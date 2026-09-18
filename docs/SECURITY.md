@@ -63,3 +63,68 @@
 - Fraud detection
 - Audit logs (foundation آماده — audit_logs table)
 - Backup + disaster recovery
+
+---
+
+## امنیت Authentication — پیاده‌سازی Phase 2 (2026-09-18)
+
+### معماری Token
+
+| Token         | محل                                   | مدت      | نکته                                  |
+| ------------- | ------------------------------------- | -------- | ------------------------------------- |
+| Access (JWT)  | httpOnly cookie `zarnama_at` / Bearer | ۱۵ دقیقه | حاوی `sid` — بررسی نشست در هر request |
+| Refresh (JWT) | httpOnly cookie `zarnama_rt` / body   | ۳۰ روز   | rotation + reuse detection            |
+
+- `sid` در access token → revoke شدن Session بلافاصله روی همه APIها اثر می‌کند (بررسی `revokedAt`/`expiresAt` در `requireAuth`)
+- Refresh token فقط hash آن در DB نگه داشته می‌شود (`refreshTokenHash`)
+- Reuse شدن refresh token قدیمی → همه Sessionهای کاربر revoke می‌شوند (theft detection)
+
+### OTP
+
+- ۶ رقم، TTL پیش‌فرض ۱۲۰ ثانیه، حداکثر ۵ تلاش، cooldown ارسال مجدد ۶۰ ثانیه
+- OTP با `OTP_PEPPER` هش و ذخیره می‌شود — plaintext هرگز در DB نیست
+- مصرف‌شده/منقضی‌شده قابل استفاده مجدد نیست (replay resistant)
+- Rate limit جداگانه برای `otp.send` و `otp.verify`
+
+### Password
+
+- bcrypt (cost پیش‌فرض ۱۲) + `PASSWORD_PEPPER` سروری
+- Pepper فقط در env — در DB ذخیره نمی‌شود
+- forgot/reset با OTP؛ پس از reset همه Sessionها revoke می‌شوند
+- change نیازمند احراز + رمز فعلی؛ پس از تغییر سایر نشست‌ها revoke می‌شوند
+
+### Brute Force Protection
+
+- شمارنده `failedLoginAttempts` + `lockedUntil` روی User — پس از ۵ تلاش قفل موقت
+- پیام خطای generic — وجود/عدم وجود حساب فاش نمی‌شود
+- Rate limit `auth.login` per-mobile
+
+### Session / Device Management
+
+- `GET /api/v1/auth/sessions` — فقط نشست‌های همان کاربر (فیلتر `userId` از token — جلوگیری IDOR)
+- `DELETE /api/v1/auth/sessions/[id]` — فقط نشست خود کاربر
+- Logout idempotent — با token نامعتبر هم cookieها پاک می‌شوند
+
+### Rate Limiting (Configurable)
+
+قوانین از جدول `RateLimitConfig` خوانده می‌شوند (Redis sliding window) — بدون تغییر کد قابل تنظیم:
+
+| کلید                  | پیش‌فرض | scope  |
+| --------------------- | ------- | ------ |
+| `api.general`         | 100/60s | ip     |
+| `otp.send`            | 5/h     | mobile |
+| `otp.verify`          | 10/h    | mobile |
+| `auth.login`          | 10/h    | mobile |
+| `auth.register`       | 10/h    | ip     |
+| `auth.password_reset` | 5/h     | mobile |
+
+### SMS Provider
+
+- Interface `SmsProvider` — پیاده‌سازی `MockSmsProvider` و `KavenegarProvider`
+- انتخاب با `SMS_PROVIDER` (نه NODE_ENV) — در production باید `kavenegar`
+- Mock کد را در Redis `devotp:{mobile}` می‌نویسد + در لاگ با موبایل masked چاپ می‌کند
+- endpoint توسعه `GET /api/v1/dev/otp/[mobile]` فقط وقتی `DEV_OTP_ENDPOINT=true` و `SMS_PROVIDER=mock` — در production هرگز فعال نشود
+
+### Audit
+
+رویدادهای auth در `audit_logs`: `USER_REGISTER`, `USER_LOGIN`, `USER_LOGOUT`, `SESSION_REVOKE`, `PASSWORD_RESET`, `PASSWORD_CHANGE`, `REFRESH_REUSE_DETECTED` — با actor, ip, userAgent.

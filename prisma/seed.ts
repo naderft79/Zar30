@@ -86,7 +86,10 @@ async function main() {
     [
       { key: 'api.general', limit: 100, windowSeconds: 60, scope: 'IP' },
       { key: 'otp.send', limit: 5, windowSeconds: 3600, scope: 'MOBILE' },
+      { key: 'otp.verify', limit: 10, windowSeconds: 3600, scope: 'MOBILE' },
       { key: 'auth.login', limit: 10, windowSeconds: 3600, scope: 'MOBILE' },
+      { key: 'auth.register', limit: 10, windowSeconds: 3600, scope: 'IP' },
+      { key: 'auth.password_reset', limit: 5, windowSeconds: 3600, scope: 'MOBILE' },
       { key: 'trading.execute', limit: 30, windowSeconds: 60, scope: 'USER' },
       { key: 'admin.api', limit: 200, windowSeconds: 60, scope: 'IP' },
     ]
@@ -377,19 +380,21 @@ async function main() {
 
   const testUser = await prisma.user.upsert({
     where: { mobile: '09123456789' },
-    update: {},
+    update: { mobileVerifiedAt: new Date() },
     create: {
       mobile: '09123456789',
       passwordHash: testPassword,
-      pepper: process.env.PASSWORD_PEPPER || 'dev_pepper',
       kycLevel: 'LEVEL_1',
+      mobileVerifiedAt: new Date(),
       referralCode: 'ZARNAMA1',
     },
   })
 
   // Create Wallet + Asset Accounts for test user
-  await prisma.wallet.create({
-    data: {
+  await prisma.wallet.upsert({
+    where: { userId: testUser.id },
+    update: {},
+    create: {
       userId: testUser.id,
       assetAccounts: {
         create: [

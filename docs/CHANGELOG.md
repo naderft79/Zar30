@@ -1,5 +1,53 @@
 # Zarnama — Changelog
 
+## [0.2.0] — Phase 2: Authentication & User Management (2026-09-18)
+
+### Added
+
+- **Auth Service کامل** — register، login، logout (idempotent)، refresh rotation، OTP send/verify، password forgot/reset/change، sessions list/revoke، `/me` — تحت `/api/v1/auth/*`
+- **JWT دوگانه** — access token (۱۵ دقیقه، حاوی `sid`) + refresh token (۳۰ روز، rotation + reuse detection) — Web با httpOnly cookie، Mobile با Bearer
+- **`sid` در access token** — revoke شدن Session بلافاصله روی همه APIها اثر می‌کند (بررسی نشست در `requireAuth`)
+- **OTP امن** — هش با `OTP_PEPPER`، TTL ۱۲۰s، حداکثر ۵ تلاش، resend cooldown ۶۰s، replay resistant — plaintext در DB ذخیره نمی‌شود
+- **Rate Limiting configurable** — از `RateLimitConfig` (seed: `api.general`، `otp.send`، `otp.verify`، `auth.login`، `auth.register`، `auth.password_reset`)
+- **Brute force protection** — `failedLoginAttempts` + `lockedUntil` (۵ تلاش → قفل موقت) + پیام generic
+- **RBAC foundation** — Role/Permission + `hasPermission` (SUPER_ADMIN همه‌کاره)
+- **SMS Provider interface** — `MockSmsProvider` + `KavenegarProvider`؛ انتخاب با `SMS_PROVIDER` (نه NODE_ENV)
+- **Dev endpoint** — `GET /api/v1/dev/otp/[mobile]` فقط با `DEV_OTP_ENDPOINT=true` + `SMS_PROVIDER=mock`
+- **UI auth واقعی** — `/login`، `/register`، `/verify-otp` (auto-advance + paste + resend timer)، `/forgot-password`، `/reset-password`، `/dashboard` (پروفایل + نشست‌های فعال + لغو نشست + خروج)
+- **Tests** — ۱۳ unit + ۹ integration (DB واقعی) + ۵ E2E flow روی ۳ viewport
+
+### Changed
+
+- Proxy به `/login` redirect می‌کند (نه `/auth/login`) + `callbackUrl` حفظ می‌شود + refresh cookie به‌عنوان نشانه نشست پذیرفته می‌شود
+- Seed: `RateLimitConfig` keys با `FALLBACK_RULES` هماهنگ شد + test user با `mobileVerifiedAt` (self-healing upsert)
+- `env.ts`: `JWT_ISSUER` + `JWT_AUDIENCE` اضافه شد
+- Playwright: `globalSetup` شمارنده‌های rate limit را قبل از اجرا پاک می‌کند + timeout تست‌های چندمرحله‌ای bcrypt
+
+### Fixed
+
+- `pepper` از create data کاربر حذف شد (فیلد در schema نبود؛ pepper فقط در env می‌ماند)
+- Seed idempotent شد (upsert برای wallet + asset accounts)
+- Logout با refresh token نامعتبر/غایب — cookieها همچنان پاک می‌شوند (idempotent)
+- Lint: `set-state-in-effect` در dashboard-client با الگوی cancelled flag رفع شد
+- `getSessionMeta`/`env`/`useRouter` unused imports حذف شدند
+- `AuditLog.entityType` required بود — fallback `'unknown'`
+
+### Security
+
+- OTP و Password هر دو با pepper جداگانه هش می‌شوند — pepper هرگز در DB نیست
+- Refresh token فقط hash آن در DB است — reuse detection با revoke همه نشست‌ها
+- User isolation: نشست کاربر دیگر قابل لیست/لغو نیست (تست integration)
+- Dev OTP endpoint در production همیشه 404 (دو شرط env)
+- هدر `SMS_PROVIDER=mock` در production build هشدار `error` لاگ می‌کند
+
+### Validated
+
+- `pnpm lint`: 0 errors / 0 warnings
+- `pnpm typecheck`: 0 errors
+- `pnpm test`: 50/50 (unit + integration روی PostgreSQL واقعی)
+- `pnpm test:e2e`: 35 pass / 1 skip (mobile-only) — روی ۳ viewport
+- `pnpm build`: موفق — ۳۵ route + Serwist SW
+
 ## [0.1.1] — Phase 0 Final Gate (2026-09-18)
 
 ### Changed

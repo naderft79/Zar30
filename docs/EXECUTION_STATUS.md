@@ -149,9 +149,70 @@
 
 ## Phase بعدی
 
-**Phase 2:** Authentication & User Management — 🔄 در حال اجرا
+**Phase 2:** Authentication & User Management — ✅ **DONE** (پایین را ببینید)
 
 ### Cleanup پس از APPROVE Phase 1 (2026-09-18)
 
 1. **شمارش Sectionها** — تعداد واقعی از `src/app/(public)/page.tsx` استخراج شد: ۱۵ بخش در نسخه اصلی؛ پس از حذف Testimonials = **۱۴ بخش**. (گزارش قبلی «۱۵» برای ترکیب قبلی درست بود؛ `GoldCalculator` Section مستقل نیست و داخل `PriceSection` است.)
 2. **حذف Fake Social Proof** — بخش `Testimonials` (۴ نظر جعلی) و آمار ساختگی (`+۵۰,۰۰۰ کاربر`، `+۱۲۰ کیلوگرم`، `+۱ میلیون تراکنش`) حذف شدند؛ `STATS` با قابلیت‌های واقعی محصول جایگزین شد. Price Widget با برچسب «Demo / پیش‌نمایش» صحیح باقی ماند.
+
+---
+
+## Phase 2: Authentication & User Management
+
+**وضعیت:** ✅ DONE — Final Gate پاس شد (Lint / Typecheck / Unit+Integration / E2E / Build)
+
+> مرجع کامل: `docs/phases/PHASE-02-REPORT.md` — امنیت: `docs/SECURITY.md` — API: `docs/API.md`
+
+### تسک‌ها
+
+| #    | تسک                                                                                                          | وضعیت |
+| ---- | ------------------------------------------------------------------------------------------------------------ | ----- |
+| 2.1  | Auth Service: register/login/logout/refresh/OTP/password + `authService` export                              | ✅    |
+| 2.2  | JWT: access (۱۵m، حاوی `sid`) + refresh (۳۰d، rotation + reuse detection) — Web cookie/Mobile Bearer         | ✅    |
+| 2.3  | OTP: server-side، هش با pepper، TTL، attempts، resend cooldown، replay resistant                             | ✅    |
+| 2.4  | Session: DB-backed، list/revoke، revoke بلافاصله روی access token اثر می‌کند (`sid` claim)                   | ✅    |
+| 2.5  | Password: forgot/reset (OTP → revoke همه نشست‌ها) + change (authenticated)                                   | ✅    |
+| 2.6  | Rate Limiting: `RateLimitConfig` — otp.send/otp.verify/auth.login/auth.register/password_reset + api.general | ✅    |
+| 2.7  | RBAC foundation: Role/Permission + `hasPermission` + User/Admin                                              | ✅    |
+| 2.8  | Brute force: failedLoginAttempts + lockedUntil — پیام generic                                                | ✅    |
+| 2.9  | SMS Provider interface: Mock (SMS_PROVIDER=mock) + Kavenegar — انتخاب با env                                 | ✅    |
+| 2.10 | UI: login/register/verify-otp/forgot-password/reset-password/dashboard+sessions — RTL                        | ✅    |
+| 2.11 | Proxy: redirect به `/login` + حفظ callbackUrl + پذیرش refresh cookie                                         | ✅    |
+| 2.12 | Audit: رویدادهای auth در `audit_logs` با actor/ip/userAgent                                                  | ✅    |
+| 2.13 | Dev endpoint: `GET /api/v1/dev/otp/[mobile]` — فقط `DEV_OTP_ENDPOINT=true` + `SMS_PROVIDER=mock`             | ✅    |
+| 2.14 | Tests: unit + integration (DB واقعی) + E2E (۳ viewport)                                                      | ✅    |
+
+### Acceptance Criteria
+
+| معیار                          | وضعیت                                         |
+| ------------------------------ | --------------------------------------------- |
+| Registration واقعی             | ✅                                            |
+| OTP واقعی در Development       | ✅ Mock SMS + dev endpoint                    |
+| Login واقعی                    | ✅                                            |
+| Session درست مدیریت شود        | ✅ DB + rotation + revocation فوری            |
+| Logout واقعی (idempotent)      | ✅                                            |
+| Session Revocation             | ✅ تست e2e: revoke → 401                      |
+| Rate Limiting کار کند          | ✅ configurable از DB                         |
+| Authorization server-side      | ✅ requireAuth + RBAC                         |
+| User data isolation تست شده    | ✅ integration: revoke نشست کاربر دیگر → 404  |
+| Security tests pass            | ✅ brute force/replay/expired/reuse/isolation |
+| Mobile/Auth architecture آماده | ✅ Bearer + cookie — همان API                 |
+| `pnpm lint`                    | ✅ 0 errors / 0 warnings                      |
+| `pnpm typecheck`               | ✅ 0 errors                                   |
+| `pnpm test` (unit+integration) | ✅ 50/50                                      |
+| `pnpm test:e2e`                | ✅ 35 pass / 1 skip (mobile-only)             |
+| `pnpm build`                   | ✅ ۳۵ route + Serwist                         |
+
+### تصمیم‌های کلیدی
+
+- **`sid` در access token** — revoke شدن Session بدون انتظار انقضای JWT بلافاصله اثر می‌کند
+- **Refresh rotation + reuse detection** — token قدیمی دوباره استفاده شود، همه نشست‌ها revoke می‌شوند
+- **OTP/Password هر دو pepper جداگانه** — فقط در env، نه DB
+- **SMS_PROVIDER انتخاب provider را کنترل می‌کند** (نه NODE_ENV) — production واقعی `kavenegar`
+- **Dev OTP endpoint دو شرط دارد** (`DEV_OTP_ENDPOINT=true` + `SMS_PROVIDER=mock`) — در production هرگز فعال نمی‌شود
+- **Proxy refresh cookie را می‌پذیرد** — صفحه محافظت‌شده لود می‌شود، کلاینت refresh می‌کند، ناموفق → login
+
+### Phase بعدی
+
+**Phase 3:** KYC & User Profile — آماده شروع

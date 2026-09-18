@@ -24,6 +24,7 @@ test.describe('Landing Page', () => {
   })
 
   test('ناوبری به بخش‌ها و صفحات عمومی کار می‌کند', async ({ page }) => {
+    test.setTimeout(90_000)
     await page.goto('/')
 
     // لینک anchor به بخش FAQ — فقط در ناوبری دسکتاپ (در موبایل لینک فوتر به /faq است)

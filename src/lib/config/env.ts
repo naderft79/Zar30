@@ -22,6 +22,8 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(32, 'JWT_REFRESH_SECRET must be at least 32 chars'),
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('30d'),
+  JWT_ISSUER: z.string().default('zarnama'),
+  JWT_AUDIENCE: z.string().default('zarnama-users'),
 
   // Password
   BCRYPT_COST: z.coerce.number().default(12),

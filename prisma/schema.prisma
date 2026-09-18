@@ -201,17 +201,21 @@ enum InterestRateType {
 // ============================================
 
 model User {
-  id           String     @id @default(uuid())
-  mobile       String     @unique
-  passwordHash String
-  pepper       String
-  kycLevel     KycLevel   @default(LEVEL_0)
-  status       UserStatus @default(ACTIVE)
-  referralCode String     @unique
-  referredById String?    @map("referred_by")
-  creditScore  Int        @default(0)
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  id                  String    @id @default(uuid())
+  mobile              String    @unique
+  passwordHash        String
+  kycLevel            KycLevel  @default(LEVEL_0)
+  status              UserStatus @default(ACTIVE)
+  referralCode        String    @unique
+  referredById        String?   @map("referred_by")
+  creditScore         Int       @default(0)
+  // Security state (Phase 2 — Brute Force Protection)
+  failedLoginAttempts Int       @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime? @map("locked_until")
+  mobileVerifiedAt    DateTime? @map("mobile_verified_at")
+  lastLoginAt         DateTime? @map("last_login_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
 
   referredBy      User?              @relation("Referrals", fields: [referredById], references: [id])
   referrals       User[]             @relation("Referrals")

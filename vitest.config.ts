@@ -9,6 +9,8 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
     environment: 'node',
+    // integration tests روی DB واقعی چند bcrypt (cost 12) اجرا می‌کنند و زمان‌برند
+    testTimeout: 30_000,
     globals: true,
     include: ['tests/unit/**/*.test.{ts,tsx}', 'tests/integration/**/*.test.{ts,tsx}'],
     coverage: {

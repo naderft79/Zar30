@@ -1,0 +1,16 @@
+// ============================================
+// Zarnama - Password Security (Phase 2)
+// ============================================
+// bcrypt + pepper — pepper هرگز در DB ذخیره نمی‌شود
+// ============================================
+
+import bcrypt from 'bcryptjs'
+import { env } from '@/lib/config/env'
+
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password + env.PASSWORD_PEPPER, env.BCRYPT_COST)
+}
+
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password + env.PASSWORD_PEPPER, hash)
+}

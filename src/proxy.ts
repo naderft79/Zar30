@@ -38,11 +38,13 @@ export function proxy(request: NextRequest) {
 
   if (isProtected) {
     // بررسی وجود access token در cookie یا Authorization header
+    // برای صفحات، refresh token هم کافی است — client آن را به access جدید تبدیل می‌کند
     const accessToken =
       request.cookies.get('zarnama_access')?.value ||
       request.headers.get('authorization')?.replace('Bearer ', '')
+    const refreshToken = request.cookies.get('zarnama_refresh')?.value
 
-    if (!accessToken) {
+    if (!accessToken && !(refreshToken && !pathname.startsWith('/api'))) {
       // اگر API request است → 401
       if (pathname.startsWith('/api')) {
         return NextResponse.json(
@@ -51,7 +53,7 @@ export function proxy(request: NextRequest) {
         )
       }
       // اگر صفحه است → redirect به login
-      const loginUrl = new URL('/auth/login', request.url)
+      const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('callbackUrl', pathname)
       return NextResponse.redirect(loginUrl)
     }
