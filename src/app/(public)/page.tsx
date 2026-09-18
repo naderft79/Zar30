@@ -17,7 +17,6 @@ import { InstallmentPreview } from '@/components/landing/installment-preview'
 import { SecuritySection } from '@/components/landing/security-section'
 import { PhysicalGold } from '@/components/landing/physical-gold'
 import { ReferralSection } from '@/components/landing/referral-section'
-import { Testimonials } from '@/components/landing/testimonials'
 import { FaqSection } from '@/components/landing/faq-section'
 import { CtaSection } from '@/components/landing/cta-section'
 import { DownloadApp } from '@/components/landing/download-app'
@@ -89,7 +88,6 @@ export default function LandingPage() {
       <SecuritySection />
       <PhysicalGold />
       <ReferralSection />
-      <Testimonials />
       <FaqSection />
       <DownloadApp />
       <CtaSection />

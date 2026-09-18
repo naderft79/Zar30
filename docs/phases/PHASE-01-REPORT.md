@@ -39,7 +39,17 @@
 
 ### بخش‌های Landing (`src/components/landing/`)
 
-Header, MobileMenu, Footer, Hero, PriceWidget, PriceSection, Features, WhyZarnama, HowItWorks, Stats, GoldCalculator, InvestmentPreview, InstallmentPreview, SecuritySection, PhysicalGold, ReferralSection, Testimonials, FaqSection, CtaSection, DownloadApp
+**شمارش واقعی از Source Code** (`src/app/(public)/page.tsx` — مرجع شمارش):
+
+بخش‌های اصلی Landing = **۱۴** (پس از Cleanup): Hero, PriceSection, Features, WhyZarnama, Stats, HowItWorks, InvestmentPreview, InstallmentPreview, SecuritySection, PhysicalGold, ReferralSection, FaqSection, DownloadApp, CtaSection
+
+توضیح اعداد قبلی:
+
+- در گزارش اولیه «۱۵» ثبت شده بود — Hero تا CtaSection قبل از حذف Testimonials دقیقاً 15 بود.
+- `GoldCalculator` یک Section مستقل نیست — داخل `PriceSection` رندر می‌شود (اگر شمرده شود، بصری ۱۶ بلوک دیده می‌شود؛ ساختاری ۱۴ است).
+- `Header`, `MobileMenu`, `Footer`, `PriceWidget`, `GoldCalculator` جزو ۲۰ **کامپوننت** پوشه landing هستند، نه Section.
+
+**Cleanup Social Proof (2026-09-18):** بخش `Testimonials` و داده‌های ساختگی (۴ نظر جعلی) حذف شد. `STATS` که «+۵۰,۰۰۰ کاربر»، «+۱۲۰ کیلوگرم طلا»، «+۱ میلیون تراکنش» را نمایش می‌داد — بدون منبع واقعی — با قابلیت‌های واقعی محصول جایگزین شد (۲۴/۷، شفافیت دفتر کل، خرید با هر مبلغ، ۴ سطح احراز هویت). برای پلتفرم مالی، Fake Social Proof ممنوع است. آمار واقعی پس از لانش از DB/CMS تغذیه می‌شود.
 
 ### داده و سرویس‌ها
 

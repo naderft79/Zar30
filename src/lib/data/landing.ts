@@ -177,6 +177,8 @@ export const HOW_IT_WORKS: Step[] = [
 ]
 
 // ---------- آمار ----------
+// نکته: هیچ عدد استفاده/کاربران ساختگی نمایش داده نمی‌شود (پلتفرم مالی — Fake Social Proof ممنوع)
+// این مقادیر فقط قابلیت‌های واقعی محصول هستند؛ آمار واقعی پس از لانش از DB تغذیه می‌شود
 export interface Stat {
   value: string
   label: string
@@ -184,10 +186,10 @@ export interface Stat {
 }
 
 export const STATS: Stat[] = [
-  { icon: Landmark, value: '+۵۰٬۰۰۰', label: 'کاربر فعال' },
-  { icon: Coins, value: '+۱۲۰ کیلوگرم', label: 'طلای تحت مدیریت' },
-  { icon: ShieldCheck, value: '۱۰۰٪', label: 'پشتوانه طلای فیزیکی' },
-  { icon: ArrowLeftRight, value: '+۱ میلیون', label: 'تراکنش موفق' },
+  { icon: Coins, value: 'با هر مبلغی', label: 'خرید طلا — حتی میلی‌گرمی' },
+  { icon: ArrowLeftRight, value: '۲۴/۷', label: 'معامله آنلاین' },
+  { icon: FileSearch, value: '۱۰۰٪', label: 'شفافیت دفتر کل' },
+  { icon: ShieldCheck, value: '۴ سطح', label: 'احراز هویت چندمرحله‌ای' },
 ]
 
 // ---------- FAQ ----------
@@ -240,34 +242,8 @@ export const FAQS: Faq[] = [
 ]
 
 // ---------- نظرات کاربران ----------
-export interface Testimonial {
-  name: string
-  role: string
-  text: string
-}
-
-export const TESTIMONIALS: Testimonial[] = [
-  {
-    name: 'سارة م.',
-    role: 'کاربر زرنما',
-    text: 'با مبلغ کم شروع کردم و الان بخشی از پس‌اندازم طلاست. رابط کاربری خیلی ساده و شفافه.',
-  },
-  {
-    name: 'امیر ر.',
-    role: 'سرمایه‌گذار',
-    text: 'اینکه هر تراکنش سند داره و قابل پیگیریه، بهم اعتماد داد. تحویل فیزیکی هم تست کردم، بدون مشکل بود.',
-  },
-  {
-    name: 'نگین ک.',
-    role: 'کاربر زرنما',
-    text: 'خرید اقساطی طلا دقیقاً چیزی بود که دنبالش بودم. بدون اجرت ساخت، مستقیم طلای آب‌شده.',
-  },
-  {
-    name: 'رضا ت.',
-    role: 'کسب‌وکار',
-    text: 'برای هدیه سازمانی از انتقال طلا استفاده کردیم. سریع، بدون واسطه و با گزارش کامل.',
-  },
-]
+// عمداً حذف شد: نمایش نظر ساختگی برای پلتفرم مالی مجاز نیست (Fake Social Proof ممنوع)
+// پس از لانش واقعی و کسب رضایت‌نامه واقعی کاربران، از CMS تغذیه می‌شود
 
 // ---------- نشان‌های اعتماد ----------
 export const TRUST_BADGES = [

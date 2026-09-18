@@ -97,24 +97,24 @@
 
 ### تسک‌ها
 
-| #    | تسک                                                                                                                     | وضعیت |
-| ---- | ----------------------------------------------------------------------------------------------------------------------- | ----- |
-| 1.1  | Route group `(public)` + layout (Header/Footer/skip-link)                                                               | ✅    |
-| 1.2  | Design System: Container, Section (+titleAs), Logo, Accordion, Dialog, Tooltip                                          | ✅    |
-| 1.3  | داده‌های Landing + Price Service Interface (Mock/Dev با برچسب Demo)                                                     | ✅    |
-| 1.4  | Header + Mobile Menu (Dialog) + Footer                                                                                  | ✅    |
-| 1.5  | بخش‌های Landing: Hero, Price, Features, WhyZarnama, HowItWorks, Stats                                                   | ✅    |
-| 1.6  | بخش‌های Landing: Calculator, Investment, Installment, Security, Physical, Referral, Testimonials, FAQ, CTA, DownloadApp | ✅    |
-| 1.7  | صفحات Public: about, security, faq, contact, blog, terms, privacy + auth placeholders                                   | ✅    |
-| 1.8  | SEO: metadataBase, sitemap.xml, robots.txt, OG image, JSON-LD، canonical، h1 هر صفحه                                    | ✅    |
-| 1.9  | Animations (float/fade-up) + prefers-reduced-motion + PWA icons (PNG)                                                   | ✅    |
-| 1.10 | Tests: unit (12) + Playwright E2E (desktop/tablet/mobile)                                                               | ✅    |
+| #    | تسک                                                                                                       | وضعیت |
+| ---- | --------------------------------------------------------------------------------------------------------- | ----- |
+| 1.1  | Route group `(public)` + layout (Header/Footer/skip-link)                                                 | ✅    |
+| 1.2  | Design System: Container, Section (+titleAs), Logo, Accordion, Dialog, Tooltip                            | ✅    |
+| 1.3  | داده‌های Landing + Price Service Interface (Mock/Dev با برچسب Demo)                                       | ✅    |
+| 1.4  | Header + Mobile Menu (Dialog) + Footer                                                                    | ✅    |
+| 1.5  | بخش‌های Landing: Hero, Price, Features, WhyZarnama, HowItWorks, Stats                                     | ✅    |
+| 1.6  | بخش‌های Landing: Calculator, Investment, Installment, Security, Physical, Referral, FAQ, CTA, DownloadApp | ✅    |
+| 1.7  | صفحات Public: about, security, faq, contact, blog, terms, privacy + auth placeholders                     | ✅    |
+| 1.8  | SEO: metadataBase, sitemap.xml, robots.txt, OG image, JSON-LD، canonical، h1 هر صفحه                      | ✅    |
+| 1.9  | Animations (float/fade-up) + prefers-reduced-motion + PWA icons (PNG)                                     | ✅    |
+| 1.10 | Tests: unit (12) + Playwright E2E (desktop/tablet/mobile)                                                 | ✅    |
 
 ### Acceptance Criteria
 
 | معیار                                                        | وضعیت                                 |
 | ------------------------------------------------------------ | ------------------------------------- |
-| Landing کامل (۱۵ بخش)                                        | ✅                                    |
+| Landing کامل (۱۴ بخش — پس از Cleanup Social Proof)           | ✅ تعداد واقعی از Source: `page.tsx`  |
 | RTL + Vazirmatn + پالت navy/gold/cream                       | ✅                                    |
 | Responsive (mobile/tablet/desktop — Playwright)              | ✅ ۳ پروژه viewport                   |
 | Design System بدون duplicate                                 | ✅                                    |
@@ -149,4 +149,9 @@
 
 ## Phase بعدی
 
-**Phase 2:** Authentication & User Management — آماده برای شروع پس از تأیید
+**Phase 2:** Authentication & User Management — 🔄 در حال اجرا
+
+### Cleanup پس از APPROVE Phase 1 (2026-09-18)
+
+1. **شمارش Sectionها** — تعداد واقعی از `src/app/(public)/page.tsx` استخراج شد: ۱۵ بخش در نسخه اصلی؛ پس از حذف Testimonials = **۱۴ بخش**. (گزارش قبلی «۱۵» برای ترکیب قبلی درست بود؛ `GoldCalculator` Section مستقل نیست و داخل `PriceSection` است.)
+2. **حذف Fake Social Proof** — بخش `Testimonials` (۴ نظر جعلی) و آمار ساختگی (`+۵۰,۰۰۰ کاربر`، `+۱۲۰ کیلوگرم`، `+۱ میلیون تراکنش`) حذف شدند؛ `STATS` با قابلیت‌های واقعی محصول جایگزین شد. Price Widget با برچسب «Demo / پیش‌نمایش» صحیح باقی ماند.
