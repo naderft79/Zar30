@@ -1,0 +1,802 @@
+// ============================================
+// Zarnama - Prisma Schema (Phase 0 Foundation)
+// ============================================
+// Double-Entry Ledger Architecture
+// PostgreSQL 18.x + Prisma 7 Stable
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Database URL configured in prisma.config.ts (Prisma 7)
+
+// ============================================
+// Enums
+// ============================================
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  FINANCE
+  SUPPORT
+  KYC
+  RISK
+  CONTENT
+  OPERATIONS
+  ANALYST
+  READ_ONLY
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  DELETED
+}
+
+enum KycLevel {
+  LEVEL_0
+  LEVEL_1
+  LEVEL_2
+  LEVEL_3
+}
+
+enum KycStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  NEEDS_RESUBMISSION
+}
+
+enum AssetType {
+  RIAL
+  GOLD
+  SILVER
+}
+
+enum LedgerAccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum LedgerEntryType {
+  DEBIT
+  CREDIT
+}
+
+enum JournalEntryStatus {
+  POSTED
+  REVERSED
+}
+
+enum OrderType {
+  BUY
+  SELL
+}
+
+enum OrderStatus {
+  PENDING
+  LOCKED
+  FILLED
+  CANCELLED
+  FAILED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+  FEE
+  TRANSFER
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REVERSED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+  FAILED
+}
+
+enum IdempotencyStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum RateLimitScope {
+  IP
+  USER
+  MOBILE
+}
+
+enum NotificationChannel {
+  PUSH
+  SMS
+  EMAIL
+  IN_APP
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  FAILED
+  READ
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  ANSWERED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ReferralStatus {
+  PENDING
+  QUALIFIED
+  REWARDED
+}
+
+enum InstallmentMethod {
+  INTERNAL_CREDIT
+  CHEQUE
+}
+
+enum InstallmentContractStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  DEFAULTED
+}
+
+enum InstallmentPaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  DEFAULTED
+}
+
+enum InvestmentPositionStatus {
+  ACTIVE
+  MATURED
+  EARLY_CLOSED
+}
+
+enum InterestRateType {
+  FIXED
+  VARIABLE
+}
+
+// ============================================
+// User & Auth
+// ============================================
+
+model User {
+  id           String     @id @default(uuid())
+  mobile       String     @unique
+  passwordHash String
+  pepper       String
+  kycLevel     KycLevel   @default(LEVEL_0)
+  status       UserStatus @default(ACTIVE)
+  referralCode String     @unique
+  referredById String?    @map("referred_by")
+  creditScore  Int        @default(0)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  referredBy      User?              @relation("Referrals", fields: [referredById], references: [id])
+  referrals       User[]             @relation("Referrals")
+  wallet          Wallet?
+  kycSubmissions  KycSubmission[]
+  sessions        Session[]
+  orders          Order[]
+  transactions    Transaction[]
+  withdrawals     WithdrawalRequest[]
+  adminUser       AdminUser?
+  tickets         Ticket[]
+  ticketMessages  TicketMessage[]
+  notifications   Notification[]
+  referralsMade   Referral[]         @relation("Referrer")
+  referralReceived Referral?         @relation("Referred")
+  installmentContracts InstallmentContract[]
+  investmentPositions  InvestmentPosition[]
+
+  @@index([referredById])
+  @@index([status])
+  @@map("users")
+}
+
+model AdminUser {
+  id          String    @id @default(uuid())
+  userId      String    @unique @map("user_id")
+  role        AdminRole @default(READ_ONLY)
+  permissions Json
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user                User                  @relation(fields: [userId], references: [id])
+  kycSubmissions      KycSubmission[]
+  withdrawals         WithdrawalRequest[]
+  tickets             Ticket[]
+  installmentContracts InstallmentContract[]
+
+  @@map("admin_users")
+}
+
+model Session {
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  refreshTokenHash String    @map("refresh_token_hash")
+  deviceInfo       String?   @map("device_info")
+  ip               String?
+  userAgent        String?   @map("user_agent")
+  expiresAt        DateTime  @map("expires_at")
+  revokedAt        DateTime? @map("revoked_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([refreshTokenHash])
+  @@map("sessions")
+}
+
+model OtpCode {
+  id         String    @id @default(uuid())
+  mobile     String
+  codeHash   String    @map("code_hash")
+  purpose    String
+  attempts   Int       @default(0)
+  expiresAt  DateTime  @map("expires_at")
+  consumedAt DateTime? @map("consumed_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([mobile, purpose])
+  @@index([expiresAt])
+  @@map("otp_codes")
+}
+
+model KycSubmission {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  level           KycLevel
+  status          KycStatus @default(NOT_STARTED)
+  nationalCode    String?   @map("national_code")
+  birthDate       DateTime? @map("birth_date")
+  firstName       String?   @map("first_name")
+  lastName        String?   @map("last_name")
+  idCardImageUrl  String?   @map("id_card_image_url")
+  selfieImageUrl  String?   @map("selfie_image_url")
+  videoUrl        String?   @map("video_url")
+  rejectionReason String?   @map("rejection_reason")
+  reviewedBy      String?   @map("reviewed_by")
+  reviewedAt      DateTime? @map("reviewed_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  user       User       @relation(fields: [userId], references: [id])
+  reviewer   AdminUser? @relation(fields: [reviewedBy], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("kyc_submissions")
+}
+
+// ============================================
+// Wallet & Asset Accounts
+// ============================================
+
+model Wallet {
+  id        String   @id @default(uuid())
+  userId    String   @unique @map("user_id")
+  status    String   @default("active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user         User          @relation(fields: [userId], references: [id])
+  assetAccounts AssetAccount[]
+
+  @@map("wallets")
+}
+
+model AssetAccount {
+  id            String    @id @default(uuid())
+  walletId      String    @map("wallet_id")
+  assetType     AssetType @map("asset_type")
+  balance       Decimal   @default(0) @db.Decimal(18, 8)
+  lockedBalance Decimal   @default(0) @db.Decimal(18, 8) @map("locked_balance")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  wallet      Wallet         @relation(fields: [walletId], references: [id])
+  ledgerEntries LedgerEntry[]
+
+  @@unique([walletId, assetType])
+  @@index([walletId])
+  @@map("asset_accounts")
+}
+
+// ============================================
+// Double-Entry Ledger
+// ============================================
+
+model LedgerAccount {
+  id        String           @id @default(uuid())
+  code      String           @unique
+  type      LedgerAccountType
+  name      String
+  assetType AssetType?
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  ledgerEntries LedgerEntry[]
+
+  @@map("ledger_accounts")
+}
+
+model JournalEntry {
+  id            String           @id @default(uuid())
+  referenceType String?          @map("reference_type")
+  referenceId   String?          @map("reference_id")
+  description   String?
+  status        JournalEntryStatus @default(POSTED)
+  reversalOf    String?          @map("reversal_of")
+  createdAt     DateTime         @default(now()) @map("created_at")
+
+  ledgerEntries LedgerEntry[]
+  reversal      JournalEntry?    @relation("JournalReversal", fields: [reversalOf], references: [id])
+  reversedBy    JournalEntry[]   @relation("JournalReversal")
+  orders        Order[]
+  transactions  Transaction[]
+
+  @@index([referenceType, referenceId])
+  @@index([status])
+  @@index([reversalOf])
+  @@map("journal_entries")
+}
+
+model LedgerEntry {
+  id              String         @id @default(uuid())
+  journalEntryId  String         @map("journal_entry_id")
+  ledgerAccountId String         @map("ledger_account_id")
+  entryType       LedgerEntryType @map("entry_type")
+  amountGold      Decimal?       @db.Decimal(18, 8) @map("amount_gold")
+  amountRial      BigInt?
+  balanceAfter    Decimal?       @db.Decimal(18, 8) @map("balance_after")
+  assetAccountId  String?        @map("asset_account_id")
+  createdAt       DateTime       @default(now()) @map("created_at")
+
+  journalEntry  JournalEntry   @relation(fields: [journalEntryId], references: [id])
+  ledgerAccount LedgerAccount  @relation(fields: [ledgerAccountId], references: [id])
+  assetAccount  AssetAccount?  @relation(fields: [assetAccountId], references: [id])
+
+  @@index([journalEntryId])
+  @@index([ledgerAccountId, createdAt])
+  @@index([assetAccountId, createdAt])
+  @@map("ledger_entries")
+}
+
+// ============================================
+// Orders & Transactions
+// ============================================
+
+model Order {
+  id                 String      @id @default(uuid())
+  userId             String      @map("user_id")
+  type               OrderType
+  goldAmount         Decimal     @db.Decimal(18, 8) @map("gold_amount")
+  rialAmount         BigInt      @map("rial_amount")
+  unitPrice          BigInt      @map("unit_price")
+  spread             Decimal     @db.Decimal(8, 4)
+  fee                BigInt
+  total              BigInt
+  status             OrderStatus @default(PENDING)
+  priceLockExpiresAt DateTime?   @map("price_lock_expires_at")
+  otpConfirmed       Boolean     @default(false) @map("otp_confirmed")
+  journalEntryId     String?     @map("journal_entry_id")
+  createdAt          DateTime    @default(now()) @map("created_at")
+
+  user        User         @relation(fields: [userId], references: [id])
+  journalEntry JournalEntry? @relation(fields: [journalEntryId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("orders")
+}
+
+model Transaction {
+  id              String            @id @default(uuid())
+  walletId        String            @map("wallet_id")
+  userId          String            @map("user_id")
+  type            TransactionType
+  amount          BigInt
+  status          TransactionStatus @default(PENDING)
+  gatewayRef      String?           @map("gateway_ref")
+  bankRef         String?           @map("bank_ref")
+  journalEntryId  String?           @map("journal_entry_id")
+  createdAt       DateTime          @default(now()) @map("created_at")
+
+  user         User          @relation(fields: [userId], references: [id])
+  journalEntry JournalEntry? @relation(fields: [journalEntryId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([walletId, createdAt])
+  @@index([status])
+  @@map("transactions")
+}
+
+model WithdrawalRequest {
+  id          String           @id @default(uuid())
+  userId      String           @map("user_id")
+  amount      BigInt
+  iban        String
+  status      WithdrawalStatus @default(PENDING)
+  processedBy String?          @map("processed_by")
+  processedAt DateTime?        @map("processed_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  user     User       @relation(fields: [userId], references: [id])
+  processor AdminUser? @relation(fields: [processedBy], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("withdrawal_requests")
+}
+
+// ============================================
+// Gold Price
+// ============================================
+
+model GoldPrice {
+  id         String   @id @default(uuid())
+  buyPrice   BigInt   @map("buy_price")
+  sellPrice  BigInt   @map("sell_price")
+  source     String
+  rawPrice   BigInt   @map("raw_price")
+  spread     Decimal  @db.Decimal(8, 4)
+  recordedAt DateTime @map("recorded_at")
+
+  @@index([recordedAt(sort: Desc)])
+  @@map("gold_prices")
+}
+
+// ============================================
+// Idempotency (Durable)
+// ============================================
+
+model IdempotencyRecord {
+  id           String           @id @default(uuid())
+  key          String           @unique
+  userId       String?          @map("user_id")
+  endpoint     String
+  requestHash  String           @map("request_hash")
+  responseHash String?          @map("response_hash")
+  responseBody Json?            @map("response_body")
+  status       IdempotencyStatus @default(PROCESSING)
+  createdAt    DateTime         @default(now()) @map("created_at")
+  expiresAt    DateTime          @map("expires_at")
+
+  @@index([userId, endpoint])
+  @@index([expiresAt])
+  @@map("idempotency_records")
+}
+
+// ============================================
+// Rate Limit Config (Configurable)
+// ============================================
+
+model RateLimitConfig {
+  id            String         @id @default(uuid())
+  key           String         @unique
+  limit         Int
+  windowSeconds Int            @map("window_seconds")
+  scope         RateLimitScope
+  active        Boolean        @default(true)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  @@map("rate_limit_configs")
+}
+
+// ============================================
+// Notifications
+// ============================================
+
+model Notification {
+  id        String              @id @default(uuid())
+  userId    String              @map("user_id")
+  type      String
+  title     String
+  body      String
+  data      Json?
+  channel   NotificationChannel
+  status    NotificationStatus  @default(QUEUED)
+  sentAt    DateTime?           @map("sent_at")
+  readAt    DateTime?           @map("read_at")
+  createdAt DateTime            @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("notifications")
+}
+
+model NotificationTemplate {
+  id            String   @id @default(uuid())
+  key            String  @unique
+  channels       String[]
+  titleTemplate  String  @map("title_template")
+  bodyTemplate   String  @map("body_template")
+  variables      Json
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("notification_templates")
+}
+
+// ============================================
+// Tickets
+// ============================================
+
+model Ticket {
+  id          String         @id @default(uuid())
+  userId      String         @map("user_id")
+  subject     String
+  category    String
+  priority    TicketPriority @default(MEDIUM)
+  status      TicketStatus   @default(OPEN)
+  assignedTo  String?        @map("assigned_to")
+  department  String?
+  slaDeadline DateTime?      @map("sla_deadline")
+  closedAt    DateTime?      @map("closed_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  user     User         @relation(fields: [userId], references: [id])
+  assignee AdminUser?   @relation(fields: [assignedTo], references: [id])
+  messages TicketMessage[]
+
+  @@index([userId, status])
+  @@index([assignedTo, status])
+  @@map("tickets")
+}
+
+model TicketMessage {
+  id          String   @id @default(uuid())
+  ticketId    String   @map("ticket_id")
+  senderType  String   @map("sender_type")
+  senderId    String   @map("sender_id")
+  body        String
+  attachments Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  ticket Ticket @relation(fields: [ticketId], references: [id])
+  user   User   @relation(fields: [senderId], references: [id])
+
+  @@index([ticketId, createdAt])
+  @@map("ticket_messages")
+}
+
+// ============================================
+// Referrals
+// ============================================
+
+model Referral {
+  id            String         @id @default(uuid())
+  referrerId    String         @map("referrer_id")
+  referredId    String         @unique @map("referred_id")
+  status        ReferralStatus @default(PENDING)
+  qualifiedAt   DateTime?      @map("qualified_at")
+  rewardAmount  Decimal?       @db.Decimal(18, 8) @map("reward_amount")
+  rewardType    String?        @map("reward_type")
+  createdAt     DateTime       @default(now()) @map("created_at")
+
+  referrer User @relation("Referrer", fields: [referrerId], references: [id])
+  referred User @relation("Referred", fields: [referredId], references: [id])
+
+  @@index([referrerId])
+  @@map("referrals")
+}
+
+// ============================================
+// Installments
+// ============================================
+
+model InstallmentPlan {
+  id                 String  @id @default(uuid())
+  name               String
+  months             Int
+  downPaymentPercent Decimal @db.Decimal(5, 2) @map("down_payment_percent")
+  interestRate       Decimal @db.Decimal(5, 2) @map("interest_rate")
+  fee                Decimal @db.Decimal(5, 2)
+  minAmount          BigInt  @map("min_amount")
+  maxAmount          BigInt  @map("max_amount")
+  active             Boolean @default(true)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  contracts InstallmentContract[]
+
+  @@map("installment_plans")
+}
+
+model InstallmentContract {
+  id                   String                   @id @default(uuid())
+  userId               String                   @map("user_id")
+  planId               String                   @map("plan_id")
+  principal            BigInt
+  downPayment          BigInt                   @map("down_payment")
+  totalPayable         BigInt                   @map("total_payable")
+  method               InstallmentMethod
+  status               InstallmentContractStatus @default(PENDING)
+  chequeNumber         String?                  @map("cheque_number")
+  chequeImage          String?                  @map("cheque_image")
+  guarantorId          String?                  @map("guarantor_id")
+  guarantorApprovedAt  DateTime?                @map("guarantor_approved_at")
+  approvedBy           String?                  @map("approved_by")
+  approvedAt           DateTime?                @map("approved_at")
+  createdAt            DateTime                 @default(now()) @map("created_at")
+
+  user     User            @relation(fields: [userId], references: [id])
+  plan     InstallmentPlan @relation(fields: [planId], references: [id])
+  approver AdminUser?      @relation(fields: [approvedBy], references: [id])
+  payments InstallmentPayment[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("installment_contracts")
+}
+
+model InstallmentPayment {
+  id               String                   @id @default(uuid())
+  contractId       String                   @map("contract_id")
+  installmentNumber Int                     @map("installment_number")
+  dueDate          DateTime                 @map("due_date")
+  amount           BigInt
+  status           InstallmentPaymentStatus @default(PENDING)
+  paidAt           DateTime?                @map("paid_at")
+  lateFee          BigInt                   @default(0) @map("late_fee")
+
+  contract InstallmentContract @relation(fields: [contractId], references: [id])
+
+  @@index([contractId, installmentNumber])
+  @@index([status])
+  @@map("installment_payments")
+}
+
+// ============================================
+// Investments
+// ============================================
+
+model InvestmentPlan {
+  id              String            @id @default(uuid())
+  name            String
+  durationDays    Int               @map("duration_days")
+  minGoldGram     Decimal           @db.Decimal(18, 8) @map("min_gold_gram")
+  interestRateType InterestRateType @map("interest_rate_type")
+  rate            Decimal           @db.Decimal(5, 2)
+  active          Boolean           @default(true)
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  positions InvestmentPosition[]
+
+  @@map("investment_plans")
+}
+
+model InvestmentPosition {
+  id         String                   @id @default(uuid())
+  userId     String                   @map("user_id")
+  planId     String                   @map("plan_id")
+  goldAmount Decimal                 @db.Decimal(18, 8) @map("gold_amount")
+  startDate  DateTime                 @map("start_date")
+  endDate    DateTime                 @map("end_date")
+  status     InvestmentPositionStatus @default(ACTIVE)
+  closedAt   DateTime?                @map("closed_at")
+  createdAt  DateTime                 @default(now()) @map("created_at")
+
+  user    User            @relation(fields: [userId], references: [id])
+  plan    InvestmentPlan  @relation(fields: [planId], references: [id])
+  payouts InterestPayout[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("investment_positions")
+}
+
+model InterestPayout {
+  id          String   @id @default(uuid())
+  positionId  String   @map("position_id")
+  amountGold  Decimal  @db.Decimal(18, 8) @map("amount_gold")
+  periodStart DateTime @map("period_start")
+  periodEnd   DateTime @map("period_end")
+  paidAt      DateTime @default(now()) @map("paid_at")
+
+  position InvestmentPosition @relation(fields: [positionId], references: [id])
+
+  @@index([positionId, periodStart])
+  @@map("interest_payouts")
+}
+
+// ============================================
+// Audit Log (Immutable)
+// ============================================
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorType  String   @map("actor_type")
+  actorId    String?  @map("actor_id")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id")
+  before     Json?
+  after      Json?
+  ip         String?
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([actorId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action, createdAt])
+  @@map("audit_logs")
+}
+
+// ============================================
+// CMS & Feature Flags
+// ============================================
+
+model CmsContent {
+  id          String    @id @default(uuid())
+  key         String    @unique
+  type        String
+  title       String?
+  body        String?
+  slug        String?   @unique
+  status      String    @default("draft")
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("cms_contents")
+}
+
+model FeatureFlag {
+  id             String   @id @default(uuid())
+  key            String   @unique
+  enabled        Boolean  @default(false)
+  rolloutPercent Int      @default(0) @map("rollout_percent")
+  description    String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("feature_flags")
+}

@@ -1,0 +1,171 @@
+# Zarnama — Architecture Decision Records (ADR)
+
+> سند تصمیمات معماری پروژه زرنما — Phase 0
+
+## ADR-001: نسخه‌های Baseline
+
+| تکنولوژی   | تصمیم                               | دلیل                                  |
+| ---------- | ----------------------------------- | ------------------------------------- |
+| Next.js    | 16.3.3 (pinned)                     | دستور کاربر — baseline پروژه          |
+| Node.js    | 24 LTS (`.nvmrc` = `24`)            | دستور کاربر — engines در package.json |
+| PostgreSQL | 18.x (Docker: `postgres:18-alpine`) | دستور کاربر                           |
+| Prisma ORM | 7.10.0 (آخرین stable 7)             | دستور کاربر — Prisma 8 فعلاً RC است   |
+| Redis      | 7.x (Docker: `redis:7-alpine`)      | cache، queue، pub/sub — نه مرجع مالی  |
+
+## ADR-002: Prisma 7 — Driver Adapter
+
+**تصمیم:** استفاده از `@prisma/adapter-pg` برای اتصال PostgreSQL
+
+**دلیل:** Prisma 7 دیگر اتصال مستقیم به DB ندارد — باید از Driver Adapter استفاده شود:
+
+```typescript
+import { PrismaPg } from '@prisma/adapter-pg'
+const adapter = new PrismaPg({ connectionString })
+const prisma = new PrismaClient({ adapter })
+```
+
+**پیامد:** `DATABASE_URL` در `prisma.config.ts` (نه schema.prisma) پیکربندی می‌شود.
+
+## ADR-003: Double-Entry Ledger
+
+**تصمیم:** مدل مالی بر اساس Double-Entry Accounting
+
+**مفاهیم:**
+
+- `FinancialTransaction` → رویداد کسب‌وکار
+- `JournalEntry` → مجموعه atomic متوازن (debit = credit)
+- `LedgerAccount` → حساب دفتری (ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
+- `LedgerEntry` → رکورد immutable debit/credit
+- `AssetAccount` → حساب دارایی کاربر (RIAL, GOLD, قابل توسعه)
+- `Balance` → جمع LedgerEntryها (redundant + reconciliation)
+- `Reversal` → compensating transaction (نه UPDATE)
+
+**قواعد:**
+
+- هر JournalEntry باید balanced باشد
+- LedgerEntry immutable (append-only)
+- اصلاح با Reversal JournalEntry
+- PostgreSQL مرجع نهایی Financial Integrity
+
+## ADR-004: Wallet → Asset Accounts
+
+**تصمیم:** Wallet به‌عنوان Container + Asset Accountهای جدا
+
+```
+User → Wallet → AssetAccount(RIAL) + AssetAccount(GOLD) + [آینده: SILVER, ...]
+```
+
+**مزیت:** اضافه کردن Asset جدید بدون تغییر بنیادی معماری
+
+## ADR-005: Financial Offline Operations — ممنوع
+
+**تصمیم:** هیچ عملیات مالی Offline Queue نمی‌شود
+
+**ممنوع:** Buy, Sell, Deposit, Withdrawal, Payment, Installment, Investment, Transfer, Settlement
+
+**مجاز (فقط non-financial):** UI shell، static content، draft، preferences
+
+**قاعده:** Financial state هرگز با offline data به‌عنوان حقیقت نمایش داده نمی‌شود
+
+## ADR-006: Concurrency — PostgreSQL مرجع نهایی
+
+**تصمیم:** `Database Transaction + SELECT FOR UPDATE` مرجع نهایی Financial Integrity
+
+**Redis:** فقط برای distributed coordination — هرگز مرجع نهایی نیست
+
+## ADR-007: Idempotency — Durable در DB
+
+**تصمیم:** `IdempotencyRecord` table در PostgreSQL مرجع نهایی
+
+**Redis:** فقط برای acceleration (short-lived cache)
+
+**Flow:**
+
+1. Request با `Idempotency-Key`
+2. Check Redis → hit → return cached
+3. Check IdempotencyRecord → exists → return stored
+4. Insert (processing) → Execute → Update (completed) → Cache in Redis
+
+## ADR-008: Web + Mobile دو Target
+
+**تصمیم:** Shared Codebase + دو Build Target
+
+```
+Shared Codebase (src/)
+  ├── Web Target → Next.js SSR (Turbopack)
+  └── Mobile Target → Capacitor (Android + iOS)
+```
+
+**Auth:**
+
+- Web: httpOnly cookie/session
+- Mobile: Secure token storage (Capacitor Preferences)
+- هر دو → همان `/api/v1` backend
+
+## ADR-009: PWA — Serwist + Turbopack
+
+**تصمیم:** Serwist از طریق `@serwist/turbopack` + Route Handler
+
+**نتیجه Spike:**
+
+- ✅ `@serwist/turbopack` با Next.js 16.3.3 + Turbopack کار می‌کند
+- ✅ Production build موفق — 20 precache entries
+- ✅ Service worker از طریق `/serwist/sw.js` تولید می‌شود
+- ⚠️ `@serwist/next` (webpack) با Turbopack سازگار نیست — باید از `@serwist/turbopack` استفاده شود
+- ⏳ تست Installability، Chrome Android، Safari iOS نیاز به تست روی دستگاه واقعی دارد
+
+**روش:** Route handler در `app/serwist/[path]/route.ts` با `createSerwistRoute`
+
+## ADR-010: Infrastructure V1 — ساده
+
+**تصمیم:**
+
+- Development: Docker Compose
+- Production V1: Docker + Reverse Proxy + PostgreSQL + Redis + Object Storage
+- Scaling (Swarm/K8s): در فازهای بعدی
+
+## ADR-011: Rate Limits — Configurable
+
+**تصمیم:** Rate limits در `RateLimitConfig` table — قابل تنظیم توسط admin بدون تغییر کد
+
+**پیش‌فرض‌ها (dev only):**
+
+- `api.general`: 100/min per IP
+- `otp.send`: 5/hour per mobile
+- `auth.login`: 10/hour per mobile
+- `trading.execute`: 30/min per user
+- `admin.api`: 200/min per admin
+
+## ADR-012: Business Config — PENDING BUSINESS DECISION
+
+**تصمیم:** تمام مقادیر تجاری به‌صورت configurable با پیش‌فرض موقت
+
+| مقدار                 | پیش‌فرض dev  | وضعیت   |
+| --------------------- | ------------ | ------- |
+| Spread                | 0.5%         | PENDING |
+| Trading Fee           | 0.5%         | PENDING |
+| Withdrawal Limit      | 50M Rial/day | PENDING |
+| Investment Rate       | 15%/year     | PENDING |
+| Installment Rate      | 10%/year     | PENDING |
+| Referral Commission   | 5%           | PENDING |
+| Physical Delivery Min | 100g         | PENDING |
+| SMS Provider          | Kavenegar    | PENDING |
+| Payment Gateway       | Zarinpal     | PENDING |
+| Price API             | ToloChart    | PENDING |
+
+## ADR-013: Next.js 16 — Middleware → Proxy
+
+**تصمیم:** `middleware.ts` به `proxy.ts` تبدیل شد (deprecated در Next.js 16)
+
+## ADR-014: Prisma Client Output
+
+**تصمیم:** Generated client در `src/generated/prisma` (نه `node_modules/.prisma`)
+
+**دلیل:** Turbopack بهتر resolve می‌کند + gitignore شده
+
+## تصمیم‌های معلق (DECISION REQUIRED)
+
+- [ ] تایید نتایج PWA Spike روی دستگاه واقعی (Chrome Android, Safari iOS)
+- [ ] در صورت fail شدن Serwist → جایگزین (Workbox/custom SW)
+- [ ] انتخاب Providerهای Production (SMS, Payment, Price API)
+- [ ] نرخ‌های دقیق تجاری (Spread, Fee, Interest, ...)

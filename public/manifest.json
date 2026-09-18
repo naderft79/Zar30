@@ -1,0 +1,46 @@
+{
+  "name": "زرنما - پلتفرم خرید و سرمایه‌گذاری طلای آب‌شده",
+  "short_name": "زرنما",
+  "description": "خرید، فروش و سرمایه‌گذاری روی طلای آب‌شده با شفافیت کامل",
+  "id": "ir.zarnama.app",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1a2a4f",
+  "background_color": "#f5ecd7",
+  "dir": "rtl",
+  "lang": "fa",
+  "categories": ["finance", "business"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "خرید طلا",
+      "url": "/dashboard/trading",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "کیف پول",
+      "url": "/dashboard/wallet",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

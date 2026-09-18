@@ -1,0 +1,150 @@
+@import 'tailwindcss';
+
+/* ============================================
+   Zarnama Design System - Navy / Gold / Cream
+   ============================================ */
+
+:root {
+  /* Navy palette */
+  --navy: #1a2a4f;
+  --navy-dark: #0f1a33;
+  --navy-light: #2a3f6b;
+
+  /* Gold palette */
+  --gold: #c9a227;
+  --gold-light: #e0c25a;
+  --gold-dark: #a0801c;
+
+  /* Cream palette */
+  --cream: #f5ecd7;
+  --cream-dark: #e8d9b0;
+
+  /* Semantic colors */
+  --success: #2e7d32;
+  --error: #c62828;
+  --warning: #ed6c02;
+  --info: #0288d1;
+
+  /* Light theme */
+  --background: #f5ecd7;
+  --foreground: #1a2a4f;
+  --card: #ffffff;
+  --card-foreground: #1a2a4f;
+  --border: #e8d9b0;
+  --input: #ffffff;
+  --input-foreground: #1a2a4f;
+  --primary: #1a2a4f;
+  --primary-foreground: #f5ecd7;
+  --secondary: #c9a227;
+  --secondary-foreground: #1a2a4f;
+  --muted: #f5ecd7;
+  --muted-foreground: #6b7280;
+  --accent: #c9a227;
+  --accent-foreground: #1a2a4f;
+  --destructive: #c62828;
+  --destructive-foreground: #ffffff;
+  --ring: #c9a227;
+  --radius: 0.625rem;
+}
+
+.dark {
+  /* Dark theme - Navy based */
+  --background: #0f1a33;
+  --foreground: #f5ecd7;
+  --card: #1a2a4f;
+  --card-foreground: #f5ecd7;
+  --border: #2a3f6b;
+  --input: #1a2a4f;
+  --input-foreground: #f5ecd7;
+  --primary: #c9a227;
+  --primary-foreground: #0f1a33;
+  --secondary: #2a3f6b;
+  --secondary-foreground: #f5ecd7;
+  --muted: #2a3f6b;
+  --muted-foreground: #a0b0d0;
+  --accent: #c9a227;
+  --accent-foreground: #0f1a33;
+  --destructive: #ef5350;
+  --destructive-foreground: #ffffff;
+  --ring: #c9a227;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-foreground: var(--input-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+  --color-navy: var(--navy);
+  --color-navy-dark: var(--navy-dark);
+  --color-navy-light: var(--navy-light);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dark: var(--gold-dark);
+  --color-cream: var(--cream);
+  --color-cream-dark: var(--cream-dark);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --font-sans: var(--font-vazirmatn);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 12px);
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-vazirmatn), Arial, Helvetica, sans-serif;
+  direction: rtl;
+}
+
+/* RTL support */
+html {
+  direction: rtl;
+  lang: fa;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--navy-light);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--gold-dark);
+}
+
+/* Selection */
+::selection {
+  background: var(--gold);
+  color: var(--navy-dark);
+}
