@@ -252,7 +252,7 @@ Phase 0 (Setup & Infrastructure + PWA Spike) کامل شد و Final Gate با م
 - Branch: `main`
 - Remote: `origin/main` (GitHub)
 - Commit Phase 0: `09ccadd`
-- Commit Final Gate: (این commit)
+- Commit Final Gate: `2099440`
 
 ## وضعیت Acceptance Criteria
 
