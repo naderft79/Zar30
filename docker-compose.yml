@@ -13,7 +13,8 @@ services:
       POSTGRES_PASSWORD: zarnama_dev_password
       POSTGRES_DB: zarnama_dev
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      # PostgreSQL 18+ نیازمند mount روی /var/lib/postgresql است (ساختار pg_ctlcluster)
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U zarnama -d zarnama_dev"]
       interval: 10s
@@ -36,7 +37,9 @@ services:
       retries: 5
 
   minio:
-    image: minio/minio:latest
+    # minio/minio در Docker Hub archived است — از registry رسمی quay.io استفاده می کنیم
+    # برای Development فعلاً latest — برای Production بعداً pin می شود
+    image: quay.io/minio/minio:latest
     container_name: zarnama-minio
     restart: unless-stopped
     ports:
@@ -49,7 +52,7 @@ services:
     volumes:
       - minio_data:/data
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5

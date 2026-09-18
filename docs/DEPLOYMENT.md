@@ -47,11 +47,15 @@ npx cap sync
 
 ## Docker Compose Services
 
-| Service  | Image              | Port       |
-| -------- | ------------------ | ---------- |
-| postgres | postgres:18-alpine | 5432       |
-| redis    | redis:7-alpine     | 6379       |
-| minio    | minio/minio:latest | 9000, 9001 |
+| Service  | Image                      | Port       |
+| -------- | -------------------------- | ---------- |
+| postgres | postgres:18-alpine         | 5432       |
+| redis    | redis:7-alpine             | 6379       |
+| minio    | quay.io/minio/minio:latest | 9000, 9001 |
+
+> **MinIO Image Note:** ایمیج `minio/minio` در Docker Hub آرشیو شده است. از رجیستری رسمی `quay.io/minio/minio` استفاده می کنیم. برای Development فعلاً `latest` قابل قبول است — برای Production باید نسخه Pin شود.
+>
+> **PostgreSQL 18+ Volume Note:** از نسخه ۱۸، ایمیج postgres داده را با ساختار `pg_ctlcluster` (زیرپوشه per-major-version) ذخیره می کند. Volume باید روی `/var/lib/postgresql` (نه `/var/lib/postgresql/data`) mount شود.
 
 ## CI/CD
 

@@ -5,15 +5,24 @@
 // Seed data باید واضحاً از production data جدا باشد
 // ============================================
 
-import { PrismaClient } from '../src/generated/prisma'
+import 'dotenv/config'
+import { PrismaClient, AssetType, LedgerAccountType, RateLimitScope } from '../src/generated/prisma'
+import { PrismaPg } from '@prisma/adapter-pg'
 
-const prisma = new PrismaClient()
+// Prisma 7 نیازمند Driver Adapter است
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   console.log('🌱 Starting seed...')
 
   // Ledger Accounts (Double-Entry Accounting)
-  const ledgerAccounts = [
+  const ledgerAccounts: {
+    code: string
+    type: LedgerAccountType
+    name: string
+    assetType: AssetType | null
+  }[] = [
     // Asset Accounts (دارایی‌های کاربران)
     { code: 'ASSET_RIAL', type: 'ASSET', name: 'Rial Balance', assetType: 'RIAL' },
     { code: 'ASSET_GOLD', type: 'ASSET', name: 'Gold Balance', assetType: 'GOLD' },
@@ -64,22 +73,23 @@ async function main() {
       update: {},
       create: {
         code: account.code,
-        type: account.type as any,
+        type: account.type,
         name: account.name,
-        assetType: account.assetType as any,
+        assetType: account.assetType,
       },
     })
   }
   console.log('✅ Ledger accounts seeded')
 
   // Rate Limit Configs (Configurable)
-  const rateLimits = [
-    { key: 'api.general', limit: 100, windowSeconds: 60, scope: 'IP' },
-    { key: 'otp.send', limit: 5, windowSeconds: 3600, scope: 'MOBILE' },
-    { key: 'auth.login', limit: 10, windowSeconds: 3600, scope: 'MOBILE' },
-    { key: 'trading.execute', limit: 30, windowSeconds: 60, scope: 'USER' },
-    { key: 'admin.api', limit: 200, windowSeconds: 60, scope: 'IP' },
-  ]
+  const rateLimits: { key: string; limit: number; windowSeconds: number; scope: RateLimitScope }[] =
+    [
+      { key: 'api.general', limit: 100, windowSeconds: 60, scope: 'IP' },
+      { key: 'otp.send', limit: 5, windowSeconds: 3600, scope: 'MOBILE' },
+      { key: 'auth.login', limit: 10, windowSeconds: 3600, scope: 'MOBILE' },
+      { key: 'trading.execute', limit: 30, windowSeconds: 60, scope: 'USER' },
+      { key: 'admin.api', limit: 200, windowSeconds: 60, scope: 'IP' },
+    ]
 
   for (const config of rateLimits) {
     await prisma.rateLimitConfig.upsert({
@@ -89,7 +99,7 @@ async function main() {
         key: config.key,
         limit: config.limit,
         windowSeconds: config.windowSeconds,
-        scope: config.scope as any,
+        scope: config.scope,
       },
     })
   }
@@ -378,7 +388,7 @@ async function main() {
   })
 
   // Create Wallet + Asset Accounts for test user
-  const wallet = await prisma.wallet.create({
+  await prisma.wallet.create({
     data: {
       userId: testUser.id,
       assetAccounts: {

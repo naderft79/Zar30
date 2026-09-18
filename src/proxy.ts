@@ -16,21 +16,7 @@ const SECURITY_HEADERS: Record<string, string> = {
 }
 
 // مسیرهای عمومی (بدون نیاز به احراز هویت)
-const PUBLIC_PATHS = [
-  '/',
-  '/api/v1/health',
-  '/api/v1/auth/register',
-  '/api/v1/auth/login',
-  '/api/v1/auth/otp/send',
-  '/api/v1/auth/otp/verify',
-  '/api/v1/auth/refresh',
-  '/api/v1/auth/password/forgot',
-  '/api/v1/auth/password/reset',
-  '/api/v1/price',
-  '/api/v1/price/history',
-]
-
-// مسیرهای محافظت شده
+// مسیرهای محافظت شده — سایر مسیرها عمومی هستند
 const PROTECTED_PATHS = ['/dashboard', '/admin']
 
 export function proxy(request: NextRequest) {

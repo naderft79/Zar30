@@ -8,7 +8,7 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/db/prisma'
 import redis from '@/lib/redis/client'
-import { ok, fail, withErrorHandler } from '@/lib/api/response'
+import { withErrorHandler } from '@/lib/api/response'
 
 // GET /api/v1/health — Liveness check
 export const GET = withErrorHandler(async () => {

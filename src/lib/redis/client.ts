@@ -22,16 +22,13 @@ function createRedisClient() {
       const delay = Math.min(times * 500, 5000)
       return delay
     },
-    lazyConnect: true,
+    // اتصال فعال — با enableOfflineQueue=false دستورات بدون اتصال fail می شوند
     enableOfflineQueue: false, // صف آفلاین غیرفعال — عملیات مالی فقط آنلاین
   })
 
   // جلوگیری از unhandled error event
-  client.on('error', (err) => {
-    // در development فقط یک بار لاگ می کنیم
-    if (process.env.NODE_ENV === 'development') {
-      // لاگ ساکت — health endpoint وضعیت را گزارش می دهد
-    }
+  client.on('error', (_err) => {
+    // لاگ ساکت — health endpoint وضعیت را گزارش می دهد
   })
 
   return client

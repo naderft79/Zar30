@@ -14,6 +14,8 @@ const eslintConfig = [
       "public/sw.js",
       "prisma/migrations/**",
       "coverage/**",
+      // کدهای تولیدشده Prisma لینت نمی شوند
+      "src/generated/**",
     ],
   },
   {

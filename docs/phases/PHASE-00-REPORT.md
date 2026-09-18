@@ -1,8 +1,30 @@
 # گزارش Phase 0 — زرنما
 
+**وضعیت نهایی: ✅ DONE — FINAL GATE PASSED**
+
+> چک‌لیست رسمی Validation: `docs/phases/PHASE-00-VALIDATION-CHECKLIST.md` — همه موارد الزامی PASS
+
 ## خلاصه
 
-Phase 0 (Setup & Infrastructure + PWA Spike) با موفقیت تکمیل شد. Foundation کامل پروژه با معماری Double-Entry Ledger، دو Target Web/Mobile، و PWA Spike موفق ساخته شد.
+Phase 0 (Setup & Infrastructure + PWA Spike) کامل شد و Final Gate با موفقیت پاس شد: Docker / PostgreSQL 18.6 / Redis 7.4.11 / MinIO همگی healthy، Migration + Seed + Integration Tests روی دیتابیس واقعی اجرا شدند، Lint صفر شد و Build موفق بود. Node.js 24.21.0 LTS نصب و فعال است.
+
+## نتایج Final Gate (2026-09-18)
+
+| بررسی             | نتیجه                                                                   |
+| ----------------- | ----------------------------------------------------------------------- |
+| Node.js           | ✅ v24.21.0 LTS (Krypton)                                               |
+| Docker / Compose  | ✅ 29.8.0 / v5.5.1                                                      |
+| PostgreSQL        | ✅ 18.6 — healthy — `pg_isready` accepting                              |
+| Redis             | ✅ 7.4.11 — healthy — `PONG`                                            |
+| MinIO             | ✅ `quay.io/minio/minio:latest` — health 200                            |
+| Migration         | ✅ `migrate deploy` applied — بدون drift                                |
+| Seed              | ✅ ۱۳ ledger accounts + configs + plans                                 |
+| Integration Tests | ✅ ۵/۵ روی DB واقعی (balance / rollback / idempotency / FK / fee-split) |
+| Health Endpoint   | ✅ `healthy` (db: ok, redis: ok)                                        |
+| Lint              | ✅ 0 errors / 0 warnings (331 error رفع شد)                             |
+| Typecheck         | ✅ 0 errors                                                             |
+| Tests             | ✅ 16/16                                                                |
+| Build             | ✅ Turbopack + Serwist 20 precache                                      |
 
 ## چه چیزهایی ساخته شد
 
@@ -136,32 +158,40 @@ Phase 0 (Setup & Infrastructure + PWA Spike) با موفقیت تکمیل شد. 
 
 ## Docker — نتیجه
 
-| مورد                | وضعیت                        |
-| ------------------- | ---------------------------- |
-| docker-compose.yml  | ✅ آماده                     |
-| PostgreSQL 18 image | ✅ postgres:18-alpine        |
-| Redis 7 image       | ✅ redis:7-alpine            |
-| MinIO image         | ✅ minio/minio:latest        |
-| اجرای واقعی         | ⚠️ BLOCKED — Docker نصب نیست |
+| مورد                | وضعیت                                     |
+| ------------------- | ----------------------------------------- |
+| docker-compose.yml  | ✅ اجرا شده                               |
+| PostgreSQL 18 image | ✅ postgres:18-alpine → **18.6 healthy**  |
+| Redis 7 image       | ✅ redis:7-alpine → **7.4.11 healthy**    |
+| MinIO image         | ✅ **quay.io/minio/minio:latest** healthy |
+| اجرای واقعی         | ✅ هر ۳ سرویس `Up (healthy)`              |
 
 ## تست‌های اجرا شده
 
-| تست                 | تعداد | وضعیت                                  |
-| ------------------- | ----- | -------------------------------------- |
-| Unit Tests (Vitest) | 11    | ✅ همه pass                            |
-| TypeScript Check    | —     | ✅ 0 errors                            |
-| ESLint              | —     | ✅ 0 errors, 8 warnings                |
-| Production Build    | —     | ✅ موفق                                |
-| Health Endpoint     | —     | ✅ 503 degraded (DB/Redis down — درست) |
+| تست                 | تعداد | وضعیت                                           |
+| ------------------- | ----- | ----------------------------------------------- |
+| Unit Tests (Vitest) | 11    | ✅ همه pass                                     |
+| Integration Tests   | 5     | ✅ روی PostgreSQL 18.6 واقعی                    |
+| TypeScript Check    | —     | ✅ 0 errors                                     |
+| ESLint              | —     | ✅ **0 errors / 0 warnings** (331 error رفع شد) |
+| Production Build    | —     | ✅ Turbopack — Node 24.21.0                     |
+| Health Endpoint     | —     | ✅ **healthy** (db: ok 113ms, redis: ok 2ms)    |
+| pg_isready          | —     | ✅ accepting connections                        |
+| redis-cli ping      | —     | ✅ PONG                                         |
+| MinIO health        | —     | ✅ HTTP 200                                     |
 
-## مشکلات پیدا شده
+## مشکلات پیدا شده (همه حل شده)
 
-1. **Docker نصب نیست** — فایل‌ها آماده، اجرا BLOCKED
-2. **Node.js محلی v22** — `.nvmrc` با 24 ساخته شد
-3. **Prisma 7 Driver Adapter** — تغییر بزرگ نسبت به Prisma 6
+1. ~~**Docker نصب نیست**~~ → Docker Desktop در مسیر user-local یافت شد — Docker 29.8.0
+2. ~~**Node.js محلی v22**~~ → Node 24.21.0 LTS نصب شد
+3. **Prisma 7 Driver Adapter** — تغییر بزرگ نسبت به Prisma 6 (در seed.ts هم اعمال شد)
 4. **middleware → proxy** — Next.js 16 convention تغییر کرد
 5. **@serwist/next با Turbopack ناسازگار** — به `@serwist/turbopack` مهاجرت شد
 6. **Hydration mismatch** — `cz-shortcut-listen` (browser extension — مشکل ما نیست)
+7. ~~**ESLint FAIL (331 error)**~~ → `src/generated/**` به ignores اضافه شد — اکنون 0/0
+8. **minio/minio آرشیو در Docker Hub** → به `quay.io/minio/minio` مهاجرت شد
+9. **PostgreSQL 18+ volume path** → mount روی `/var/lib/postgresql` (الزام pg_ctlcluster)
+10. **Redis lazyConnect** → حذف شد تا health check وضعیت واقعی را نشان دهد
 
 ## تصمیم‌های جدید
 
@@ -169,24 +199,25 @@ Phase 0 (Setup & Infrastructure + PWA Spike) با موفقیت تکمیل شد. 
 - Prisma client در `src/generated/prisma`
 - proxy.ts به جای middleware.ts
 - Driver Adapter pattern برای Prisma 7
+- MinIO از `quay.io` — برای Production باید Pin شود
+- Redis بدون `lazyConnect` + `enableOfflineQueue: false`
 
 ## موارد Pending
 
-| مورد                    | وضعیت                               |
-| ----------------------- | ----------------------------------- |
-| Spread                  | PENDING BUSINESS DECISION           |
-| Trading Fee             | PENDING BUSINESS DECISION           |
-| Withdrawal Limits       | PENDING BUSINESS DECISION           |
-| Investment Rate         | PENDING BUSINESS DECISION           |
-| Installment Rate        | PENDING BUSINESS DECISION           |
-| Referral Commission     | PENDING BUSINESS DECISION           |
-| Physical Delivery Rules | PENDING BUSINESS DECISION           |
-| SMS Provider            | PENDING BUSINESS DECISION           |
-| Payment Gateway         | PENDING BUSINESS DECISION           |
-| Price API Provider      | PENDING BUSINESS DECISION           |
-| PWA تست دستگاه واقعی    | نیاز به Chrome Android + Safari iOS |
-| Docker اجرا             | نیاز به نصب Docker                  |
-| Node 24 نصب محلی        | نیاز به nvm/nvm-windows             |
+| مورد                      | وضعیت                               |
+| ------------------------- | ----------------------------------- |
+| Spread                    | PENDING BUSINESS DECISION           |
+| Trading Fee               | PENDING BUSINESS DECISION           |
+| Withdrawal Limits         | PENDING BUSINESS DECISION           |
+| Investment Rate           | PENDING BUSINESS DECISION           |
+| Installment Rate          | PENDING BUSINESS DECISION           |
+| Referral Commission       | PENDING BUSINESS DECISION           |
+| Physical Delivery Rules   | PENDING BUSINESS DECISION           |
+| SMS Provider              | PENDING BUSINESS DECISION           |
+| Payment Gateway           | PENDING BUSINESS DECISION           |
+| Price API Provider        | PENDING BUSINESS DECISION           |
+| PWA تست دستگاه واقعی      | نیاز به Chrome Android + Safari iOS |
+| MinIO pin برای Production | قبل از deploy نسخه Pin شود          |
 
 ## فایل‌های مهم ایجاد/تغییرکرده
 
@@ -220,24 +251,25 @@ Phase 0 (Setup & Infrastructure + PWA Spike) با موفقیت تکمیل شد. 
 
 - Branch: `main`
 - Remote: `origin/main` (GitHub)
-- Commit: در انتظار commit نهایی Phase 0
+- Commit Phase 0: `09ccadd`
+- Commit Final Gate: (این commit)
 
 ## وضعیت Acceptance Criteria
 
-| معیار                         | وضعیت                        |
-| ----------------------------- | ---------------------------- |
-| `pnpm dev` اجرا شود           | ✅                           |
-| `pnpm lint` pass              | ✅                           |
-| `pnpm typecheck` pass         | ✅                           |
-| `pnpm test` pass              | ✅                           |
-| `pnpm build` موفق             | ✅                           |
-| ساختار پوشه‌ها مطابق MEGAPLAN | ✅                           |
-| پالت رنگی + Vazirmatn + RTL   | ✅                           |
-| Prisma schema + generate      | ✅                           |
-| `.nvmrc` با `24`              | ✅                           |
-| PWA Spike نتیجه‌دار           | ✅                           |
-| docker compose بالا بیاید     | ⚠️ BLOCKED (Docker نصب نیست) |
+| معیار                          | وضعیت                                     |
+| ------------------------------ | ----------------------------------------- |
+| `pnpm dev` اجرا شود            | ✅                                        |
+| `pnpm lint` pass               | ✅ **0 errors / 0 warnings**              |
+| `pnpm typecheck` pass          | ✅                                        |
+| `pnpm test` pass               | ✅ 16/16 (11 unit + 5 integration)        |
+| `pnpm build` موفق              | ✅ Turbopack + Serwist                    |
+| ساختار پوشه‌ها مطابق MEGAPLAN  | ✅                                        |
+| پالت رنگی + Vazirmatn + RTL    | ✅                                        |
+| Prisma schema + migrate + seed | ✅ روی PostgreSQL 18.6 واقعی — بدون drift |
+| `.nvmrc` با `24`               | ✅ Node 24.21.0 نصب و فعال                |
+| PWA Spike نتیجه‌دار            | ✅ — تست دستگاه واقعی Deferred            |
+| docker compose بالا بیاید      | ✅ هر ۳ سرویس healthy                     |
 
 ## Phase بعدی
 
-**Phase 1:** Landing Page — آماده برای شروع پس از تأیید Phase 0
+**Phase 1:** Landing Page — ✅ **UNBLOCKED** — آماده شروع
