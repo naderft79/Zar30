@@ -204,6 +204,11 @@ model User {
   id                  String    @id @default(uuid())
   mobile              String    @unique
   passwordHash        String
+  // Profile (Phase 3)
+  firstName           String?   @map("first_name")
+  lastName            String?   @map("last_name")
+  email               String?   @map("email")
+  avatarUrl           String?   @map("avatar_url")
   kycLevel            KycLevel  @default(LEVEL_0)
   status              UserStatus @default(ACTIVE)
   referralCode        String    @unique

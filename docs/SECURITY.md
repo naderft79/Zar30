@@ -128,3 +128,27 @@
 ### Audit
 
 رویدادهای auth در `audit_logs`: `USER_REGISTER`, `USER_LOGIN`, `USER_LOGOUT`, `SESSION_REVOKE`, `PASSWORD_RESET`, `PASSWORD_CHANGE`, `REFRESH_REUSE_DETECTED` — با actor, ip, userAgent.
+
+## Phase 3 — User Panel
+
+### User Data Isolation
+
+- `userId` فقط از JWT (`requireAuth`) استخراج می‌شود — هیچ endpointای user id را از client نمی‌پذیرد
+- نشست/اعلان کاربر دیگر → `404` (IDOR-safe — وجود منبع فاش نمی‌شود)
+- `markNotificationRead` ابتدا مالکیت را با `findFirst({id, userId})` بررسی می‌کند — idempotent
+
+### Profile Update
+
+- `profileUpdateSchema` فقط `firstName`/`lastName`/`email`/`avatarUrl` را می‌پذیرد
+- `mobile`، `kycLevel`، `status`، `referralCode` از این مسیر strip می‌شوند — تغییر آن‌ها فقط از جریان‌های اختصاصی (OTP/KYC/admin)
+
+### Session Management (User Panel)
+
+- `DELETE /users/sessions` → خروج از سایر نشست‌ها با `keepSessionId` — نشست جاری حفظ می‌شود
+- رویدادهای `PROFILE_UPDATE`، `SESSION_REVOKE`، `SESSION_REVOKE_OTHERS`، `SESSION_REVOKE_ALL` در `audit_logs`
+- صفحه Security Center رویدادهای `audit_logs` خود کاربر را نمایش می‌دهد (حداکثر ۵۰)
+
+### Route Protection (دو لایه)
+
+- **Edge**: proxy روی `/dashboard/*` — بدون cookie → redirect به `/login?callbackUrl=...`
+- **API**: `requireAuth` — verify JWT + بررسی status کاربر + بررسی نشست فعال (`sid`)

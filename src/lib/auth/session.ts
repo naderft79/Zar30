@@ -139,8 +139,9 @@ export async function revokeAllUserSessions(userId: string) {
 }
 
 export async function revokeAllOtherSessions(userId: string, keepSessionId?: string) {
-  await prisma.session.updateMany({
+  const result = await prisma.session.updateMany({
     where: { userId, revokedAt: null, id: { not: keepSessionId ?? '__none__' } },
     data: { revokedAt: new Date() },
   })
+  return result.count
 }

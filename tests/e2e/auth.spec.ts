@@ -61,13 +61,16 @@ test.describe('Authentication', () => {
     await page.getByLabel('رمز عبور').fill(PASSWORD)
     await page.getByRole('button', { name: 'ورود', exact: true }).click()
 
-    // ۵. داشبورد — نشست فعال دیده می‌شود
+    // ۵. داشبورد — پنل کاربر Phase 3 (main همیشه visible است؛ sidebar در موبایل hidden است)
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 15_000 })
-    await expect(page.getByText(mobile)).toBeVisible({ timeout: 15_000 })
-    await expect(page.getByText(/نشست‌های فعال/)).toBeVisible({ timeout: 15_000 })
+    await expect(page.locator('main').getByText(mobile)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('heading', { name: /خوش آمدید/ })).toBeVisible({ timeout: 15_000 })
 
     // ۶. خروج → بازگشت به login
-    await page.getByRole('button', { name: 'خروج' }).click()
+    await page
+      .getByRole('button', { name: /خروج از حساب/ })
+      .first()
+      .click()
     await expect(page).toHaveURL(/\/login/, { timeout: 15_000 })
   })
 

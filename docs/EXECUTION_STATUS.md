@@ -215,4 +215,73 @@
 
 ### Phase بعدی
 
-**Phase 3:** KYC & User Profile — آماده شروع
+**Phase 3:** User Panel & Profile — ✅ **DONE** (پایین را ببینید)
+
+---
+
+## Phase 3: User Panel & Profile
+
+**وضعیت:** ✅ DONE — Final Gate پاس شد (Lint / Typecheck / Unit+Integration / E2E / Build)
+
+> مرجع کامل: `docs/phases/PHASE-03-REPORT.md` — API: `docs/API.md` — امنیت: `docs/SECURITY.md`
+> نکته: طبق اصلاح Roadmap، KYC به Phase 4 منتقل شد — این Phase فقط پنل کاربر و profile است.
+
+### تسک‌ها
+
+| #    | تسک                                                                                               | وضعیت |
+| ---- | ------------------------------------------------------------------------------------------------- | ----- |
+| 3.1  | User fields (firstName/lastName/email/avatarUrl) + migration                                      | ✅    |
+| 3.2  | `user.service.ts`: profile/sessions/notifications/security-events — isolation کامل از userId توکن | ✅    |
+| 3.3  | APIها: `/users/me`, `/users/profile`, `/users/sessions` (+[id])، notifications، security-events   | ✅    |
+| 3.4  | `PanelShell`: auth gate + sidebar (desktop) + bottom nav (mobile) + user context                  | ✅    |
+| 3.5  | Dashboard: welcome + status + KYC preview + دارایی/تراکنش placeholder («به‌زودی — پیش‌نمایش»)     | ✅    |
+| 3.6  | Profile: مشاهده + ویرایش واقعی (PUT) — mobile/kyc/status غیرقابل تغییر                            | ✅    |
+| 3.7  | Security Center: وضعیت امنیت + تغییر رمز + رویدادهای امنیتی + 2FA readiness                       | ✅    |
+| 3.8  | Sessions: device/os/browser/IP/isCurrent + revoke + خروج از سایر نشست‌ها                          | ✅    |
+| 3.9  | Notifications Center + Referral + Support (preview)                                               | ✅    |
+| 3.10 | `parseUserAgent` — تجزیه سبک device/os/browser + تست                                              | ✅    |
+| 3.11 | Tests: unit (profile validator + UA parser) + integration (isolation/IDOR) + E2E (۳ viewport)     | ✅    |
+
+### Acceptance Criteria
+
+| معیار                             | وضعیت                                                        |
+| --------------------------------- | ------------------------------------------------------------ |
+| User Dashboard واقعی و responsive | ✅ sidebar (desktop) + bottom nav (mobile)                   |
+| Profile واقعی + update واقعی      | ✅ PUT + audit PROFILE_UPDATE                                |
+| Session Management واقعی          | ✅ device/browser/isCurrent                                  |
+| Revoke Session واقعی              | ✅ فوری از طریق `sid` در access token                        |
+| Logout All (سایر نشست‌ها) واقعی   | ✅ نشست جاری حفظ می‌شود                                      |
+| Security Center                   | ✅ رمز + رویدادها + 2FA readiness                            |
+| Route Protection                  | ✅ proxy + requireAuth + callbackUrl                         |
+| User Isolation تست شده            | ✅ integration: session/notification کاربر دیگر → 404 (IDOR) |
+| Mobile UX اختصاصی                 | ✅ bottom nav جداگانه                                        |
+| هیچ داده مالی جعلی                | ✅ همه کارت‌ها «به‌زودی — پیش‌نمایش»                         |
+| `pnpm lint`                       | ✅ 0 errors / 0 warnings                                     |
+| `pnpm typecheck`                  | ✅ 0 errors                                                  |
+| `pnpm test` (unit+integration)    | ✅ 73/73                                                     |
+| `pnpm test:e2e`                   | ✅ 45 pass / 3 skip (viewport-specific)                      |
+| `pnpm build`                      | ✅ ۴۶ route + Serwist                                        |
+
+### مشکلات پیدا شده و رفع‌شده
+
+1. **`user-agent.h` اشتباه** — فایل C++ حذف شد؛ نسخه صحیح `user-agent.ts` با کامنت فارسی
+2. **کامنت‌های چینی** — در `user-agent.ts` و `user.service.ts` به فارسی اصلاح شدند
+3. **`markNotificationRead` غیر idempotent** — خواندن دوباره اعلان خطا می‌داد → ابتدا بررسی مالکیت سپس update
+4. **parseUserAgent: iPad = mobile** — UA واقعی iPad شامل `Mobile/` است → ترتیب بررسی tablet قبل از mobile
+5. **E2E rate limit روی register** — ۱۵ ثبت‌نام موازی از limit ۱۰/ساعت گذشت → ساخت کاربر تست از service layer (rate limit در لایه route است)
+6. **E2E strict mode** — موبایل/نام هم در sidebar مخفی و هم main دیده می‌شد → scope به `main`
+7. **`dashboard-client.tsx` قدیمی** — فایل بدون ارجاع Phase 2 حذف شد
+8. **`DATABASE_URL` در Playwright runner** — `dotenv/config` به playwright.config اضافه شد
+
+### تصمیم‌های کلیدی
+
+- **همه صفحات پنل زیر `/dashboard/*`** — proxy موجود Phase 2 بدون تغییر همه را محافظت می‌کند
+- **`PanelShell` client-side auth gate** — با `apiGetWithRefresh`؛ proxy در لایه edge هم redirect می‌کند (دفاع دولایه)
+- **`user.service.ts` جدا از `auth.service.ts`** — دامنه users مستقل؛ session helpers مشترک از `lib/auth/session`
+- **نشست جاری در revoke-others حفظ می‌شود** — `revokeAllOtherSessions(userId, keepSid)`
+- **اعلان‌ها idempotent** — mark-read دوباره خطا نمی‌دهد؛ مالکیت با `findFirst({id, userId})`
+- **E2E کاربر ایزوله per test** — از service layer ساخته می‌شود تا rate limit route و تداخل موازی اثر نگذارد
+
+### Phase بعدی
+
+**Phase 4:** KYC — احراز هویت (workflow، document upload، verification، review) — آماده شروع

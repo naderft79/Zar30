@@ -1,17 +1,8 @@
-// ============================================
-// Zarnama - Dashboard Page
-// ============================================
-// پنل کاربری پایه — پروفایل + مدیریت نشست‌ها
-// ============================================
-
 import type { Metadata } from 'next'
-import { DashboardClient } from '@/components/auth/dashboard-client'
+import { DashboardOverview } from '@/components/panel/dashboard-overview'
 
-export const metadata: Metadata = {
-  title: 'داشبورد',
-  robots: { index: false },
-}
+export const metadata: Metadata = { title: 'داشبورد | زرنما' }
 
 export default function DashboardPage() {
-  return <DashboardClient />
+  return <DashboardOverview />
 }

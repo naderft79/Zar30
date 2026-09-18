@@ -1,5 +1,39 @@
 # Zarnama — Changelog
 
+## [0.3.0] — Phase 3: User Panel & Profile (2026-09-18)
+
+### Added
+
+- **User domain service** — `user.service.ts`: profile، sessions (device/os/browser/isCurrent)، notifications، security-events — isolation کامل از `userId` توکن
+- **Users API** — `GET /users/me`، `PUT /users/profile`، `GET|DELETE /users/sessions` (+`[id]`)، `GET /users/notifications`، `POST /users/notifications/[id]/read`، `GET /users/security-events` — تحت `/api/v1/users/*`
+- **PanelShell** — auth gate + sidebar دسکتاپ + bottom navigation موبایل (۷ آیتم) + user context
+- **Dashboard** — welcome + وضعیت حساب + KYC preview + دارایی/تراکنش با برچسب «به‌زودی — پیش‌نمایش» + quick actions
+- **Profile** — مشاهده + ویرایش واقعی نام/نام خانوادگی/ایمیل — mobile/kycLevel/status از این مسیر قابل تغییر نیستند
+- **Security Center** — وضعیت امنیت (OTP/2FA readiness) + تغییر رمز عبور + ۵۰ رویداد امنیتی اخیر
+- **Sessions** — device/browser/os/IP + برچسب «نشست جاری» + لغو تکی + خروج از سایر نشست‌ها (نشست جاری حفظ می‌شود)
+- **Notifications/Referral/Support** — لیست اعلان‌ها + mark-as-read؛ کد دعوت + آمار preview؛ تیکت preview
+- **`parseUserAgent`** — تجزیه سبک device/os/browser برای نمایش نشست‌ها
+- **User fields** — `firstName`/`lastName`/`email`/`avatarUrl` + migration `add_user_profile_fields`
+- **Tests** — ۱۳ unit (validator + UA parser) + ۱۰ integration (isolation/IDOR/idempotency) + ۴ E2E flow
+
+### Changed
+
+- `playwright.config.ts` — `dotenv/config` برای runner (DATABASE_URL در تست‌های service-level)
+- تست E2E کاربر ایزوله per-test از service layer می‌سازد (rate limit در لایه route اعمال نمی‌شود)
+
+### Fixed
+
+- `markNotificationRead` idempotent شد (خواندن دوباره خطا نمی‌دهد؛ مالکیت ابتدا بررسی می‌شود)
+- `parseUserAgent` — iPad/تبلت‌های Android درست تشخیص داده می‌شوند (بررسی tablet قبل از mobile)
+- حذف `user-agent.h` (فایل C++ اشتباه) و `dashboard-client.tsx` (بدون ارجاع) و کامنت‌های غیرفارسی
+
+### Security
+
+- IDOR-safe: نشست/اعلان کاربر دیگر → 404 (نه 403 — وجود منبع فاش نمی‌شود)
+- `profileUpdateSchema` فیلدهای حساس را strip می‌کند (mobile/kycLevel/status/referralCode)
+- `PROFILE_UPDATE`، `SESSION_REVOKE*` در `audit_logs` ثبت می‌شوند
+- `revokeOtherSessions` نشست جاری را با `keepSessionId` حفظ می‌کند
+
 ## [0.2.0] — Phase 2: Authentication & User Management (2026-09-18)
 
 ### Added

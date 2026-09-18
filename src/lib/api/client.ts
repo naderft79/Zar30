@@ -55,6 +55,25 @@ export async function apiGet<T>(path: string): Promise<ApiResult<T>> {
   }
 }
 
+export async function apiPut<T>(path: string, body?: unknown): Promise<ApiResult<T>> {
+  try {
+    const res = await fetch(path, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: body === undefined ? undefined : JSON.stringify(body),
+    })
+    const json = (await res.json().catch(() => null)) as ApiSuccessBody<T> | ApiErrorBody | null
+    if (!res.ok || !json?.success) {
+      const err = json && !json.success ? json.error : undefined
+      return { ok: false, error: err?.detail ?? err?.title ?? 'خطایی رخ داد' }
+    }
+    return { ok: true, data: json.data }
+  } catch {
+    return { ok: false, error: 'خطای اتصال' }
+  }
+}
+
 export async function apiDelete<T>(path: string): Promise<ApiResult<T>> {
   try {
     const res = await fetch(path, { method: 'DELETE', credentials: 'include' })
@@ -67,4 +86,14 @@ export async function apiDelete<T>(path: string): Promise<ApiResult<T>> {
   } catch {
     return { ok: false, error: 'خطای اتصال' }
   }
+}
+
+// access token منقضی → یک بار refresh و retry (برای page load که فقط refresh cookie دارد)
+export async function apiGetWithRefresh<T>(path: string): Promise<ApiResult<T>> {
+  let res = await apiGet<T>(path)
+  if (!res.ok) {
+    const refreshed = await apiPost('/api/v1/auth/refresh', {})
+    if (refreshed.ok) res = await apiGet<T>(path)
+  }
+  return res
 }

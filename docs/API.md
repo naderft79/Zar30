@@ -68,6 +68,52 @@
 // موفق → همه Sessionهای قبلی revoke می‌شوند
 ```
 
+## Users (Phase 3)
+
+همه endpointها نیازمند access token — userId فقط از JWT استخراج می‌شود (هرگز از client).
+
+| Method | Path                             | توضیح                                                              |
+| ------ | -------------------------------- | ------------------------------------------------------------------ |
+| GET    | `/users/me`                      | پروفایل کامل کاربر جاری (kycLevel، status، referralCode، ...)      |
+| PUT    | `/users/profile`                 | ویرایش firstName/lastName/email/avatarUrl — mobile/kyc/status ثابت |
+| GET    | `/users/sessions`                | نشست‌های فعال + device/os/browser + `isCurrent`                    |
+| DELETE | `/users/sessions`                | خروج از سایر نشست‌ها — نشست جاری حفظ می‌شود                        |
+| DELETE | `/users/sessions/{id}`           | لغو یک نشست — نشست کاربر دیگر → 404 (IDOR-safe)                    |
+| GET    | `/users/notifications`           | اعلان‌های کاربر (حداکثر ۱۰۰، مرتب بر اساس جدیدترین)                |
+| POST   | `/users/notifications/{id}/read` | علامت خوانده‌شده — idempotent، اعلان کاربر دیگر → 404              |
+| GET    | `/users/security-events`         | ۵۰ رویداد امنیتی اخیر کاربر از audit_logs                          |
+
+### PUT /users/profile
+
+```json
+// Request — همه فیلدها اختیاری
+{ "firstName": "علی", "lastName": "رضایی", "email": "a@b.ir", "avatarUrl": null }
+// mobile / kycLevel / status از این مسیر قابل تغییر نیستند (schema strip می‌کند)
+// Response → { "data": { "user": {...} } } — رویداد PROFILE_UPDATE در audit ثبت می‌شود
+```
+
+### GET /users/sessions
+
+```json
+// Response
+{
+  "data": {
+    "sessions": [
+      {
+        "id": "...",
+        "device": "desktop",
+        "os": "Windows",
+        "browser": "Chrome",
+        "ip": "127.0.0.1",
+        "isCurrent": true,
+        "createdAt": "...",
+        "expiresAt": "..."
+      }
+    ]
+  }
+}
+```
+
 ## سایر
 
 | Method | Path                | توضیح                                                                |
