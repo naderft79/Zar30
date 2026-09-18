@@ -377,6 +377,51 @@ The representation must be consistent throughout:
 * API
 * Tests
 
+### Double-Entry Ledger (Zarnama Architecture)
+
+Zarnama uses a Double-Entry Ledger, not a simple signed ledger.
+
+Every financial mutation must produce a balanced JournalEntry:
+
+```text
+sum of debits = sum of credits
+```
+
+Concepts:
+
+* Transaction (business event)
+* JournalEntry (atomic, balanced set of LedgerEntry)
+* LedgerAccount (account: ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
+* LedgerEntry (immutable debit/credit on a LedgerAccount)
+* Asset (RIAL, GOLD, extensible to SILVER, crypto, ...)
+* Balance (redundant sum of LedgerEntry per account)
+* Reference (link to Order, Deposit, Withdrawal, ...)
+* Reversal (compensating JournalEntry, not UPDATE)
+
+### Source of Truth for Financial Integrity
+
+PostgreSQL is the primary and final source of truth for financial integrity.
+
+Primary mechanism:
+
+```text
+Database Transaction + Row Lock (SELECT FOR UPDATE) + appropriate Isolation
+```
+
+Redis may be used only for distributed coordination in multi-instance scenarios.
+
+Redis must never be the final authority for financial integrity.
+
+### Idempotency (Durable)
+
+Idempotency state must be durable and recoverable.
+
+It must not depend solely on Redis.
+
+Use a durable `IdempotencyRecord` table as the final source.
+
+Redis may be used for acceleration / short-lived coordination only.
+
 ---
 
 # 12. GOLD WEIGHT PRECISION
@@ -471,6 +516,34 @@ This applies especially to:
 
 Retries must not create duplicate financial effects.
 
+### Durable Idempotency (Zarnama Architecture)
+
+Idempotency state must be durable and recoverable.
+
+It must not depend solely on Redis.
+
+Use a durable `IdempotencyRecord` table as the final source of truth.
+
+Redis may be used for acceleration / short-lived coordination only.
+
+Flow:
+
+```text
+Request with Idempotency-Key
+    ↓
+Check Redis (acceleration) → if hit, return cached response
+    ↓
+Check IdempotencyRecord (DB, durable) → if exists, return stored response
+    ↓
+Insert IdempotencyRecord (status=processing)
+    ↓
+Execute financial operation
+    ↓
+Update IdempotencyRecord (status=completed, response stored)
+    ↓
+Cache response in Redis (short TTL)
+```
+
 ---
 
 # 16. CONCURRENCY
@@ -495,6 +568,20 @@ Pay special attention to:
 * Reservations
 * Payments
 * Installment payments
+
+### Primary Mechanism (Zarnama Architecture)
+
+PostgreSQL is the primary and final source of truth for financial integrity.
+
+Primary mechanism:
+
+```text
+Database Transaction + Row Lock (SELECT FOR UPDATE) + appropriate Isolation
+```
+
+Redis may be used only for distributed coordination in multi-instance scenarios.
+
+Redis must never be the final authority for financial integrity.
 
 ---
 
@@ -1088,6 +1175,95 @@ PWA functionality should include, as applicable:
 * Push notifications
 
 Do not use offline caching for sensitive financial state in a way that could display misleading balances.
+
+### Financial Offline Operations (Zarnama Architecture)
+
+No financial operation may be queued for offline execution.
+
+The following must NOT be queued in IndexedDB or any offline store for later execution:
+
+* Buy
+* Sell
+* Deposit
+* Withdrawal
+* Payment
+* Installment Payment
+* Investment Subscription
+* Transfer
+* Settlement
+
+These operations must be online and server-authoritative.
+
+Offline is allowed only for non-financial, safe-to-cache content:
+
+* UI shell
+* Non-sensitive cached content
+* Draft (non-financial)
+* Static content
+* Preferences
+
+Financial state must never be displayed as truth using offline data.
+
+If offline, display a clear "connection required" state instead of a cached balance.
+
+---
+
+# 52.1 WEB + MOBILE TARGET ARCHITECTURE (Zarnama)
+
+Zarnama uses a shared codebase with two build targets.
+
+```text
+Shared Codebase (src/)
+      │
+      ├── Web Target
+      │    └── Next.js SSR / Web (production build)
+      │
+      └── Mobile Target
+           └── Capacitor
+               ├── Android
+               └── iOS (V2)
+```
+
+Both targets must use the same backend API and shared business logic.
+
+Do not assume:
+
+```text
+Next.js SSR Production Build = direct Capacitor App
+```
+
+### Authentication (Two Strategies, Same Domain)
+
+Web:
+
+```text
+Secure HTTP-only session/cookie strategy
+```
+
+Mobile:
+
+```text
+Mobile-compatible token/session strategy with Secure Storage appropriate to Platform
+```
+
+Both must connect to a single shared authentication domain.
+
+---
+
+# 52.2 RATE LIMITS (Zarnama Architecture)
+
+Rate limits must be configurable.
+
+Do not hardcode values like:
+
+```text
+100/min
+5/hour OTP
+```
+
+as business truth.
+
+Rate limits must be stored in a configurable store (e.g., `RateLimitConfig` table) and adjustable by admin without code changes.
 
 ---
 

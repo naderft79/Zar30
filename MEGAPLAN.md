@@ -1,6 +1,6 @@
 # MEGAPLAN — پلتفرم طلای آبشده زرنما
 
-> سند جامع معماری و اجرای پروژه — نسخه 1.0
+> سند جامع معماری و اجرای پروژه — نسخه 1.1 (اصلاح معماری — Double-Entry Ledger + دو Target Web/Mobile + نسخه‌های جدید)
 > نقش‌های هم‌زمان: CTO, Product Manager, UX/UI Designer, Frontend/Backend/Database/DevOps/Security/Mobile/QA/FinTech Architect, Business Analyst, SEO/Performance Engineer
 > وضعیت: آماده اجرا — منتظر دستور `EXECUTE MEGAPLAN`
 
@@ -10,13 +10,14 @@
 
 | موضوع | تصمیم |
 |---|---|
-| استک فرانت | Next.js 15 (App Router) + TypeScript strict + Tailwind v4 + shadcn/ui |
-| موبایل | PWA کامل + Capacitor (Android native-ready, iOS PWA) |
+| استک فرانت | **Next.js 16.3.3** (App Router) + TypeScript strict + Tailwind v4 + shadcn/ui + Turbopack |
+| Node.js | **Node.js 24 LTS** (pin در `.nvmrc` و `package.json` engines) |
+| موبایل | PWA کامل + Capacitor (Android native-ready, iOS PWA) — **دو Target از shared codebase** |
 | بک‌اند | Next.js Route Handlers (تک پروژه) |
-| ORM/DB | PostgreSQL + Prisma |
+| ORM/DB | **PostgreSQL 18.x** + **Prisma ORM 7 Stable** (آماده upgrade به 8 بدون بازنویسی Financial Core) |
 | کش/صف | Redis (ioredis) + BullMQ |
 | Real-time | Socket.io (قیمت لحظه‌ای، چت تیکت، اعلان‌ها) |
-| احراز هویت | JWT (access + refresh) httpOnly cookie + OTP + 2FA اختیاری |
+| احراز هویت | JWT (access + refresh) — **Web: httpOnly cookie / Mobile: secure token storage** (هم‌دامنه auth) + OTP + 2FA اختیاری |
 | KYC | سه‌سطحی (موبایل → کارت ملی → سلفی+ویدیو) |
 | ساختار | تک repo Next.js (app/ + api/) |
 | MVP | گسترده (همه ماژول‌های اصلی + پنل ادمین) |
@@ -26,6 +27,14 @@
 | قسطی | هر دو (اعتبارسنجی داخلی + چک صیادی با ضامن) |
 | سوددهی | به صورت طلا (تورم‌زدا) |
 | نوتیفیکیشن | Web Push + FCM + APNs + درون‌اپ + SMS + ایمیل |
+| **Ledger** | **Double-Entry Ledger** (Transaction, Journal, Account, Entry) — نه signed ledger ساده |
+| **Wallet** | Container با **Asset Accountهای جدا** (Rial, Gold، قابل توسعه) |
+| **Financial Offline** | **ممنوع** — تمام عملیات مالی Online و Server-authoritative |
+| **Concurrency** | **PostgreSQL Transaction + Row Lock** مرجع نهایی؛ Redis فقط coordination |
+| **Idempotency** | **Durable در DB** (`IdempotencyRecord`) + Redis برای acceleration |
+| **PWA/Serwist** | **Spike در Phase 0** قبل از finalize (مشروط به تست) |
+| **Infrastructure V1** | **Docker + Reverse Proxy** (ساده)؛ Swarm/K8s در فازهای بعدی |
+| **Rate Limits** | **Configurable** (در DB `RateLimitConfig`) — نه hardcoded |
 
 ---
 
@@ -340,11 +349,12 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 ```
 ┌─────────────────────────────────────────┐
 │  Clients                                │
-│  Web (Next.js) | PWA | Android (Cap)    │
+│  Web (Next.js 16 SSR) | PWA | Android   │
+│  (Capacitor) | iOS PWA                  │
 └───────────────┬─────────────────────────┘
                 │ HTTPS + WebSocket
 ┌───────────────▼─────────────────────────┐
-│  Next.js 15 (App Router)                │
+│  Next.js 16.3.3 (App Router + Turbopack)│
 │  ├─ app/ (SSR/SSG/ISR)                  │
 │  ├─ api/ (Route Handlers)                │
 │  ├─ Socket.io server                    │
@@ -353,8 +363,8 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
         │               │
 ┌───────▼───────┐  ┌────▼─────┐  ┌──────────┐
 │ PostgreSQL    │  │ Redis    │  │ Object   │
-│ (Prisma)      │  │ (cache,  │  │ Storage  │
-│               │  │ queue,   │  │ (S3/MinIO)│
+│ 18.x (Prisma  │  │ (cache,  │  │ Storage  │
+│  7 Stable)    │  │ queue,   │  │ (S3/MinIO)│
 │               │  │ pubsub)  │  │          │
 └───────────────┘  └──────────┘  └──────────┘
         │               │
@@ -369,20 +379,44 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 └───────────────────────────┘
 ```
 
+### Web + Capacitor Architecture (دو Target)
+
+```
+Shared Codebase (src/)
+      │
+      ├── Web Target
+      │    └── Next.js 16 SSR / Web (production build + Turbopack)
+      │        ├── app/ (pages)
+      │        ├── api/ (route handlers)
+      │        └── PWA (manifest + SW)
+      │
+      └── Mobile Target
+           └── Capacitor
+               ├── Android (native shell)
+               └── iOS (native shell, V2)
+```
+
+**نکات:**
+- **Shared**: `src/lib/` (services, validators, types)، `src/components/` (UI)
+- **Web**: Next.js SSR build با Turbopack
+- **Mobile**: Capacitor از build جدا (static export یا webview)
+- **Auth**: Web از httpOnly cookie، Mobile از secure token storage (Capacitor Preferences/Keychain)
+- **هر دو** به همان `/api/v1` backend متصل می‌شوند
+
 ### WHY THIS TECHNOLOGY?
 
 | تکنولوژی | چرا؟ | چرا نه جایگزین؟ |
 |---|---|---|
-| Next.js 15 | SSR/SSG/ISR + API در یک پروژه، PWA عالی، Capacitor-ready، ecosystem قوی | Remix: ecosystem کوچک‌تر؛ CRA: deprecate |
+| Next.js 16.3.3 | SSR/SSG/ISR + API در یک پروژه، PWA عالی، Capacitor-ready، Turbopack، ecosystem قوی | Next.js 15: قدیمی‌تر؛ Remix: ecosystem کوچک‌تر؛ CRA: deprecate |
 | TypeScript | type safety، refactoring، self-documenting | JS خالص: ریسک در FinTech |
 | Tailwind v4 | سرعت، consistency، bundle کوچک | CSS خالص: کند در پروژه بزرگ |
 | shadcn/ui | قابل customize، ownership کامل، Radix-based | MUI: سنگین، کم‌انعطاف |
-| Prisma | type-safe، migration، ecosystem | Drizzle: کم‌مستندتر؛ TypeORM: سنگین |
-| PostgreSQL | ACID، JSONB، Ledger مناسب، مقیاس | MongoDB: ACID ضعیف برای مالی |
-| Redis | کش + صف + pubsub در یک ابزار | Memcached: بدون صف |
+| Prisma 7 Stable | type-safe، migration، ecosystem، آماده upgrade به 8 بدون بازنویسی | Drizzle: کم‌مستندتر؛ TypeORM: سنگین؛ Prisma 8 RC: هنوز پایدار نیست |
+| PostgreSQL 18.x | ACID، JSONB، Ledger مناسب، مقیاس، مرجع نهایی Financial Integrity | MongoDB: ACID ضعیف برای مالی؛ MySQL: Decimal ضعیف‌تر |
+| Redis | کش + صف + pubsub در یک ابزار (فقط برای coordination/acceleration) | Memcached: بدون صف |
 | BullMQ | صف شغل‌های قابل اعتماد | cron خالص: بدون retry |
 | Socket.io | real-time با fallback، room برای تیکت | SSE: یک‌طرفه؛ Polling: ناکارآمد |
-| Capacitor | وب‌تکنالوژی → اپ native، آشنا | React Native: کد جدا، پل پل |
+| Capacitor | وب‌تکنالوژی → اپ native، آشنا، دو Target از shared codebase | React Native: کد جدا، پل پل |
 | Zustand | سبک، ساده | Redux: boilerplate زیاد |
 | TanStack Query | cache، retry، invalidation | SWR: کم‌امکان‌تر |
 | Zod | validation runtime + type inference | Yup: کم‌قدرتمندتر |
@@ -418,26 +452,50 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 - id, buyPrice, sellPrice, source (api/manual), rawPrice
 - spread, recordedAt (indexed, immutable)
 
-#### Wallet (یک به یک با User)
-- id, userId (unique FK), goldBalanceGram (decimal 18,8)
-- rialBalance (bigint), lockedGold, lockedRial
+#### Wallet (Container — یک به یک با User)
+- id, userId (unique FK), status (active/frozen)
+- createdAt, updatedAt
+- **نکته**: Wallet فقط container است. موجودی‌ها در AssetAccountها نگه‌داری می‌شوند.
 
-#### LedgerEntry (immutable, append-only)
-- id, walletId (FK), type (gold_buy/gold_sell/deposit/withdraw/transfer_in/transfer_out/interest/lock/unlock/installment)
-- amountGold (decimal, signed), amountRial (bigint, signed)
-- balanceAfterGold, balanceAfterRial
-- referenceType, referenceId (polymorphic)
+#### AssetAccount (دارایی‌های جدا — قابل توسعه)
+- id, walletId (FK), assetType (enum: RIAL, GOLD, SILVER, ...)
+- balance (Decimal/BigInt بسته به asset)، lockedBalance
+- availableBalance = balance - lockedBalance (computed)
+- **نکته**: اضافه کردن Asset جدید (نقره، ارز) بدون تغییر بنیادی architecture.
+
+#### LedgerAccount (حساب دفتری — Double-Entry)
+- id, code (unique, e.g., "ASSET_RIAL", "ASSET_GOLD", "FEE_REVENUE", "SPREAD_REVENUE")
+- type (ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
+- name, assetType (nullable، برای asset accounts)
+- createdAt
+
+#### JournalEntry (مجموعه atomic از LedgerEntryها — Double-Entry)
+- id, referenceType (order/deposit/withdrawal/transfer/installment/investment/interest/fee)
+- referenceId (polymorphic)
+- description, status (posted/reversed)
+- reversalOf (FK self، nullable — برای compensating transaction)
 - createdAt (immutable)
+
+#### LedgerEntry (immutable, append-only — Double-Entry)
+- id, journalEntryId (FK), ledgerAccountId (FK)
+- entryType (DEBIT/CREDIT)
+- amountGold (Decimal(18,8), nullable)، amountRial (BigInt, nullable)
+- balanceAfter (redundant برای performance)
+- assetAccountId (nullable، برای asset accounts)
+- createdAt (immutable)
+- **قاعده**: هر JournalEntry باید balanced باشد (sum of debits = sum of credits)
 
 #### Order
 - id, userId (FK), type (buy/sell), goldAmount, rialAmount
 - unitPrice, spread, fee, total, status (pending/locked/filled/cancelled/failed)
-- priceLockExpiresAt, otpConfirmed, createdAt
+- priceLockExpiresAt, otpConfirmed, journalEntryId (FK، nullable)
+- createdAt
 
 #### Transaction (ریالی)
 - id, walletId (FK), type (deposit/withdraw/fee/transfer)
 - amount (signed), status (pending/completed/failed/reversed)
-- gatewayRef, bankRef, createdAt
+- gatewayRef, bankRef, journalEntryId (FK، nullable)
+- createdAt
 
 #### WithdrawalRequest
 - id, userId (FK), amount, iban, status (pending/approved/rejected/paid/failed)
@@ -487,6 +545,19 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 #### NotificationTemplate
 - id, key (unique), channels, titleTemplate, bodyTemplate, variables (json)
 
+#### IdempotencyRecord (Durable — مرجع نهایی Idempotency)
+- id, key (unique, از header Idempotency-Key)
+- userId, endpoint, requestHash, responseHash
+- status (processing/completed/failed), responseBody (json)
+- createdAt, expiresAt
+- **نکته**: Redis فقط برای acceleration است. این table مرجع نهایی است.
+
+#### RateLimitConfig (Configurable Rate Limits)
+- id, key (unique, e.g., "otp.send", "auth.login", "api.general")
+- limit (int), windowSeconds (int), scope (ip/user/mobile)
+- active (bool), updatedAt
+- **نکته**: مقادیر hardcoded نیست. ادمین قابل تنظیم.
+
 #### AuditLog (immutable)
 - id, actorType (user/admin/system), actorId, action, entityType, entityId
 - before (json), after (json), ip, userAgent, createdAt
@@ -500,20 +571,26 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 #### FeatureFlag
 - id, key (unique), enabled, rolloutPercent, description
 
-### اصول طراحی
-- **Immutable**: LedgerEntry, AuditLog, TicketMessage, GoldPrice, KycSubmission
-- **Double-Spending Prevention**: هر معامله در یک transaction DB انجام می‌شود با `SELECT ... FOR UPDATE` روی Wallet، به‌علاوه lock توزیع‌شده Redis برای idempotency
-- **Idempotency**: هر درخواست مالی `Idempotency-Key` دارد؛ در Redis ذخیره می‌شود
-- **Reconciliation**: cron روزانه جمع Ledger را با Wallet.balance مقایسه می‌کند
-- **Decimal**: تمام مبالغ طلا `Decimal(18,8)`، ریالی `BigInt` (ریال بزرگ‌تر از int)
+### اصول طراحی (اصلاح‌شده با Double-Entry)
+- **Double-Entry Ledger**: هر JournalEntry باید balanced باشد (sum of debits = sum of credits)
+- **Immutable**: LedgerEntry, JournalEntry, AuditLog, TicketMessage, GoldPrice, KycSubmission
+- **Reversal**: اصلاح با compensating JournalEntry (نه UPDATE) — فیلد `reversalOf`
+- **Asset Accounts جدا**: Rial و Gold در AssetAccountهای متمایز (قابل توسعه به نقره، ارز)
+- **Double-Spending Prevention**: PostgreSQL Transaction + SELECT FOR UPDATE (مرجع نهایی)؛ Redis فقط برای distributed coordination
+- **Idempotency**: `Idempotency-Key` در header → چک Redis (acceleration) → چک `IdempotencyRecord` (durable) → اجرا
+- **Reconciliation**: cron روزانه: SUM(LedgerEntry per account) = AssetAccount.balance → اگر mismatch → alert + freeze
+- **Decimal**: تمام مبالغ طلا `Decimal(18,8)`، ریالی `BigInt`
 - **Soft Delete**: User با status=deleted، نه حذف فیزیکی (audit)
 
 ### Indexes
-- LedgerEntry: (walletId, createdAt), (referenceType, referenceId)
+- LedgerEntry: (journalEntryId), (ledgerAccountId, createdAt), (assetAccountId, createdAt)
+- JournalEntry: (referenceType, referenceId), (status)
+- AssetAccount: (walletId, assetType)
 - Order: (userId, createdAt), (status)
 - GoldPrice: (recordedAt desc)
 - AuditLog: (actorId, createdAt), (entityType, entityId)
 - Ticket: (userId, status), (assignedTo, status)
+- IdempotencyRecord: (key), (userId, endpoint), (expiresAt)
 
 ---
 
@@ -614,7 +691,10 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 ## بخش ۱۴ — Security Architecture
 
 ### Authentication & Authorization
-- JWT access (۱۵ دقیقه) + refresh (۳۰ روز) در httpOnly + Secure + SameSite=Lax cookie
+- JWT access (۱۵ دقیقه) + refresh (۳۰ روز)
+- **Web**: httpOnly + Secure + SameSite=Lax cookie
+- **Mobile (Capacitor)**: secure token storage (Capacitor Preferences/Keychain) + Bearer header
+- **هم‌دامنه Auth**: هر دو به همان `/api/v1/auth/*` متصل؛ backend تشخیص Web/Mobile و پاسخ مناسب
 - Refresh rotation + reuse detection
 - RBAC با ۹ نقش ادمین + permission granular
 - 2FA اختیاری (TOTP با otpauth)
@@ -622,14 +702,17 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 ### OTP
 - ۶ رقم، TTL ۲ دقیقه، max ۵ تلاش، فاصله ۶۰ ثانیه بین ارسال
 - hash با bcrypt + pepper
-- rate limit با Redis (slide window)
+- rate limit با Redis (slide window) — **مقادیر از `RateLimitConfig` قابل تنظیم**
 
-### Rate Limiting
-- عمومی: ۱۰۰ req/min per IP
-- OTP: ۵/ساعت per mobile
-- Login: ۱۰/ساعت per mobile
-- API مالی: ۳۰/min per user
-- ادمین: ۲۰۰/min per admin
+### Rate Limiting (Configurable — نه hardcoded)
+- مقادیر در DB table `RateLimitConfig` ذخیره می‌شوند
+- ادمین می‌تواند بدون تغییر کد، مقادیر را تغییر دهد
+- **پیش‌فرض‌ها (قابل تغییر)**:
+  - `api.general`: ۱۰۰ req/min per IP
+  - `otp.send`: ۵/ساعت per mobile
+  - `auth.login`: ۱۰/ساعت per mobile
+  - `trading.execute`: ۳۰/min per user
+  - `admin.api`: ۲۰۰/min per admin
 
 ### Protect Against
 - **Brute Force**: قفل اکانت پس ۵ تلاش ناموفق (۱۵ دقیقه)
@@ -708,37 +791,55 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 - fallback: آخرین قیمت معتبر در صورت قطعی API
 - ادمین می‌تواند override دستی (با audit)
 
-### Order Flow
+### Order Flow (Double-Entry)
 1. کاربر درخواست preview → backend قیمت لحظه‌ای + spread + fee را محاسبه
 2. lock قیمت به مدت ۶۰ ثانیه (Redis: `price:lock:{userId}`)
 3. کاربر تایید → POST /orders با Idempotency-Key
-4. backend در یک DB transaction:
-   - SELECT FOR UPDATE روی Wallet
-   - بررسی موجودی کافی
-   - ایجاد LedgerEntry (signed)
-   - آپدیت Wallet.balance
-   - ایجاد Order (status=filled)
+4. backend در یک **PostgreSQL Transaction**:
+   - SELECT FOR UPDATE روی AssetAccount (Rial + Gold) — **مرجع نهایی**
+   - بررسی موجودی کافی (availableBalance)
+   - ایجاد JournalEntry (balanced: debit Gold + credit Rial)
+   - ایجاد LedgerEntry (DEBIT) روی AssetAccount Gold
+   - ایجاد LedgerEntry (CREDIT) روی AssetAccount Rial
+   - ایجاد LedgerEntry (DEBIT) روی Fee Revenue account (کارمزد)
+   - آپدیت AssetAccount.balance (redundant)
+   - ایجاد Order (status=filled, journalEntryId)
 5. اگر مبلغ > threshold → OTP تایید
 6. emit notification + Socket.io
 
 ### Cancel
 - فقط در status=pending (قبل از fill) قابل لغو
+- اگر filled → فقط با Reversal JournalEntry (compensating transaction)
 
 ---
 
-## بخش ۱۷ — Wallet/Ledger Architecture
+## بخش ۱۷ — Wallet/Ledger Architecture (Double-Entry)
 
-### اصل مهم
-- **Ledger append-only immutable**: هیچ آپدیت/حذف روی LedgerEntry
-- **Wallet.balance** = جمع LedgerEntryهای آن wallet (redundant برای performance، reconciliation روزانه)
-- **Double-Spending Prevention**: SELECT FOR UPDATE + Redis lock
-- **Idempotency-Key**: در Redis ذخیره، اگر تکراری → همان پاسخ قبلی
+### اصل مهم (اصلاح‌شده)
+- **Double-Entry Ledger**: هر JournalEntry باید balanced باشد (sum of debits = sum of credits)
+- **Ledger append-only immutable**: هیچ آپدیت/حذف روی LedgerEntry و JournalEntry
+- **Reversal**: اصلاح با compensating JournalEntry (فیلد `reversalOf`)، نه UPDATE
+- **AssetAccount.balance** = جمع LedgerEntryهای آن account (redundant برای performance)
+- **Double-Spending Prevention**: **PostgreSQL Transaction + SELECT FOR UPDATE** (مرجع نهایی)؛ Redis فقط برای distributed coordination در multi-instance
+- **Idempotency**: `Idempotency-Key` در header → چک Redis (acceleration) → چک `IdempotencyRecord` (durable در DB) → اجرا → ذخیره response در DB
+- **Asset Accounts جدا**: Rial و Gold در AssetAccountهای متمایز (قابل توسعه به نقره، ارز)
 
 ### Reconciliation
-- cron روزانه: `SUM(LedgerEntry) vs Wallet.balance` → اگر mismatch → alert + freeze
+- cron روزانه: `SUM(LedgerEntry per AssetAccount) = AssetAccount.balance` → اگر mismatch → alert + freeze
+- cron روزانه: هر JournalEntry باید balanced باشد → اگر نبود → alert
 
-### Transfer داخلی
-- در یک transaction: LedgerEntry از A، LedgerEntry به B، آپدیت هر دو Wallet
+### Transfer داخلی (Double-Entry)
+- در یک PostgreSQL transaction:
+  - JournalEntry (balanced)
+  - LedgerEntry (CREDIT) از AssetAccount A (Gold)
+  - LedgerEntry (DEBIT) به AssetAccount B (Gold)
+  - آپدیت هر دو AssetAccount.balance
+
+### Financial Offline Operations (ممنوع)
+- **هیچ عملیات مالی نباید Offline Queue شود**
+- ممنوع: Buy, Sell, Deposit, Withdrawal, Payment, Installment, Investment, Transfer, Settlement
+- مجاز (offline): UI shell, static content, preferences, draft (غیرمالی)
+- **قاعده**: Financial State هرگز با Offline Data به‌عنوان حقیقت نمایش داده نمی‌شود. اگر offline، نمایش "اتصال لازم" به جای موجودی.
 
 ---
 
@@ -863,27 +964,49 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 
 ## بخش ۲۳ — Mobile/PWA Architecture
 
-### PWA
+### Web + Capacitor (دو Target از Shared Codebase)
+```
+Shared Codebase (src/)
+      │
+      ├── Web Target
+      │    └── Next.js 16 SSR / Web (production build + Turbopack)
+      │        ├── app/ (pages)
+      │        ├── api/ (route handlers)
+      │        └── PWA (manifest + SW)
+      │
+      └── Mobile Target
+           └── Capacitor
+               ├── Android (native shell)
+               └── iOS (native shell, V2)
+```
+- **Shared**: `src/lib/` (services, validators, types)، `src/components/` (UI)
+- **Web**: Next.js SSR build با Turbopack
+- **Mobile**: Capacitor از build جدا (static export یا webview)
+- **Auth**: Web از httpOnly cookie، Mobile از secure token storage (Capacitor Preferences/Keychain)
+- **هر دو** به همان `/api/v1` backend متصل می‌شوند
+
+### PWA (مشروط به Spike در Phase 0)
 - `manifest.webmanifest` (icons, shortcuts, screenshots, display standalone)
-- Service Worker (Serwist): precache + runtime cache + offline fallback
-- Offline: صف تراکنش در IndexedDB → sync هنگام آنلاین
+- Service Worker: **Serwist مشروط به تست** (Spike در Phase 0)؛ اگر fail → Workbox یا custom SW
+- **Offline (ممنوع برای مالی)**: فقط UI shell + static content + preferences + draft غیرمالی
+- **Financial State هرگز با Offline Data به‌عنوان حقیقت نمایش داده نمی‌شود**
 - Add to Home Screen prompt (custom)
 - Splash screen (Android + iOS)
 
 ### Capacitor (Android)
 - `capacitor.config.ts`
-- Plugins: Camera (KYC), Push (FCM), Share, Haptics, App, Network
-- Build: `next build && next export` → `npx cap sync` → Android Studio
+- Plugins: Camera (KYC), Push (FCM), Share, Haptics, App, Network, Preferences (secure storage)
+- Build: build جدا از Web → `npx cap sync` → Android Studio
 - Deep links: `zarnama://` + universal links
 
 ### iOS PWA
 - Push notifications (iOS 16.4+)
 - محدودیت‌ها: no background fetch طولانی، storage محدود
 
-### Shared
-- Web و Mobile از همان Next.js build (Capacitor از `out/` استفاده می‌کند)
-- API یکسان
-- Design system یکسان با responsive variants
+### Authentication (دو استراتژی، هم‌دامنه)
+- **Web**: httpOnly + Secure + SameSite cookie
+- **Mobile (Capacitor)**: secure token storage (Preferences/Keychain) + Bearer header
+- **هر دو** به همان `/api/v1/auth/*` backend متصل؛ backend تشخیص Web/Mobile و پاسخ مناسب
 
 ---
 
@@ -966,9 +1089,9 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 - **staging**: cloud (تست قبل از prod)
 - **production**: cloud
 
-### Stack
+### Stack (V1 ساده — بیش از حد پیچیده نیست)
 - Container: Docker (multi-stage)
-- Orchestration: Docker Swarm (نسخه ۱) → Kubernetes (V2)
+- Orchestration V1: **Docker + Reverse Proxy** (ساده) → Swarm/Kubernetes در فازهای بعدی و در صورت نیاز واقعی
 - CI/CD: GitHub Actions
 - Registry: GitHub Container Registry
 - Reverse proxy: Caddy (auto TLS)
@@ -1013,27 +1136,27 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 ## بخش ۲۹ — Dependency Graph
 
 ```
-Phase 0 (setup) ─┬─> Phase 1 (landing)
-                 ├─> Phase 2 (auth)
-                 │
-Phase 2 ─────────┴─> Phase 3 (user panel base)
-                       │
-Phase 5 (price) ──────┤
-Phase 4 (KYC) ────────┼─> Phase 6 (trading) ─> Phase 7 (wallet)
-                       │                          │
-                       ├─> Phase 8 (installment) ─┤
-                       ├─> Phase 9 (investment) ───┤
-                       ├─> Phase 10 (assets) ──────┤
-                       ├─> Phase 11 (ticket) ──────┤
-                       ├─> Phase 12 (referral) ────┤
-                       ├─> Phase 13 (notification) ─┤
-                       │
-Phase 14-16 (admin) ───┘ (parallel بعد از Phase 3)
-Phase 17 (security) ─── cross-cutting (همه فازها)
-Phase 18 (PWA) ─────── بعد از Phase 1 + 3
-Phase 19 (testing) ─── cross-cutting
-Phase 20 (devops) ──── بعد از Phase 0
-Phase 21 (analytics) ── بعد از Phase 6
+Phase 0 (setup + PWA spike) ─┬─> Phase 1 (landing)
+                             ├─> Phase 2 (auth: web + mobile)
+                             │
+Phase 2 ─────────────────────┴─> Phase 3 (user panel base)
+                                  │
+Phase 5 (price) ──────────────────┤
+Phase 4 (KYC) ───────────────────┼─> Phase 6 (trading: double-entry) ─> Phase 7 (wallet: asset accounts)
+                                  │                                       │
+                                  ├─> Phase 8 (installment) ──────────────┤
+                                  ├─> Phase 9 (investment) ──────────────┤
+                                  ├─> Phase 10 (assets) ────────────────┤
+                                  ├─> Phase 11 (ticket) ────────────────┤
+                                  ├─> Phase 12 (referral) ──────────────┤
+                                  ├─> Phase 13 (notification) ─────────┤
+                                  │
+Phase 14-16 (admin) ──────────────┘ (parallel بعد از Phase 3)
+Phase 17 (security) ───────────── cross-cutting (همه فازها)
+Phase 18 (PWA finalize) ────────── بعد از Spike (Phase 0) + Phase 1 + 3
+Phase 19 (testing) ────────────── cross-cutting
+Phase 20 (devops: docker + reverse proxy) ── بعد از Phase 0
+Phase 21 (analytics) ─────────── بعد از Phase 6
 ```
 
 ### Critical Path
@@ -1189,20 +1312,33 @@ zarnama/
 
 ## بخش ۳۳ — Execution Phases (۲۵ فاز)
 
-### Phase 0: Setup & Infrastructure
-1. نصب Node 20+, pnpm, Docker
-2. `pnpm create next-app` با TypeScript + Tailwind + App Router
-3. نصب وابستگی‌ها (prisma, ioredis, bullmq, socket.io, zod, jose, bcryptjs, shadcn, zustand, tanstack-query, recharts, sonner, lucide)
-4. تنظیم ESLint + Prettier + Husky + lint-staged
-5. ساخت ساختار پوشه‌ها (طبق بخش ۳۰)
-6. تنظیم Tailwind v4 با پالت navy/gold/cream + تم تیره
-7. نصب Vazirmatn با next/font + RTL در layout
-8. `prisma init` + schema پایه (User, Session, OtpCode)
-9. `docker-compose.yml` (PostgreSQL + Redis)
-10. نصب Capacitor + `cap init`
-11. تنظیم PWA: manifest + Serwist service worker
-12. `.env.example` + `README.md` اولیه
-- **Acceptance**: `pnpm dev` اجرا شود، `pnpm lint` pass، docker up، `npx cap` کار کند
+### Phase 0: Setup & Infrastructure + PWA Spike
+1. نصب **Node.js 24 LTS** + pin در `.nvmrc` (محتوای: `24`) و `package.json` engines (`"node": ">=24.0.0"`)
+2. `pnpm create next-app@16.3.3` با TypeScript strict + Tailwind v4 + App Router + **Turbopack**
+3. نصب وابستگی‌ها: `prisma@7` + `@prisma/client@7`، `ioredis`، `bullmq`، `socket.io`، `zod`، `jose`، `bcryptjs`، `zustand`، `@tanstack/react-query`، `recharts`، `sonner`، `lucide-react`، `react-hook-form` + `@hookform/resolvers`
+4. shadcn/ui: `pnpm dlx shadcn@latest init`
+5. ESLint + Prettier + Husky + lint-staged
+6. ساخت ساختار پوشه‌ها (طبق بخش ۳۰)
+7. Tailwind v4 با پالت navy/gold/cream + تم تیره
+8. فونت Vazirmatn با next/font + RTL در layout
+9. **PostgreSQL 18.x**: `docker-compose.yml` با `postgres:18.x` (explicit minor) + **Redis 7**
+10. **Prisma 7**: `prisma init` + schema پایه (User, Session, OtpCode, IdempotencyRecord, RateLimitConfig, LedgerAccount, JournalEntry, LedgerEntry, AssetAccount)
+11. نصب Capacitor + `cap init` (با awareness از دو Target: Web + Mobile)
+12. **PWA Spike**: تست Serwist با Next.js 16.3.3 + Turbopack:
+    - [ ] Installability (Chrome Android, Safari iOS)
+    - [ ] Service Worker registration
+    - [ ] Cache invalidation
+    - [ ] Update behavior
+    - [ ] Push notifications
+    - [ ] Offline shell (non-financial فقط)
+    - [ ] Safari iOS behavior
+    - [ ] Production build (Turbopack)
+    - [ ] Deployment build
+    - اگر Serwist fail → انتخاب جایگزین (Workbox/custom SW) و مستندسازی در `docs/ARCHITECTURE_DECISIONS.md`
+13. `.env.example` با تمام متغیرها (DB, Redis, JWT, OTP, SMS, Payment, Push)
+14. `README.md` اولیه
+15. `docs/ARCHITECTURE_DECISIONS.md` با تصمیمات این فاز (شامل نتایج PWA Spike)
+- **Acceptance**: `pnpm dev` با Turbopack اجرا شود، `pnpm lint` pass، docker up (PostgreSQL 18 + Redis)، `npx cap` کار کند، `.nvmrc` با `24`، PWA Spike نتایج ثبت شده (pass یا fail + جایگزین)
 
 ### Phase 1: Landing Page
 1. `(landing)` route group + layout
@@ -1605,18 +1741,18 @@ zarnama/
 ## بخش ۳۵ — MASTER CHECKLIST
 
 ### Phase 0: Setup
-- [ ] 0.1 نصب Node 20+ و pnpm
-- [ ] 0.2 ساخت پروژه Next.js 15
-- [ ] 0.3 نصب وابستگی‌ها
+- [ ] 0.1 نصب Node.js 24 LTS + pin در `.nvmrc`
+- [ ] 0.2 ساخت پروژه Next.js 16.3.3 + Turbopack
+- [ ] 0.3 نصب وابستگی‌ها (Prisma 7, ioredis, bullmq, ...)
 - [ ] 0.4 ESLint + Prettier + Husky
 - [ ] 0.5 ساختار پوشه‌ها
 - [ ] 0.6 Tailwind v4 + پالت رنگی
 - [ ] 0.7 فونت Vazirmatn + RTL
-- [ ] 0.8 Prisma + schema پایه
-- [ ] 0.9 docker-compose (PostgreSQL + Redis)
-- [ ] 0.10 Capacitor init
-- [ ] 0.11 PWA manifest + service worker
-- [ ] 0.12 .env.example + README
+- [ ] 0.8 Prisma 7 + schema پایه (Double-Entry + Asset Accounts + Idempotency)
+- [ ] 0.9 docker-compose (PostgreSQL 18.x + Redis 7)
+- [ ] 0.10 Capacitor init (دو Target)
+- [ ] 0.11 PWA Spike (Serwist + Turbopack + تست‌ها)
+- [ ] 0.12 .env.example + README + ARCHITECTURE_DECISIONS
 
 ### Phase 1: Landing
 - [ ] 1.1 route group + layout
@@ -1856,19 +1992,19 @@ zarnama/
 - [ ] 17.11 backup encryption
 - [ ] 17.12 security headers
 
-### Phase 18: PWA
-- [ ] 18.1 manifest
-- [ ] 18.2 service worker
-- [ ] 18.3 offline
+### Phase 18: PWA (Finalize — پس از Spike)
+- [ ] 18.1 manifest نهایی
+- [ ] 18.2 service worker (Serwist یا جایگزین از Spike)
+- [ ] 18.3 offline (فقط non-financial: UI shell + static)
 - [ ] 18.4 add to home
 - [ ] 18.5 splash
 - [ ] 18.6 icons
-- [ ] 18.7 Capacitor plugins
+- [ ] 18.7 Capacitor plugins (camera, push, share, preferences)
 - [ ] 18.8 Android build
 - [ ] 18.9 iOS PWA
 - [ ] 18.10 native plugins
 - [ ] 18.11 store assets
-- [ ] 18.12 auto-update
+- [ ] 18.12 auto-update SW
 
 ### Phase 19: Testing
 - [ ] 19.1 unit
@@ -1997,6 +2133,16 @@ zarnama/
 8. درگاه بانکی: زرین‌پال (قابل تغییر)
 9. SMS: Kavenegar (قابل تغییر)
 10. استقرار: cloud (قابل تغییر)
+11. Docker image `postgres:18.x` (آخرین minor پایدار ۱۸)
+12. Docker image `redis:7-alpine`
+13. pnpm 9+ به‌عنوان package manager
+14. Vitest برای unit/integration، Playwright برای E2E
+15. MinIO برای object storage (S3-compatible)
+16. Caddy به‌عنوان reverse proxy (auto TLS)
+17. Sentry برای error tracking
+18. PostHog self-hosted برای analytics
+19. دامنه `zarnama.ir` (قابل تغییر)
+20. فونت Vazirmatn (استاندارد فارسی)
 
 ---
 
@@ -2017,6 +2163,11 @@ zarnama/
 13. آیا کارت بانکی اختصاصی؟ (خیر، V2)
 14. سقف معاملات روزانه per KYC level
 15. آیا تحویل فیزیکی در همه شهرها؟
+16. ارائه‌دهنده API قیمت طلا (طلاچارت/بازارچارت/TGJU)
+17. ارائه‌دهنده SMS (Kavenegar/فراز)
+18. درگاه بانکی (زرین‌پال/سامان)
+19. آیا نتایج PWA Spike (در Phase 0) نیاز به تأیید شما دارد؟ یا خودم تصمیم می‌گیرم؟
+20. در صورت fail شدن Serwist، آیا جایگزین (Workbox/custom SW) را خودم انتخاب کنم؟
 
 ---
 
