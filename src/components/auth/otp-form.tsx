@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { apiPost } from '@/lib/api/client'
 import { Button } from '@/components/ui/button'
+import { DevOtpHint } from './dev-otp-hint'
 
 export function OtpForm() {
   const router = useRouter()
@@ -23,6 +24,7 @@ export function OtpForm() {
   const [loading, setLoading] = useState(false)
   const [cooldown, setCooldown] = useState(60)
   const [done, setDone] = useState(false)
+  const [resendCount, setResendCount] = useState(0)
   const inputsRef = useRef<(HTMLInputElement | null)[]>([])
 
   // شمارش معکوس ارسال مجدد
@@ -96,6 +98,7 @@ export function OtpForm() {
       return
     }
     setCooldown(60)
+    setResendCount((c) => c + 1)
     setDigits(Array(6).fill(''))
     inputsRef.current[0]?.focus()
   }
@@ -132,6 +135,9 @@ export function OtpForm() {
           />
         ))}
       </div>
+
+      {/* کد تست — فقط در محیط development با Mock SMS نمایش داده می‌شود */}
+      <DevOtpHint mobile={mobile} refreshKey={resendCount} />
 
       {error && (
         <p role="alert" className="bg-destructive/10 text-destructive rounded-md px-3 py-2 text-sm">

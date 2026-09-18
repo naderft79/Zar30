@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { apiPost } from '@/lib/api/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DevOtpHint } from './dev-otp-hint'
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams()
@@ -84,6 +85,10 @@ export function ResetPasswordForm() {
           onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
         />
       </div>
+
+      {/* کد تست — فقط در محیط development با Mock SMS نمایش داده می‌شود */}
+      <DevOtpHint mobile={mobile} />
+
       <div>
         <label
           htmlFor="reset-password"
