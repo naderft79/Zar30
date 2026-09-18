@@ -68,3 +68,8 @@ docker-data/
 
 # prisma generated client
 src/generated/
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/

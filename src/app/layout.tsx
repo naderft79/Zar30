@@ -10,6 +10,7 @@ const vazirmatn = Vazirmatn({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://zarnama.ir'),
   title: {
     default: 'زرنما | پلتفرم خرید و سرمایه‌گذاری طلای آب‌شده',
     template: '%s | زرنما',
@@ -25,6 +26,10 @@ export const metadata: Metadata = {
     locale: 'fa_IR',
   },
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icons/apple-touch-icon.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',

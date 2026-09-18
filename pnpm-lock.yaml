@@ -264,7 +264,7 @@ importers:
         version: 3.3.0(@types/react@19.3.0)(react-dom@19.2.8(react@19.2.8))(react-is@17.0.2)(react@19.2.8)(redux@5.0.1)
       serwist:
         specifier: ^9.5.12
-        version: 9.5.12(browserslist@4.28.6)(typescript@5.9.3)
+        version: 9.5.12(browserslist@4.29.0)(typescript@5.9.3)
       socket.io:
         specifier: 4.8.1
         version: 4.8.1(supports-color@7.2.0)
@@ -277,6 +277,9 @@ importers:
       tailwind-merge:
         specifier: 3.3.1
         version: 3.3.1
+      tw-animate-css:
+        specifier: 1.4.0
+        version: 1.4.0
       zod:
         specifier: 3.25.76
         version: 3.25.76
@@ -292,7 +295,7 @@ importers:
         version: 1.54.2
       '@serwist/cli':
         specifier: ^9.5.12
-        version: 9.5.12(@types/node@24.0.10)(browserslist@4.28.6)(esbuild@0.28.2)(typescript@5.9.3)
+        version: 9.5.12(@types/node@24.0.10)(browserslist@4.29.0)(esbuild@0.28.2)(typescript@5.9.3)
       '@serwist/turbopack':
         specifier: 9.5.12
         version: 9.5.12(@swc/helpers@0.5.23)(esbuild@0.28.2)(next@16.3.3(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.54.2)(@types/node@24.0.10)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(typescript@5.9.3)
@@ -356,6 +359,9 @@ importers:
       prisma:
         specifier: 7.10.0
         version: 7.10.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(magicast@0.3.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)
+      sharp:
+        specifier: ^0.35.4
+        version: 0.35.4(@types/node@24.0.10)
       tailwindcss:
         specifier: 4.3.3
         version: 4.3.3
@@ -6024,6 +6030,9 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
+  tw-animate-css@1.4.0:
+    resolution: {integrity: sha512-7bziOlRqH0hJx80h/3mbicLW7o8qLsH5+RaLR2t+OHM3D0JlWGODQKQ4cxbK7WlvmUxpcj6Kgu6EKqjrGFe3QQ==}
+
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -6937,8 +6946,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.35.4':
     optionalDependencies:
@@ -8430,11 +8438,25 @@ snapshots:
     transitivePeerDependencies:
       - browserslist
 
-  '@serwist/cli@9.5.12(@types/node@24.0.10)(browserslist@4.28.6)(esbuild@0.28.2)(typescript@5.9.3)':
+  '@serwist/build@9.5.12(browserslist@4.29.0)(typescript@5.9.3)':
+    dependencies:
+      '@serwist/utils': 9.5.12(browserslist@4.29.0)
+      common-tags: 1.8.2
+      glob: 13.0.6
+      pretty-bytes: 6.1.1
+      source-map: 0.8.0
+      type-fest: 5.8.0
+      zod: 4.4.3
+    optionalDependencies:
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - browserslist
+
+  '@serwist/cli@9.5.12(@types/node@24.0.10)(browserslist@4.29.0)(esbuild@0.28.2)(typescript@5.9.3)':
     dependencies:
       '@inquirer/prompts': 8.5.2(@types/node@24.0.10)
-      '@serwist/build': 9.5.12(browserslist@4.28.6)(typescript@5.9.3)
-      '@serwist/utils': 9.5.12(browserslist@4.28.6)
+      '@serwist/build': 9.5.12(browserslist@4.29.0)(typescript@5.9.3)
+      '@serwist/utils': 9.5.12(browserslist@4.29.0)
       chalk: 5.6.2
       chokidar: 5.0.0
       common-tags: 1.8.2
@@ -8473,6 +8495,10 @@ snapshots:
   '@serwist/utils@9.5.12(browserslist@4.28.6)':
     optionalDependencies:
       browserslist: 4.28.6
+
+  '@serwist/utils@9.5.12(browserslist@4.29.0)':
+    optionalDependencies:
+      browserslist: 4.29.0
 
   '@serwist/window@9.5.12(browserslist@4.28.6)(typescript@5.9.3)':
     dependencies:
@@ -11733,6 +11759,15 @@ snapshots:
     transitivePeerDependencies:
       - browserslist
 
+  serwist@9.5.12(browserslist@4.29.0)(typescript@5.9.3):
+    dependencies:
+      '@serwist/utils': 9.5.12(browserslist@4.29.0)
+      idb: 8.0.3
+    optionalDependencies:
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - browserslist
+
   set-function-length@1.2.2:
     dependencies:
       define-data-property: 1.1.4
@@ -11787,7 +11822,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.4
       '@img/sharp-win32-x64': 0.35.4
       '@types/node': 24.0.10
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:
@@ -12146,6 +12180,8 @@ snapshots:
       get-tsconfig: 4.14.3
     optionalDependencies:
       fsevents: 2.3.3
+
+  tw-animate-css@1.4.0: {}
 
   type-check@0.4.0:
     dependencies:

@@ -86,3 +86,67 @@
 ## Phase بعدی
 
 **Phase 1:** Landing Page — ✅ **UNBLOCKED** — آماده شروع
+
+---
+
+## Phase 1: Landing & Public Website
+
+**وضعیت:** ✅ DONE — Final Gate پاس شد (Lint / Typecheck / Unit / E2E / Build)
+
+> مرجع کامل: `docs/phases/PHASE-01-REPORT.md`
+
+### تسک‌ها
+
+| #    | تسک                                                                                                                     | وضعیت |
+| ---- | ----------------------------------------------------------------------------------------------------------------------- | ----- |
+| 1.1  | Route group `(public)` + layout (Header/Footer/skip-link)                                                               | ✅    |
+| 1.2  | Design System: Container, Section (+titleAs), Logo, Accordion, Dialog, Tooltip                                          | ✅    |
+| 1.3  | داده‌های Landing + Price Service Interface (Mock/Dev با برچسب Demo)                                                     | ✅    |
+| 1.4  | Header + Mobile Menu (Dialog) + Footer                                                                                  | ✅    |
+| 1.5  | بخش‌های Landing: Hero, Price, Features, WhyZarnama, HowItWorks, Stats                                                   | ✅    |
+| 1.6  | بخش‌های Landing: Calculator, Investment, Installment, Security, Physical, Referral, Testimonials, FAQ, CTA, DownloadApp | ✅    |
+| 1.7  | صفحات Public: about, security, faq, contact, blog, terms, privacy + auth placeholders                                   | ✅    |
+| 1.8  | SEO: metadataBase, sitemap.xml, robots.txt, OG image, JSON-LD، canonical، h1 هر صفحه                                    | ✅    |
+| 1.9  | Animations (float/fade-up) + prefers-reduced-motion + PWA icons (PNG)                                                   | ✅    |
+| 1.10 | Tests: unit (12) + Playwright E2E (desktop/tablet/mobile)                                                               | ✅    |
+
+### Acceptance Criteria
+
+| معیار                                                        | وضعیت                                 |
+| ------------------------------------------------------------ | ------------------------------------- |
+| Landing کامل (۱۵ بخش)                                        | ✅                                    |
+| RTL + Vazirmatn + پالت navy/gold/cream                       | ✅                                    |
+| Responsive (mobile/tablet/desktop — Playwright)              | ✅ ۳ پروژه viewport                   |
+| Design System بدون duplicate                                 | ✅                                    |
+| Mobile UX (منوی Dialog مخصوص موبایل)                         | ✅                                    |
+| SEO پایه (metadata/OG/sitemap/robots/JSON-LD/h1)             | ✅                                    |
+| Accessibility (skip-link، semantic h1، aria، reduced-motion) | ✅                                    |
+| `pnpm build` موفق                                            | ✅ ۲۰ route تولید شد                  |
+| `pnpm typecheck`                                             | ✅ 0 errors                           |
+| `pnpm lint`                                                  | ✅ 0 errors / 0 warnings              |
+| `pnpm test` (unit+integration)                               | ✅ 28/28                              |
+| `pnpm test:e2e` (Playwright)                                 | ✅ 20 pass / 1 skip (mobile-only)     |
+| هیچ Mock مالی به‌عنوان Live نمایش داده نشود                  | ✅ برچسب «Demo / پیش‌نمایش» + تست e2e |
+| Public Routing درست                                          | ✅ ۸ صفحه + ۲ auth placeholder        |
+| PWA Foundation خراب نشده                                     | ✅ Serwist + manifest + آیکون‌های PNG |
+| Financial Core دست‌نخورده                                    | ✅ فقط Presentation                   |
+
+### مشکلات پیدا شده و رفع‌شده
+
+1. **satori متن فارسی** — `opengraph-image` با فارسی خطای `lookupType 5` داد → متن لاتین در OG image (محدودیت shaping در satori)
+2. **iPad Mini → WebKit** — پروژه tablet روی Chromium تنظیم شد (نصب WebKit لازم نبود)
+3. **CardTitle = div** — به `h3` و CardDescription به `p` تغییر کرد (معناشناسی heading)
+4. **h1 در صفحات public** — prop `titleAs` به Section اضافه شد؛ هر صفحه یک h1 دارد
+5. **cache قدیمی `.next/types`** — با پاک‌سازی `.next` رفع شد
+
+### تصمیم‌های جدید
+
+- `cn` package (shadcn-ui/cn) به‌جای clsx+tailwind-merge در importهای `from 'cn'` — convention جدید shadcn
+- `titleAs` prop در Section برای کنترل معنایی h1/h2
+- OG image با متن لاتین (محدودیت satori در shaping فارسی)
+- آیکون‌های PWA از `public/icon.svg` با اسکریپت `scripts/generate-icons.mjs` (sharp) تولید می‌شوند
+- Mock Price فقط با `isLive: false` + `source: 'demo'` — جایگزینی Provider واقعی در Phase 5
+
+## Phase بعدی
+
+**Phase 2:** Authentication & User Management — آماده برای شروع پس از تأیید

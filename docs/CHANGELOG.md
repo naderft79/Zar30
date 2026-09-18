@@ -89,3 +89,39 @@
 
 - Docker نصب نیست در محیط development — docker-compose.yml آماده اما اجرا نشده
 - Node.js محلی v22 — .nvmrc با 24 ساخته شد
+
+## [0.2.0] — Phase 1 Landing & Public Website (2026-09-18)
+
+### Added
+
+- Landing Page کامل با ۱۵ بخش: Hero، Price Widget (Demo)، Features، WhyZarnama، Stats، HowItWorks، GoldCalculator، Investment، Installment، Security، PhysicalGold، Referral، Testimonials، FAQ، CTA، DownloadApp
+- Route group `(public)` با layout مشترک (Header، Footer، skip-link)
+- صفحات عمومی: `/about`, `/security`, `/faq`, `/contact`, `/blog`, `/terms`, `/privacy`
+- Route group `(auth)` با placeholder صفحات `/login` و `/register`
+- Design System: `Container`, `Section` (+`titleAs` برای h1/h2)، `Logo`، `Accordion`، `Dialog`، `Tooltip` (Radix/shadcn)
+- Price Service Interface (`src/lib/price/`) — Mock Provider فقط برای Development با `isLive: false` و `source: 'demo'` — جایگزینی Provider واقعی در Phase 5
+- API route `/api/v1/price`
+- SEO: `metadataBase`، `sitemap.xml`، `robots.txt`، `opengraph-image`، JSON-LD (Organization + WebSite + FAQPage)، canonical، یک h1 در هر صفحه
+- PWA icons: تولید PNG از `public/icon.svg` با `scripts/generate-icons.mjs` (sharp)
+- انیمیشن‌های float/fade-up + احترام کامل به `prefers-reduced-motion`
+- Playwright: `playwright.config.ts` با ۳ پروژه (desktop-chrome / tablet / mobile-chrome) + ۷ تست E2E
+- تست‌های unit جدید: landing-data، price-service، components (jsdom)
+
+### Changed
+
+- `CardTitle` به `h3` و `CardDescription` به `p` تغییر کرد (معناشناسی heading برای a11y/SEO)
+- صفحه اصلی از `src/app/page.tsx` به `src/app/(public)/page.tsx` منتقل شد
+- SVGهای پیش‌فرض create-next-app حذف شدند
+
+### Fixed
+
+- `opengraph-image` با متن فارسی در satori خطا می‌داد (lookupType 5) — متن لاتین استفاده شد
+- پروژه tablet در Playwright به‌طور پیش‌فرض WebKit می‌خواست — به Chromium تغییر کرد
+
+### Validated
+
+- `pnpm lint`: 0 errors / 0 warnings
+- `pnpm typecheck`: 0 errors
+- `pnpm test`: 28/28 (unit + integration)
+- `pnpm test:e2e`: 20 pass / 1 skip — روی ۳ viewport (desktop/tablet/mobile)
+- `pnpm build`: موفق — ۲۰ route + Serwist service worker
