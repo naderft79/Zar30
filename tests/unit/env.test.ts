@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Environment Validation Test
+// Zar30 - Environment Validation Test
 // ============================================
 import { describe, it, expect } from 'vitest'
 

@@ -7,7 +7,7 @@
 
 ## هدف
 
-ساخت Landing Page کاملاً Production-Ready برای برند زرنما: هویت بصری Premium (navy/gold/cream)، فارسی/RTL با فونت Vazirmatn، معماری Public Website قابل توسعه، بدون دست‌کاری Financial Core.
+ساخت Landing Page کاملاً Production-Ready برای برند زرسی: هویت بصری Premium (navy/gold/cream)، فارسی/RTL با فونت Vazirmatn، معماری Public Website قابل توسعه، بدون دست‌کاری Financial Core.
 
 ---
 
@@ -18,7 +18,7 @@
 | Route                 | نوع    | توضیح                                         |
 | --------------------- | ------ | --------------------------------------------- |
 | `/`                   | public | Landing کامل — ۱۵ بخش                         |
-| `/about`              | public | درباره زرنما — داستان، ارزش‌ها، آمار          |
+| `/about`              | public | درباره زرسی — داستان، ارزش‌ها، آمار           |
 | `/security`           | public | امنیت — لایه‌ها، KYC، audit، مدیریت ریسک      |
 | `/faq`                | public | سوالات متداول — Accordion از داده مرکزی       |
 | `/contact`            | public | تماس — کانال‌ها + فرم (backend در Phase بعدی) |
@@ -41,7 +41,7 @@
 
 **شمارش واقعی از Source Code** (`src/app/(public)/page.tsx` — مرجع شمارش):
 
-بخش‌های اصلی Landing = **۱۴** (پس از Cleanup): Hero, PriceSection, Features, WhyZarnama, Stats, HowItWorks, InvestmentPreview, InstallmentPreview, SecuritySection, PhysicalGold, ReferralSection, FaqSection, DownloadApp, CtaSection
+بخش‌های اصلی Landing = **۱۴** (پس از Cleanup): Hero, PriceSection, Features, WhyZar30, Stats, HowItWorks, InvestmentPreview, InstallmentPreview, SecuritySection, PhysicalGold, ReferralSection, FaqSection, DownloadApp, CtaSection
 
 توضیح اعداد قبلی:
 
@@ -53,7 +53,7 @@
 
 ### داده و سرویس‌ها
 
-- `src/lib/data/landing.ts` — منبع واحد داده‌های Landing (NAV_LINKS, FOOTER_LINKS, FEATURES, WHY_ZARNAMA, HOW_IT_WORKS, STATS, FAQS, TESTIMONIALS, TRUST_BADGES) — آماده برای CMS
+- `src/lib/data/landing.ts` — منبع واحد داده‌های Landing (NAV_LINKS, FOOTER_LINKS, FEATURES, WHY_ZAR30, HOW_IT_WORKS, STATS, FAQS, TESTIMONIALS, TRUST_BADGES) — آماده برای CMS
 - `src/lib/price/` — PriceService interface + MockPriceService — معماری `UI → Service → Provider` — جایگزینی در Phase 5
 
 ---

@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Landing Header
+// Zar30 - Landing Header
 // ============================================
 // هدر عمومی: لوگو + ناوبری + ورود/ثبت‌نام + منوی موبایل
 // Server Component — منوی موبایل به‌صورت Client جداست
@@ -16,7 +16,7 @@ export function Header() {
     <header className="border-border/50 bg-background/80 sticky top-0 z-40 w-full border-b backdrop-blur-lg">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* لوگو */}
-        <Link href="/" className="flex items-center gap-2" aria-label="زرنما — صفحه اصلی">
+        <Link href="/" className="flex items-center gap-2" aria-label="زرسی — صفحه اصلی">
           <Logo size="md" />
         </Link>
 

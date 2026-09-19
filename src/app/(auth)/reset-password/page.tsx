@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Reset Password Page
+// Zar30 - Reset Password Page
 // ============================================
 
 import type { Metadata } from 'next'
@@ -9,7 +9,7 @@ import { ResetPasswordForm } from '@/components/auth/reset-password-form'
 
 export const metadata: Metadata = {
   title: 'تنظیم رمز جدید',
-  description: 'تنظیم رمز عبور جدید برای حساب زرنما.',
+  description: 'تنظیم رمز عبور جدید برای حساب زرسی.',
   robots: { index: false },
 }
 

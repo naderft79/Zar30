@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - User Panel Unit Tests (Phase 3)
+// Zar30 - User Panel Unit Tests (Phase 3)
 // ============================================
 // Profile validation + User-Agent parsing
 // ============================================

@@ -1,4 +1,4 @@
-# گزارش Phase 0 — زرنما
+# گزارش Phase 0 — زرسی
 
 **وضعیت نهایی: ✅ DONE — FINAL GATE PASSED**
 

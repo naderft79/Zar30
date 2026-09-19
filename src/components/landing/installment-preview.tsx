@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Installment Preview Section
+// Zar30 - Installment Preview Section
 // ============================================
 // معرفی خرید اقساطی طلا — فقط Presentation/UX
 // قوانین مالی در Phaseهای بعدی پیاده‌سازی می شوند

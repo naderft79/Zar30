@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Forgot Password Page
+// Zar30 - Forgot Password Page
 // ============================================
 
 import type { Metadata } from 'next'
@@ -9,7 +9,7 @@ import { ForgotPasswordForm } from '@/components/auth/forgot-password-form'
 
 export const metadata: Metadata = {
   title: 'بازیابی رمز عبور',
-  description: 'بازیابی رمز عبور حساب زرنما با کد تایید پیامکی.',
+  description: 'بازیابی رمز عبور حساب زرسی با کد تایید پیامکی.',
   robots: { index: false },
 }
 

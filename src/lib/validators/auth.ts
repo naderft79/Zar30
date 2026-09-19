@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Auth Validators (Phase 2)
+// Zar30 - Auth Validators (Phase 2)
 // ============================================
 
 import { z } from 'zod'

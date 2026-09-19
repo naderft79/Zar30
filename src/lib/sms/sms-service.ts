@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - SMS Service (Phase 2)
+// Zar30 - SMS Service (Phase 2)
 // ============================================
 // Provider Interface از ابتدا — Production به Mock وابسته نیست
 // Development Mock: کد OTP در لاگ + Redis (فقط dev) برای تست E2E
@@ -43,7 +43,7 @@ class KavenegarProvider implements SmsService {
     const params = new URLSearchParams({
       receptor: mobile,
       token: code,
-      template: 'zarnama-otp',
+      template: 'zar30-otp',
     })
     const response = await fetch(`${url}?${params}`, { method: 'GET' })
     if (!response.ok) {

@@ -1,4 +1,4 @@
-package ir.zarnama.app;
+package com.zar30.app;
 
 import com.getcapacitor.BridgeActivity;
 

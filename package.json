@@ -1,8 +1,8 @@
 {
-  "name": "zarnama",
+  "name": "zar30",
   "version": "0.1.0",
   "private": true,
-  "description": "Zarnama - FinTech Gold Trading Platform",
+  "description": "Zar30 - FinTech Gold Trading Platform",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",

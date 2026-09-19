@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Accordion Component (shadcn/radix)
+// Zar30 - Accordion Component (shadcn/radix)
 // ============================================
 'use client'
 

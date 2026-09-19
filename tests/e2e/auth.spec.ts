@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Auth E2E Tests (Phase 2)
+// Zar30 - Auth E2E Tests (Phase 2)
 // ============================================
 // Critical: Register → OTP → Login → Session → Logout
 //           Login → Revoke Session → Access Denied

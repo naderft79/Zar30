@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Notifications Center (Phase 3.1 — Premium Redesign)
+// Zar30 - Notifications Center (Phase 3.1 — Premium Redesign)
 // ============================================
 // مرکز اعلان — از طریق bell در Header در دسترس است (nav item نیست)
 // ============================================

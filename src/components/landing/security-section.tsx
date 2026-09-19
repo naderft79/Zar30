@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Security Section
+// Zar30 - Security Section
 // ============================================
 // بخش امنیت — احراز هویت، رمزنگاری، Audit
 // Server Component
@@ -42,7 +42,7 @@ export function SecuritySection() {
       className="bg-muted/30"
       eyebrow="امنیت"
       title="امنیت، بخشی از معماری — نه یک افزونه"
-      description="زرنما از ابتدا با استانداردهای FinTech طراحی شده است."
+      description="زرسی از ابتدا با استانداردهای FinTech طراحی شده است."
     >
       <div className="grid gap-6 sm:grid-cols-2">
         {SECURITY_ITEMS.map((item) => (
@@ -63,7 +63,7 @@ export function SecuritySection() {
       <div className="mt-8 text-center">
         <Button variant="outline" asChild>
           <Link href="/security">
-            بیشتر درباره امنیت زرنما
+            بیشتر درباره امنیت زرسی
             <ArrowLeft className="size-4" />
           </Link>
         </Button>

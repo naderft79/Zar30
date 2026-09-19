@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - OTP Verification Page
+// Zar30 - OTP Verification Page
 // ============================================
 
 import type { Metadata } from 'next'

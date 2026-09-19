@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - POST /api/v1/auth/refresh
+// Zar30 - POST /api/v1/auth/refresh
 // ============================================
 // Refresh rotation + reuse detection
 // token از httpOnly cookie (Web) یا body (Mobile)

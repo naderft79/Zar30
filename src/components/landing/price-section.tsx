@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Price Section (Server)
+// Zar30 - Price Section (Server)
 // ============================================
 // بخش قیمت طلا — PriceWidget + GoldCalculator
 // قیمت اولیه از PriceService (فعلاً Mock/Demo)

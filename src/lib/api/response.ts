@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - API Response Helpers
+// Zar30 - API Response Helpers
 // ============================================
 // Response envelope: { success: bool, data?, error?, meta? }
 // ============================================

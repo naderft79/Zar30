@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Design System Preview (/design-system)
+// Zar30 - Design System Preview (/design-system)
 // ============================================
 // صفحه preview داخلی برای Design System فاز 3.1 — noindex، فقط توسعه/بازبینی
 // ============================================

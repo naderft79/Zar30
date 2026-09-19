@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Structured Logger (pino)
+// Zar30 - Structured Logger (pino)
 // ============================================
 // لاگ ها به زبان انگلیسی می باشند (طبق قانون پروژه)
 // Never log: passwords, OTPs, tokens, secrets, card numbers
@@ -44,7 +44,7 @@ export const logger = pino({
     censor: '[REDACTED]',
   },
   base: {
-    app: 'zarnama',
+    app: 'zar30',
     env: process.env.NODE_ENV,
   },
 })

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 // ============================================
-// Zarnama - Component Tests
+// Zar30 - Component Tests
 // ============================================
 // تست کامپوننت‌های کلیدی Design System
 // ============================================
@@ -16,13 +16,13 @@ afterEach(cleanup)
 describe('Logo', () => {
   it('نام برند را نمایش می‌دهد', () => {
     render(<Logo />)
-    expect(screen.getByText('زرنما')).toBeTruthy()
+    expect(screen.getByText('زرسی')).toBeTruthy()
   })
 
   it('بدون متن هم قابل رندر است', () => {
     const { container } = render(<Logo showText={false} />)
     expect(container.querySelector('svg')).toBeTruthy()
-    expect(screen.queryByText('زرنما')).toBeNull()
+    expect(screen.queryByText('زرسی')).toBeNull()
   })
 })
 

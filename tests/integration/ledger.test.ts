@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Double-Entry Ledger Integration Test
+// Zar30 - Double-Entry Ledger Integration Test
 // ============================================
 // این تست روی PostgreSQL واقعی اجرا می شود
 // بررسی: تراز Debit/Credit، Rollback، Idempotency

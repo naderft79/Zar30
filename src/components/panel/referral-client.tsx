@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Referral (Phase 3.1 — Premium Redesign)
+// Zar30 - Referral (Phase 3.1 — Premium Redesign)
 // ============================================
 // کد دعوت + آمار — Commission Engine در Phase بعدی
 // ============================================

@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Auth Unit Tests (Phase 2)
+// Zar30 - Auth Unit Tests (Phase 2)
 // ============================================
 // password hashing, JWT, OTP generation, RBAC
 // ============================================

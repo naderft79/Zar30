@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - PWA Icon Generator
+// Zar30 - PWA Icon Generator
 // ============================================
 // تولید آیکون‌های PNG موردنیاز manifest از SVG برند
 // اجرا: node scripts/generate-icons.mjs

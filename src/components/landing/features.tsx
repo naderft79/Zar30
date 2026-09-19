@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Features Section
+// Zar30 - Features Section
 // ============================================
 // امکانات اصلی — ۶ کارت طبق MEGAPLAN
 // Server Component
@@ -15,7 +15,7 @@ export function Features() {
       id="features"
       eyebrow="امکانات"
       title="هر آنچه برای طلا نیاز دارید"
-      description="از خرید با هر مبلغی تا تحویل فیزیکی درب منزل — زرنما یک پلتفرم کامل طلای دیجیتال است."
+      description="از خرید با هر مبلغی تا تحویل فیزیکی درب منزل — زرسی یک پلتفرم کامل طلای دیجیتال است."
     >
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {FEATURES.map((feature) => (

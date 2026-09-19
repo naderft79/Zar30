@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Register Form
+// Zar30 - Register Form
 // ============================================
 // Client Component — اتصال به /api/v1/auth/register
 // پس از موفقیت → /verify-otp
@@ -124,7 +124,7 @@ export function RegisterForm() {
         <Link href="/privacy" className="text-gold hover:underline">
           حریم خصوصی
         </Link>{' '}
-        زرنما را می‌پذیرید.
+        زرسی را می‌پذیرید.
       </p>
     </form>
   )

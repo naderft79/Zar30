@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - PERMANENT USER NAVIGATION CONTRACT
+// Zar30 - PERMANENT USER NAVIGATION CONTRACT
 // ============================================
 // ⚠️ قانون دائمی پروژه (ADR: Permanent User Panel Navigation)
 // Navigation اصلی User Panel همیشه دقیقاً این ۵ مقصد را با همین ترتیب دارد:

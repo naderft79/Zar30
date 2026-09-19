@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Auth Integration Tests (Phase 2)
+// Zar30 - Auth Integration Tests (Phase 2)
 // ============================================
 // جریان کامل روی PostgreSQL + Redis واقعی:
 // Register → OTP → Verify → Login → Session → Logout → Revoke

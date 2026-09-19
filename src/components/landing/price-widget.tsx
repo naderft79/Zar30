@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Gold Price Widget (Client)
+// Zar30 - Gold Price Widget (Client)
 // ============================================
 // ویجت قیمت طلا — fetch از /api/v1/price + polling هر ۶۰ ثانیه
 // داده فعلی Demo است و UI آن را صریحاً اعلام می کند

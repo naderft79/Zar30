@@ -1,4 +1,23 @@
-# Zarnama — Changelog
+# Zar30 — Changelog
+
+## [0.4.0] — Global Rebranding & Technical Namespace Migration (ADR-017)
+
+### Changed
+
+- **هویت دائمی محصول:** LEGACY «زرنما / Zarnama / zarnama.ir» → **زرسی / zar30 / zar30.com** — مهاجرت سراسری ۱۸۱ فایل tracked + `.env`
+- **Package:** `zarnama` → `zar30`
+- **Auth namespace:** cookies `zar30_access` / `zar30_refresh`، JWT iss `zar30` / aud `zar30-users`، mobile storage key `zar30_refresh_token` — sessionهای قدیمی نامعتبر می‌شوند (Development)
+- **Infrastructure:** containers `zar30-postgres/redis/minio`، dev DB `zar30_dev` / user `zar30`، S3 bucket `zar30`
+- **Mobile:** `appId`/`applicationId`/`namespace` = `com.zar30.app`، app name «زرسی»، انتقال پکیج Java به `com.zar30.app`
+- **PWA:** manifest name «زرسی»، id `com.zar30.app`
+- **SEO:** metadata/JSON-LD/robots/sitemap → `zar30.com` + «زرسی»
+- **Naming:** `why-zarnama.tsx` → `why-zar30.tsx`، `WHY_ZAR30`، `WhyZar30`، gradient id `zar30-gold`
+- **Docs:** `PERMANENT BRAND IDENTITY` در AGENTS.md + ADR-017 + `docs/rebranding/ZAR30-REBRAND-AUDIT.md`
+
+### Notes
+
+- قالب Kavenegar `zar30-otp` باید در پنل Kavenegar ثبت شود (اقدام دستی)
+- Dev database باید با `docker compose down -v && docker compose up -d` بازسازی و migrate/seed شود
 
 ## [0.3.1] — Phase 3.1: Navigation Lock & Premium UI/UX Redesign (2026-09-19)
 
@@ -212,7 +231,7 @@
 
 ### Added
 
-- Landing Page کامل با ۱۵ بخش: Hero، Price Widget (Demo)، Features، WhyZarnama، Stats، HowItWorks، GoldCalculator، Investment، Installment، Security، PhysicalGold، Referral، Testimonials، FAQ، CTA، DownloadApp
+- Landing Page کامل با ۱۵ بخش: Hero، Price Widget (Demo)، Features، WhyZar30، Stats، HowItWorks، GoldCalculator، Investment، Installment، Security، PhysicalGold، Referral، Testimonials، FAQ، CTA، DownloadApp
 - Route group `(public)` با layout مشترک (Header، Footer، skip-link)
 - صفحات عمومی: `/about`, `/security`, `/faq`, `/contact`, `/blog`, `/terms`, `/privacy`
 - Route group `(auth)` با placeholder صفحات `/login` و `/register`

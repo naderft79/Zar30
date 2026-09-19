@@ -1,29 +1,29 @@
-# Zarnama - Docker Compose for Development
+# Zar30 - Docker Compose for Development
 # PostgreSQL 18.x + Redis 7 + MinIO (S3-compatible object storage)
 
 services:
   postgres:
     image: postgres:18-alpine
-    container_name: zarnama-postgres
+    container_name: zar30-postgres
     restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: zarnama
-      POSTGRES_PASSWORD: zarnama_dev_password
-      POSTGRES_DB: zarnama_dev
+      POSTGRES_USER: zar30
+      POSTGRES_PASSWORD: zar30_dev_password
+      POSTGRES_DB: zar30_dev
     volumes:
       # PostgreSQL 18+ نیازمند mount روی /var/lib/postgresql است (ساختار pg_ctlcluster)
       - postgres_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U zarnama -d zarnama_dev"]
+      test: ["CMD-SHELL", "pg_isready -U zar30 -d zar30_dev"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: zarnama-redis
+    container_name: zar30-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -40,14 +40,14 @@ services:
     # minio/minio در Docker Hub archived است — از registry رسمی quay.io استفاده می کنیم
     # برای Development فعلاً latest — برای Production بعداً pin می شود
     image: quay.io/minio/minio:latest
-    container_name: zarnama-minio
+    container_name: zar30-minio
     restart: unless-stopped
     ports:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: zarnama
-      MINIO_ROOT_PASSWORD: zarnama_dev_password
+      MINIO_ROOT_USER: zar30
+      MINIO_ROOT_PASSWORD: zar30_dev_password
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data

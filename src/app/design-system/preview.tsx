@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Design System Preview (client)
+// Zar30 - Design System Preview (client)
 // ============================================
 // نمایش tokenها، primitiveها و کامپوننت‌های مالی در stateهای مختلف
 // ============================================
@@ -81,7 +81,7 @@ export function DesignSystemPreview() {
   return (
     <main className="bg-background mx-auto max-w-6xl space-y-10 p-6 pb-24" dir="rtl">
       <header>
-        <h1 className="text-display text-foreground">Design System — زرنما</h1>
+        <h1 className="text-display text-foreground">Design System — زرسی</h1>
         <p className="text-muted-foreground mt-1 text-sm">
           پیش‌نمایش توکن‌ها و کامپوننت‌های Phase 3.1 — فقط برای توسعه
         </p>

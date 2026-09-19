@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Browser API Client
+// Zar30 - Browser API Client
 // ============================================
 // fetch wrapper برای فرم‌های client-side — cookie-based auth
 // ============================================

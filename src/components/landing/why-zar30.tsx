@@ -1,24 +1,24 @@
 // ============================================
-// Zarnama - Why ZarNama Section
+// Zar30 - Why Zar30 Section
 // ============================================
 // مزایای کلیدی — اعتماد، امنیت، شفافیت
 // Server Component
 // ============================================
 
-import { WHY_ZARNAMA } from '@/lib/data/landing'
+import { WHY_ZAR30 } from '@/lib/data/landing'
 import { Section } from '@/components/shared/section'
 
-export function WhyZarnama() {
+export function WhyZar30() {
   return (
     <Section
-      id="why-zarnama"
+      id="why-zar30"
       className="bg-muted/30"
-      eyebrow="چرا زرنما"
+      eyebrow="چرا زرسی"
       title="اعتماد، با سند و مدرک"
-      description="در زرنما هر گرم طلا سند دارد — نه شعار، بلکه معماری قابل حسابرسی."
+      description="در زرسی هر گرم طلا سند دارد — نه شعار، بلکه معماری قابل حسابرسی."
     >
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {WHY_ZARNAMA.map((item, index) => (
+        {WHY_ZAR30.map((item, index) => (
           <div
             key={item.title}
             className="border-border/60 bg-card relative overflow-hidden rounded-2xl border p-6"

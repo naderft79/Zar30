@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Contact Page
+// Zar30 - Contact Page
 // ============================================
 
 import type { Metadata } from 'next'
@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 
 export const metadata: Metadata = {
   title: 'تماس با ما',
-  description: 'راه‌های ارتباط با پشتیبانی زرنما — تیکت، ایمیل و تماس تلفنی.',
+  description: 'راه‌های ارتباط با پشتیبانی زرسی — تیکت، ایمیل و تماس تلفنی.',
   alternates: { canonical: '/contact' },
 }
 
@@ -26,8 +26,8 @@ const CHANNELS = [
     icon: Mail,
     title: 'ایمیل',
     description: 'برای سوالات عمومی و همکاری',
-    value: 'support@zarnama.ir',
-    href: 'mailto:support@zarnama.ir',
+    value: 'support@zar30.com',
+    href: 'mailto:support@zar30.com',
   },
   {
     icon: Phone,
@@ -46,7 +46,7 @@ export default function ContactPage() {
         eyebrow="تماس با ما"
         titleAs="h1"
         title="در کنار شما هستیم"
-        description="تیم پشتیبانی زرنما آماده پاسخگویی به سوالات شماست"
+        description="تیم پشتیبانی زرسی آماده پاسخگویی به سوالات شماست"
       >
         <div className="grid gap-5 sm:grid-cols-3">
           {CHANNELS.map((ch) => (
@@ -78,7 +78,7 @@ export default function ContactPage() {
         <Card className="border-border/60">
           <CardContent className="p-6 sm:p-8">
             {/* فرم ساده — backend در Phase تیکتینگ متصل می شود */}
-            <form className="space-y-5" action="mailto:support@zarnama.ir" method="get">
+            <form className="space-y-5" action="mailto:support@zar30.com" method="get">
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <label

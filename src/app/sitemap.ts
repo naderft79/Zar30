@@ -1,12 +1,12 @@
 // ============================================
-// Zarnama - Sitemap
+// Zar30 - Sitemap
 // ============================================
 // نقشه سایت — صفحات عمومی قابل ایندکس
 // ============================================
 
 import type { MetadataRoute } from 'next'
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://zarnama.ir'
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://zar30.com'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = ['', '/about', '/security', '/faq', '/contact', '/blog', '/terms', '/privacy']

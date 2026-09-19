@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 // ============================================
-// Zarnama - Capacitor Configuration
+// Zar30 - Capacitor Configuration
 // ============================================
 // Mobile Target: Android + iOS (V2)
 // Build: BUILD_TARGET=mobile pnpm build → out/
@@ -9,8 +9,8 @@ import type { CapacitorConfig } from '@capacitor/cli'
 // ============================================
 
 const config: CapacitorConfig = {
-  appId: 'ir.zarnama.app',
-  appName: 'زرنما',
+  appId: 'com.zar30.app',
+  appName: 'زرسی',
   webDir: 'out',
   // در development به dev server اشاره می‌کند
   server: {

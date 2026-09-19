@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Landing Footer
+// Zar30 - Landing Footer
 // ============================================
 // فوتر عمومی: ناوبری + تماس + حقوقی + شبکه‌های اجتماعی
 // Server Component
@@ -11,9 +11,9 @@ import { FOOTER_LINKS, TRUST_BADGES } from '@/lib/data/landing'
 import { Logo } from '@/components/shared/logo'
 
 const SOCIAL_LINKS = [
-  { href: 'https://instagram.com/zarnama', label: 'اینستاگرام', icon: Instagram },
-  { href: 'https://t.me/zarnama', label: 'تلگرام', icon: Send },
-  { href: 'https://linkedin.com/company/zarnama', label: 'لینکدین', icon: Linkedin },
+  { href: 'https://instagram.com/zar30', label: 'اینستاگرام', icon: Instagram },
+  { href: 'https://t.me/zar30', label: 'تلگرام', icon: Send },
+  { href: 'https://linkedin.com/company/zar30', label: 'لینکدین', icon: Linkedin },
 ]
 
 export function Footer() {
@@ -26,7 +26,7 @@ export function Footer() {
           <div className="lg:col-span-4">
             <Logo size="lg" />
             <p className="text-cream/70 mt-4 max-w-xs text-sm leading-relaxed">
-              زرنما، پلتفرم خرید، فروش و سرمایه‌گذاری طلای آب‌شده ۱۸ عیار — با شفافیت کامل و پشتوانه
+              زرسی، پلتفرم خرید، فروش و سرمایه‌گذاری طلای آب‌شده ۱۸ عیار — با شفافیت کامل و پشتوانه
               طلای فیزیکی.
             </p>
             {/* نشان‌های اعتماد */}
@@ -67,11 +67,11 @@ export function Footer() {
         <div className="border-cream/10 mt-12 flex flex-col gap-4 border-t pt-8 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
             <a
-              href="mailto:support@zarnama.ir"
+              href="mailto:support@zar30.com"
               className="text-cream/70 hover:text-gold inline-flex items-center gap-2 text-sm transition-colors"
             >
               <Mail className="size-4" />
-              support@zarnama.ir
+              support@zar30.com
             </a>
             <a
               href="tel:+982100000000"
@@ -106,7 +106,7 @@ export function Footer() {
         {/* کپی‌رایت */}
         <div className="border-cream/10 mt-8 border-t pt-6">
           <p className="text-cream/50 text-center text-xs leading-relaxed">
-            © {new Date().getFullYear()} زرنما — تمامی حقوق محفوظ است.
+            © {new Date().getFullYear()} زرسی — تمامی حقوق محفوظ است.
             <br className="sm:hidden" />
             <span className="mx-2 hidden sm:inline">•</span>
             سرمایه‌گذاری در طلا همراه با ریسک است. عملکرد گذشته تضمینی برای آینده نیست.

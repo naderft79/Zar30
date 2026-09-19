@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Tooltip Component (shadcn/radix)
+// Zar30 - Tooltip Component (shadcn/radix)
 // ============================================
 'use client'
 

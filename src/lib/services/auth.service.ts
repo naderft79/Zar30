@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Auth Service (Phase 2)
+// Zar30 - Auth Service (Phase 2)
 // ============================================
 // منطق کسب‌وکار احراز هویت — Registration, Login, OTP, Password,
 // Session Management, Brute Force Protection, Audit

@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - POST /api/v1/auth/otp/send
+// Zar30 - POST /api/v1/auth/otp/send
 // ============================================
 
 import { ok, withErrorHandler } from '@/lib/api/response'

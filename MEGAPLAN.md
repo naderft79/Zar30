@@ -1,4 +1,4 @@
-# MEGAPLAN — پلتفرم طلای آبشده زرنما
+# MEGAPLAN — پلتفرم طلای آبشده زرسی
 
 > سند جامع معماری و اجرای پروژه — نسخه 1.1 (اصلاح معماری — Double-Entry Ledger + دو Target Web/Mobile + نسخه‌های جدید)
 > نقش‌های هم‌زمان: CTO, Product Manager, UX/UI Designer, Frontend/Backend/Database/DevOps/Security/Mobile/QA/FinTech Architect, Business Analyst, SEO/Performance Engineer
@@ -40,7 +40,7 @@
 
 ## بخش ۱ — Executive Summary
 
-«زرنما» یک پلتفرم FinTech برای خرید، فروش و سرمایه‌گذاری روی طلای آب‌شده ۱۸ عیار است. کاربر می‌تواند با هر مبلغی (حتی یک میلی‌گرم) طلا بخرد، بفروشد، در طرح‌های سوددهی سرمایه‌گذاری کند، خرید قسطی انجام دهد و در صورت رسیدن به حدنصاب، طلا را به‌صورت فیزیکی تحویل بگیرد.
+«زرسی» یک پلتفرم FinTech برای خرید، فروش و سرمایه‌گذاری روی طلای آب‌شده ۱۸ عیار است. کاربر می‌تواند با هر مبلغی (حتی یک میلی‌گرم) طلا بخرد، بفروشد، در طرح‌های سوددهی سرمایه‌گذاری کند، خرید قسطی انجام دهد و در صورت رسیدن به حدنصاب، طلا را به‌صورت فیزیکی تحویل بگیرد.
 
 **مزیت رقابتی**: تجربه پریمیوم، شفافیت کامل، Ledger قابل حسابرسی، معماری مقیاس‌پذیر، پشتیبانی کامل موبایل (PWA + Android native-ready).
 
@@ -56,7 +56,7 @@
 
 ## بخش ۲ — Product Vision
 
-**چشم‌انداز**: زرنما ساده‌ترین، امن‌ترین و شفاف‌ترین راه برای پس‌انداز و سرمایه‌گذاری روی طلا در ایران باشد.
+**چشم‌انداز**: زرسی ساده‌ترین، امن‌ترین و شفاف‌ترین راه برای پس‌انداز و سرمایه‌گذاری روی طلا در ایران باشد.
 
 **مأموریت**: حذف واسطه‌های سنتی، اجرت ساخت و مالیات، و امکان سرمایه‌گذاری با هر مبلغ، ۲۴ ساعته، با شفافیت کامل Ledger.
 
@@ -85,7 +85,7 @@
 - اپ iOS Native (فقط PWA)
 - صرافی ارز دیجیتال
 - وام ریالی روی طلا (V2)
-- کارت بانکی اختصاصی زرنما (V2)
+- کارت بانکی اختصاصی زرسی (V2)
 - بازار ثانویه طلا (V2)
 - API عمومی برای توسعه‌دهندگان (V2)
 
@@ -151,7 +151,7 @@
 
 ### P5: ادمین پلتفرم
 
-- کارمند زرنما
+- کارمند زرسی
 - هدف: مدیریت کاربران، معاملات، محتوا
 - نیاز: پنل کامل، RBAC، گزارش
 
@@ -315,7 +315,7 @@
 ### Information Architecture
 
 ```
-زرنما
+زرسی
 ├── لندینگ (عمومی)
 │   ├── هیرو، امکانات، قیمت، ماشین حساب، FAQ، وبلاگ، تماس
 ├── احراز هویت
@@ -994,7 +994,7 @@ Shared Codebase (src/)
 ## بخش ۱۹ — Referral Architecture
 
 - کد دعوت: ۸ حرف (base32) auto-generated، unique
-- لینک: `https://zarnama.ir/r/{code}` → redirect به لندینگ با cookie referral
+- لینک: `https://zar30.com/r/{code}` → redirect به لندینگ با cookie referral
 - در ثبت‌نام: اگر cookie → referredById ثبت
 - شرط فعال‌سازی: referredId سطح KYC ≥ ۲ + اولین معامله ≥ threshold
 - پاداش: قابل تنظیم (طلا یا ریال) به دعوت‌کننده (و optionally به referred)
@@ -1136,7 +1136,7 @@ Shared Codebase (src/)
 - `capacitor.config.ts`
 - Plugins: Camera (KYC), Push (FCM), Share, Haptics, App, Network, Preferences (secure storage)
 - Build: build جدا از Web → `npx cap sync` → Android Studio
-- Deep links: `zarnama://` + universal links
+- Deep links: `zar30://` + universal links
 
 ### iOS PWA
 
@@ -1333,7 +1333,7 @@ Phase 0 → 2 → 3 → 5 → 6 → 7 → MVP
 ## بخش ۳۰ — Project Structure
 
 ```
-zarnama/
+zar30/
 ├── src/
 │   ├── app/
 │   │   ├── (landing)/            # لندینگ پیج
@@ -1505,7 +1505,7 @@ zarnama/
 2. Header با ناوبری + دکمه ورود/ثبت‌نام (responsive)
 3. Hero با شعار + CTA + تصویر پریمیوم
 4. Features (۶ کارت: خرید، فروش، قسطی، سوددهی، تحویل فیزیکی، انتقال)
-5. WhyZarNama (مزایا با آیکون)
+5. WhyZar30 (مزایا با آیکون)
 6. PriceWidget (fetch `/api/price` + polling ۶۰s)
 7. GoldCalculator (مبلغ ↔ گرم با قیمت لحظه‌ای)
 8. Stats (کاربران، حجم، شفافیت)
@@ -1970,7 +1970,7 @@ zarnama/
 - [ ] 1.2 Header
 - [ ] 1.3 Hero
 - [ ] 1.4 Features
-- [ ] 1.5 WhyZarNama
+- [ ] 1.5 WhyZar30
 - [ ] 1.6 PriceWidget
 - [ ] 1.7 GoldCalculator
 - [ ] 1.8 Stats
@@ -2344,7 +2344,7 @@ zarnama/
 ## بخش ۳۶ — Future Expansion (پس از V1)
 
 - وام ریالی با پشتوانه طلا
-- کارت بانکی زرنما
+- کارت بانکی زرسی
 - بازار ثانویه OTC
 - صندوق‌های سرمایه‌گذاری
 - API عمومی
@@ -2376,7 +2376,7 @@ zarnama/
 16. Caddy به‌عنوان reverse proxy (auto TLS)
 17. Sentry برای error tracking
 18. PostHog self-hosted برای analytics
-19. دامنه `zarnama.ir` (قابل تغییر)
+19. دامنه `zar30.com` (قابل تغییر)
 20. فونت Vazirmatn (استاندارد فارسی)
 
 ---

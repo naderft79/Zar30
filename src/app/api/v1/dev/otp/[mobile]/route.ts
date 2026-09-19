@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - GET /api/v1/dev/otp/[mobile]
+// Zar30 - GET /api/v1/dev/otp/[mobile]
 // ============================================
 // Development Only — خواندن آخرین OTP از Redis برای تست E2E
 // در Production هرگز 404 می‌شود

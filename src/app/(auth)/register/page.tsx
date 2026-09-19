@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Register Page
+// Zar30 - Register Page
 // ============================================
 
 import type { Metadata } from 'next'
@@ -9,7 +9,7 @@ import { RegisterForm } from '@/components/auth/register-form'
 
 export const metadata: Metadata = {
   title: 'ثبت‌نام',
-  description: 'ایجاد حساب کاربری در زرنما — خرید و فروش طلای آب‌شده.',
+  description: 'ایجاد حساب کاربری در زرسی — خرید و فروش طلای آب‌شده.',
   robots: { index: false },
 }
 
@@ -17,7 +17,7 @@ export default function RegisterPage() {
   return (
     <Card className="border-border/60 w-full max-w-sm">
       <CardHeader className="text-center">
-        <h1 className="text-xl leading-none font-semibold">ثبت‌نام در زرنما</h1>
+        <h1 className="text-xl leading-none font-semibold">ثبت‌نام در زرسی</h1>
         <p className="text-muted-foreground text-sm">با شماره موبایل شروع کنید</p>
       </CardHeader>
       <CardContent>

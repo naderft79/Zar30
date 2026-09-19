@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
-  <circle cx="24" cy="24" r="22" fill="url(#zarnama-gold)"/>
+  <circle cx="24" cy="24" r="22" fill="url(#zar30-gold)"/>
   <circle cx="24" cy="24" r="18" fill="none" stroke="#0f1a33" stroke-width="1.5" opacity="0.35"/>
   <path d="M15 16h18l-11.5 16H34" fill="none" stroke="#0f1a33" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
   <defs>
-    <linearGradient id="zarnama-gold" x1="8" y1="6" x2="40" y2="42" gradientUnits="userSpaceOnUse">
+    <linearGradient id="zar30-gold" x1="8" y1="6" x2="40" y2="42" gradientUnits="userSpaceOnUse">
       <stop stop-color="#e0c25a"/>
       <stop offset="0.5" stop-color="#c9a227"/>
       <stop offset="1" stop-color="#a0801c"/>

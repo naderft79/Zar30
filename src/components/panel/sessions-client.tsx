@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Sessions Management (Phase 3.1 — Premium Redesign)
+// Zar30 - Sessions Management (Phase 3.1 — Premium Redesign)
 // ============================================
 // نشست‌های فعال — device/browser/IP/current + revoke + logout others
 // ============================================

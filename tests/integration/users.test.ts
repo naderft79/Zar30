@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - User Service Integration Tests (Phase 3)
+// Zar30 - User Service Integration Tests (Phase 3)
 // ============================================
 // Profile / Sessions / Notifications روی PostgreSQL واقعی
 // تمرکز: User Isolation — هیچ کاربری به داده کاربر دیگر دسترسی ندارد

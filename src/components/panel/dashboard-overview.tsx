@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Dashboard Overview (Phase 3.1 — Premium Redesign)
+// Zar30 - Dashboard Overview (Phase 3.1 — Premium Redesign)
 // ============================================
 // سلسله‌مراتب: Greeting → خلاصه مالی → Quick Actions → دارایی →
 // بازار → فعالیت اخیر → قسطی → امنیت/KYC → معرفی

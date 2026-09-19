@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - DELETE /api/v1/auth/sessions/[id]
+// Zar30 - DELETE /api/v1/auth/sessions/[id]
 // ============================================
 // Revoke یک Session — فقط Sessionهای خود کاربر (user isolation)
 // ============================================

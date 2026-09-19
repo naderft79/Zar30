@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Prisma Client Singleton (Prisma 7)
+// Zar30 - Prisma Client Singleton (Prisma 7)
 // ============================================
 // Prisma 7 از Driver Adapters استفاده می کند
 // PostgreSQL adapter: @prisma/adapter-pg

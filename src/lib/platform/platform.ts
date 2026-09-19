@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Platform Detection & Abstraction
+// Zar30 - Platform Detection & Abstraction
 // ============================================
 // تشخیص Web / Mobile (Capacitor) و ارائه API مشترک
 // Shared Codebase → Web Target + Mobile Target
@@ -33,7 +33,7 @@ export const isWeb = (): boolean => !isNative()
 // Web: فقط برای داده‌های غیرحساس (tokens در httpOnly cookie هستند)
 // Mobile: Capacitor Preferences (Keychain/Keystore در native)
 
-const TOKEN_KEY = 'zarnama_refresh_token'
+const TOKEN_KEY = 'zar30_refresh_token'
 
 // ذخیره refresh token (فقط برای Mobile — Web از httpOnly cookie استفاده می‌کند)
 export async function saveRefreshToken(token: string): Promise<void> {

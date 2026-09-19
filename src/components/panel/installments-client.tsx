@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Installments Client — Preview (بدون Financial Logic)
+// Zar30 - Installments Client — Preview (بدون Financial Logic)
 // ============================================
 
 'use client'

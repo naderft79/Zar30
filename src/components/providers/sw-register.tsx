@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Service Worker Registration
+// Zar30 - Service Worker Registration
 // ============================================
 // ثبت SW در Web target — در Mobile (Capacitor) غیرفعال
 // ============================================

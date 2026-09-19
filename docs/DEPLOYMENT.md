@@ -1,4 +1,4 @@
-# Zarnama — Deployment Documentation
+# Zar30 — Deployment Documentation
 
 ## Infrastructure V1 (ساده)
 

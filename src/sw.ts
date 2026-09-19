@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 // ============================================
-// Zarnama - Service Worker (Serwist v9)
+// Zar30 - Service Worker (Serwist v9)
 // ============================================
 // این فایل Service Worker را برای PWA می سازد
 // فقط محتوای غیرمالی cache می شود

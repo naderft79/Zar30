@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Utils Test
+// Zar30 - Utils Test
 // ============================================
 import { describe, it, expect } from 'vitest'
 import { toPersianDigits, formatRial, formatGold, generateReferralCode } from '@/lib/utils/utils'

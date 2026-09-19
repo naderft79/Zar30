@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - API Request Helpers (Phase 2)
+// Zar30 - API Request Helpers (Phase 2)
 // ============================================
 
 import type { ZodType } from 'zod'

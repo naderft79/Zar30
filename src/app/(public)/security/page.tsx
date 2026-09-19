@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Security Page
+// Zar30 - Security Page
 // ============================================
 
 import type { Metadata } from 'next'
@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button'
 export const metadata: Metadata = {
   title: 'امنیت',
   description:
-    'امنیت در زرنما بخشی از معماری است: احراز هویت چندسطحی، رمزنگاری، دفتر کل دوطرفه و زیرساخت قابل حسابرسی.',
+    'امنیت در زرسی بخشی از معماری است: احراز هویت چندسطحی، رمزنگاری، دفتر کل دوطرفه و زیرساخت قابل حسابرسی.',
   alternates: { canonical: '/security' },
 }
 
@@ -80,7 +80,7 @@ export default function SecurityPage() {
         containerSize="md"
         eyebrow="امنیت"
         titleAs="h1"
-        title="امنیت در زرنما"
+        title="امنیت در زرسی"
         description="امنیت برای ما یک قابلیت نیست — بخشی از معماری است."
       >
         <div className="mx-auto max-w-3xl text-center">
@@ -88,7 +88,7 @@ export default function SecurityPage() {
             <ShieldCheck className="text-gold size-8" />
           </div>
           <p className="text-muted-foreground leading-relaxed">
-            زرنما از ابتدا با استانداردهای FinTech طراحی شده است. در ادامه لایه‌های امنیتی پلتفرم را
+            زرسی از ابتدا با استانداردهای FinTech طراحی شده است. در ادامه لایه‌های امنیتی پلتفرم را
             می‌بینید — از احراز هویت کاربر تا یکپارچگی دفتر کل مالی.
           </p>
         </div>

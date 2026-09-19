@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Middleware Foundation
+// Zar30 - Middleware Foundation
 // ============================================
 // Authentication + Rate Limiting + Security Headers
 // ============================================
@@ -40,9 +40,9 @@ export function proxy(request: NextRequest) {
     // بررسی وجود access token در cookie یا Authorization header
     // برای صفحات، refresh token هم کافی است — client آن را به access جدید تبدیل می‌کند
     const accessToken =
-      request.cookies.get('zarnama_access')?.value ||
+      request.cookies.get('zar30_access')?.value ||
       request.headers.get('authorization')?.replace('Bearer ', '')
-    const refreshToken = request.cookies.get('zarnama_refresh')?.value
+    const refreshToken = request.cookies.get('zar30_refresh')?.value
 
     if (!accessToken && !(refreshToken && !pathname.startsWith('/api'))) {
       // اگر API request است → 401

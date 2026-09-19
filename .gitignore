@@ -41,7 +41,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# zarnama specific
+# zar30 specific
 .env.local
 .env.production
 .env.staging

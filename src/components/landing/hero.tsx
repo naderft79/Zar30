@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Hero Section
+// Zar30 - Hero Section
 // ============================================
 // بخش اصلی Landing — headline + CTA + visual طلایی
 // Visual با SVG ساخته شده (بدون تصویر stock)
@@ -52,7 +52,7 @@ export function Hero() {
             </h1>
 
             <p className="text-cream/70 mx-auto mt-6 max-w-xl text-base leading-relaxed sm:text-lg lg:mx-0">
-              زرنما امن‌ترین راه برای خرید، فروش و نگهداری طلای ۱۸ عیار است. با هر مبلغی شروع کنید —
+              زرسی امن‌ترین راه برای خرید، فروش و نگهداری طلای ۱۸ عیار است. با هر مبلغی شروع کنید —
               بدون اجرت ساخت، بدون واسطه، با شفافیت کامل.
             </p>
 
@@ -151,7 +151,7 @@ function HeroVisual() {
           <polygon points="40,60 190,60 190,110 40,110" fill="url(#goldBar)" />
           <polygon points="190,60 170,20 170,70 190,110" fill="url(#goldBarSide)" />
           <text x="115" y="95" textAnchor="middle" fontSize="16" fontWeight="bold" fill="#4a3a08">
-            ZARNAMA
+            ZAR30
           </text>
         </g>
 

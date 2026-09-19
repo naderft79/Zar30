@@ -1,4 +1,4 @@
-# Zarnama — API Documentation
+# Zar30 — API Documentation
 
 > Base URL: `/api/v1` — همه پاسخ‌ها JSON با ساختار `{ data }` یا `{ error }` (RFC 7807)
 
@@ -6,7 +6,7 @@
 
 ### Session Model
 
-- **Web**: httpOnly cookies — `zarnama_at` (access، ۱۵ دقیقه) و `zarnama_rt` (refresh، ۳۰ روز)
+- **Web**: httpOnly cookies — `zar30_at` (access، ۱۵ دقیقه) و `zar30_rt` (refresh، ۳۰ روز)
 - **Mobile**: همان API — access token در `Authorization: Bearer` و refresh token در body ارسال می‌شود
 - هر access token حاوی `sid` (شناسه Session) است → revoke شدن نشست بلافاصله اثر می‌کند
 

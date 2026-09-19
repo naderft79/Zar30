@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Auth Guard (Phase 2)
+// Zar30 - Auth Guard (Phase 2)
 // ============================================
 // Authorization server-side — هر endpoint حساس از این استفاده می‌کند
 // Web (cookie) و Mobile (Bearer) هر دو پشتیبانی می‌شوند

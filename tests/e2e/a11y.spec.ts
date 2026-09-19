@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Accessibility Smoke Tests (Phase 3.1)
+// Zar30 - Accessibility Smoke Tests (Phase 3.1)
 // ============================================
 // بررسی‌های پایه دسترس پذیری روی صفحات کلیدی:
 // landmarkها، سلسله مراتب heading، نام‌های در دسترس، label فرم‌ها، focus

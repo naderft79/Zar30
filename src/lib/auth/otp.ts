@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - OTP Security (Phase 2)
+// Zar30 - OTP Security (Phase 2)
 // ============================================
 // Server-generated / Expiring / Attempt-limited /
 // Rate-limited (در لایه API) / Replay-resistant / Hashed (بدون plaintext)

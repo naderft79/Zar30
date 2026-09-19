@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Download App Section
+// Zar30 - Download App Section
 // ============================================
 // دانلود اپلیکیشن — PWA install + QR code
 // Server Component
@@ -15,9 +15,9 @@ export function DownloadApp() {
   return (
     <Section
       id="download"
-      eyebrow="اپلیکیشن زرنما"
-      title="زرنما، همیشه همراه شما"
-      description="اپلیکیشن وب پیشرو (PWA) زرنما را روی گوشی خود نصب کنید — بدون نیاز به فروشگاه."
+      eyebrow="اپلیکیشن زرسی"
+      title="زرسی، همیشه همراه شما"
+      description="اپلیکیشن وب پیشرو (PWA) زرسی را روی گوشی خود نصب کنید — بدون نیاز به فروشگاه."
     >
       <div className="mx-auto grid max-w-4xl items-center gap-8 lg:grid-cols-2">
         {/* کارت نصب PWA */}
@@ -35,7 +35,7 @@ export function DownloadApp() {
                 <ol className="text-muted-foreground mt-3 space-y-1.5 text-sm">
                   <li>۱. سایت را در مرورگر موبایل باز کنید</li>
                   <li>۲. روی «افزودن به صفحه اصلی» بزنید</li>
-                  <li>۳. زرنما مثل یک اپلیکیشن اجرا می‌شود</li>
+                  <li>۳. زرسی مثل یک اپلیکیشن اجرا می‌شود</li>
                 </ol>
               </div>
             </div>
@@ -57,7 +57,7 @@ export function DownloadApp() {
                   </Badge>
                 </div>
                 <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
-                  اپلیکیشن اندروید و iOS زرنما به‌زودی عرضه می‌شود. با ثبت‌نام، از انتشار آن باخبر
+                  اپلیکیشن اندروید و iOS زرسی به‌زودی عرضه می‌شود. با ثبت‌نام، از انتشار آن باخبر
                   شوید.
                 </p>
                 <div className="text-muted-foreground mt-3 flex items-center gap-2 text-xs">
@@ -77,7 +77,7 @@ export function DownloadApp() {
             <Logo size="lg" showText={false} />
           </div>
           <div className="text-start">
-            <p className="text-foreground text-sm font-semibold">zarnama.ir</p>
+            <p className="text-foreground text-sm font-semibold">zar30.com</p>
             <p className="text-muted-foreground text-xs">همین حالا در مرورگر باز کنید</p>
           </div>
         </div>

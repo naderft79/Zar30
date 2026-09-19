@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - User Panel E2E Tests (Phase 3.1)
+// Zar30 - User Panel E2E Tests (Phase 3.1)
 // ============================================
 // Critical: Login → Dashboard → Profile → Security → Sessions → Logout
 //           Unauthorized → Protected Route → Login → callbackUrl → Dashboard

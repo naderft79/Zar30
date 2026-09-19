@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - User Panel Shell (Phase 3.1)
+// Zar30 - User Panel Shell (Phase 3.1)
 // ============================================
 // Auth gate + navigation chrome برای همه صفحات /dashboard/*
 // Desktop: Premium navy sidebar — Mobile: bottom nav (۵ آیتم قرارداد)
@@ -148,7 +148,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
         <aside className="bg-navy-950 fixed inset-y-0 right-0 z-30 hidden w-64 flex-col md:flex">
           {/* لوگو */}
           <div className="border-navy-700/50 flex h-16 items-center border-b px-5">
-            <Link href="/" aria-label="زرنما — صفحه اصلی">
+            <Link href="/" aria-label="زرسی — صفحه اصلی">
               <Logo size="md" textClassName="text-cream-100" />
             </Link>
           </div>
@@ -220,7 +220,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
 
         {/* ============ Header — موبایل + دسکتاپ ============ */}
         <header className="border-border/60 bg-card/80 sticky top-0 z-(--z-sticky) flex h-14 items-center justify-between border-b px-4 backdrop-blur-sm md:pr-68 md:pl-8">
-          <Link href="/" className="md:hidden" aria-label="زرنما — صفحه اصلی">
+          <Link href="/" className="md:hidden" aria-label="زرسی — صفحه اصلی">
             <Logo size="sm" />
           </Link>
           {/* دسکتاپ — سمت راست header فضای خالی برای breadcrumb آینده */}

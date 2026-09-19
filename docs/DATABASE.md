@@ -1,4 +1,4 @@
-# Zarnama — Database Documentation
+# Zar30 — Database Documentation
 
 > PostgreSQL 18.x + Prisma 7.10.0 + Double-Entry Ledger
 

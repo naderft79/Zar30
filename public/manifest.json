@@ -1,8 +1,8 @@
 {
-  "name": "زرنما - پلتفرم خرید و سرمایه‌گذاری طلای آب‌شده",
-  "short_name": "زرنما",
+  "name": "زرسی - پلتفرم خرید و سرمایه‌گذاری طلای آب‌شده",
+  "short_name": "زرسی",
   "description": "خرید، فروش و سرمایه‌گذاری روی طلای آب‌شده با شفافیت کامل",
-  "id": "ir.zarnama.app",
+  "id": "com.zar30.app",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

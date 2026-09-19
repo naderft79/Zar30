@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Landing E2E Tests
+// Zar30 - Landing E2E Tests
 // ============================================
 // Open Homepage → Navigate → Login → Register
 // + SEO + RTL + Responsive checks
@@ -16,7 +16,7 @@ test.describe('Landing Page', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'fa')
 
     // عنوان صفحه
-    await expect(page).toHaveTitle(/زرنما/)
+    await expect(page).toHaveTitle(/زرسی/)
 
     // هدر و Hero
     await expect(page.locator('header')).toBeVisible()
@@ -52,10 +52,10 @@ test.describe('Landing Page', () => {
 
   test('صفحات ورود و ثبت‌نام باز می‌شوند', async ({ page }) => {
     await page.goto('/login')
-    await expect(page.getByRole('heading', { name: 'ورود به زرنما' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'ورود به زرسی' })).toBeVisible()
 
     await page.goto('/register')
-    await expect(page.getByRole('heading', { name: 'ثبت‌نام در زرنما' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'ثبت‌نام در زرسی' })).toBeVisible()
   })
 
   test('SEO — metadata و canonical موجود است', async ({ page }) => {

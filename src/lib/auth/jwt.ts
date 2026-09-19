@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - JWT (jose) — Access + Refresh (Phase 2)
+// Zar30 - JWT (jose) — Access + Refresh (Phase 2)
 // ============================================
 // Web: httpOnly cookie — Mobile: Bearer header
 // هر دو به همان /api/v1/auth متصل‌اند (هم‌دامنه Auth)

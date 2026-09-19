@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Auth Cookies (Phase 2)
+// Zar30 - Auth Cookies (Phase 2)
 // ============================================
 // Web: httpOnly + Secure + SameSite=Lax
 // Mobile: tokens در body (Bearer) — cookie نادیده گرفته می‌شود
@@ -7,8 +7,8 @@
 
 import type { NextResponse } from 'next/server'
 
-export const ACCESS_COOKIE = 'zarnama_access'
-export const REFRESH_COOKIE = 'zarnama_refresh'
+export const ACCESS_COOKIE = 'zar30_access'
+export const REFRESH_COOKIE = 'zar30_refresh'
 
 const isProd = process.env.NODE_ENV === 'production'
 

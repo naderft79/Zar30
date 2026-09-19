@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Privacy Policy Page
+// Zar30 - Privacy Policy Page
 // ============================================
 
 import type { Metadata } from 'next'
@@ -7,7 +7,7 @@ import { Section } from '@/components/shared/section'
 
 export const metadata: Metadata = {
   title: 'حریم خصوصی',
-  description: 'سیاست حفظ حریم خصوصی و حفاظت از داده‌های کاربران زرنما.',
+  description: 'سیاست حفظ حریم خصوصی و حفاظت از داده‌های کاربران زرسی.',
   alternates: { canonical: '/privacy' },
 }
 

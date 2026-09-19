@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - User Service (Phase 3: User Panel)
+// Zar30 - User Service (Phase 3: User Panel)
 // ============================================
 // Profile / Sessions / Notifications / Security events
 // تمام عملیات فقط روی userId استخراج‌شده از token — isolation سرور

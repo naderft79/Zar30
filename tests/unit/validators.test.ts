@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Validators Test
+// Zar30 - Validators Test
 // ============================================
 import { describe, it, expect } from 'vitest'
 import { iranMobileSchema, passwordSchema, nationalCodeSchema } from '@/lib/validators/common'

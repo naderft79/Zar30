@@ -1,6 +1,10 @@
-# Zarnama — Execution Status
+# Zar30 — Execution Status
 
 > وضعیت اجرای پروژه — به‌روزرسانی شده در Phase 0 Final Gate (2026-09-18)
+
+## Global Rebrand (ADR-017) — دائمی
+
+**وضعیت:** ✅ DONE — هویت محصول از LEGACY «زرنما/Zarnama/zarnama.ir» به **زرسی / zar30 / zar30.com** مهاجرت کرد (۱۸۱ فایل + `.env` + Prisma Client regen). مرجع: `docs/rebranding/ZAR30-REBRAND-AUDIT.md` و `docs/architecture/ADR-ZAR30-GLOBAL-REBRANDING.md`. از این تاریخ نام برند برای همه Phaseها لازم‌الاجرا است.
 
 ## Phase 0: Setup & Infrastructure + PWA Spike
 
@@ -103,7 +107,7 @@
 | 1.2  | Design System: Container, Section (+titleAs), Logo, Accordion, Dialog, Tooltip                            | ✅    |
 | 1.3  | داده‌های Landing + Price Service Interface (Mock/Dev با برچسب Demo)                                       | ✅    |
 | 1.4  | Header + Mobile Menu (Dialog) + Footer                                                                    | ✅    |
-| 1.5  | بخش‌های Landing: Hero, Price, Features, WhyZarnama, HowItWorks, Stats                                     | ✅    |
+| 1.5  | بخش‌های Landing: Hero, Price, Features, WhyZar30, HowItWorks, Stats                                       | ✅    |
 | 1.6  | بخش‌های Landing: Calculator, Investment, Installment, Security, Physical, Referral, FAQ, CTA, DownloadApp | ✅    |
 | 1.7  | صفحات Public: about, security, faq, contact, blog, terms, privacy + auth placeholders                     | ✅    |
 | 1.8  | SEO: metadataBase, sitemap.xml, robots.txt, OG image, JSON-LD، canonical، h1 هر صفحه                      | ✅    |
@@ -344,11 +348,11 @@
 
 ## Permanent Design Language — ثبت قانون دائمی (2026-09-19)
 
-**ADR-016: Zarnama Navy Luxury Design Language** — از این تاریخ برای **تمام Phaseهای بعدی و همه platformها** (User Panel، Admin، Landing، PWA، Android/iOS) لازم‌الاجرا است.
+**ADR-016: Zar30 Navy Luxury Design Language** — از این تاریخ برای **تمام Phaseهای بعدی و همه platformها** (User Panel، Admin، Landing، PWA، Android/iOS) لازم‌الاجرا است.
 
 - امضای بصری: **«Luxury Private Banking for Gold»**
 - اولویت رنگ: **Navy → Primary** · **Gold → Luxury Accent** · **Cream → Supporting Accent** · Neutral → text/border
 - **Dark/Navy-First:** `:root` = navy، `<html class="dark">`؛ light فقط opt-in با `.light`
 - Token-based اجباری — hardcode رنگ/style در کامپوننت ممنوع؛ تغییر بنیادی فقط با ADR
-- Source of Truth: `src/app/globals.css` (tokens) + `/design-system` (preview) + `AGENTS.md › PERMANENT ZARNAMA DESIGN LANGUAGE`
+- Source of Truth: `src/app/globals.css` (tokens) + `/design-system` (preview) + `AGENTS.md › PERMANENT ZAR30 DESIGN LANGUAGE`
 - Anti-patterns: white/cream-first، neon crypto، excessive glass/glow، generic SaaS/Bootstrap look — ممنوع

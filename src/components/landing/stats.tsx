@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Stats Section
+// Zar30 - Stats Section
 // ============================================
 // نوار آمار — کاربران، طلا، تراکنش‌ها
 // Server Component
@@ -10,7 +10,7 @@ import { Container } from '@/components/shared/container'
 
 export function Stats() {
   return (
-    <section className="bg-navy-dark text-cream py-14" aria-label="آمار زرنما">
+    <section className="bg-navy-dark text-cream py-14" aria-label="آمار زرسی">
       <Container>
         <dl className="grid grid-cols-2 gap-8 lg:grid-cols-4">
           {STATS.map((stat) => (

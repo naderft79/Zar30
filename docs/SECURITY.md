@@ -1,4 +1,4 @@
-# Zarnama — Security Documentation
+# Zar30 — Security Documentation
 
 ## اصول امنیتی (Phase 0 Foundation)
 
@@ -70,10 +70,10 @@
 
 ### معماری Token
 
-| Token         | محل                                   | مدت      | نکته                                  |
-| ------------- | ------------------------------------- | -------- | ------------------------------------- |
-| Access (JWT)  | httpOnly cookie `zarnama_at` / Bearer | ۱۵ دقیقه | حاوی `sid` — بررسی نشست در هر request |
-| Refresh (JWT) | httpOnly cookie `zarnama_rt` / body   | ۳۰ روز   | rotation + reuse detection            |
+| Token         | محل                                 | مدت      | نکته                                  |
+| ------------- | ----------------------------------- | -------- | ------------------------------------- |
+| Access (JWT)  | httpOnly cookie `zar30_at` / Bearer | ۱۵ دقیقه | حاوی `sid` — بررسی نشست در هر request |
+| Refresh (JWT) | httpOnly cookie `zar30_rt` / body   | ۳۰ روز   | rotation + reuse detection            |
 
 - `sid` در access token → revoke شدن Session بلافاصله روی همه APIها اثر می‌کند (بررسی `revokedAt`/`expiresAt` در `requireAuth`)
 - Refresh token فقط hash آن در DB نگه داشته می‌شود (`refreshTokenHash`)

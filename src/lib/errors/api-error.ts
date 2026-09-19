@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - API Error Handling (RFC 7807)
+// Zar30 - API Error Handling (RFC 7807)
 // ============================================
 // خطاهای API بر اساس Problem Details استاندارد هستند
 // اطلاعات حساس هرگز به کلاینت بازگردانده نمی شود
@@ -28,36 +28,36 @@ export class ApiError extends Error {
     this.name = 'ApiError'
   }
 
-  static badRequest(detail: string, type = 'https://zarnama.ir/errors/bad-request') {
+  static badRequest(detail: string, type = 'https://zar30.com/errors/bad-request') {
     return new ApiError(400, 'Bad Request', detail, type)
   }
 
   static unauthorized(detail = 'Authentication required') {
-    return new ApiError(401, 'Unauthorized', detail, 'https://zarnama.ir/errors/unauthorized')
+    return new ApiError(401, 'Unauthorized', detail, 'https://zar30.com/errors/unauthorized')
   }
 
   static forbidden(detail = 'Insufficient permissions') {
-    return new ApiError(403, 'Forbidden', detail, 'https://zarnama.ir/errors/forbidden')
+    return new ApiError(403, 'Forbidden', detail, 'https://zar30.com/errors/forbidden')
   }
 
   static notFound(detail = 'Resource not found') {
-    return new ApiError(404, 'Not Found', detail, 'https://zarnama.ir/errors/not-found')
+    return new ApiError(404, 'Not Found', detail, 'https://zar30.com/errors/not-found')
   }
 
   static conflict(detail: string) {
-    return new ApiError(409, 'Conflict', detail, 'https://zarnama.ir/errors/conflict')
+    return new ApiError(409, 'Conflict', detail, 'https://zar30.com/errors/conflict')
   }
 
   static unprocessableEntity(detail: string) {
-    return new ApiError(422, 'Unprocessable Entity', detail, 'https://zarnama.ir/errors/validation')
+    return new ApiError(422, 'Unprocessable Entity', detail, 'https://zar30.com/errors/validation')
   }
 
   static tooManyRequests(detail = 'Rate limit exceeded') {
-    return new ApiError(429, 'Too Many Requests', detail, 'https://zarnama.ir/errors/rate-limit')
+    return new ApiError(429, 'Too Many Requests', detail, 'https://zar30.com/errors/rate-limit')
   }
 
   static internal(detail = 'Internal server error') {
-    return new ApiError(500, 'Internal Server Error', detail, 'https://zarnama.ir/errors/internal')
+    return new ApiError(500, 'Internal Server Error', detail, 'https://zar30.com/errors/internal')
   }
 }
 
@@ -74,7 +74,7 @@ export function errorResponse(error: ApiError | Error) {
   }
   // خطاهای ناشناخته — جزئیات داخلی را نشت نمی دهیم
   return {
-    type: 'https://zarnama.ir/errors/internal',
+    type: 'https://zar30.com/errors/internal',
     title: 'Internal Server Error',
     status: 500,
     detail: 'An unexpected error occurred',

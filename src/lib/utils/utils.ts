@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Utility Functions
+// Zar30 - Utility Functions
 // ============================================
 
 import { clsx, type ClassValue } from 'clsx'

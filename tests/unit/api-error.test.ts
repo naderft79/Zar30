@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - API Error Test
+// Zar30 - API Error Test
 // ============================================
 import { describe, it, expect } from 'vitest'
 import { ApiError, errorResponse } from '@/lib/errors/api-error'

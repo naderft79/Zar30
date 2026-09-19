@@ -2,7 +2,7 @@ import type { NextConfig } from 'next'
 import { withSerwist } from '@serwist/turbopack'
 
 // ============================================
-// Zarnama - Next.js Configuration
+// Zar30 - Next.js Configuration
 // ============================================
 // دو Target: Web (SSR) + Mobile (Capacitor static export)
 // BUILD_TARGET=mobile → static export برای Capacitor

@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Physical Gold Delivery Section
+// Zar30 - Physical Gold Delivery Section
 // ============================================
 // معرفی تحویل فیزیکی طلا — فقط Presentation
 // Order Flow واقعی در Phaseهای بعدی

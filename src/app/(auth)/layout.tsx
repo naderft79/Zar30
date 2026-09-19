@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Auth Layout
+// Zar30 - Auth Layout
 // ============================================
 // چیدمان صفحات احراز هویت — بدون هدر/فوتر عمومی
 // ============================================
@@ -11,7 +11,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="bg-background flex min-h-screen flex-col">
       <header className="border-border/50 flex h-16 items-center justify-center border-b">
-        <Link href="/" aria-label="زرنما — صفحه اصلی">
+        <Link href="/" aria-label="زرسی — صفحه اصلی">
           <Logo size="md" />
         </Link>
       </header>

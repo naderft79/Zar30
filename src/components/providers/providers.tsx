@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Application Providers
+// Zar30 - Application Providers
 // ============================================
 // TanStack Query + Theme + Toast
 // ============================================

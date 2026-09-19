@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Session Management (Phase 2)
+// Zar30 - Session Management (Phase 2)
 // ============================================
 // Refresh rotation + Reuse detection + Revocation
 // Session hash = sha256(refresh token) — token خام هرگز در DB ذخیره نمی‌شود

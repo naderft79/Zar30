@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Database Seed (Development Only)
+// Zar30 - Database Seed (Development Only)
 // ============================================
 // این فایل فقط برای محیط development استفاده می‌شود
 // Seed data باید واضحاً از production data جدا باشد
@@ -255,14 +255,14 @@ async function main() {
     {
       key: 'otp',
       channels: ['SMS'],
-      titleTemplate: 'کد تایید زرنما',
+      titleTemplate: 'کد تایید زرسی',
       bodyTemplate: 'کد تایید شما: {code}',
       variables: { code: '' },
     },
     {
       key: 'login_alert',
       channels: ['PUSH', 'SMS'],
-      titleTemplate: 'ورود به حساب زرنما',
+      titleTemplate: 'ورود به حساب زرسی',
       bodyTemplate: 'ورود جدید از {device} در {time}',
       variables: { device: '', time: '' },
     },
@@ -386,7 +386,7 @@ async function main() {
       passwordHash: testPassword,
       kycLevel: 'LEVEL_1',
       mobileVerifiedAt: new Date(),
-      referralCode: 'ZARNAMA1',
+      referralCode: 'ZAR301',
     },
   })
 

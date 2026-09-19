@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - OTP Verification Form
+// Zar30 - OTP Verification Form
 // ============================================
 // Client Component — اتصال به /api/v1/auth/otp/verify + resend
 // ============================================

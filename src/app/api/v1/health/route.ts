@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Health Check Endpoint
+// Zar30 - Health Check Endpoint
 // ============================================
 // GET /api/v1/health
 // Liveness + Readiness checks

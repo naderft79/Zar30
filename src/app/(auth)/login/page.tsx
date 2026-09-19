@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Login Page
+// Zar30 - Login Page
 // ============================================
 
 import type { Metadata } from 'next'
@@ -10,7 +10,7 @@ import { LoginForm } from '@/components/auth/login-form'
 
 export const metadata: Metadata = {
   title: 'ورود',
-  description: 'ورود به حساب کاربری زرنما.',
+  description: 'ورود به حساب کاربری زرسی.',
   robots: { index: false },
 }
 
@@ -18,7 +18,7 @@ export default function LoginPage() {
   return (
     <Card className="border-border/60 w-full max-w-sm">
       <CardHeader className="text-center">
-        <h1 className="text-xl leading-none font-semibold">ورود به زرنما</h1>
+        <h1 className="text-xl leading-none font-semibold">ورود به زرسی</h1>
         <p className="text-muted-foreground text-sm">با موبایل و رمز عبور وارد شوید</p>
       </CardHeader>
       <CardContent>

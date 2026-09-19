@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Dialog (Modal) Component (shadcn/radix)
+// Zar30 - Dialog (Modal) Component (shadcn/radix)
 // ============================================
 'use client'
 

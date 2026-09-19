@@ -20,11 +20,11 @@
 
 ## ۲. Infrastructure
 
-| #       | مورد          | دستور بررسی                                | معیار PASS                        | نتیجه واقعی                                                                | وضعیت   |
-| ------- | ------------- | ------------------------------------------ | --------------------------------- | -------------------------------------------------------------------------- | ------- |
-| INFRA-1 | PostgreSQL 18 | `docker compose up -d` سپس `docker ps`     | container سالم + healthcheck pass | **PostgreSQL 18.6** — `Up (healthy)` — `pg_isready: accepting connections` | ✅ PASS |
-| INFRA-2 | Redis 7       | `docker exec zarnama-redis redis-cli ping` | پاسخ `PONG`                       | **Redis 7.4.11** — `PONG`                                                  | ✅ PASS |
-| INFRA-3 | MinIO         | `curl localhost:9000/minio/health/live`    | HTTP 200                          | **HTTP 200** — `Up (healthy)` روی `quay.io/minio/minio:latest`             | ✅ PASS |
+| #       | مورد          | دستور بررسی                              | معیار PASS                        | نتیجه واقعی                                                                | وضعیت   |
+| ------- | ------------- | ---------------------------------------- | --------------------------------- | -------------------------------------------------------------------------- | ------- |
+| INFRA-1 | PostgreSQL 18 | `docker compose up -d` سپس `docker ps`   | container سالم + healthcheck pass | **PostgreSQL 18.6** — `Up (healthy)` — `pg_isready: accepting connections` | ✅ PASS |
+| INFRA-2 | Redis 7       | `docker exec zar30-redis redis-cli ping` | پاسخ `PONG`                       | **Redis 7.4.11** — `PONG`                                                  | ✅ PASS |
+| INFRA-3 | MinIO         | `curl localhost:9000/minio/health/live`  | HTTP 200                          | **HTTP 200** — `Up (healthy)` روی `quay.io/minio/minio:latest`             | ✅ PASS |
 
 نتایج دستورات الزامی:
 

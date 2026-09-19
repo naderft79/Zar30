@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Rate Limiting (Phase 2)
+// Zar30 - Rate Limiting (Phase 2)
 // ============================================
 // Sliding window با Redis ZSET — مقادیر از RateLimitConfig (DB) خوانده می‌شوند
 // Redis هرگز مرجع نهایی نیست؛ در دسترس‌نبودن Redis → fail-open با لاگ

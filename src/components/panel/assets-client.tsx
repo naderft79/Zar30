@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Assets Client — Preview (بدون Financial Logic)
+// Zar30 - Assets Client — Preview (بدون Financial Logic)
 // ============================================
 
 'use client'

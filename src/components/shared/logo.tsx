@@ -1,7 +1,7 @@
 // ============================================
-// Zarnama - Logo Component
+// Zar30 - Logo Component
 // ============================================
-// لوگوی برند زرنما — نماد طلا + نام فارسی
+// لوگوی برند زرسی — نماد طلا + نام فارسی
 // ============================================
 
 import { cn } from 'cn'
@@ -24,7 +24,7 @@ export function Logo({ className, size = 'md', showText = true, textClassName }:
   const s = sizes[size]
   return (
     <span className={cn('inline-flex items-center gap-2', className)}>
-      {/* نماد زرنما — سکه طلا با حرف ز */}
+      {/* نماد زرسی — سکه طلا با حرف ز */}
       <svg
         viewBox="0 0 48 48"
         fill="none"
@@ -32,7 +32,7 @@ export function Logo({ className, size = 'md', showText = true, textClassName }:
         aria-hidden="true"
         role="img"
       >
-        <circle cx="24" cy="24" r="22" fill="url(#zarnama-gold)" />
+        <circle cx="24" cy="24" r="22" fill="url(#zar30-gold)" />
         <circle
           cx="24"
           cy="24"
@@ -52,7 +52,7 @@ export function Logo({ className, size = 'md', showText = true, textClassName }:
         />
         <defs>
           <linearGradient
-            id="zarnama-gold"
+            id="zar30-gold"
             x1="8"
             y1="6"
             x2="40"
@@ -66,7 +66,7 @@ export function Logo({ className, size = 'md', showText = true, textClassName }:
         </defs>
       </svg>
       {showText && (
-        <span className={cn('text-foreground font-bold', s.text, textClassName)}>زرنما</span>
+        <span className={cn('text-foreground font-bold', s.text, textClassName)}>زرسی</span>
       )}
     </span>
   )

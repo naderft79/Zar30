@@ -1,6 +1,6 @@
-# Zarnama — Architecture Decision Records (ADR)
+# Zar30 — Architecture Decision Records (ADR)
 
-> سند تصمیمات معماری پروژه زرنما — Phase 0
+> سند تصمیمات معماری پروژه زرسی — Phase 0
 
 ## ADR-001: نسخه‌های Baseline
 
@@ -184,9 +184,9 @@ Shared Codebase (src/)
 
 **دلیل:** یک IA ثابت و قابل پیش‌بینی برای محصول مالی؛ جلوگیری از رشد بی‌رویه nav در Phaseهای آینده؛ تست E2E (`Navigation Contract`) از تغییر ناخواسته جلوگیری می‌کند.
 
-## ADR-016: Zarnama Navy Luxury Design Language
+## ADR-016: Zar30 Navy Luxury Design Language
 
-**تصمیم:** زبان بصری دائمی زرنما = **«Luxury Private Banking for Gold»**
+**تصمیم:** زبان بصری دائمی زرسی = **«Luxury Private Banking for Gold»**
 
 **فلسفه رنگ (ترتیب اولویت):**
 
@@ -207,9 +207,17 @@ Shared Codebase (src/)
 - **Token-based اجباری:** همه تصمیم‌ها از tokenها (`globals.css`) — hardcode رنگ/style در کامپوننت ممنوع. تغییر بنیادی فقط با ADR.
 - **یک زبان برای همه:** User Panel، Admin (denseتر)، Landing، PWA، Android/iOS آینده — همان Navy+Gold+Cream DNA.
 
-**Source of Truth:** `src/app/globals.css` (tokens) + صفحه `/design-system` (preview) — مرجع کامل: `AGENTS.md › PERMANENT ZARNAMA DESIGN LANGUAGE`
+**Source of Truth:** `src/app/globals.css` (tokens) + صفحه `/design-system` (preview) — مرجع کامل: `AGENTS.md › PERMANENT ZAR30 DESIGN LANGUAGE`
 
 **دلیل:** ایجاد امضای بصری یکتا برای برند مالی لوکس؛ جلوگیری از رفتهرفته شدن UI به template عمومی در Phaseهای آینده.
+
+## ADR-017: Zar30 Global Rebranding & Technical Namespace Migration
+
+**تصمیم:** هویت دائمی محصول = **زرسی / zar30 / zar30.com** — مهاجرت سراسری namespace از برند LEGACY (زرنما/Zarnama/zarnama.ir) شامل UI، کد، Auth/JWT/cookies، env، Docker، PWA، Capacitor/Android، SEO و مستندات. Forward-only، بدون تغییر Business Logic.
+
+**سند کامل:** `docs/architecture/ADR-ZAR30-GLOBAL-REBRANDING.md` + Audit: `docs/rebranding/ZAR30-REBRAND-AUDIT.md`
+
+**قانون:** Agentهای آینده حق استفاده از نام LEGACY را ندارند مگر با برچسب `LEGACY` در مستندات Migration. مرجع اجرایی: `AGENTS.md › PERMANENT BRAND IDENTITY`
 
 ## تصمیم‌های معلق (DECISION REQUIRED)
 

@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - OpenGraph Image
+// Zar30 - OpenGraph Image
 // ============================================
 // تصویر اشتراک‌گذاری — در زمان build تولید می شود
 // نکته: satori از shaping پیچیده فارسی پشتیبانی نمی کند،
@@ -8,7 +8,7 @@
 
 import { ImageResponse } from 'next/og'
 
-export const alt = 'ZarNama — Buy, Sell & Invest in 18K Gold'
+export const alt = 'Zar30 — Buy, Sell & Invest in 18K Gold'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -54,7 +54,7 @@ export default function OpengraphImage() {
             letterSpacing: 2,
           }}
         >
-          ZarNama
+          Zar30
         </div>
         <div
           style={{

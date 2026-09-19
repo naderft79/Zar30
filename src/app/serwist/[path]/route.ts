@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Serwist Service Worker Route
+// Zar30 - Serwist Service Worker Route
 // ============================================
 // این route به‌صورت on-demand service worker را می سازد
 // سازگار با Turbopack

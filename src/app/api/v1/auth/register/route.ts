@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - POST /api/v1/auth/register
+// Zar30 - POST /api/v1/auth/register
 // ============================================
 
 import { created, withErrorHandler } from '@/lib/api/response'

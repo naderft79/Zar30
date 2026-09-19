@@ -1,8 +1,8 @@
-# ZARNAMA — AGENTS.md
+# ZAR30 — AGENTS.md
 
 ## Project Identity
 
-Project Name: **Zarnama / زر‌نما**
+Project Name: **Zar30 / زرسی**
 
 Project Type:
 
@@ -28,6 +28,22 @@ The platform must support:
 - PWA
 - Future Android application
 - Future iOS application
+
+---
+
+## PERMANENT BRAND IDENTITY
+
+```text
+Persian Brand:    زرسی
+English Brand:    zar30
+Primary Domain:   https://zar30.com
+Canonical Domain: https://zar30.com
+```
+
+- این هویت برند یک **Permanent Project Constraint** است (ADR-017).
+- نام‌های LEGACY — «زرنما / Zarnama / ZarNama / zarnama / zarnama.ir» — **Deprecated** هستند. هیچ Agentی حق ندارد آن‌ها را در کد، UI، namespace، docs یا config جدید استفاده کند، مگر در مستندات Migration با برچسب صریح `LEGACY`.
+- تغییر برند فقط با یک Product/Design Decision رسمی جدید + ADR مجاز است.
+- مرجع Migration: `docs/rebranding/ZAR30-REBRAND-AUDIT.md` و `docs/architecture/ADR-ZAR30-GLOBAL-REBRANDING.md`
 
 ---
 
@@ -322,7 +338,7 @@ and must never be mistaken for production functionality.
 
 # 10. FINANCIAL SYSTEM RULES
 
-Zarnama is a financial platform.
+Zar30 is a financial platform.
 
 Financial correctness is a first-class engineering requirement.
 
@@ -377,9 +393,9 @@ The representation must be consistent throughout:
 - API
 - Tests
 
-### Double-Entry Ledger (Zarnama Architecture)
+### Double-Entry Ledger (Zar30 Architecture)
 
-Zarnama uses a Double-Entry Ledger, not a simple signed ledger.
+Zar30 uses a Double-Entry Ledger, not a simple signed ledger.
 
 Every financial mutation must produce a balanced JournalEntry:
 
@@ -516,7 +532,7 @@ This applies especially to:
 
 Retries must not create duplicate financial effects.
 
-### Durable Idempotency (Zarnama Architecture)
+### Durable Idempotency (Zar30 Architecture)
 
 Idempotency state must be durable and recoverable.
 
@@ -569,7 +585,7 @@ Pay special attention to:
 - Payments
 - Installment payments
 
-### Primary Mechanism (Zarnama Architecture)
+### Primary Mechanism (Zar30 Architecture)
 
 PostgreSQL is the primary and final source of truth for financial integrity.
 
@@ -1176,7 +1192,7 @@ PWA functionality should include, as applicable:
 
 Do not use offline caching for sensitive financial state in a way that could display misleading balances.
 
-### Financial Offline Operations (Zarnama Architecture)
+### Financial Offline Operations (Zar30 Architecture)
 
 No financial operation may be queued for offline execution.
 
@@ -1208,9 +1224,9 @@ If offline, display a clear "connection required" state instead of a cached bala
 
 ---
 
-# 52.1 WEB + MOBILE TARGET ARCHITECTURE (Zarnama)
+# 52.1 WEB + MOBILE TARGET ARCHITECTURE (Zar30)
 
-Zarnama uses a shared codebase with two build targets.
+Zar30 uses a shared codebase with two build targets.
 
 ```text
 Shared Codebase (src/)
@@ -1250,7 +1266,7 @@ Both must connect to a single shared authentication domain.
 
 ---
 
-# 52.2 RATE LIMITS (Zarnama Architecture)
+# 52.2 RATE LIMITS (Zar30 Architecture)
 
 Rate limits must be configurable.
 
@@ -1843,7 +1859,7 @@ On mobile:
 
 # 88. DESIGN LANGUAGE
 
-Zarnama visual identity:
+Zar30 visual identity:
 
 Primary palette:
 
@@ -2298,7 +2314,7 @@ Do not silently override it.
 
 # 113. PROJECT SUCCESS DEFINITION
 
-Zarnama is successful only when it becomes a:
+Zar30 is successful only when it becomes a:
 
 - Secure
 - Reliable
@@ -2324,9 +2340,9 @@ It must be a coherent software product.
 
 # END OF AGENTS.md
 
-# AGENTS.md — راهنمای Agent توسعه پروژه زرنما
+# AGENTS.md — راهنمای Agent توسعه پروژه زرسی
 
-> این فایل قوانین و دستورالعمل‌های کلی برای هر Agent که روی پروژه «زرنما» کار می‌کند را تعریف می‌کند.
+> این فایل قوانین و دستورالعمل‌های کلی برای هر Agent که روی پروژه «زرسی» کار می‌کند را تعریف می‌کند.
 
 ---
 
@@ -2419,7 +2435,7 @@ It must be a coherent software product.
 ## ساختار پوشه‌ها
 
 ```
-zarnama/
+zar30/
 ├── src/
 │   ├── app/                  # Next.js App Router
 │   │   ├── (landing)/        # لندینگ پیج
@@ -2471,9 +2487,9 @@ Navigation اصلی User Panel یک **قرارداد دائمی محصول** ا�
 - تغییر این قرارداد فقط با ADR رسمی جدید مجاز است — مرجع: `docs/ARCHITECTURE_DECISIONS.md` (ADR-015).
 - تست E2E «Navigation Contract» در `tests/e2e/panel.spec.ts` از تغییر ناخواسته جلوگیری می‌کند.
 
-## PERMANENT ZARNAMA DESIGN LANGUAGE
+## PERMANENT ZAR30 DESIGN LANGUAGE
 
-> امضای بصری زرنما: **«Luxury Private Banking for Gold»**
+> امضای بصری زرسی: **«Luxury Private Banking for Gold»**
 > قانون دائمی برای همه Agentها، همه Phaseها، همه UIها (User Panel، Admin، Landing، PWA، Android/iOS آینده). مرجع: `docs/ARCHITECTURE_DECISIONS.md` (ADR-016) — tokens: `src/app/globals.css` — preview: `/design-system`
 
 ### ۱. اولویت رنگ (ترتیب ثابت)

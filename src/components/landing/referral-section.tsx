@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Referral Section
+// Zar30 - Referral Section
 // ============================================
 // معرفی سیستم دعوت — فقط UX و معرفی Feature
 // ============================================
@@ -21,8 +21,8 @@ export function ReferralSection() {
       id="referral"
       className="from-navy-dark to-navy text-cream bg-gradient-to-b"
       eyebrow="دعوت از دوستان"
-      title="زرنما را معرفی کنید، هر دو سود کنید"
-      description="با لینک دعوت اختصاصی خود، دوستانتان را به زرنما دعوت کنید."
+      title="زرسی را معرفی کنید، هر دو سود کنید"
+      description="با لینک دعوت اختصاصی خود، دوستانتان را به زرسی دعوت کنید."
     >
       <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3">
         {REFERRAL_STEPS.map((step, index) => (

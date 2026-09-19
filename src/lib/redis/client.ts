@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Redis Client (ioredis)
+// Zar30 - Redis Client (ioredis)
 // ============================================
 // Redis is used for: cache, queue (BullMQ), pub/sub, rate limiting
 // Redis is NOT the source of truth for financial integrity

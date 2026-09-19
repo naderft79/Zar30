@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - About Page
+// Zar30 - About Page
 // ============================================
 
 import type { Metadata } from 'next'
@@ -10,9 +10,9 @@ import { Button } from '@/components/ui/button'
 import { STATS } from '@/lib/data/landing'
 
 export const metadata: Metadata = {
-  title: 'درباره زرنما',
+  title: 'درباره زرسی',
   description:
-    'زرنما با ماموریت ساده‌سازی سرمایه‌گذاری روی طلا برای همه ساخته شده است — شفاف، امن و قابل حسابرسی.',
+    'زرسی با ماموریت ساده‌سازی سرمایه‌گذاری روی طلا برای همه ساخته شده است — شفاف، امن و قابل حسابرسی.',
   alternates: { canonical: '/about' },
 }
 
@@ -23,16 +23,16 @@ export default function AboutPage() {
         containerSize="md"
         eyebrow="درباره ما"
         titleAs="h1"
-        title="زرنما؛ طلا برای همه"
+        title="زرسی؛ طلا برای همه"
         description="ما باور داریم سرمایه‌گذاری روی طلا نباید فقط برای افراد ثروتمند باشد."
       >
         <div className="prose-p:text-muted-foreground mx-auto max-w-3xl space-y-6 text-center">
           <p className="text-muted-foreground text-lg leading-relaxed">
-            زرنما پلتفرمی برای خرید، فروش و نگهداری طلای آب‌شده ۱۸ عیار به‌صورت دیجیتال است. ماموریت
+            زرسی پلتفرمی برای خرید، فروش و نگهداری طلای آب‌شده ۱۸ عیار به‌صورت دیجیتال است. ماموریت
             ما این است که سرمایه‌گذاری روی طلا را برای همه — با هر بودجه‌ای — ساده، امن و شفاف کنیم.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            هر گرم طلای دیجیتال در زرنما متناظر با طلای فیزیکی نگهداری‌شده در خزانه است و تمام
+            هر گرم طلای دیجیتال در زرسی متناظر با طلای فیزیکی نگهداری‌شده در خزانه است و تمام
             تراکنش‌ها در یک دفتر کل دوطرفه (Double-Entry Ledger) ثبت می‌شوند — دقیقاً همان
             استانداردی که سیستم‌های بانکی از آن استفاده می‌کنند.
           </p>
@@ -72,7 +72,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Section title="زرنما در یک نگاه">
+      <Section title="زرسی در یک نگاه">
         <dl className="grid grid-cols-2 gap-6 lg:grid-cols-4">
           {STATS.map((stat) => (
             <div
@@ -90,7 +90,7 @@ export default function AboutPage() {
         <div className="mt-12 text-center">
           <Button size="lg" asChild>
             <Link href="/register">
-              به زرنما بپیوندید
+              به زرسی بپیوندید
               <ArrowLeft className="size-4" />
             </Link>
           </Button>

@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Blog Page
+// Zar30 - Blog Page
 // ============================================
 // معماری بلاگ — محتوا بعداً از CMS مدیریت می شود
 // فعلاً placeholder ساختاریافته
@@ -12,8 +12,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 export const metadata: Metadata = {
-  title: 'بلاگ زرنما',
-  description: 'مقالات آموزشی درباره طلا، سرمایه‌گذاری و بازار — به‌زودی در بلاگ زرنما.',
+  title: 'بلاگ زرسی',
+  description: 'مقالات آموزشی درباره طلا، سرمایه‌گذاری و بازار — به‌زودی در بلاگ زرسی.',
   alternates: { canonical: '/blog' },
 }
 
@@ -42,7 +42,7 @@ export default function BlogPage() {
       containerSize="lg"
       eyebrow="بلاگ"
       titleAs="h1"
-      title="مجله زرنما"
+      title="مجله زرسی"
       description="مقالات آموزشی درباره طلا، سرمایه‌گذاری و بازار — به‌زودی"
     >
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -66,7 +66,7 @@ export default function BlogPage() {
         ))}
       </div>
       <p className="text-muted-foreground mt-10 text-center text-sm">
-        بلاگ زرنما به‌زودی با مقالات آموزشی راه‌اندازی می‌شود.
+        بلاگ زرسی به‌زودی با مقالات آموزشی راه‌اندازی می‌شود.
       </p>
     </Section>
   )

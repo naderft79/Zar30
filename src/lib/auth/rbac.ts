@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - RBAC Foundation (Phase 2)
+// Zar30 - RBAC Foundation (Phase 2)
 // ============================================
 // ساختار Authorization — Admin Panel کامل در Phaseهای 14-16
 // هر endpoint حساس باید server-side این را enforce کند

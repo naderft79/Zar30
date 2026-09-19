@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - FAQ Section
+// Zar30 - FAQ Section
 // ============================================
 // سوالات متداول — Accordion با Radix
 // داده از src/lib/data — بعداً از CMS مدیریت می شود
@@ -25,7 +25,7 @@ export function FaqSection() {
       containerSize="md"
       eyebrow="سوالات متداول"
       title="پاسخ سوال‌های شما"
-      description="هر آنچه درباره زرنما باید بدانید"
+      description="هر آنچه درباره زرسی باید بدانید"
     >
       <Accordion
         type="single"
