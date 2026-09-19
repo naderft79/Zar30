@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { Vazirmatn } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Providers } from '@/components/providers/providers'
 import './globals.css'
 
-const vazirmatn = Vazirmatn({
-  subsets: ['arabic', 'latin'],
+const vazirmatn = localFont({
+  src: '../../public/fonts/vazirmatn.woff2',
   variable: '--font-vazirmatn',
   display: 'swap',
 })
