@@ -184,6 +184,33 @@ Shared Codebase (src/)
 
 **دلیل:** یک IA ثابت و قابل پیش‌بینی برای محصول مالی؛ جلوگیری از رشد بی‌رویه nav در Phaseهای آینده؛ تست E2E (`Navigation Contract`) از تغییر ناخواسته جلوگیری می‌کند.
 
+## ADR-016: Zarnama Navy Luxury Design Language
+
+**تصمیم:** زبان بصری دائمی زرنما = **«Luxury Private Banking for Gold»**
+
+**فلسفه رنگ (ترتیب اولویت):**
+
+1. **Navy → Primary/Dominant** — Canvas اصلی همه UI
+2. **Gold → Luxury Accent/Action** — CTA، nav فعال، متریک‌های مهم، قیمت، focus
+3. **Cream → Supporting Accent** — فقط text روی navy، highlight، warmth — دیگر رنگ اصلی UI نیست
+4. **Neutral → Text/Border/Secondary Surfaces**
+
+**قواعد کلیدی:**
+
+- **Dark/Navy-first:** حالت اصلی برند dark/navy است — نه سیاه ساده؛ لایه‌های navy (`navy-950…600`) برای background، sidebar، card، elevated، modal، input. Light Mode فقط opt-in با کلاس `.light` و همچنان navy-primary.
+- **Gold کنترل‌شده:** نه همه‌جا؛ بدون glow شدید و gradient سراسری. Gold gradient فقط CTA/Hero/highlight مهم.
+- **Glassmorphism** فقط navy-glass + gold border — نه سفید/یخی.
+- **Cards:** navy surface + subtle border + gold accent محدود — نه سفید، نه SaaS-like.
+- **Buttons:** Primary = Gold روی Navy؛ Secondary = Navy/transparent + gold border.
+- **Charts:** Gold primary، cream/neutral secondary، green مثبت، red منفی، grid کم‌کنتراست navy.
+- **Anti-patterns ممنوع:** white-first، cream-first، rainbow dashboard، neon crypto، excessive glass/glow/gradient، generic Bootstrap/SaaS look.
+- **Token-based اجباری:** همه تصمیم‌ها از tokenها (`globals.css`) — hardcode رنگ/style در کامپوننت ممنوع. تغییر بنیادی فقط با ADR.
+- **یک زبان برای همه:** User Panel، Admin (denseتر)، Landing، PWA، Android/iOS آینده — همان Navy+Gold+Cream DNA.
+
+**Source of Truth:** `src/app/globals.css` (tokens) + صفحه `/design-system` (preview) — مرجع کامل: `AGENTS.md › PERMANENT ZARNAMA DESIGN LANGUAGE`
+
+**دلیل:** ایجاد امضای بصری یکتا برای برند مالی لوکس؛ جلوگیری از رفتهرفته شدن UI به template عمومی در Phaseهای آینده.
+
 ## تصمیم‌های معلق (DECISION REQUIRED)
 
 - [ ] تایید نتایج PWA Spike روی دستگاه واقعی (Chrome Android, Safari iOS)

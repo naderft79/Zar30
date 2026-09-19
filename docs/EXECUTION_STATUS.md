@@ -339,3 +339,16 @@
 ### Phase بعدی
 
 **Phase 4:** KYC — پس از تایید گزارش Phase 3.1 توسط کاربر شروع می‌شود
+
+---
+
+## Permanent Design Language — ثبت قانون دائمی (2026-09-19)
+
+**ADR-016: Zarnama Navy Luxury Design Language** — از این تاریخ برای **تمام Phaseهای بعدی و همه platformها** (User Panel، Admin، Landing، PWA، Android/iOS) لازم‌الاجرا است.
+
+- امضای بصری: **«Luxury Private Banking for Gold»**
+- اولویت رنگ: **Navy → Primary** · **Gold → Luxury Accent** · **Cream → Supporting Accent** · Neutral → text/border
+- **Dark/Navy-First:** `:root` = navy، `<html class="dark">`؛ light فقط opt-in با `.light`
+- Token-based اجباری — hardcode رنگ/style در کامپوننت ممنوع؛ تغییر بنیادی فقط با ADR
+- Source of Truth: `src/app/globals.css` (tokens) + `/design-system` (preview) + `AGENTS.md › PERMANENT ZARNAMA DESIGN LANGUAGE`
+- Anti-patterns: white/cream-first، neon crypto، excessive glass/glow، generic SaaS/Bootstrap look — ممنوع

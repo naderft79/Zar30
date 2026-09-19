@@ -343,14 +343,26 @@
 
 ## بخش ۱۰ — UI Design System
 
-### رنگ‌ها
+### PERMANENT DESIGN LANGUAGE (ADR-016)
+
+امضای بصری: **«Luxury Private Banking for Gold»** — قانون دائمی برای همه Phaseها و platformها.
+
+**اولویت رنگ (ترتیب ثابت):**
+
+1. **Navy → Primary/Dominant** — Canvas اصلی (`navy-950…100` چندلایه برای depth)
+2. **Gold → Luxury Accent/Action** — CTA، nav فعال، متریک مهم، قیمت، focus — کنترل‌شده
+3. **Cream → Supporting Accent** — text روی navy، highlight — دیگر رنگ اصلی UI نیست
+4. **Neutral → Text/Border/Secondary**
+
+**Dark/Navy-First:** حالت اصلی برند dark/navy است (`:root` = navy، `<html class="dark">`)؛ light فقط opt-in با `.light` و navy-primary.
+
+### رنگ‌ها (Token-based — `src/app/globals.css`)
 
 ```css
---navy: #1a2a4f /* پس‌زمینه اصلی، هدر */ --navy-dark: #0f1a33 /* پس‌زمینه تیره */
-  --navy-light: #2a3f6b /* هاور */ --gold: #c9a227 /* CTA، اکسنت، قیمت */ --gold-light: #e0c25a
-  /* هاور طلایی */ --gold-dark: #a0801c /* فعال */ --cream: #f5ecd7 /* پس‌زمینه روشن */
-  --cream-dark: #e8d9b0 /* مرز */ --success: #2e7d32 --error: #c62828 --warning: #ed6c02
-  --info: #0288d1;
+/* Navy — Canvas اصلی برند */    --navy-950 … --navy-100
+/* Gold — Luxury Accent */       --gold-700 … --gold-100
+/* Cream — Supporting Accent */  --cream-50 … --cream-400
+/* Semantic */                   --success #1f9d55 · --warning #d97706 · --error #d64545 · --info #3b82c4
 ```
 
 ### Typography

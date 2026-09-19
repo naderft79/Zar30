@@ -1,14 +1,21 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Dark/Navy-first — حالت اصلی برند؛ dark: variant به کلاس .dark متصل است
+   (html همیشه کلاس dark دارد — ترجیح OS اثر ندارد) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ============================================
-   Zarnama Design System — Phase 3.1
-   Premium FinTech: Deep Navy / Rich Gold / Cream
+   Zarnama Design System — PERMANENT DESIGN LANGUAGE
+   «Luxury Private Banking for Gold»
+   Navy = Canvas | Gold = Luxury | Cream = Contrast/Warmth
+   اولویت رنگ: 1) Navy 2) Gold 3) Cream 4) Neutral
+   Dark/Navy-first — حالت اصلی و Premium برند
    ============================================ */
 
 :root {
   /* ---- Brand palette ---- */
-  /* Deep Navy scale — از تیره‌ترین به روشن‌ترین */
+  /* Deep Navy scale — Canvas اصلی برند؛ از تیره‌ترین به روشن‌ترین */
   --navy-950: #070d1d;
   --navy-900: #0b1526;
   --navy-800: #101d38;
@@ -20,7 +27,7 @@
   --navy-200: #93a9cc;
   --navy-100: #c7d4e8;
 
-  /* Rich Gold scale */
+  /* Rich Gold scale — Luxury Accent؛ استفاده کنترل‌شده */
   --gold-700: #8a6d14;
   --gold-600: #a98a1e;
   --gold-500: #c9a227;
@@ -29,7 +36,7 @@
   --gold-200: #f0e0ac;
   --gold-100: #f8efd4;
 
-  /* Cream scale */
+  /* Cream scale — فقط Supporting Accent / Text روی Navy */
   --cream-50: #fbf8f0;
   --cream-100: #f7f0dd;
   --cream-200: #f0e4c8;
@@ -46,65 +53,8 @@
   --info: #3b82c4;
   --info-foreground: #ffffff;
 
-  /* ---- Light theme surfaces ---- */
-  --background: #f6f1e4;
-  --surface: #efe8d5;
-  --card: #fffdf7;
-  --elevated: #ffffff;
-  --overlay: #ffffff;
-  --field: #fffdf7;
-  --border: #e0d4b4;
-  --border-strong: #c9b98f;
-
-  /* ---- Light theme text ---- */
-  --foreground: #101d38;
-  --text-secondary: #3d4f78;
-  --muted-foreground: #6e7c9c;
-
-  /* ---- Light theme roles ---- */
-  --card-foreground: var(--foreground);
-  --input: var(--field);
-  --input-foreground: var(--foreground);
-  --primary: #16264a;
-  --primary-foreground: #f7f0dd;
-  --secondary: var(--gold-500);
-  --secondary-foreground: #101d38;
-  --muted: var(--surface);
-  --accent: var(--gold-500);
-  --accent-foreground: #101d38;
-  --destructive: var(--error);
-  --destructive-foreground: var(--error-foreground);
-  --ring: var(--gold-500);
-
-  /* ---- Radius ---- */
-  --radius: 0.625rem;
-
-  /* ---- Shadows ---- */
-  --shadow-xs: 0 1px 2px rgb(16 29 56 / 0.05);
-  --shadow-sm: 0 1px 3px rgb(16 29 56 / 0.07), 0 1px 2px rgb(16 29 56 / 0.04);
-  --shadow-md: 0 4px 10px -2px rgb(16 29 56 / 0.08), 0 2px 4px -2px rgb(16 29 56 / 0.04);
-  --shadow-lg: 0 10px 24px -6px rgb(16 29 56 / 0.12), 0 4px 8px -4px rgb(16 29 56 / 0.06);
-  --shadow-xl: 0 20px 40px -12px rgb(16 29 56 / 0.18);
-  --shadow-gold: 0 4px 14px -4px rgb(201 162 39 / 0.35);
-
-  /* ---- Motion ---- */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
-  --duration-fast: 120ms;
-  --duration-normal: 200ms;
-  --duration-slow: 350ms;
-
-  /* ---- Z-index ---- */
-  --z-dropdown: 40;
-  --z-sticky: 30;
-  --z-overlay: 50;
-  --z-modal: 60;
-  --z-toast: 70;
-}
-
-.dark {
-  /* ---- Dark Financial UI — لایه‌های navy با عمق واقعی ---- */
+  /* ==== NAVY-FIRST (حالت اصلی برند) ==== */
+  /* لایه‌های navy با عمق واقعی — نه سیاه ساده */
   --background: #070d1d;
   --surface: #0c172e;
   --card: #11203f;
@@ -132,13 +82,97 @@
   --destructive-foreground: #ffffff;
   --ring: var(--gold-400);
 
-  /* Shadows در dark عمیق‌تر */
+  /* ---- Radius ---- */
+  --radius: 0.625rem;
+
+  /* Shadows — عمیق و نرم برای عمق Dark UI */
   --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.3);
   --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4);
   --shadow-md: 0 4px 10px -2px rgb(0 0 0 / 0.45);
   --shadow-lg: 0 10px 24px -6px rgb(0 0 0 / 0.55);
   --shadow-xl: 0 20px 40px -12px rgb(0 0 0 / 0.65);
   --shadow-gold: 0 4px 16px -4px rgb(201 162 39 / 0.3);
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 350ms;
+
+  /* ---- Z-index ---- */
+  --z-dropdown: 40;
+  --z-sticky: 30;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+}
+
+/* سازگاری: کلاس dark همان حالت اصلی است */
+.dark {
+  --background: #070d1d;
+  --surface: #0c172e;
+  --card: #11203f;
+  --elevated: #182a4e;
+  --overlay: #1d3159;
+  --field: #0e1b36;
+  --border: #22365f;
+  --border-strong: #30477a;
+  --foreground: #f0ead6;
+  --text-secondary: #b6c2dc;
+  --muted-foreground: #8494b8;
+  --card-foreground: var(--foreground);
+  --input: var(--field);
+  --input-foreground: var(--foreground);
+  --primary: var(--gold-500);
+  --primary-foreground: #0b1526;
+  --secondary: #1d3159;
+  --secondary-foreground: #f0ead6;
+  --muted: #16264a;
+  --accent: var(--gold-500);
+  --accent-foreground: #0b1526;
+  --destructive: #e05c5c;
+  --destructive-foreground: #ffffff;
+  --ring: var(--gold-400);
+}
+
+/* ==== Light Mode (فرعی — فقط opt-in با کلاس .light) ====
+   همچنان navy در نقش primary است؛ cream فقط accent گرم */
+.light {
+  --background: #eef1f7;
+  --surface: #e2e7f1;
+  --card: #f8fafd;
+  --elevated: #ffffff;
+  --overlay: #ffffff;
+  --field: #f8fafd;
+  --border: #c6cfe0;
+  --border-strong: #a4b1ca;
+
+  --foreground: #101d38;
+  --text-secondary: #3d4f78;
+  --muted-foreground: #64748f;
+
+  --card-foreground: var(--foreground);
+  --input: var(--field);
+  --input-foreground: var(--foreground);
+  --primary: #16264a;
+  --primary-foreground: #f7f0dd;
+  --secondary: var(--gold-500);
+  --secondary-foreground: #101d38;
+  --muted: var(--surface);
+  --accent: var(--gold-500);
+  --accent-foreground: #101d38;
+  --destructive: var(--error);
+  --destructive-foreground: var(--error-foreground);
+  --ring: var(--gold-500);
+
+  --shadow-xs: 0 1px 2px rgb(16 29 56 / 0.05);
+  --shadow-sm: 0 1px 3px rgb(16 29 56 / 0.07), 0 1px 2px rgb(16 29 56 / 0.04);
+  --shadow-md: 0 4px 10px -2px rgb(16 29 56 / 0.08), 0 2px 4px -2px rgb(16 29 56 / 0.04);
+  --shadow-lg: 0 10px 24px -6px rgb(16 29 56 / 0.12), 0 4px 8px -4px rgb(16 29 56 / 0.06);
+  --shadow-xl: 0 20px 40px -12px rgb(16 29 56 / 0.18);
+  --shadow-gold: 0 4px 14px -4px rgb(201 162 39 / 0.35);
 }
 
 /* ============================================
@@ -254,10 +288,16 @@
 }
 
 body {
-  background: var(--background);
+  /* عمق ظریف navy — radial light بسیار کم‌رنگ، نه بافت شلوغ */
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgb(53 84 138 / 0.12), transparent 60%),
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-vazirmatn), Arial, Helvetica, sans-serif;
   direction: rtl;
+}
+.light body {
+  background: var(--background);
 }
 
 html {
@@ -281,11 +321,11 @@ html {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: var(--navy-500);
   border-radius: 4px;
 }
-.dark ::-webkit-scrollbar-thumb {
-  background: var(--navy-500);
+.light ::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
 }
 
 ::selection {

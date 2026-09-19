@@ -2471,8 +2471,43 @@ Navigation اصلی User Panel یک **قرارداد دائمی محصول** ا�
 - تغییر این قرارداد فقط با ADR رسمی جدید مجاز است — مرجع: `docs/ARCHITECTURE_DECISIONS.md` (ADR-015).
 - تست E2E «Navigation Contract» در `tests/e2e/panel.spec.ts` از تغییر ناخواسته جلوگیری می‌کند.
 
-## DESIGN SYSTEM (Phase 3.1)
+## PERMANENT ZARNAMA DESIGN LANGUAGE
 
-- Design Tokenها در `src/app/globals.css` — رنگ، radius، shadow، spacing، typography، motion، z-index همه token-based‌اند؛ رنگ hardcode ممنوع.
-- کامپوننت‌های مالی در `src/components/financial/` و primitiveها در `src/components/ui/` — preview: `/design-system`.
-- هیچ Phase آینده‌ای رنگ، radius، دکمه، sidebar یا navigation style جدید اضافه نمی‌کند.
+> امضای بصری زرنما: **«Luxury Private Banking for Gold»**
+> قانون دائمی برای همه Agentها، همه Phaseها، همه UIها (User Panel، Admin، Landing، PWA، Android/iOS آینده). مرجع: `docs/ARCHITECTURE_DECISIONS.md` (ADR-016) — tokens: `src/app/globals.css` — preview: `/design-system`
+
+### ۱. اولویت رنگ (ترتیب ثابت)
+
+1. **Navy → Primary/Dominant** — Canvas اصلی همه UI (`navy-950…100`)
+2. **Gold → Luxury Accent/Action** — CTA، nav فعال، متریک‌های مهم، قیمت طلا، focus
+3. **Cream → Supporting Accent** — فقط text روی navy، highlight، warmth — رنگ اصلی UI نیست
+4. **Neutral → Text/Border/Secondary**
+
+### ۲. Dark/Navy-First
+
+- حالت اصلی و Premium برند **dark/navy** است (`:root` = navy، `<html class="dark">`)
+- Light Mode فقط opt-in با کلاس `.light` و همچنان navy-primary (نه cream-first)
+- لایه‌های navy: app background → sidebar → card → elevated → modal → input — عمق واقعی، نه `#000`
+
+### ۳. قواعد استفاده
+
+- **Gold:** فقط CTA، active nav، متریک مهم، قیمت، border خاص، micro-interaction، focus — کنترل‌شده؛ glow ظریف فقط برای hover/CTA/active؛ Gold gradient فقط CTA/Hero/highlight مهم
+- **Cream:** text روی navy، highlight، subtle accent — هرگز background پیش‌فرض
+- **Cards:** navy surface + subtle border + gold accent محدود + controlled shadow — نه سفید، نه بیش از حد گرد، نه SaaS-like
+- **Buttons:** Primary = Gold روی Navy · Secondary = Navy/transparent + gold border · Danger = red کنترل‌شده · Success = financial green
+- **Sidebar/Bottom Nav:** navy background + gold active + cream/neutral inactive — حس Private Banking، نه Admin Template
+- **Charts:** primary=gold، secondary=cream/neutral، positive=green، negative=red، grid=نوی کم‌کنتراست
+- **Financial Numbers:** dominant — cream/gold/bright-neutral با tabular-nums
+- **Loading/Empty/Error:** navy-first — skeleton navy + gold highlight ظریف؛ error با controlled red نه قرمز سراسری
+- **Glassmorphism:** فقط navy-glass + gold border در صورت نیاز واقعی — نه زبان اصلی
+
+### ۴. Anti-Patterns (ممنوع)
+
+white-first UI · cream-first UI · rainbow dashboard · neon crypto styling · excessive glassmorphism/gold/gradient/glow · generic Bootstrap/SaaS dashboard · کپی UI رقبا · style تصادفی در کامپوننت
+
+### ۵. قانون اجرا
+
+- همه تصمیم‌ها **token-based** از `globals.css` — hardcode رنگ/radius/shadow در کامپوننت ممنوع
+- تغییر بنیادی در رنگ/typography/animation/navigation فقط با ADR رسمی
+- هر Feature جدید قبل از Done: آیا navy غالب است؟ gold فقط accent؟ cream فقط supporting؟ شبیه template نیست؟ mobile/desktop یک زبان؟
+- اگر بین «UI روشن کرمی» و «UI عمیق navy با gold/cream» مردد بودی → **گزینه navy صحیح است**

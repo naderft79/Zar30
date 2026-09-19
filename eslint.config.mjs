@@ -14,6 +14,9 @@ const eslintConfig = [
       "public/sw.js",
       "prisma/migrations/**",
       "coverage/**",
+      // خروجی‌های تست Playwright لینت نمی‌شوند
+      "playwright-report/**",
+      "test-results/**",
       // کدهای تولیدشده Prisma لینت نمی شوند
       "src/generated/**",
     ],
