@@ -1,8 +1,6 @@
-import type { Metadata } from 'next'
-import { ReferralClient } from '@/components/panel/referral-client'
+// مسیر قدیمی — انتقال یافته به /dashboard/profile/referral
+import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'معرفی دوستان | زرنما' }
-
-export default function ReferralPage() {
-  return <ReferralClient />
+export default function ReferralRedirect() {
+  redirect('/dashboard/profile/referral')
 }

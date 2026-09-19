@@ -7,6 +7,11 @@
 import 'dotenv/config'
 import { defineConfig, devices } from '@playwright/test'
 
+// bcryptjs خالص JS و CPU-bound است — cost پایین‌تر فقط برای E2E تا سرور تست
+// زیر بار موازی workerها کرش نکند. مقدار production در .env همان ۱۲ می‌ماند
+// (dotenv مقدار موجود را override نمی‌کند؛ این مقدار به webServer و workerها ارث می‌رسد)
+process.env.BCRYPT_COST = '10'
+
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000'
 
 export default defineConfig({
@@ -14,8 +19,8 @@ export default defineConfig({
   globalSetup: './tests/e2e/global-setup.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 2 : 1,
+  workers: process.env.CI ? 1 : 4,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL,

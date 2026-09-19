@@ -1,8 +1,7 @@
-import type { Metadata } from 'next'
-import { SecurityClient } from '@/components/panel/security-client'
+// مسیر قدیمی — انتقال یافته به /dashboard/profile/security
+// redirect برای سازگاری با bookmarkهای موجود
+import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'مرکز امنیت | زرنما' }
-
-export default function SecurityPage() {
-  return <SecurityClient />
+export default function SecurityRedirect() {
+  redirect('/dashboard/profile/security')
 }

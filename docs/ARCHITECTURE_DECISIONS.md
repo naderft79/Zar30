@@ -163,6 +163,27 @@ Shared Codebase (src/)
 
 **دلیل:** Turbopack بهتر resolve می‌کند + gitignore شده
 
+## ADR-015: Permanent User Panel Navigation
+
+**تصمیم:** Navigation اصلی User Panel برای همیشه دقیقاً ۵ مقصد با این ترتیب ثابت است:
+
+1. خانه → `/dashboard`
+2. معاملات → `/dashboard/trade`
+3. دارایی → `/dashboard/assets`
+4. قسطی → `/dashboard/installments`
+5. پروفایل → `/dashboard/profile`
+
+**قرارداد:**
+
+- این ساختار یک **Permanent Product Navigation Contract** است — ترتیب و تعداد ثابت می‌ماند.
+- Desktop (sidebar) و Mobile (bottom navigation) از یک Information Architecture استفاده می‌کنند.
+- Source of Truth واحد: `src/config/navigation.ts` — hardcode navigation در کامپوننت‌ها ممنوع.
+- اعلان‌ها، پشتیبانی، جستجو و هشدارهای امنیتی nav item جدید نمی‌شوند — از Header، Profile یا Contextual Actions در دسترس‌اند.
+- صفحات فرعی (امنیت، نشست‌ها، معرفی، پشتیبانی) زیر `/dashboard/profile/*` قرار دارند.
+- هر تغییر آینده در این قرارداد فقط با ADR رسمی جدید مجاز است.
+
+**دلیل:** یک IA ثابت و قابل پیش‌بینی برای محصول مالی؛ جلوگیری از رشد بی‌رویه nav در Phaseهای آینده؛ تست E2E (`Navigation Contract`) از تغییر ناخواسته جلوگیری می‌کند.
+
 ## تصمیم‌های معلق (DECISION REQUIRED)
 
 - [ ] تایید نتایج PWA Spike روی دستگاه واقعی (Chrome Android, Safari iOS)

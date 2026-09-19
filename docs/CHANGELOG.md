@@ -1,5 +1,41 @@
 # Zarnama — Changelog
 
+## [0.3.1] — Phase 3.1: Navigation Lock & Premium UI/UX Redesign (2026-09-19)
+
+### Added
+
+- **Permanent Navigation Contract** — `src/config/navigation.ts`: دقیقاً ۵ مقصد (خانه، معاملات، دارایی، قسطی، پروفایل) به‌عنوان source of truth واحد برای sidebar دسکتاپ و bottom nav موبایل + `isNavItemActive` برای nested routes (ADR-015)
+- **Premium Design Tokens** — palette کامل navy/gold در `globals.css`: surfaces چندلایه (app/sidebar/card/elevated/modal/input) برای dark و light، shadows، radius، spacing، typography، motion (duration/easing)، z-index، breakpoints
+- **Financial Components** (`src/components/financial/`): FinancialNumber (count-up)، BalanceCard، PriceTicker، TransactionItem، OrderCard، QuoteCard، PortfolioChart، StatusCard، TrendBadge
+- **UI Primitives**: Button variantهای `gold`/`success`، Skeleton shimmer، EmptyState، ErrorState، StatusBadge، DataTable responsive (دسکتاپ جدول → موبایل کارت)
+- **صفحات جدید** — `/dashboard/trade`، `/dashboard/assets`، `/dashboard/installments` (preview/empty — بدون financial logic)
+- **Profile hub** — `/dashboard/profile` + زیرمسیرها: `security`، `sessions`، `referral`، `support`؛ مسیرهای قدیمی redirect می‌شوند
+- **`/design-system`** — صفحه preview کامپوننت‌ها و stateها
+- **`src/lib/utils/format.ts`** — `toPersianDigits`، `formatToman`، `formatGoldGrams`، `formatPercentChange`، `formatAmount`
+- **Accessibility smoke tests** — `tests/e2e/a11y.spec.ts` (landmark، h1، label، focus، aria-current)
+- **E2E Navigation Contract** — دو تست در `panel.spec.ts` که قرارداد ۵‌آیتمی و یکسان بودن IA را روی desktop/tablet/mobile قفل می‌کنند
+
+### Changed
+
+- `PanelShell` بازنویسی — sidebar navy premium + bottom nav با safe-area + header با notification bell + skeleton loading + logout از طریق context
+- همه صفحات پنل (dashboard، profile، security، sessions، notifications، referral، support) با design system جدید redesign شدند
+- دکمه «خروج از حساب» به profile hub منتقل شد (طبق قرارداد nav)
+- `Logo` — prop اختیاری `textClassName` برای خوانایی روی surface تیره
+
+### Fixed
+
+- **E2E ناپایدار** — bcryptjs (CPU-bound) با cost ۱۲ زیر بار موازی، سرور تست را کرش می‌کرد → `BCRYPT_COST=10` فقط برای e2e در `playwright.config.ts` + `workers: 4` + `retries: 1` محلی
+- صفحات auth (`login`، `register`، `verify-otp`، `forgot-password`، `reset-password`) `h1` نداشتند → `CardTitle` به `h1`
+- Strict-mode violation روی heading «معاملات» و «دارایی» → `exact: true` در تست‌ها
+
+### Validated
+
+- `pnpm lint`: 0 errors / 0 warnings
+- `pnpm typecheck`: 0 errors
+- `pnpm test`: 73/73 (unit + integration)
+- `pnpm test:e2e`: ۵۹ pass / ۱ skip — روی ۳ viewport (شامل Navigation Contract + a11y)
+- `pnpm build`: موفق — ۵۴ route + Serwist
+
 ## [0.3.0] — Phase 3: User Panel & Profile (2026-09-18)
 
 ### Added

@@ -2,80 +2,168 @@
 @import 'tw-animate-css';
 
 /* ============================================
-   Zarnama Design System - Navy / Gold / Cream
+   Zarnama Design System — Phase 3.1
+   Premium FinTech: Deep Navy / Rich Gold / Cream
    ============================================ */
 
 :root {
-  /* Navy palette */
-  --navy: #1a2a4f;
-  --navy-dark: #0f1a33;
-  --navy-light: #2a3f6b;
+  /* ---- Brand palette ---- */
+  /* Deep Navy scale — از تیره‌ترین به روشن‌ترین */
+  --navy-950: #070d1d;
+  --navy-900: #0b1526;
+  --navy-800: #101d38;
+  --navy-700: #16264a;
+  --navy-600: #1d3159;
+  --navy-500: #254069;
+  --navy-400: #35548a;
+  --navy-300: #5a76ad;
+  --navy-200: #93a9cc;
+  --navy-100: #c7d4e8;
 
-  /* Gold palette */
-  --gold: #c9a227;
-  --gold-light: #e0c25a;
-  --gold-dark: #a0801c;
+  /* Rich Gold scale */
+  --gold-700: #8a6d14;
+  --gold-600: #a98a1e;
+  --gold-500: #c9a227;
+  --gold-400: #d9b94a;
+  --gold-300: #e6cd7d;
+  --gold-200: #f0e0ac;
+  --gold-100: #f8efd4;
 
-  /* Cream palette */
-  --cream: #f5ecd7;
-  --cream-dark: #e8d9b0;
+  /* Cream scale */
+  --cream-50: #fbf8f0;
+  --cream-100: #f7f0dd;
+  --cream-200: #f0e4c8;
+  --cream-300: #e5d5ae;
+  --cream-400: #d6c08e;
 
-  /* Semantic colors */
-  --success: #2e7d32;
-  --error: #c62828;
-  --warning: #ed6c02;
-  --info: #0288d1;
+  /* ---- Semantic ---- */
+  --success: #1f9d55;
+  --success-foreground: #ffffff;
+  --warning: #d97706;
+  --warning-foreground: #ffffff;
+  --error: #d64545;
+  --error-foreground: #ffffff;
+  --info: #3b82c4;
+  --info-foreground: #ffffff;
 
-  /* Light theme */
-  --background: #f5ecd7;
-  --foreground: #1a2a4f;
-  --card: #ffffff;
-  --card-foreground: #1a2a4f;
-  --border: #e8d9b0;
-  --input: #ffffff;
-  --input-foreground: #1a2a4f;
-  --primary: #1a2a4f;
-  --primary-foreground: #f5ecd7;
-  --secondary: #c9a227;
-  --secondary-foreground: #1a2a4f;
-  --muted: #f5ecd7;
-  --muted-foreground: #6b7280;
-  --accent: #c9a227;
-  --accent-foreground: #1a2a4f;
-  --destructive: #c62828;
-  --destructive-foreground: #ffffff;
-  --ring: #c9a227;
+  /* ---- Light theme surfaces ---- */
+  --background: #f6f1e4;
+  --surface: #efe8d5;
+  --card: #fffdf7;
+  --elevated: #ffffff;
+  --overlay: #ffffff;
+  --field: #fffdf7;
+  --border: #e0d4b4;
+  --border-strong: #c9b98f;
+
+  /* ---- Light theme text ---- */
+  --foreground: #101d38;
+  --text-secondary: #3d4f78;
+  --muted-foreground: #6e7c9c;
+
+  /* ---- Light theme roles ---- */
+  --card-foreground: var(--foreground);
+  --input: var(--field);
+  --input-foreground: var(--foreground);
+  --primary: #16264a;
+  --primary-foreground: #f7f0dd;
+  --secondary: var(--gold-500);
+  --secondary-foreground: #101d38;
+  --muted: var(--surface);
+  --accent: var(--gold-500);
+  --accent-foreground: #101d38;
+  --destructive: var(--error);
+  --destructive-foreground: var(--error-foreground);
+  --ring: var(--gold-500);
+
+  /* ---- Radius ---- */
   --radius: 0.625rem;
+
+  /* ---- Shadows ---- */
+  --shadow-xs: 0 1px 2px rgb(16 29 56 / 0.05);
+  --shadow-sm: 0 1px 3px rgb(16 29 56 / 0.07), 0 1px 2px rgb(16 29 56 / 0.04);
+  --shadow-md: 0 4px 10px -2px rgb(16 29 56 / 0.08), 0 2px 4px -2px rgb(16 29 56 / 0.04);
+  --shadow-lg: 0 10px 24px -6px rgb(16 29 56 / 0.12), 0 4px 8px -4px rgb(16 29 56 / 0.06);
+  --shadow-xl: 0 20px 40px -12px rgb(16 29 56 / 0.18);
+  --shadow-gold: 0 4px 14px -4px rgb(201 162 39 / 0.35);
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 350ms;
+
+  /* ---- Z-index ---- */
+  --z-dropdown: 40;
+  --z-sticky: 30;
+  --z-overlay: 50;
+  --z-modal: 60;
+  --z-toast: 70;
 }
 
 .dark {
-  /* Dark theme - Navy based */
-  --background: #0f1a33;
-  --foreground: #f5ecd7;
-  --card: #1a2a4f;
-  --card-foreground: #f5ecd7;
-  --border: #2a3f6b;
-  --input: #1a2a4f;
-  --input-foreground: #f5ecd7;
-  --primary: #c9a227;
-  --primary-foreground: #0f1a33;
-  --secondary: #2a3f6b;
-  --secondary-foreground: #f5ecd7;
-  --muted: #2a3f6b;
-  --muted-foreground: #a0b0d0;
-  --accent: #c9a227;
-  --accent-foreground: #0f1a33;
-  --destructive: #ef5350;
+  /* ---- Dark Financial UI — لایه‌های navy با عمق واقعی ---- */
+  --background: #070d1d;
+  --surface: #0c172e;
+  --card: #11203f;
+  --elevated: #182a4e;
+  --overlay: #1d3159;
+  --field: #0e1b36;
+  --border: #22365f;
+  --border-strong: #30477a;
+
+  --foreground: #f0ead6;
+  --text-secondary: #b6c2dc;
+  --muted-foreground: #8494b8;
+
+  --card-foreground: var(--foreground);
+  --input: var(--field);
+  --input-foreground: var(--foreground);
+  --primary: var(--gold-500);
+  --primary-foreground: #0b1526;
+  --secondary: #1d3159;
+  --secondary-foreground: #f0ead6;
+  --muted: #16264a;
+  --accent: var(--gold-500);
+  --accent-foreground: #0b1526;
+  --destructive: #e05c5c;
   --destructive-foreground: #ffffff;
-  --ring: #c9a227;
+  --ring: var(--gold-400);
+
+  /* Shadows در dark عمیق‌تر */
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 10px -2px rgb(0 0 0 / 0.45);
+  --shadow-lg: 0 10px 24px -6px rgb(0 0 0 / 0.55);
+  --shadow-xl: 0 20px 40px -12px rgb(0 0 0 / 0.65);
+  --shadow-gold: 0 4px 16px -4px rgb(201 162 39 / 0.3);
 }
 
+/* ============================================
+   Tailwind v4 — Theme Tokens
+   ============================================ */
 @theme inline {
+  /* Surfaces */
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
   --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+  --color-elevated: var(--elevated);
+  --color-overlay: var(--overlay);
+  --color-field: var(--field);
+
+  /* Text */
+  --color-foreground: var(--foreground);
+  --color-text-secondary: var(--text-secondary);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Borders */
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  /* Roles */
+  --color-card-foreground: var(--card-foreground);
   --color-input: var(--input);
   --color-input-foreground: var(--input-foreground);
   --color-primary: var(--primary);
@@ -83,31 +171,84 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-ring: var(--ring);
-  --color-navy: var(--navy);
-  --color-navy-dark: var(--navy-dark);
-  --color-navy-light: var(--navy-light);
-  --color-gold: var(--gold);
-  --color-gold-light: var(--gold-light);
-  --color-gold-dark: var(--gold-dark);
-  --color-cream: var(--cream);
-  --color-cream-dark: var(--cream-dark);
+
+  /* Brand scales */
+  --color-navy: #1a2a4f;
+  --color-navy-dark: #0f1a33;
+  --color-navy-light: #2a3f6b;
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-navy-500: var(--navy-500);
+  --color-navy-400: var(--navy-400);
+  --color-navy-300: var(--navy-300);
+  --color-navy-200: var(--navy-200);
+  --color-navy-100: var(--navy-100);
+  --color-gold: var(--gold-500);
+  --color-gold-light: var(--gold-300);
+  --color-gold-dark: var(--gold-600);
+  --color-gold-700: var(--gold-700);
+  --color-gold-600: var(--gold-600);
+  --color-gold-500: var(--gold-500);
+  --color-gold-400: var(--gold-400);
+  --color-gold-300: var(--gold-300);
+  --color-gold-200: var(--gold-200);
+  --color-gold-100: var(--gold-100);
+  --color-cream: var(--cream-100);
+  --color-cream-dark: var(--cream-300);
+  --color-cream-50: var(--cream-50);
+  --color-cream-100: var(--cream-100);
+  --color-cream-200: var(--cream-200);
+  --color-cream-300: var(--cream-300);
+  --color-cream-400: var(--cream-400);
+
+  /* Semantic */
   --color-success: var(--success);
-  --color-error: var(--error);
+  --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
   --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  /* Font */
   --font-sans: var(--font-vazirmatn);
+
+  /* Radius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 4px);
-  --radius-xl: calc(var(--radius) + 12px);
+  --radius-xl: calc(var(--radius) + 8px);
+  --radius-2xl: calc(var(--radius) + 14px);
+
+  /* Shadows */
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-gold: var(--shadow-gold);
+
+  /* Motion */
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+  --ease-spring: var(--ease-spring);
+  --duration-fast: var(--duration-fast);
+  --duration-normal: var(--duration-normal);
+  --duration-slow: var(--duration-slow);
 }
 
+/* ============================================
+   Base
+   ============================================ */
 * {
   border-color: var(--border);
 }
@@ -119,38 +260,110 @@ body {
   direction: rtl;
 }
 
-/* RTL support */
 html {
   direction: rtl;
   lang: fa;
 }
 
-/* Scrollbar styling */
+/* اعداد مالی — digits یکدست برای تراز ستونی */
+.tnum,
+[data-financial] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--muted);
+  background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--navy-light);
+  background: var(--border-strong);
   border-radius: 4px;
 }
-
 .dark ::-webkit-scrollbar-thumb {
-  background: var(--gold-dark);
+  background: var(--navy-500);
 }
 
-/* Selection */
 ::selection {
-  background: var(--gold);
-  color: var(--navy-dark);
+  background: var(--gold-500);
+  color: var(--navy-950);
 }
 
-/* Float animation — برای عناصر شناور Landing */
+/* Focus visible — حلقه طلایی یکدست */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Typography Utilities — سلسله‌مراتب مالی
+   ============================================ */
+.text-display {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.text-h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.text-h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.text-h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.text-body {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.7;
+}
+.text-caption {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.text-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+/* اعداد مالی — سلسله‌مراتب واضح */
+.text-financial {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.text-financial-lg {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.text-price {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ============================================
+   Motion — Premium, Fast, Meaningful
+   ============================================ */
 @keyframes float {
   0%,
   100% {
@@ -160,12 +373,10 @@ html {
     transform: translateY(-10px);
   }
 }
-
 .animate-float {
   animation: float 4s ease-in-out infinite;
 }
 
-/* Fade-up — ورود نرم بخش‌ها */
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -176,9 +387,108 @@ html {
     transform: translateY(0);
   }
 }
-
 .animate-fade-up {
-  animation: fade-up 0.6s ease-out both;
+  animation: fade-up 0.6s var(--ease-out) both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade-in {
+  animation: fade-in var(--duration-normal) var(--ease-out) both;
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-scale-in {
+  animation: scale-in var(--duration-normal) var(--ease-spring) both;
+}
+
+/* ورود تدریجی بخش‌های صفحه — با تأخیر پلکانی */
+.animate-stagger > * {
+  animation: fade-up 0.45s var(--ease-out) both;
+}
+.animate-stagger > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.animate-stagger > *:nth-child(2) {
+  animation-delay: 50ms;
+}
+.animate-stagger > *:nth-child(3) {
+  animation-delay: 100ms;
+}
+.animate-stagger > *:nth-child(4) {
+  animation-delay: 150ms;
+}
+.animate-stagger > *:nth-child(5) {
+  animation-delay: 200ms;
+}
+.animate-stagger > *:nth-child(6) {
+  animation-delay: 250ms;
+}
+.animate-stagger > *:nth-child(7) {
+  animation-delay: 300ms;
+}
+.animate-stagger > *:nth-child(8) {
+  animation-delay: 350ms;
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--muted) 25%, var(--surface) 50%, var(--muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s var(--ease-in-out) infinite;
+}
+
+/* Pulse نرم برای نشانگرهای وضعیت */
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Micro-interaction آیکون nav — فنری کوتاه */
+@keyframes nav-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.82);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.animate-nav-pop {
+  animation: nav-pop 0.3s var(--ease-spring) both;
 }
 
 /* کاهش حرکت — احترام به prefers-reduced-motion */

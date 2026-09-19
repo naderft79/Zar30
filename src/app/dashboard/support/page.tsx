@@ -1,8 +1,6 @@
-import type { Metadata } from 'next'
-import { SupportClient } from '@/components/panel/support-client'
+// مسیر قدیمی — انتقال یافته به /dashboard/profile/support
+import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'پشتیبانی | زرنما' }
-
-export default function SupportPage() {
-  return <SupportClient />
+export default function SupportRedirect() {
+  redirect('/dashboard/profile/support')
 }

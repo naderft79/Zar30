@@ -1,8 +1,6 @@
-import type { Metadata } from 'next'
-import { SessionsClient } from '@/components/panel/sessions-client'
+// مسیر قدیمی — انتقال یافته به /dashboard/profile/sessions
+import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'نشست‌ها | زرنما' }
-
-export default function SessionsPage() {
-  return <SessionsClient />
+export default function SessionsRedirect() {
+  redirect('/dashboard/profile/sessions')
 }

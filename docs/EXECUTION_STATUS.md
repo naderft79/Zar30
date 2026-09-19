@@ -285,3 +285,57 @@
 ### Phase بعدی
 
 **Phase 4:** KYC — احراز هویت (workflow، document upload، verification، review) — آماده شروع
+
+---
+
+## Phase 3.1: Navigation Lock & Premium UI/UX Redesign
+
+**وضعیت:** ✅ DONE — Final Gate پاس شد (Lint / Typecheck / Unit+Integration / E2E / Build)
+
+> مرجع کامل: `docs/phases/PHASE-3.1-REPORT.md` — قرارداد nav: `src/config/navigation.ts` + `docs/ARCHITECTURE_DECISIONS.md` (ADR-015)
+
+### تسک‌ها
+
+| #      | تسک                                                                                                      | وضعیت |
+| ------ | -------------------------------------------------------------------------------------------------------- | ----- |
+| 3.1.1  | `src/config/navigation.ts` — قرارداد دائمی ۵ مقصدی (خانه، معاملات، دارایی، قسطی، پروفایل) + active match | ✅    |
+| 3.1.2  | Design Tokens کامل در `globals.css` — navy/gold، surfaces چندلایه dark/light، shadow، motion، type       | ✅    |
+| 3.1.3  | کامپوننت‌های مالی: BalanceCard، PriceTicker، TransactionItem، OrderCard، QuoteCard، PortfolioChart، ...  | ✅    |
+| 3.1.4  | UI primitives: Button (gold/success)، Skeleton shimmer، EmptyState، ErrorState، StatusBadge، DataTable   | ✅    |
+| 3.1.5  | `PanelShell` جدید — sidebar premium + bottom nav ۵‌آیتمی + header + bell + safe-area + skeleton          | ✅    |
+| 3.1.6  | صفحات جدید: `/dashboard/trade`، `/assets`، `/installments` (preview/empty، بدون financial logic)         | ✅    |
+| 3.1.7  | انتقال security/sessions/referral/support زیر `/dashboard/profile/*` + redirect مسیرهای قدیمی            | ✅    |
+| 3.1.8  | Redesign همه صفحات موجود با design system جدید                                                           | ✅    |
+| 3.1.9  | صفحه `/design-system` — preview کامپوننت‌ها و stateها                                                    | ✅    |
+| 3.1.10 | E2E «Navigation Contract» — ۵ آیتم + ترتیب + desktop/mobile از یک IA                                     | ✅    |
+| 3.1.11 | Accessibility smoke tests (landmark، h1، label، focus، aria-current)                                     | ✅    |
+
+### Acceptance Criteria
+
+| معیار                                          | وضعیت                                           |
+| ---------------------------------------------- | ----------------------------------------------- |
+| 5-item navigation دقیقاً مطابق قرارداد         | ✅ `PANEL_NAV_ITEMS` + E2E contract test        |
+| Desktop و Mobile یک IA                         | ✅ هر دو از یک config مرکزی                     |
+| Navigation config مرکزی                        | ✅ `src/config/navigation.ts`                   |
+| E2E contract test                              | ✅ ۲ تست در `panel.spec.ts`                     |
+| Design System جدید                             | ✅ token-based کامل در `globals.css`            |
+| تمام صفحات موجود redesign                      | ✅ dashboard، profile، security، sessions، ...  |
+| Animation System                               | ✅ token motion + reduced-motion + count-up     |
+| Skeleton/Empty/Error                           | ✅ کامپوننت‌های اختصاصی                         |
+| Accessibility                                  | ✅ smoke tests + h1 در همه صفحات + aria-current |
+| `pnpm lint` / `typecheck` / `test`             | ✅ 0 / 0 / 73 pass                              |
+| `pnpm test:e2e`                                | ✅ ۵۹ pass (۳ viewport)                         |
+| `pnpm build`                                   | ✅ موفق                                         |
+| Docs: AGENTS + MEGAPLAN + ADR + STATUS + گزارش | ✅ ADR-015 + PHASE-3.1-REPORT                   |
+
+### مشکلات پیدا شده و رفع‌شده
+
+1. **E2E ناپایدار (bcrypt CPU-bound)** — `bcryptjs` با cost ۱۲ روی نود تک‌نخی زیر ۶ worker موازی، سرور تست را خفه می‌کرد (ECONNREFUSED) → `BCRYPT_COST=10` فقط برای e2e در `playwright.config.ts` + workers=4 + retry=1 (مقدار production در `.env` همان ۱۲ است)
+2. **Strict mode روی «معاملات»** — `تاریخچه معاملات` substring match می‌شد → `exact: true`
+3. **nav مخفی در getByRole** — تست IA دو nav نمی‌توانست هر دو را هم‌زمان ببیند → CSS locator روی `nav[aria-label]`
+4. **صفحات auth بدون h1** — `CardTitle` (h3) به `h1` تبدیل شد در ۵ صفحه auth
+5. **خروج از حساب** — با حذف دکمه از header موبایل، دکمه خروج به profile hub منتقل شد
+
+### Phase بعدی
+
+**Phase 4:** KYC — پس از تایید گزارش Phase 3.1 توسط کاربر شروع می‌شود

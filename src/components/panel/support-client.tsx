@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Support Preview (Phase 3)
+// Zarnama - Support (Phase 3.1 — Premium Redesign)
 // ============================================
 // محل تیکت و تماس — Ticket Engine در Phase بعدی
 // ============================================
@@ -9,55 +9,54 @@
 import Link from 'next/link'
 import { LifeBuoy, MessageSquare, Phone } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { EmptyState } from '@/components/ui/empty-state'
+import { PageHeader } from './page-header'
 
 export function SupportClient() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-foreground text-2xl font-bold">پشتیبانی</h1>
+    <div className="animate-stagger space-y-5">
+      <PageHeader title="پشتیبانی" description="تیکت پشتیبانی و راه‌های ارتباطی" />
 
-      <Card className="border-border/60">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <MessageSquare className="text-gold size-5" />
+            <MessageSquare className="text-gold-500 size-5" strokeWidth={1.75} />
             تیکت پشتیبانی
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="border-border/60 flex flex-col items-center gap-2 rounded-lg border border-dashed py-8 text-center">
-            <p className="text-muted-foreground text-sm">
-              سیستم تیکتینگ به‌زودی فعال می‌شود — بلیط جدید، پیگیری و پاسخ
-            </p>
-            <Badge variant="outline" className="text-xs">
-              به‌زودی — پیش‌نمایش
-            </Badge>
-          </div>
+          <EmptyState
+            icon={MessageSquare}
+            title="سیستم تیکتینگ به‌زودی فعال می‌شود"
+            description="بلیط جدید، پیگیری وضعیت و پاسخ پشتیبانی پس از راه‌اندازی موتور تیکت اینجا مدیریت می‌شود."
+            badge="به‌زودی — پیش‌نمایش"
+          />
         </CardContent>
       </Card>
 
-      <Card className="border-border/60">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Phone className="text-gold size-5" />
+            <Phone className="text-gold-500 size-5" strokeWidth={1.75} />
             راه‌های ارتباطی
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <div className="text-muted-foreground flex items-center justify-between">
+        <CardContent className="divide-border/40 divide-y text-sm">
+          <div className="text-muted-foreground flex items-center justify-between py-2.5">
             <span className="flex items-center gap-2">
               <LifeBuoy className="size-4" />
               مرکز راهنمایی
             </span>
-            <Link href="/faq" className="text-gold hover:underline">
+            <Link href="/faq" className="text-gold-600 dark:text-gold-400 hover:underline">
               سوالات متداول
             </Link>
           </div>
-          <div className="text-muted-foreground flex items-center justify-between">
+          <div className="text-muted-foreground flex items-center justify-between py-2.5">
             <span className="flex items-center gap-2">
               <MessageSquare className="size-4" />
               تماس با ما
             </span>
-            <Link href="/contact" className="text-gold hover:underline">
+            <Link href="/contact" className="text-gold-600 dark:text-gold-400 hover:underline">
               صفحه تماس
             </Link>
           </div>

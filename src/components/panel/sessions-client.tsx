@@ -1,5 +1,5 @@
 // ============================================
-// Zarnama - Sessions Management (Phase 3)
+// Zarnama - Sessions Management (Phase 3.1 — Premium Redesign)
 // ============================================
 // نشست‌های فعال — device/browser/IP/current + revoke + logout others
 // ============================================
@@ -7,11 +7,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { MonitorSmartphone, Smartphone, Monitor, Tablet, LogOut } from 'lucide-react'
+import { LogOut, Monitor, MonitorSmartphone, Smartphone, Tablet } from 'lucide-react'
 import { apiDelete, apiGetWithRefresh } from '@/lib/api/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { SkeletonListItem } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/ui/empty-state'
+import { PageHeader } from './page-header'
+import { cn } from 'cn'
 
 export interface SessionView {
   id: string
@@ -77,56 +81,80 @@ export function SessionsClient() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-foreground text-2xl font-bold">نشست‌های فعال</h1>
-        <Button variant="outline" size="sm" onClick={logoutOthers} disabled={busy}>
-          <LogOut className="ml-2 size-4" />
-          خروج از سایر نشست‌ها
-        </Button>
-      </div>
+    <div className="animate-stagger space-y-5">
+      <PageHeader
+        title="دستگاه‌ها و نشست‌ها"
+        description="دستگاه‌های متصل به حساب شما را مدیریت کنید"
+        actions={
+          <Button variant="outline" size="sm" onClick={logoutOthers} disabled={busy}>
+            <LogOut className="size-4" />
+            خروج از سایر نشست‌ها
+          </Button>
+        }
+      />
 
       {error && (
-        <p role="alert" className="bg-destructive/10 text-destructive rounded-md px-3 py-2 text-sm">
+        <p role="alert" className="bg-error/10 text-error rounded-lg px-3 py-2 text-sm">
           {error}
         </p>
       )}
 
-      <Card className="border-border/60">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <MonitorSmartphone className="text-gold size-5" />
-            دستگاه‌های متصل ({sessions?.length ?? '…'})
+            <MonitorSmartphone className="text-gold-500 size-5" strokeWidth={1.75} />
+            دستگاه‌های متصل
+            {sessions !== null && (
+              <StatusBadge tone="neutral" dot={false}>
+                {sessions.length} نشست
+              </StatusBadge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {sessions === null && !error && (
-            <p className="text-muted-foreground text-sm">در حال بارگذاری…</p>
+            <div className="divide-border/40 divide-y">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <SkeletonListItem key={i} />
+              ))}
+            </div>
           )}
           {sessions?.length === 0 && (
-            <p className="text-muted-foreground text-sm">نشست فعالی یافت نشد.</p>
+            <EmptyState icon={MonitorSmartphone} title="نشست فعالی یافت نشد" />
           )}
           {sessions?.map((s) => {
             const Icon = DEVICE_ICONS[s.device] ?? MonitorSmartphone
             return (
               <div
                 key={s.id}
-                className="border-border/60 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3"
+                className={cn(
+                  'flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 transition-colors',
+                  s.isCurrent ? 'border-gold-500/30 bg-gold-500/5' : 'border-border/60 bg-muted/20',
+                )}
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <Icon className="text-muted-foreground size-5 shrink-0" />
+                  <div
+                    className={cn(
+                      'flex size-11 shrink-0 items-center justify-center rounded-xl',
+                      s.isCurrent
+                        ? 'bg-gold-500/15 text-gold-600 dark:text-gold-400'
+                        : 'bg-muted text-muted-foreground',
+                    )}
+                  >
+                    <Icon className="size-5" strokeWidth={1.75} />
+                  </div>
                   <div className="min-w-0">
-                    <p className="text-foreground flex items-center gap-2 text-sm">
+                    <p className="text-foreground flex flex-wrap items-center gap-2 text-sm font-medium">
                       <span className="truncate">
                         {s.browser} · {s.os}
                       </span>
                       {s.isCurrent && (
-                        <Badge variant="secondary" className="text-xs">
+                        <StatusBadge tone="gold" dot={false}>
                           نشست جاری
-                        </Badge>
+                        </StatusBadge>
                       )}
                     </p>
-                    <p className="text-muted-foreground text-xs" dir="ltr">
+                    <p className="text-muted-foreground mt-0.5 text-xs" dir="ltr">
                       {s.ip ?? '—'} · {new Date(s.createdAt).toLocaleString('fa-IR')}
                     </p>
                   </div>

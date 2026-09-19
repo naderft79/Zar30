@@ -6,14 +6,14 @@ Project Name: **Zarnama / زر‌نما**
 
 Project Type:
 
-* Gold Trading Platform
-* Digital Gold Platform
-* Gold Investment Platform
-* Installment Gold Platform
-* Financial Technology Platform
-* Responsive Web Application
-* Progressive Web App (PWA)
-* Mobile-ready Application Architecture
+- Gold Trading Platform
+- Digital Gold Platform
+- Gold Investment Platform
+- Installment Gold Platform
+- Financial Technology Platform
+- Responsive Web Application
+- Progressive Web App (PWA)
+- Mobile-ready Application Architecture
 
 Primary Product Goal:
 
@@ -21,13 +21,13 @@ Build a secure, scalable, production-grade platform for buying, selling, holding
 
 The platform must support:
 
-* Web
-* Desktop
-* Tablet
-* Mobile
-* PWA
-* Future Android application
-* Future iOS application
+- Web
+- Desktop
+- Tablet
+- Mobile
+- PWA
+- Future Android application
+- Future iOS application
 
 ---
 
@@ -93,16 +93,16 @@ The AI Agent is not merely a code generator.
 
 The Agent operates simultaneously as:
 
-* Senior Software Engineer
-* Software Architect
-* Backend Engineer
-* Frontend Engineer
-* Database Engineer
-* Security Engineer
-* QA Engineer
-* DevOps Engineer
-* Performance Engineer
-* Product Engineer
+- Senior Software Engineer
+- Software Architect
+- Backend Engineer
+- Frontend Engineer
+- Database Engineer
+- Security Engineer
+- QA Engineer
+- DevOps Engineer
+- Performance Engineer
+- Product Engineer
 
 The Agent must think in terms of:
 
@@ -164,13 +164,13 @@ Do not create a second competing implementation of an existing feature.
 
 Do not duplicate:
 
-* Services
-* API clients
-* Validation
-* Business logic
-* Authentication
-* Notification logic
-* Financial logic
+- Services
+- API clients
+- Validation
+- Business logic
+- Authentication
+- Notification logic
+- Financial logic
 
 without a clear architectural reason.
 
@@ -198,12 +198,12 @@ If the issue is technically non-critical, choose the safest reasonable implement
 
 If it changes:
 
-* Money
-* Legal behavior
-* Financial calculations
-* User entitlement
-* Security architecture
-* Core database structure
+- Money
+- Legal behavior
+- Financial calculations
+- User entitlement
+- Security architecture
+- Core database structure
 
 treat it as a significant decision.
 
@@ -247,15 +247,15 @@ Plan → Done
 
 Every project Phase must have:
 
-* Goal
-* Dependencies
-* Tasks
-* Implementation
-* Tests
-* Security Review
-* Acceptance Criteria
-* Documentation
-* Phase Report
+- Goal
+- Dependencies
+- Tasks
+- Implementation
+- Tests
+- Security Review
+- Acceptance Criteria
+- Documentation
+- Phase Report
 
 A Phase can only be marked:
 
@@ -285,13 +285,13 @@ and unit/integration tests.
 
 Every important task should answer:
 
-* What?
-* Why?
-* Where?
-* Dependency?
-* Expected output?
-* How is it tested?
-* How is completion verified?
+- What?
+- Why?
+- Where?
+- Dependency?
+- Expected output?
+- How is it tested?
+- How is completion verified?
 
 ---
 
@@ -299,14 +299,14 @@ Every important task should answer:
 
 Never claim a feature is implemented when it is:
 
-* Mocked
-* Hardcoded
-* Placeholder-only
-* UI-only
-* Static
-* Simulated
-* Returning fake success
-* Returning fabricated financial data
+- Mocked
+- Hardcoded
+- Placeholder-only
+- UI-only
+- Static
+- Simulated
+- Returning fake success
+- Returning fabricated financial data
 
 A mock can exist for development.
 
@@ -328,19 +328,19 @@ Financial correctness is a first-class engineering requirement.
 
 Financial features include:
 
-* Gold balances
-* Rial balances
-* Deposits
-* Withdrawals
-* Purchases
-* Sales
-* Fees
-* Spreads
-* Investments
-* Installments
-* Referral commissions
-* Settlements
-* Profit calculations
+- Gold balances
+- Rial balances
+- Deposits
+- Withdrawals
+- Purchases
+- Sales
+- Fees
+- Spreads
+- Investments
+- Installments
+- Referral commissions
+- Settlements
+- Profit calculations
 
 These must be handled as financial operations, not ordinary CRUD operations.
 
@@ -362,20 +362,20 @@ as the authoritative representation for sensitive monetary calculations.
 
 Use an appropriate exact representation such as:
 
-* Decimal
-* Fixed precision
-* Integer minor units
-* Database numeric/decimal types
+- Decimal
+- Fixed precision
+- Integer minor units
+- Database numeric/decimal types
 
 according to the project's selected architecture.
 
 The representation must be consistent throughout:
 
-* Database
-* Backend
-* Services
-* API
-* Tests
+- Database
+- Backend
+- Services
+- API
+- Tests
 
 ### Double-Entry Ledger (Zarnama Architecture)
 
@@ -389,14 +389,14 @@ sum of debits = sum of credits
 
 Concepts:
 
-* Transaction (business event)
-* JournalEntry (atomic, balanced set of LedgerEntry)
-* LedgerAccount (account: ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
-* LedgerEntry (immutable debit/credit on a LedgerAccount)
-* Asset (RIAL, GOLD, extensible to SILVER, crypto, ...)
-* Balance (redundant sum of LedgerEntry per account)
-* Reference (link to Order, Deposit, Withdrawal, ...)
-* Reversal (compensating JournalEntry, not UPDATE)
+- Transaction (business event)
+- JournalEntry (atomic, balanced set of LedgerEntry)
+- LedgerAccount (account: ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
+- LedgerEntry (immutable debit/credit on a LedgerAccount)
+- Asset (RIAL, GOLD, extensible to SILVER, crypto, ...)
+- Balance (redundant sum of LedgerEntry per account)
+- Reference (link to Order, Deposit, Withdrawal, ...)
+- Reversal (compensating JournalEntry, not UPDATE)
 
 ### Source of Truth for Financial Integrity
 
@@ -430,11 +430,11 @@ Gold weight must have explicitly defined precision.
 
 The system must clearly define:
 
-* Minimum tradeable quantity
-* Decimal precision
-* Rounding rules
-* Display precision
-* Calculation precision
+- Minimum tradeable quantity
+- Decimal precision
+- Rounding rules
+- Display precision
+- Calculation precision
 
 Never round intermediate financial calculations unless explicitly required.
 
@@ -504,15 +504,15 @@ Financial APIs must be resistant to duplicate requests.
 
 This applies especially to:
 
-* Deposit
-* Withdrawal
-* Buy
-* Sell
-* Payment
-* Installment Payment
-* Investment Subscription
-* Referral Commission
-* Settlement
+- Deposit
+- Withdrawal
+- Buy
+- Sell
+- Payment
+- Installment Payment
+- Investment Subscription
+- Referral Commission
+- Settlement
 
 Retries must not create duplicate financial effects.
 
@@ -550,24 +550,24 @@ Cache response in Redis (short TTL)
 
 Assume users may:
 
-* Double-click
-* Retry requests
-* Open multiple tabs
-* Have unstable internet
-* Submit simultaneous requests
-* Use multiple devices
+- Double-click
+- Retry requests
+- Open multiple tabs
+- Have unstable internet
+- Submit simultaneous requests
+- Use multiple devices
 
 Financial operations must be safe under concurrency.
 
 Pay special attention to:
 
-* Balance
-* Gold inventory
-* Orders
-* Withdrawals
-* Reservations
-* Payments
-* Installment payments
+- Balance
+- Gold inventory
+- Orders
+- Withdrawals
+- Reservations
+- Payments
+- Installment payments
 
 ### Primary Mechanism (Zarnama Architecture)
 
@@ -619,12 +619,12 @@ Audit
 
 If the system maintains operational gold inventory, the architecture must clearly distinguish between:
 
-* User Gold Holdings
-* Operational Inventory
-* Available Inventory
-* Reserved Inventory
-* Pending Inventory
-* Settled Inventory
+- User Gold Holdings
+- Operational Inventory
+- Available Inventory
+- Reserved Inventory
+- Pending Inventory
+- Settled Inventory
 
 Do not assume these are interchangeable.
 
@@ -638,15 +638,15 @@ Pricing logic belongs in a dedicated domain/service layer.
 
 Pricing may involve:
 
-* Market price
-* Buy price
-* Sell price
-* Spread
-* Fees
-* Discounts
-* Promotional pricing
-* Limits
-* Market status
+- Market price
+- Buy price
+- Sell price
+- Spread
+- Fees
+- Discounts
+- Promotional pricing
+- Limits
+- Market status
 
 All relevant rules must be centralized.
 
@@ -668,10 +668,10 @@ Do not display made-up prices to users.
 
 Fees must be:
 
-* Configurable
-* Auditable
-* Testable
-* Versionable when needed
+- Configurable
+- Auditable
+- Testable
+- Versionable when needed
 
 Never scatter fee calculations throughout random UI components.
 
@@ -685,15 +685,15 @@ Authentication must be centralized and reusable.
 
 Support architecture for:
 
-* Registration
-* OTP
-* Login
-* Logout
-* Session management
-* Refresh
-* Password recovery
-* Device management
-* Suspicious login detection
+- Registration
+- OTP
+- Login
+- Logout
+- Session management
+- Refresh
+- Password recovery
+- Device management
+- Suspicious login detection
 
 Authentication logic must not be duplicated across pages.
 
@@ -748,23 +748,23 @@ Admin operations are high risk.
 
 Sensitive actions should include:
 
-* Authorization
-* Audit logging
-* Actor identity
-* Timestamp
-* Target resource
-* Before/after state when appropriate
-* Reason where appropriate
+- Authorization
+- Audit logging
+- Actor identity
+- Timestamp
+- Target resource
+- Before/after state when appropriate
+- Reason where appropriate
 
 Examples:
 
-* Price changes
-* Fee changes
-* Balance corrections
-* Withdrawal approval
-* KYC approval
-* Investment configuration
-* Installment configuration
+- Price changes
+- Fee changes
+- Balance corrections
+- Withdrawal approval
+- KYC approval
+- Investment configuration
+- Installment configuration
 
 ---
 
@@ -772,12 +772,12 @@ Examples:
 
 OTP handling must include:
 
-* Expiration
-* Attempt limits
-* Rate limiting
-* Abuse protection
-* Replay protection
-* Secure storage/verification
+- Expiration
+- Attempt limits
+- Rate limiting
+- Abuse protection
+- Replay protection
+- Secure storage/verification
 
 Never store OTPs in plaintext when avoidable.
 
@@ -787,10 +787,10 @@ Never store OTPs in plaintext when avoidable.
 
 Sessions must be:
 
-* Secure
-* Expirable
-* Revocable
-* Device-aware where appropriate
+- Secure
+- Expirable
+- Revocable
+- Device-aware where appropriate
 
 Users should be able to manage active sessions when supported by the product plan.
 
@@ -800,13 +800,13 @@ Users should be able to manage active sessions when supported by the product pla
 
 Never commit:
 
-* Passwords
-* API keys
-* Tokens
-* Private keys
-* Encryption secrets
-* Database passwords
-* Third-party credentials
+- Passwords
+- API keys
+- Tokens
+- Private keys
+- Encryption secrets
+- Database passwords
+- Third-party credentials
 
 to Git.
 
@@ -824,13 +824,13 @@ Validate all external input.
 
 This includes:
 
-* Forms
-* API payloads
-* URL parameters
-* Query parameters
-* File uploads
-* Webhooks
-* Third-party responses
+- Forms
+- API payloads
+- URL parameters
+- Query parameters
+- File uploads
+- Webhooks
+- Third-party responses
 
 Never trust the client.
 
@@ -850,14 +850,14 @@ The backend enforces truth.
 
 Every sensitive API must consider:
 
-* Authentication
-* Authorization
-* Validation
-* Rate limiting
-* Idempotency
-* Logging
-* Error handling
-* Abuse protection
+- Authentication
+- Authorization
+- Validation
+- Rate limiting
+- Idempotency
+- Logging
+- Error handling
+- Abuse protection
 
 ---
 
@@ -867,11 +867,11 @@ Do not expose sensitive internals to users.
 
 Never send:
 
-* Stack traces
-* Database credentials
-* SQL queries
-* Internal secrets
-* Private infrastructure details
+- Stack traces
+- Database credentials
+- SQL queries
+- Internal secrets
+- Private infrastructure details
 
 to production clients.
 
@@ -881,10 +881,10 @@ to production clients.
 
 Errors must be:
 
-* Predictable
-* Structured
-* Logged appropriately
-* Traceable
+- Predictable
+- Structured
+- Logged appropriately
+- Traceable
 
 Use consistent error response formats.
 
@@ -896,22 +896,22 @@ Logs must be structured where practical.
 
 Important events should contain appropriate context such as:
 
-* Request ID
-* Correlation ID
-* User ID
-* Resource ID
-* Timestamp
-* Action
-* Result
+- Request ID
+- Correlation ID
+- User ID
+- Resource ID
+- Timestamp
+- Action
+- Result
 
 Never log:
 
-* Password
-* OTP
-* Private key
-* Access token
-* Full payment credentials
-* Sensitive personal data unnecessarily
+- Password
+- OTP
+- Private key
+- Access token
+- Full payment credentials
+- Sensitive personal data unnecessarily
 
 ---
 
@@ -929,12 +929,12 @@ KYC is sensitive.
 
 KYC data must receive appropriate:
 
-* Access control
-* Encryption where required
-* Audit logging
-* Retention handling
-* Secure storage
-* Secure transport
+- Access control
+- Encryption where required
+- Audit logging
+- Retention handling
+- Secure storage
+- Secure transport
 
 Only authorized roles should access sensitive KYC information.
 
@@ -948,11 +948,11 @@ Avoid unnecessary storage of sensitive information.
 
 Do not expose personal data through:
 
-* Public URLs
-* Client logs
-* Analytics
-* Debugging output
-* Error messages
+- Public URLs
+- Client logs
+- Analytics
+- Debugging output
+- Error messages
 
 ---
 
@@ -962,11 +962,11 @@ Treat uploaded files as untrusted.
 
 Validate:
 
-* MIME
-* Size
-* Extension
-* Content
-* Storage path
+- MIME
+- Size
+- Extension
+- Content
+- Storage path
 
 Do not execute uploaded files.
 
@@ -982,11 +982,11 @@ Use the database abstraction safely.
 
 Validate:
 
-* IDs
-* Filters
-* Sorting
-* Pagination
-* Search
+- IDs
+- Filters
+- Sorting
+- Pagination
+- Search
 
 ---
 
@@ -996,11 +996,11 @@ Escape untrusted content.
 
 Special attention:
 
-* User-generated content
-* Blog
-* Support tickets
-* Admin-entered content
-* Rich text
+- User-generated content
+- Blog
+- Support tickets
+- Admin-entered content
+- Rich text
 
 Never render arbitrary HTML without controlled sanitization.
 
@@ -1016,14 +1016,14 @@ Use appropriate CSRF protections based on the selected authentication architectu
 
 Implement rate limiting for sensitive operations such as:
 
-* OTP requests
-* Login
-* Password recovery
-* Withdrawals
-* Trading
-* API access
-* Ticket spam
-* Referral abuse
+- OTP requests
+- Login
+- Password recovery
+- Withdrawals
+- Trading
+- API access
+- Ticket spam
+- Referral abuse
 
 ---
 
@@ -1031,13 +1031,13 @@ Implement rate limiting for sensitive operations such as:
 
 Design architecture to detect or prevent:
 
-* Self referral
-* Multi-account abuse
-* Repeated failed login
-* Suspicious withdrawals
-* Duplicate transactions
-* Automation abuse
-* Promotional abuse
+- Self referral
+- Multi-account abuse
+- Repeated failed login
+- Suspicious withdrawals
+- Duplicate transactions
+- Automation abuse
+- Promotional abuse
 
 Do not assume the frontend can prevent fraud.
 
@@ -1059,15 +1059,15 @@ Add indexes based on actual query patterns.
 
 Important areas:
 
-* User lookup
-* Transaction history
-* Orders
-* Ledger
-* Notifications
-* Tickets
-* KYC status
-* Referral
-* Installments
+- User lookup
+- Transaction history
+- Orders
+- Ledger
+- Notifications
+- Tickets
+- KYC status
+- Referral
+- Installments
 
 Do not blindly index every field.
 
@@ -1081,10 +1081,10 @@ Never manually edit production schema as a shortcut.
 
 Before significant migration:
 
-* Backup strategy
-* Compatibility check
-* Migration test
-* Rollback consideration
+- Backup strategy
+- Compatibility check
+- Migration test
+- Rollback consideration
 
 ---
 
@@ -1092,10 +1092,10 @@ Before significant migration:
 
 API contracts should be:
 
-* Consistent
-* Predictable
-* Documented
-* Versionable
+- Consistent
+- Predictable
+- Documented
+- Versionable
 
 Avoid random endpoint naming.
 
@@ -1107,10 +1107,10 @@ Business rules must live in appropriate domain/service layers.
 
 Do not bury critical logic inside:
 
-* React components
-* Pages
-* Controllers
-* Database triggers without justification
+- React components
+- Pages
+- Controllers
+- Database triggers without justification
 
 UI should orchestrate presentation.
 
@@ -1122,13 +1122,13 @@ Domain services should enforce business logic.
 
 Frontend should:
 
-* Be componentized
-* Avoid duplicated business logic
-* Handle loading states
-* Handle errors
-* Handle empty states
-* Support responsive layouts
-* Be accessible
+- Be componentized
+- Avoid duplicated business logic
+- Handle loading states
+- Handle errors
+- Handle empty states
+- Support responsive layouts
+- Be accessible
 
 ---
 
@@ -1138,12 +1138,12 @@ Reuse the Design System.
 
 Do not create five different styles for:
 
-* Buttons
-* Inputs
-* Cards
-* Modals
-* Tables
-* Alerts
+- Buttons
+- Inputs
+- Cards
+- Modals
+- Tables
+- Alerts
 
 without justification.
 
@@ -1153,9 +1153,9 @@ without justification.
 
 Every significant feature must work across:
 
-* Desktop
-* Tablet
-* Mobile
+- Desktop
+- Tablet
+- Mobile
 
 Mobile is not merely a shrunken desktop.
 
@@ -1165,14 +1165,14 @@ Mobile is not merely a shrunken desktop.
 
 PWA functionality should include, as applicable:
 
-* Manifest
-* Icons
-* Service Worker
-* Installability
-* Cache strategy
-* Offline fallback
-* Update handling
-* Push notifications
+- Manifest
+- Icons
+- Service Worker
+- Installability
+- Cache strategy
+- Offline fallback
+- Update handling
+- Push notifications
 
 Do not use offline caching for sensitive financial state in a way that could display misleading balances.
 
@@ -1182,25 +1182,25 @@ No financial operation may be queued for offline execution.
 
 The following must NOT be queued in IndexedDB or any offline store for later execution:
 
-* Buy
-* Sell
-* Deposit
-* Withdrawal
-* Payment
-* Installment Payment
-* Investment Subscription
-* Transfer
-* Settlement
+- Buy
+- Sell
+- Deposit
+- Withdrawal
+- Payment
+- Installment Payment
+- Investment Subscription
+- Transfer
+- Settlement
 
 These operations must be online and server-authoritative.
 
 Offline is allowed only for non-financial, safe-to-cache content:
 
-* UI shell
-* Non-sensitive cached content
-* Draft (non-financial)
-* Static content
-* Preferences
+- UI shell
+- Non-sensitive cached content
+- Draft (non-financial)
+- Static content
+- Preferences
 
 Financial state must never be displayed as truth using offline data.
 
@@ -1271,11 +1271,11 @@ Rate limits must be stored in a configurable store (e.g., `RateLimitConfig` tabl
 
 The architecture must be future-ready for:
 
-* Secure device sessions
-* Biometric authentication
-* Push authentication
-* Deep links
-* App-like navigation
+- Secure device sessions
+- Biometric authentication
+- Push authentication
+- Deep links
+- App-like navigation
 
 without exposing secrets.
 
@@ -1285,13 +1285,13 @@ without exposing secrets.
 
 Important interfaces should support:
 
-* Semantic HTML
-* Keyboard navigation
-* Focus states
-* Labels
-* Accessible errors
-* Adequate contrast
-* Screen reader compatibility where practical
+- Semantic HTML
+- Keyboard navigation
+- Focus states
+- Labels
+- Accessible errors
+- Adequate contrast
+- Screen reader compatibility where practical
 
 ---
 
@@ -1299,12 +1299,12 @@ Important interfaces should support:
 
 Avoid unnecessary:
 
-* Re-renders
-* API requests
-* Database queries
-* Large bundles
-* Large images
-* Client-side data duplication
+- Re-renders
+- API requests
+- Database queries
+- Large bundles
+- Large images
+- Client-side data duplication
 
 Performance optimization must not compromise correctness.
 
@@ -1347,11 +1347,11 @@ Tests are part of implementation.
 
 At minimum use appropriate combinations of:
 
-* Unit Tests
-* Integration Tests
-* E2E Tests
-* Security Tests
-* Regression Tests
+- Unit Tests
+- Integration Tests
+- E2E Tests
+- Security Tests
+- Regression Tests
 
 ---
 
@@ -1361,22 +1361,22 @@ Financial calculations require strong test coverage.
 
 Test:
 
-* Buy
-* Sell
-* Fees
-* Spread
-* Deposits
-* Withdrawals
-* Balance
-* Ledger
-* Referral
-* Installments
-* Investment
-* Rounding
-* Precision
-* Concurrency
-* Duplicate requests
-* Failure recovery
+- Buy
+- Sell
+- Fees
+- Spread
+- Deposits
+- Withdrawals
+- Balance
+- Ledger
+- Referral
+- Installments
+- Investment
+- Rounding
+- Precision
+- Concurrency
+- Duplicate requests
+- Failure recovery
 
 ---
 
@@ -1386,20 +1386,20 @@ Do not test only happy paths.
 
 Test:
 
-* Zero
-* Negative input
-* Maximum values
-* Minimum values
-* Decimal precision
-* Insufficient balance
-* Concurrent requests
-* Duplicate requests
-* Expired session
-* Expired OTP
-* Missing data
-* Invalid data
-* Network interruption
-* Third-party failure
+- Zero
+- Negative input
+- Maximum values
+- Minimum values
+- Decimal precision
+- Insufficient balance
+- Concurrent requests
+- Duplicate requests
+- Expired session
+- Expired OTP
+- Missing data
+- Invalid data
+- Network interruption
+- Third-party failure
 
 ---
 
@@ -1465,9 +1465,9 @@ Type safety should be enforced where the selected stack supports it.
 
 Do not silence compiler errors with:
 
-* unnecessary `any`
-* ignore comments
-* disabled lint rules
+- unnecessary `any`
+- ignore comments
+- disabled lint rules
 
 unless there is a documented reason.
 
@@ -1502,11 +1502,11 @@ Every new dependency must provide clear value.
 
 Before adding:
 
-* Check existing alternatives
-* Check project compatibility
-* Consider maintenance
-* Consider security
-* Consider bundle impact
+- Check existing alternatives
+- Check project compatibility
+- Consider maintenance
+- Consider security
+- Consider bundle impact
 
 Avoid dependency bloat.
 
@@ -1518,14 +1518,14 @@ Major decisions must be documented.
 
 Examples:
 
-* Framework choice
-* Database architecture
-* Authentication strategy
-* Ledger design
-* Queue architecture
-* Payment architecture
-* PWA architecture
-* Mobile strategy
+- Framework choice
+- Database architecture
+- Authentication strategy
+- Ledger design
+- Queue architecture
+- Payment architecture
+- PWA architecture
+- Mobile strategy
 
 Record them in:
 
@@ -1541,13 +1541,13 @@ Do not silently rewrite it.
 
 Document:
 
-* Existing decision
-* Problem discovered
-* Evidence
-* Proposed change
-* Alternatives
-* Impact
-* Migration strategy
+- Existing decision
+- Problem discovered
+- Evidence
+- Proposed change
+- Alternatives
+- Impact
+- Migration strategy
 
 Then update relevant documentation.
 
@@ -1557,11 +1557,11 @@ Then update relevant documentation.
 
 Refactor when:
 
-* Duplication is harmful
-* Complexity is excessive
-* Security requires it
-* Performance requires it
-* Maintainability requires it
+- Duplication is harmful
+- Complexity is excessive
+- Security requires it
+- Performance requires it
+- Maintainability requires it
 
 Do not refactor for style alone in the middle of unrelated feature work.
 
@@ -1575,11 +1575,11 @@ If debt is intentionally accepted:
 
 record:
 
-* What
-* Why
-* Impact
-* Suggested fix
-* Priority
+- What
+- Why
+- Impact
+- Suggested fix
+- Priority
 
 ---
 
@@ -1642,10 +1642,10 @@ Never rewrite history unless explicitly required.
 
 Avoid destructive operations such as:
 
-* deleting databases
-* force resetting branches
-* dropping important data
-* overwriting production configuration
+- deleting databases
+- force resetting branches
+- dropping important data
+- overwriting production configuration
 
 unless explicitly required and safely controlled.
 
@@ -1688,13 +1688,13 @@ rather than undocumented manual procedures.
 
 Production systems need visibility into:
 
-* Errors
-* Performance
-* API health
-* Database health
-* Background jobs
-* Notifications
-* Financial operations
+- Errors
+- Performance
+- API health
+- Database health
+- Background jobs
+- Notifications
+- Financial operations
 
 ---
 
@@ -1706,13 +1706,13 @@ use a reliable queue/job architecture.
 
 Examples:
 
-* Notifications
-* Emails
-* SMS
-* Reports
-* Reconciliation
-* Scheduled installment reminders
-* Analytics processing
+- Notifications
+- Emails
+- SMS
+- Reports
+- Reconciliation
+- Scheduled installment reminders
+- Analytics processing
 
 Do not use fragile `setTimeout`-style application logic as a substitute for reliable jobs.
 
@@ -1724,10 +1724,10 @@ Treat all incoming webhooks as untrusted.
 
 Verify:
 
-* Signature
-* Source
-* Event ID
-* Timestamp where applicable
+- Signature
+- Source
+- Event ID
+- Timestamp where applicable
 
 Implement idempotent processing.
 
@@ -1739,12 +1739,12 @@ Third-party systems can fail.
 
 Always consider:
 
-* Timeout
-* Retry
-* Backoff
-* Failure handling
-* Idempotency
-* Monitoring
+- Timeout
+- Retry
+- Backoff
+- Failure handling
+- Idempotency
+- Monitoring
 
 Never assume external APIs are always available.
 
@@ -1754,13 +1754,13 @@ Never assume external APIs are always available.
 
 Payment flow must account for:
 
-* Pending
-* Success
-* Failure
-* Callback
-* Duplicate callback
-* Timeout
-* Reconciliation
+- Pending
+- Success
+- Failure
+- Callback
+- Duplicate callback
+- Timeout
+- Reconciliation
 
 Never treat a client-side success screen as proof of payment.
 
@@ -1770,10 +1770,10 @@ Never treat a client-side success screen as proof of payment.
 
 Financial systems should support reconciliation between:
 
-* Internal ledger
-* Payment provider
-* Operational inventory
-* Other external systems
+- Internal ledger
+- Payment provider
+- Operational inventory
+- Other external systems
 
 Any mismatch should be detectable.
 
@@ -1799,13 +1799,13 @@ Prefer controlled correction workflows with audit trails.
 
 Financial actions should communicate clearly:
 
-* What will happen
-* Amount
-* Gold quantity
-* Fees
-* Price
-* Final result
-* Status
+- What will happen
+- Amount
+- Gold quantity
+- Fees
+- Price
+- Final result
+- Status
 
 Avoid ambiguous confirmations.
 
@@ -1832,12 +1832,12 @@ Final confirmation
 
 On mobile:
 
-* Important actions should be reachable
-* Touch targets should be usable
-* Tables should adapt
-* Charts should remain readable
-* Navigation should be simple
-* Critical confirmations should be clear
+- Important actions should be reachable
+- Touch targets should be usable
+- Tables should adapt
+- Charts should remain readable
+- Navigation should be simple
+- Critical confirmations should be clear
 
 ---
 
@@ -1847,19 +1847,19 @@ Zarnama visual identity:
 
 Primary palette:
 
-* Navy
-* Gold
-* Cream
+- Navy
+- Gold
+- Cream
 
 Design direction:
 
-* Premium
-* Elegant
-* Modern
-* Financial
-* High Trust
-* Clean
-* Sophisticated
+- Premium
+- Elegant
+- Modern
+- Financial
+- High Trust
+- Clean
+- Sophisticated
 
 Avoid unnecessary visual noise.
 
@@ -1869,13 +1869,13 @@ Avoid unnecessary visual noise.
 
 Do not directly copy:
 
-* Competitor logos
-* Proprietary illustrations
-* Exact layouts
-* Text
-* Branding
-* Assets
-* Protected content
+- Competitor logos
+- Proprietary illustrations
+- Exact layouts
+- Text
+- Branding
+- Assets
+- Protected content
 
 Benchmark competitors for product behavior and UX patterns only.
 
@@ -1885,14 +1885,14 @@ Benchmark competitors for product behavior and UX patterns only.
 
 Public pages should consider:
 
-* Metadata
-* Canonical
-* Sitemap
-* Robots
-* Structured Data
-* Open Graph
-* Internal links
-* Performance
+- Metadata
+- Canonical
+- Sitemap
+- Robots
+- Structured Data
+- Open Graph
+- Internal links
+- Performance
 
 Do not expose private account pages to search engines.
 
@@ -1906,11 +1906,11 @@ Never send sensitive financial information unnecessarily to analytics services.
 
 Avoid sending:
 
-* Exact balances
-* OTP
-* Password
-* Full identity data
-* Private transaction data
+- Exact balances
+- OTP
+- Password
+- Full identity data
+- Private transaction data
 
 unless explicitly required and properly designed.
 
@@ -1924,10 +1924,10 @@ They should not become permanent undocumented complexity.
 
 Every important flag should have:
 
-* Purpose
-* Owner/context
-* Default behavior
-* Removal plan
+- Purpose
+- Owner/context
+- Default behavior
+- Removal plan
 
 ---
 
@@ -1937,13 +1937,13 @@ Persian/Farsi UI must be considered carefully.
 
 Pay attention to:
 
-* RTL
-* Persian typography
-* Number formatting
-* Currency formatting
-* Date formatting
-* Mobile RTL interactions
-* Mixed Latin/Persian text
+- RTL
+- Persian typography
+- Number formatting
+- Currency formatting
+- Date formatting
+- Mobile RTL interactions
+- Mixed Latin/Persian text
 
 The system should not accidentally break because of RTL layouts.
 
@@ -1977,10 +1977,10 @@ Do not assume a quote remains valid forever.
 
 Where applicable define:
 
-* Quote timestamp
-* Expiration
-* Execution status
-* Settlement status
+- Quote timestamp
+- Expiration
+- Execution status
+- Settlement status
 
 ---
 
@@ -2074,10 +2074,10 @@ mark:
 
 and document:
 
-* Blocker
-* Why
-* What depends on it
-* What can continue independently
+- Blocker
+- Why
+- What depends on it
+- What can continue independently
 
 Do not pretend it is complete.
 
@@ -2117,12 +2117,12 @@ Do not fix one feature by breaking another.
 
 Remove:
 
-* Dead code
-* Debug statements
-* Temporary files
-* Unused imports
-* Unused dependencies
-* Fake data accidentally left behind
+- Dead code
+- Debug statements
+- Temporary files
+- Unused imports
+- Unused dependencies
+- Fake data accidentally left behind
 
 before completing relevant work.
 
@@ -2134,12 +2134,12 @@ Before production:
 
 search the repository for:
 
-* secrets
-* API keys
-* tokens
-* debug credentials
-* test credentials
-* accidental personal data
+- secrets
+- API keys
+- tokens
+- debug credentials
+- test credentials
+- accidental personal data
 
 ---
 
@@ -2170,27 +2170,27 @@ Before production readiness:
 
 verify:
 
-* Build
-* Database
-* Migrations
-* Environment variables
-* Security
-* Authentication
-* Authorization
-* Ledger
-* Pricing
-* Financial flows
-* Notifications
-* Admin
-* PWA
-* Responsive UI
-* Error handling
-* Logging
-* Monitoring
-* Backups
-* Recovery
-* Testing
-* Documentation
+- Build
+- Database
+- Migrations
+- Environment variables
+- Security
+- Authentication
+- Authorization
+- Ledger
+- Pricing
+- Financial flows
+- Notifications
+- Admin
+- PWA
+- Responsive UI
+- Error handling
+- Logging
+- Monitoring
+- Backups
+- Recovery
+- Testing
+- Documentation
 
 ---
 
@@ -2300,15 +2300,15 @@ Do not silently override it.
 
 Zarnama is successful only when it becomes a:
 
-* Secure
-* Reliable
-* Auditable
-* Scalable
-* Maintainable
-* Responsive
-* Mobile-ready
-* PWA-capable
-* Production-grade
+- Secure
+- Reliable
+- Auditable
+- Scalable
+- Maintainable
+- Responsive
+- Mobile-ready
+- PWA-capable
+- Production-grade
 
 financial platform.
 
@@ -2333,29 +2333,35 @@ It must be a coherent software product.
 ## قوانین کلی
 
 ### زبان و متن
+
 - **فارسی صحبت کن**: تمام تعاملات با کاربر به زبان فارسی باشد.
 - **کامنت‌ها فارسی**: تمام کامنت‌های داخل کد به زبان فارسی نوشته شوند.
 - **لاگ‌ها انگلیسی**: تمام پیام‌های لاگ (console.log، logger.info و ...) به زبان انگلیسی باشند.
 - **از بهم چسبوندن کلمات فارسی خودداری کن**: مثلاً «شبکه‌سازی» را جدا بنویس «شبکه سازی». «می‌توانم» را درست بنویس نه «می‌تواتم».
 
 ### نسخه‌های دسکتاپ و موبایل
+
 - **هر تغییری که ایجاد می‌کنی هم برای نسخه دسکتاپ و هم برای نسخه گوشی انجام بده**.
 - تغییرات باید در دو نسخه هماهنگ باشند.
 - طراحی responsive و PWA از ابتدا لحاظ شود.
 
 ### پنل ادمین
+
 - **بخش ادمین فقط نسخه فارسی می‌خواهد**.
 - تغییرات یا ویژگی‌هایی که در بخش ادمین اعمال می‌شود نیازمند نسخه انگلیسی اصلاً نیست و فقط فارسی عالی است.
 
 ### جابجایی و ایجاد فایل‌ها
+
 - جابجایی، ایجاد یا تغییرات همگی باید در دو نسخه دسکتاپ و گوشی هماهنگ باشند.
 
 ### نحوه پیشبرد کار
+
 - **کارهارو مرحله به مرحله پیش ببر**.
 - **حتما برای تمامی کارها todo list ایجاد کن**.
 - بعد از اتمام کار توضیح خیلی زیاد نده و فقط توضیحات مهم برای اجرای درست و یا کاری اگر نیازه خودم انجام بدم رو بهم بگو.
 
 ### دسترسی و امنیت
+
 - **هیچ مشکلی در تغییر دیتا و دیتابیس و اسکیما و موارد امنیتی تو نداری**.
 - فقط منظورم اینه کدنویسی امنی انجام بده که بعدا دچار حمله نشیم.
 - وگرنه قدرت اختیار تام داری توی همه چیز.
@@ -2374,23 +2380,24 @@ It must be a coherent software product.
 
 ## استک تکنولوژی (قطعی)
 
-| بخش | تکنولوژی |
-|---|---|
-| فرانت | Next.js 15 (App Router) + TypeScript strict + Tailwind v4 + shadcn/ui |
-| موبایل | PWA کامل + Capacitor (Android native-ready, iOS PWA) |
-| بک‌اند | Next.js Route Handlers (تک پروژه) |
-| ORM/DB | PostgreSQL + Prisma |
-| کش/صف | Redis (ioredis) + BullMQ |
-| Real-time | Socket.io |
-| احراز هویت | JWT (access + refresh) httpOnly cookie + OTP + 2FA |
-| زبان/RTL | فارسی RTL |
-| رنگ | Navy `#1a2a4f`، Gold `#c9a227`، Cream `#f5ecd7` |
+| بخش        | تکنولوژی                                                              |
+| ---------- | --------------------------------------------------------------------- |
+| فرانت      | Next.js 15 (App Router) + TypeScript strict + Tailwind v4 + shadcn/ui |
+| موبایل     | PWA کامل + Capacitor (Android native-ready, iOS PWA)                  |
+| بک‌اند     | Next.js Route Handlers (تک پروژه)                                     |
+| ORM/DB     | PostgreSQL + Prisma                                                   |
+| کش/صف      | Redis (ioredis) + BullMQ                                              |
+| Real-time  | Socket.io                                                             |
+| احراز هویت | JWT (access + refresh) httpOnly cookie + OTP + 2FA                    |
+| زبان/RTL   | فارسی RTL                                                             |
+| رنگ        | Navy `#1a2a4f`، Gold `#c9a227`، Cream `#f5ecd7`                       |
 
 ---
 
 ## Definition of Done
 
 هر Feature زمانی Done است که:
+
 - [ ] کدنویسی شده و review شده
 - [ ] Unit + integration test نوشته و pass
 - [ ] E2E برای جریان کلیدی pass
@@ -2442,3 +2449,30 @@ zarnama/
 - هرگز بدون اجازه push نکن
 - هرگز فایل‌های `.env` را commit نکن
 - از Co-Authored-By Devin در commit استفاده کن
+
+---
+
+## PERMANENT USER NAVIGATION
+
+Navigation اصلی User Panel یک **قرارداد دائمی محصول** است — دقیقاً ۵ مقصد با این ترتیب ثابت:
+
+1. خانه → `/dashboard`
+2. معاملات → `/dashboard/trade`
+3. دارایی → `/dashboard/assets`
+4. قسطی → `/dashboard/installments`
+5. پروفایل → `/dashboard/profile`
+
+قوانین:
+
+- Desktop (sidebar) و Mobile (bottom nav) یک Information Architecture مشترک دارند.
+- Source of Truth واحد: `src/config/navigation.ts` — hardcode navigation در کامپوننت‌ها ممنوع.
+- اعلان‌ها، پشتیبانی، جستجو و هشدارهای امنیتی nav item جدید نمی‌شوند — از Header، Profile یا Contextual Actions در دسترس‌اند.
+- صفحات فرعی (امنیت، نشست‌ها، معرفی، پشتیبانی) زیر `/dashboard/profile/*` هستند.
+- تغییر این قرارداد فقط با ADR رسمی جدید مجاز است — مرجع: `docs/ARCHITECTURE_DECISIONS.md` (ADR-015).
+- تست E2E «Navigation Contract» در `tests/e2e/panel.spec.ts` از تغییر ناخواسته جلوگیری می‌کند.
+
+## DESIGN SYSTEM (Phase 3.1)
+
+- Design Tokenها در `src/app/globals.css` — رنگ، radius، shadow، spacing، typography، motion، z-index همه token-based‌اند؛ رنگ hardcode ممنوع.
+- کامپوننت‌های مالی در `src/components/financial/` و primitiveها در `src/components/ui/` — preview: `/design-system`.
+- هیچ Phase آینده‌ای رنگ، radius، دکمه، sidebar یا navigation style جدید اضافه نمی‌کند.

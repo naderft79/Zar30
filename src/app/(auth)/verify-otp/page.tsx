@@ -4,7 +4,7 @@
 
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { OtpForm } from '@/components/auth/otp-form'
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default function VerifyOtpPage() {
   return (
     <Card className="border-border/60 w-full max-w-sm">
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">تایید شماره موبایل</CardTitle>
+        <h1 className="text-xl leading-none font-semibold">تایید شماره موبایل</h1>
         <p className="text-muted-foreground text-sm">
           کد ۶ رقمی ارسال‌شده به موبایل شما را وارد کنید
         </p>

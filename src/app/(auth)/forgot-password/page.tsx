@@ -4,7 +4,7 @@
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { ForgotPasswordForm } from '@/components/auth/forgot-password-form'
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
   return (
     <Card className="border-border/60 w-full max-w-sm">
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">بازیابی رمز عبور</CardTitle>
+        <h1 className="text-xl leading-none font-semibold">بازیابی رمز عبور</h1>
         <p className="text-muted-foreground text-sm">کد بازیابی به موبایل شما ارسال می‌شود</p>
       </CardHeader>
       <CardContent>

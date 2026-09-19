@@ -4,7 +4,7 @@
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { RegisterForm } from '@/components/auth/register-form'
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default function RegisterPage() {
   return (
     <Card className="border-border/60 w-full max-w-sm">
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">ثبت‌نام در زرنما</CardTitle>
+        <h1 className="text-xl leading-none font-semibold">ثبت‌نام در زرنما</h1>
         <p className="text-muted-foreground text-sm">با شماره موبایل شروع کنید</p>
       </CardHeader>
       <CardContent>

@@ -10,6 +10,8 @@ interface LogoProps {
   className?: string
   size?: 'sm' | 'md' | 'lg'
   showText?: boolean
+  /** کلاس رنگ متن — پیش‌فرض text-foreground؛ روی سطوح تیره مقدار روشن بدهید */
+  textClassName?: string
 }
 
 const sizes = {
@@ -18,7 +20,7 @@ const sizes = {
   lg: { icon: 'size-12', text: 'text-2xl' },
 }
 
-export function Logo({ className, size = 'md', showText = true }: LogoProps) {
+export function Logo({ className, size = 'md', showText = true, textClassName }: LogoProps) {
   const s = sizes[size]
   return (
     <span className={cn('inline-flex items-center gap-2', className)}>
@@ -63,7 +65,9 @@ export function Logo({ className, size = 'md', showText = true }: LogoProps) {
           </linearGradient>
         </defs>
       </svg>
-      {showText && <span className={cn('text-foreground font-bold', s.text)}>زرنما</span>}
+      {showText && (
+        <span className={cn('text-foreground font-bold', s.text, textClassName)}>زرنما</span>
+      )}
     </span>
   )
 }
