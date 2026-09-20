@@ -38,6 +38,19 @@ const STATUS_MAP: Record<string, { label: string; tone: Tone }> = {
   // Ledger entry
   DEBIT: { label: 'بدهکار', tone: 'info' },
   CREDIT: { label: 'بستانکار', tone: 'success' },
+  // Products / Support
+  DEFAULTED: { label: 'نکول‌شده', tone: 'error' },
+  MATURED: { label: 'سررسیدشده', tone: 'success' },
+  EARLY_CLOSED: { label: 'بسته‌شده زودهنگام', tone: 'warning' },
+  QUALIFIED: { label: 'واجد شرایط', tone: 'info' },
+  REWARDED: { label: 'پاداش‌داده‌شده', tone: 'success' },
+  OPEN: { label: 'باز', tone: 'warning' },
+  ANSWERED: { label: 'پاسخ‌داده‌شده', tone: 'success' },
+  CLOSED: { label: 'بسته', tone: 'neutral' },
+  LOW: { label: 'کم', tone: 'neutral' },
+  MEDIUM: { label: 'متوسط', tone: 'info' },
+  HIGH: { label: 'زیاد', tone: 'warning' },
+  URGENT: { label: 'فوری', tone: 'error' },
 }
 
 const TONE_CLASSES: Record<Tone, string> = {
