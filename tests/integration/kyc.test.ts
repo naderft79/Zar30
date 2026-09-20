@@ -168,6 +168,7 @@ describe('KYC Service (DB + MinIO واقعی)', () => {
     const sub = queue.find((q) => q.user.id === user.id)!
     expect(sub.status).toBe('SUBMITTED')
 
+    await kycService.claim(admin.id, admin.role, sub.id, meta)
     const approved = await kycService.review(
       admin.id,
       admin.role,
@@ -206,6 +207,7 @@ describe('KYC Service (DB + MinIO واقعی)', () => {
     await fillDraft(user.id)
     const sub = await kycService.submit(user.id, meta)
 
+    await kycService.claim(admin.id, admin.role, sub!.id, meta)
     // reject بدون دلیل → 400
     await expect(
       kycService.review(admin.id, admin.role, sub!.id, 'reject', undefined, meta),
@@ -239,7 +241,25 @@ describe('KYC Service (DB + MinIO واقعی)', () => {
     await expect(kycService.claim(admin.id, admin.role, draft!.id, meta)).rejects.toThrow()
   })
 
-  it('concurrency — دو review همزمان روی یک SUBMITTED؛ فقط یکی موفق', async () => {
+  it('review مستقیم از SUBMITTED → conflict؛ باید claim شود', async () => {
+    const user = await createVerifiedUser()
+    const adminUser = await createVerifiedUser()
+    const admin = await prisma.adminUser.create({
+      data: { userId: adminUser.id, role: 'KYC', permissions: {} },
+    })
+
+    await kycService.start(user.id, meta)
+    await fillDraft(user.id)
+    const sub = await kycService.submit(user.id, meta)
+
+    await expect(
+      kycService.review(admin.id, admin.role, sub!.id, 'approve', undefined, meta),
+    ).rejects.toThrow(/بررسی بگیرید/)
+    const after = await prisma.kycSubmission.findUniqueOrThrow({ where: { id: sub!.id } })
+    expect(after.status).toBe('SUBMITTED')
+  })
+
+  it('review توسط بررسی‌کننده دیگر → forbidden', async () => {
     const user = await createVerifiedUser()
     const adminUserA = await createVerifiedUser()
     const adminUserB = await createVerifiedUser()
@@ -253,8 +273,30 @@ describe('KYC Service (DB + MinIO واقعی)', () => {
     await kycService.start(user.id, meta)
     await fillDraft(user.id)
     const sub = await kycService.submit(user.id, meta)
+    await kycService.claim(adminA.id, adminA.role, sub!.id, meta)
 
-    // دو reviewer همزمان تصمیم می‌گیرند — predicate وضعیت فقط یکی را عبور می‌دهد
+    await expect(
+      kycService.review(adminB.id, adminB.role, sub!.id, 'approve', undefined, meta),
+    ).rejects.toThrow(/بررسی‌کننده دیگری/)
+  })
+
+  it('concurrency — review همزمان owner vs non-owner؛ فقط owner موفق', async () => {
+    const user = await createVerifiedUser()
+    const adminUserA = await createVerifiedUser()
+    const adminUserB = await createVerifiedUser()
+    const adminA = await prisma.adminUser.create({
+      data: { userId: adminUserA.id, role: 'KYC', permissions: {} },
+    })
+    const adminB = await prisma.adminUser.create({
+      data: { userId: adminUserB.id, role: 'KYC', permissions: {} },
+    })
+
+    await kycService.start(user.id, meta)
+    await fillDraft(user.id)
+    const sub = await kycService.submit(user.id, meta)
+    // adminA پرونده را می‌گیرد — تصمیم همزمان B هرگز موفق نمی‌شود
+    await kycService.claim(adminA.id, adminA.role, sub!.id, meta)
+
     const results = await Promise.allSettled([
       kycService.review(adminA.id, adminA.role, sub!.id, 'approve', undefined, meta),
       kycService.review(adminB.id, adminB.role, sub!.id, 'reject', 'مدرک ناخوانا', meta),
@@ -264,9 +306,10 @@ describe('KYC Service (DB + MinIO واقعی)', () => {
     expect(fulfilled).toHaveLength(1)
     expect(rejected).toHaveLength(1)
 
-    // وضعیت نهایی terminal و یکتا است
+    // وضعیت نهایی terminal و فقط نتیجه owner است
     const final = await prisma.kycSubmission.findUniqueOrThrow({ where: { id: sub!.id } })
-    expect(['APPROVED', 'REJECTED']).toContain(final.status)
+    expect(final.status).toBe('APPROVED')
+    expect(final.reviewedBy).toBe(adminA.id)
 
     // دقیقاً یک notification نتیجه — نه بیشتر
     const notifs = await prisma.notification.findMany({

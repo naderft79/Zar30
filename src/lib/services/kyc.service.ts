@@ -14,13 +14,8 @@ import prisma from '@/lib/db/prisma'
 import { ApiError } from '@/lib/errors/api-error'
 import { toAuditData, writeAudit } from '@/lib/audit/audit'
 import { logger } from '@/lib/logger/logger'
-import {
-  encryptBuffer,
-  decryptBuffer,
-  encryptString,
-  decryptString,
-  sha256Hex,
-} from '@/lib/crypto/aes-gcm'
+import { encryptBuffer, decryptBuffer, encryptString, sha256Hex } from '@/lib/crypto/aes-gcm'
+import { kycBankPresentation } from '@/lib/kyc/presentation'
 import { storagePut, storageGet, storageDelete } from '@/lib/storage/s3'
 import {
   kycDraftSchema,
@@ -102,36 +97,19 @@ const submissionSelect = {
   documents: { select: docSelect },
 } as const
 
-// مقادیر حساس بانکی هرگز plaintext برنمی‌گردند — فقط masked برای نمایش مرور
-function maskIban(ibanEnc: string | null): string | null {
-  if (!ibanEnc) return null
-  const iban = decryptString(ibanEnc)
-  if (!iban) return null
-  return `${iban.slice(0, 4)}••••••••••••••${iban.slice(-4)}`
-}
-
-function maskCard(cardEnc: string | null): string | null {
-  if (!cardEnc) return null
-  const card = decryptString(cardEnc)
-  if (!card) return null
-  return `${card.slice(0, 4)}••••••••${card.slice(-4)}`
-}
-
 type RawSubmission = {
   cardNumberEnc?: string | null
   ibanEnc?: string | null
   [k: string]: unknown
 }
 
-// حذف فیلدهای رمزنگاری‌شده از پاسخ + افزودن masked equivalents
+// حذف فیلدهای رمزنگاری‌شده از پاسخ + افزودن masked equivalents (از presentation helper)
 function toPublic<T extends RawSubmission | null | undefined>(s: T) {
   if (!s) return s
   const { cardNumberEnc, ibanEnc, ...rest } = s
   return {
     ...rest,
-    bankComplete: !!(cardNumberEnc && ibanEnc),
-    cardMasked: maskCard(cardNumberEnc ?? null),
-    ibanMasked: maskIban(ibanEnc ?? null),
+    ...kycBankPresentation(cardNumberEnc ?? null, ibanEnc ?? null),
   }
 }
 
@@ -485,7 +463,7 @@ export const kycService = {
   ) {
     const sub = await prisma.kycSubmission.findUnique({
       where: { id: submissionId },
-      select: { status: true, userId: true, level: true },
+      select: { status: true, userId: true, level: true, reviewedBy: true },
     })
     if (!sub) throw ApiError.notFound('درخواست یافت نشد')
 
@@ -495,23 +473,24 @@ export const kycService = {
         : decision === 'reject'
           ? 'REJECTED'
           : 'NEEDS_RESUBMISSION'
-    // اجازه بررسی مستقیم از SUBMITTED هم (claim اختیاری)
-    const from: KycStatus = sub.status === 'SUBMITTED' ? 'SUBMITTED' : sub.status
-    const allowed =
-      from === 'UNDER_REVIEW'
-        ? ALLOWED_TRANSITIONS.UNDER_REVIEW.includes(target)
-        : from === 'SUBMITTED'
-          ? ['APPROVED', 'REJECTED', 'NEEDS_RESUBMISSION'].includes(target)
-          : false
-    if (!allowed) throw ApiError.conflict(`وضعیت ${sub.status} قابل بررسی نیست`)
+    // تصمیم نهایی فقط روی پرونده UNDER_REVIEW که در اختیار همین بررسی‌کننده است
+    if (sub.status === 'SUBMITTED') {
+      throw ApiError.conflict('ابتدا پرونده را برای بررسی بگیرید')
+    }
+    if (sub.status === 'UNDER_REVIEW' && sub.reviewedBy !== adminId) {
+      throw ApiError.forbidden('این پرونده در اختیار بررسی‌کننده دیگری است')
+    }
+    if (sub.status !== 'UNDER_REVIEW') {
+      throw ApiError.conflict(`وضعیت ${sub.status} قابل بررسی نیست`)
+    }
     if (decision !== 'approve' && !reason?.trim()) {
       throw ApiError.badRequest('دلیل رد یا بازگشت الزامی است')
     }
 
     const updated = await prisma.$transaction(async (tx) => {
-      // گارد concurrency — predicate وضعیت؛ فقط یک reviewer موفق می‌شود
+      // گارد concurrency — فقط اگر هنوز UNDER_REVIEW و در اختیار همین ادمین است
       const transitioned = await tx.kycSubmission.updateMany({
-        where: { id: submissionId, status: { in: ['SUBMITTED', 'UNDER_REVIEW'] } },
+        where: { id: submissionId, status: 'UNDER_REVIEW', reviewedBy: adminId },
         data: {
           status: target,
           reviewedBy: adminId,
@@ -520,7 +499,7 @@ export const kycService = {
         },
       })
       if (transitioned.count !== 1) {
-        throw ApiError.conflict(`وضعیت ${sub.status} قابل بررسی نیست`)
+        throw ApiError.conflict('پرونده دیگر در اختیار شما نیست یا وضعیتش تغییر کرده است')
       }
       if (decision === 'approve') {
         // ارتقای سطح KYC کاربر — اثر مالی واقعی تصمیم ادمین
@@ -566,7 +545,7 @@ export const kycService = {
           entityId: submissionId,
           targetUserId: sub.userId,
           reason,
-          before: { status: sub.status },
+          before: { status: 'UNDER_REVIEW' },
           after: { status: target, reason },
           ...meta,
         }),

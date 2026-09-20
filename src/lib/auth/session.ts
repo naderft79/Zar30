@@ -20,6 +20,7 @@ export interface SessionMeta {
   ip?: string
   userAgent?: string
   deviceInfo?: string
+  requestId?: string
 }
 
 // ایجاد Session جدید — هر Session یک refresh token مستقل دارد

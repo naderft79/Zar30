@@ -7,17 +7,27 @@
 
 'use client'
 
+export interface ApiMeta {
+  page?: number
+  limit?: number
+  total?: number
+  totalPages?: number
+  [key: string]: unknown
+}
+
 export interface ApiResult<T> {
   ok: boolean
   data?: T
   error?: string
   /** HTTP status پاسخ — برای network error تعریف‌نشده است */
   status?: number
+  meta?: ApiMeta
 }
 
 interface ApiSuccessBody<T> {
   success: true
   data: T
+  meta?: ApiMeta
 }
 
 interface ApiErrorBody {
@@ -42,7 +52,7 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<ApiResul
         error: err?.detail ?? err?.title ?? 'خطایی رخ داد — دوباره تلاش کنید',
       }
     }
-    return { ok: true, status: res.status, data: json.data }
+    return { ok: true, status: res.status, data: json.data, meta: json.meta }
   } catch {
     return { ok: false, error: 'خطای اتصال — اینترنت خود را بررسی کنید' }
   }
@@ -56,7 +66,7 @@ export async function apiGet<T>(path: string): Promise<ApiResult<T>> {
       const err = json && !json.success ? json.error : undefined
       return { ok: false, status: res.status, error: err?.detail ?? err?.title ?? 'خطایی رخ داد' }
     }
-    return { ok: true, status: res.status, data: json.data }
+    return { ok: true, status: res.status, data: json.data, meta: json.meta }
   } catch {
     return { ok: false, error: 'خطای اتصال' }
   }
@@ -75,7 +85,26 @@ export async function apiPut<T>(path: string, body?: unknown): Promise<ApiResult
       const err = json && !json.success ? json.error : undefined
       return { ok: false, status: res.status, error: err?.detail ?? err?.title ?? 'خطایی رخ داد' }
     }
-    return { ok: true, status: res.status, data: json.data }
+    return { ok: true, status: res.status, data: json.data, meta: json.meta }
+  } catch {
+    return { ok: false, error: 'خطای اتصال' }
+  }
+}
+
+export async function apiPatch<T>(path: string, body?: unknown): Promise<ApiResult<T>> {
+  try {
+    const res = await fetch(path, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: body === undefined ? undefined : JSON.stringify(body),
+    })
+    const json = (await res.json().catch(() => null)) as ApiSuccessBody<T> | ApiErrorBody | null
+    if (!res.ok || !json?.success) {
+      const err = json && !json.success ? json.error : undefined
+      return { ok: false, status: res.status, error: err?.detail ?? err?.title ?? 'خطایی رخ داد' }
+    }
+    return { ok: true, status: res.status, data: json.data, meta: json.meta }
   } catch {
     return { ok: false, error: 'خطای اتصال' }
   }
@@ -84,12 +113,14 @@ export async function apiPut<T>(path: string, body?: unknown): Promise<ApiResult
 export async function apiDelete<T>(path: string): Promise<ApiResult<T>> {
   try {
     const res = await fetch(path, { method: 'DELETE', credentials: 'include' })
+    // 204 No Content — بدون body؛ موفقیت مستقیم
+    if (res.status === 204) return { ok: true, status: 204 }
     const json = (await res.json().catch(() => null)) as ApiSuccessBody<T> | ApiErrorBody | null
     if (!res.ok || !json?.success) {
       const err = json && !json.success ? json.error : undefined
       return { ok: false, status: res.status, error: err?.detail ?? 'خطایی رخ داد' }
     }
-    return { ok: true, status: res.status, data: json.data }
+    return { ok: true, status: res.status, data: json.data, meta: json.meta }
   } catch {
     return { ok: false, error: 'خطای اتصال' }
   }
@@ -108,7 +139,7 @@ export async function apiUpload<T>(path: string, form: FormData): Promise<ApiRes
         error: err?.detail ?? err?.title ?? 'آپلود ناموفق بود',
       }
     }
-    return { ok: true, status: res.status, data: json.data }
+    return { ok: true, status: res.status, data: json.data, meta: json.meta }
   } catch {
     return { ok: false, error: 'خطای اتصال — اینترنت خود را بررسی کنید' }
   }
