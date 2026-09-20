@@ -92,6 +92,32 @@ export function SecurityClient() {
     <div className="animate-stagger space-y-5">
       <PageHeader title="مرکز امنیت" description="مدیریت امنیت حساب و دسترسی‌ها" />
 
+      {/* ============ Security Overview — سطح ممتاز ============ */}
+      <section
+        aria-label="نمای کلی امنیت"
+        className="surface-wealth relative overflow-hidden rounded-2xl border p-6"
+      >
+        <div className="relative flex flex-wrap items-center gap-4">
+          <span className="bg-gold-500/15 text-gold-400 ring-gold-500/30 flex size-14 shrink-0 items-center justify-center rounded-2xl ring-1">
+            <ShieldCheck className="size-7" strokeWidth={1.5} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-cream-50 text-base font-bold">امنیت حساب شما</p>
+            <p className="text-navy-200/70 mt-1 text-xs leading-5 text-pretty">
+              نشست‌های فعال، رمز عبور و رویدادهای امنیتی حساب زیر نظر گرفته می‌شوند.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusBadge tone={user.mobileVerifiedAt ? 'success' : 'warning'}>
+              OTP {user.mobileVerifiedAt ? 'فعال' : 'غیرفعال'}
+            </StatusBadge>
+            <StatusBadge tone="neutral" dot={false}>
+              2FA به‌زودی
+            </StatusBadge>
+          </div>
+        </div>
+      </section>
+
       <div className="grid gap-5 md:grid-cols-2">
         {/* وضعیت امنیت حساب */}
         <Card>

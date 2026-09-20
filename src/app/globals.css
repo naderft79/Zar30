@@ -92,6 +92,8 @@
   --shadow-lg: 0 10px 24px -6px rgb(0 0 0 / 0.55);
   --shadow-xl: 0 20px 40px -12px rgb(0 0 0 / 0.65);
   --shadow-gold: 0 4px 16px -4px rgb(201 162 39 / 0.3);
+  /* Gold glow کنترل‌شده — فقط برای سطوح ممتاز (Wealth Hero، CTA اصلی) */
+  --shadow-glow: 0 0 56px -16px rgb(201 162 39 / 0.32);
 
   /* ---- Motion ---- */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -270,6 +272,7 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-gold: var(--shadow-gold);
+  --shadow-glow: var(--shadow-glow);
 
   /* Motion */
   --ease-out: var(--ease-out);
@@ -402,8 +405,54 @@ html {
 }
 
 /* ============================================
+   Premium Surfaces — لایه‌های اختصاصی برند
+   ============================================ */
+/* Wealth Hero — سطح ممتاز داشبورد: Navy لایه‌ای + halo طلایی بسیار کنترل‌شده */
+.surface-wealth {
+  background:
+    radial-gradient(880px 320px at 88% -18%, rgb(201 162 39 / 0.16), transparent 58%),
+    radial-gradient(560px 380px at 6% 118%, rgb(53 84 138 / 0.3), transparent 62%),
+    linear-gradient(155deg, var(--elevated) 0%, var(--card) 52%, var(--surface) 100%);
+  border-color: rgb(201 162 39 / 0.24);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+.light .surface-wealth {
+  background:
+    radial-gradient(880px 320px at 88% -18%, rgb(201 162 39 / 0.12), transparent 58%),
+    linear-gradient(155deg, var(--elevated) 0%, var(--card) 60%, var(--surface) 100%);
+  border-color: rgb(201 162 39 / 0.35);
+  box-shadow: var(--shadow-lg), var(--shadow-gold);
+}
+
+/* حلقه‌های تزئینی طلایی — فقط decoration در سطوح ممتاز */
+.gold-rings {
+  background-image: repeating-radial-gradient(
+    circle at 100% 0%,
+    transparent 0,
+    transparent 34px,
+    rgb(201 162 39 / 0.07) 34px,
+    rgb(201 162 39 / 0.07) 35px
+  );
+}
+
+/* ============================================
    Motion — Premium, Fast, Meaningful
    ============================================ */
+/* ورود صفحه — fade + جابه‌جایی خیلی کوتاه (transform/opacity فقط) */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-page-in {
+  animation: page-in var(--duration-normal) var(--ease-out) both;
+}
+
 @keyframes float {
   0%,
   100% {

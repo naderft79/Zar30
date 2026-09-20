@@ -14,21 +14,24 @@ export function TradeClient() {
     <div className="animate-stagger space-y-5">
       {/* اکشن‌های اصلی معامله — preview */}
       <div className="grid grid-cols-2 gap-3">
-        <Card className="border-gold-500/25 from-gold-500/10 via-card to-card bg-gradient-to-bl">
-          <CardContent className="flex flex-col items-center gap-3 pt-6 pb-5 text-center">
-            <div className="bg-gold-500/15 text-gold-600 dark:text-gold-400 flex size-12 items-center justify-center rounded-2xl">
+        <Card className="surface-wealth gold-rings relative overflow-hidden">
+          <CardContent className="relative flex flex-col items-center gap-3 pt-6 pb-5 text-center">
+            <div className="bg-gold-500/20 text-gold-400 ring-gold-500/30 flex size-12 items-center justify-center rounded-2xl ring-1">
               <ArrowDownLeft className="size-6" strokeWidth={1.75} />
             </div>
             <div>
-              <p className="text-foreground font-semibold">خرید طلا</p>
-              <p className="text-muted-foreground mt-0.5 text-xs">طلای آب‌شده ۱۸ عیار</p>
+              <p className="text-cream-50 font-semibold">خرید طلا</p>
+              <p className="text-navy-200/70 mt-0.5 text-xs">طلای آب‌شده ۱۸ عیار</p>
             </div>
+            <p className="text-navy-200/60 text-[10px] tabular-nums" dir="ltr">
+              نرخ: — تومان
+            </p>
             <StatusBadge tone="gold" dot={false}>
               به‌زودی
             </StatusBadge>
           </CardContent>
         </Card>
-        <Card className="border-border/60">
+        <Card className="border-border/60 hover:border-navy-400/40 transition-colors duration-(--duration-normal)">
           <CardContent className="flex flex-col items-center gap-3 pt-6 pb-5 text-center">
             <div className="bg-navy-500/10 text-navy-500 dark:bg-navy-400/15 dark:text-navy-200 flex size-12 items-center justify-center rounded-2xl">
               <ArrowUpLeft className="size-6" strokeWidth={1.75} />
@@ -37,6 +40,9 @@ export function TradeClient() {
               <p className="text-foreground font-semibold">فروش طلا</p>
               <p className="text-muted-foreground mt-0.5 text-xs">تسویه فوری به کیف پول</p>
             </div>
+            <p className="text-muted-foreground text-[10px] tabular-nums" dir="ltr">
+              نرخ: — تومان
+            </p>
             <StatusBadge tone="gold" dot={false}>
               به‌زودی
             </StatusBadge>

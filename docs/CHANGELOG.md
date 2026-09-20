@@ -1,5 +1,25 @@
 # Zar30 — Changelog
 
+## [0.5.0] — Full User Panel Redesign (ADR-019)
+
+### Added
+
+- **Wealth Hero** (`panel/wealth-hero.tsx`) — سطح ممتاز `.surface-wealth` + `gold-rings`: ارزش کل دارایی + تفکیک طلا/ریال + badgeهای وضعیت
+- **PanelShell** — سایدبار با nav طلایی‌گرادیانی + کارت کاربر → پروفایل؛ Header context-aware (عنوان صفحه + تاریخ + آواتار + bell)؛ انتقال صفحه `animate-page-in`
+- **Sessions** — جدول داده premium روی دسکتاپ + کارت تعاملی روی موبایل + خلاصه «نشست جاری» همیشه‌نمایان
+- **Notifications** — فیلتر «همه / خوانده‌نشده» + آیکون دسته‌بندی نوع اعلان
+- **Profile** — Identity Header با آواتار halo طلایی + badgeها
+- **Security** — Overview Strip با وضعیت OTP/2FA
+- **Referral** — کد + لینک دعوت + آمار پیش‌نمایش
+- **Support** — پایه Help Center با ۴ دسته موضوعی
+- **Tokens** — `--shadow-glow`، `.surface-wealth`، `.gold-rings`، `animate-page-in`
+
+### Notes
+
+- Navigation Contract (ADR-015) دست‌نخورده — ۵ آیتم دائمی، هر دو nav از یک IA
+- هیچ Business Logic یا API Contract تغییر نکرد؛ داده‌های مالی همچنان Placeholder برچسب‌دارند
+- UI Skills (`baseline-ui`، `fixing-accessibility`، `fixing-motion-performance`) در تصمیم‌ها اعمال شدند
+
 ## [0.4.1] — Permanent UI Skills Integration (ADR-018)
 
 ### Added

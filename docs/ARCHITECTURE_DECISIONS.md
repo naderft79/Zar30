@@ -234,6 +234,26 @@ Shared Codebase (src/)
 
 **دلیل:** کیفیت UI قابل‌تکرار و مبتنی بر مرجع مهندسی — نه سلیقه لحظه‌ای agent؛ reproducibility با pin؛ استقلال از ابزار خاص.
 
+## ADR-019: Full User Panel Redesign (Premium Private Banking)
+
+**تصمیم:** بازطراحی کامل UX/UI پنل کاربری روی اسکلت Phase 3.1 — بدون تغییر Business Logic و بدون شکستن Navigation Contract (ADR-015).
+
+**اجزای کلیدی:**
+
+- **Wealth Hero** (`wealth-hero.tsx`): سطح ممتاز `.surface-wealth` — Navy لایه‌ای + halo طلایی کنترل‌شده + `gold-rings` تزئینی؛ عدد شاخص «ارزش کل دارایی» + تفکیک طلا/ریال.
+- **PanelShell:** سایدبار با eyebrow «پنل کاربری»، آیتم‌های nav با گرادیان طلایی active + نشانگر نوار طلایی؛ کارت کاربر → پروفایل؛ Header با عنوان صفحه context-aware + تاریخ + آواتار + bell؛ Bottom Nav با pill فعال. انتقال صفحه با `animate-page-in` (key={pathname}).
+- **Sessions:** دسکتاپ = جدول داده premium (thead معنایی) — موبایل = کارت تعاملی. خلاصه «نشست جاری» همیشه‌نمایان در header کارت.
+- **Notifications:** فیلتر tablist «همه / خوانده‌نشده» + آیکون دسته‌بندی بر اساس نوع.
+- **Profile:** Identity Header با آواتار halo طلایی + badgeهای وضعیت — hub بخش‌ها حفظ شد.
+- **Security:** Overview Strip با وضعیت OTP/2FA + بخش‌ها.
+- **Referral:** کد + لینک دعوت (`zar30.com/register?ref=`) + آمار پیش‌نمایش (بدون داده مالی جعلی).
+- **Support:** پایه Help Center — ۴ دسته موضوعی → `/faq`.
+- **Tokens:** `--shadow-glow` + `.surface-wealth` + `.gold-rings` + `animate-page-in` در `globals.css`.
+
+**قواعد مهارتی اعمال‌شده:** `baseline-ui` + `fixing-accessibility` (ul/li nav، tablist، th scope، aria-current) + `fixing-motion-performance` (فقط transform/opacity، بدون layout animation، blur یک‌باره کوچک، reduced-motion). UI Skills هرگز قرارداد ۵‌آیتمی را تغییر نداد.
+
+**دلیل:** خروج از ظاهر «کارت‌های پشت سر هم» به تجربه Premium Private Banking؛ آماده‌سازی بستر UI برای Phase 4 (KYC).
+
 ## تصمیم‌های معلق (DECISION REQUIRED)
 
 - [ ] تایید نتایج PWA Spike روی دستگاه واقعی (Chrome Android, Safari iOS)

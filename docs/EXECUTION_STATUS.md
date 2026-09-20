@@ -346,6 +346,26 @@
 
 ---
 
+## Full User Panel Redesign (ADR-019) — 2026-09-20
+
+**وضعیت:** ✅ DONE — بازطراحی کامل UX/UI پنل کاربری (بدون تغییر Business Logic / Navigation Contract)
+
+| بخش           | تغییر                                                                                                                                                                |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dashboard     | Wealth Hero (`.surface-wealth` + `gold-rings`) — ارزش کل + طلا/ریال + badge وضعیت؛ Quick Actions؛ ویجت قیمت با ساختار خرید/فروش؛ نمودار روند (داده نمایشی برچسب‌دار) |
+| PanelShell    | سایدبار premium (eyebrow + nav طلایی + کارت کاربر)؛ Header context-aware (عنوان + تاریخ + آواتار + bell)؛ Bottom Nav؛ `animate-page-in`                              |
+| Sessions      | جدول premium دسکتاپ + کارت موبایل + خلاصه نشست جاری                                                                                                                  |
+| Notifications | فیلتر tablist + آیکون دسته‌بندی                                                                                                                                      |
+| Profile       | Identity Header با آواتار halo طلایی                                                                                                                                 |
+| Security      | Overview Strip                                                                                                                                                       |
+| Referral      | کد + لینک + آمار پیش‌نمایش                                                                                                                                           |
+| Support       | Help Center (۴ دسته)                                                                                                                                                 |
+| Tokens        | `--shadow-glow`، `.surface-wealth`، `.gold-rings`، `animate-page-in`                                                                                                 |
+
+**Verification:** typecheck ✅ / lint ✅ / unit+integration ۷۳ ✅ / E2E (panel+a11y) ✅ / build ✅ / Visual QA با screenshot ۱۴۴۰ و ۳۹۰ ✅
+
+---
+
 ## Permanent Design Language — ثبت قانون دائمی (2026-09-19)
 
 **ADR-016: Zar30 Navy Luxury Design Language** — از این تاریخ برای **تمام Phaseهای بعدی و همه platformها** (User Panel، Admin، Landing، PWA، Android/iOS) لازم‌الاجرا است.

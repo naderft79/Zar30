@@ -121,6 +121,43 @@ export function ProfileClient() {
         }
       />
 
+      {/* ============ Identity Header — سطح ممتاز ============ */}
+      <section
+        aria-label="هویت حساب"
+        className="surface-wealth gold-rings relative overflow-hidden rounded-2xl border p-6"
+      >
+        <div className="relative flex flex-wrap items-center gap-4 sm:gap-5">
+          <span className="from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/40 shadow-gold flex size-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xl font-extrabold ring-1 sm:size-20 sm:text-2xl">
+            {([user.firstName, user.lastName].filter(Boolean).join(' ') || user.mobile).slice(0, 2)}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-cream-50 truncate text-lg font-bold sm:text-xl">
+              {[user.firstName, user.lastName].filter(Boolean).join(' ') || 'کاربر زرسی'}
+            </p>
+            <p className="text-navy-200/70 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+              <span dir="ltr" className="tabular-nums">
+                {user.mobile}
+              </span>
+              <span aria-hidden="true">·</span>
+              <span>عضویت از {joinDate}</span>
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <StatusBadge tone={user.status === 'ACTIVE' ? 'success' : 'error'}>
+                {user.status === 'ACTIVE' ? 'حساب فعال' : user.status}
+              </StatusBadge>
+              <StatusBadge tone={kycDone ? 'success' : 'warning'}>
+                {KYC_LABELS[user.kycLevel] ?? user.kycLevel}
+              </StatusBadge>
+              {user.mobileVerifiedAt && (
+                <StatusBadge tone="neutral" dot={false}>
+                  موبایل تایید شده
+                </StatusBadge>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="grid gap-5 lg:grid-cols-5">
         {/* اطلاعات حساب */}
         <Card className="lg:col-span-3">
