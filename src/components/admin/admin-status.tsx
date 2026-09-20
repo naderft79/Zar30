@@ -22,6 +22,22 @@ const STATUS_MAP: Record<string, { label: string; tone: Tone }> = {
   APPROVED: { label: 'تاییدشده', tone: 'success' },
   REJECTED: { label: 'ردشده', tone: 'error' },
   NEEDS_RESUBMISSION: { label: 'نیازمند اصلاح', tone: 'warning' },
+  // Order / Transaction / Withdrawal / Journal — PENDING مشترک «در انتظار»
+  PENDING: { label: 'در انتظار', tone: 'warning' },
+  LOCKED: { label: 'قفل‌شده', tone: 'info' },
+  FILLED: { label: 'تکمیل‌شده', tone: 'success' },
+  CANCELLED: { label: 'لغوشده', tone: 'neutral' },
+  FAILED: { label: 'ناموفق', tone: 'error' },
+  COMPLETED: { label: 'موفق', tone: 'success' },
+  REVERSED: { label: 'برگشت‌خورده', tone: 'warning' },
+  PAID: { label: 'پرداخت‌شده', tone: 'success' },
+  POSTED: { label: 'ثبت‌شده', tone: 'success' },
+  // Wallet
+  active: { label: 'فعال', tone: 'success' },
+  frozen: { label: 'مسدود', tone: 'error' },
+  // Ledger entry
+  DEBIT: { label: 'بدهکار', tone: 'info' },
+  CREDIT: { label: 'بستانکار', tone: 'success' },
 }
 
 const TONE_CLASSES: Record<Tone, string> = {
