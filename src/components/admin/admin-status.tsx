@@ -51,6 +51,14 @@ const STATUS_MAP: Record<string, { label: string; tone: Tone }> = {
   MEDIUM: { label: 'متوسط', tone: 'info' },
   HIGH: { label: 'زیاد', tone: 'warning' },
   URGENT: { label: 'فوری', tone: 'error' },
+  REVOKED: { label: 'لغوشده', tone: 'neutral' },
+  DISABLED: { label: 'غیرفعال', tone: 'neutral' },
+  QUEUED: { label: 'در صف', tone: 'warning' },
+  SENT: { label: 'ارسال‌شده', tone: 'info' },
+  DELIVERED: { label: 'تحویل‌شده', tone: 'success' },
+  READ: { label: 'خوانده‌شده', tone: 'success' },
+  DRAFT: { label: 'پیش‌نویس', tone: 'neutral' },
+  PUBLISHED: { label: 'منتشرشده', tone: 'success' },
 }
 
 const TONE_CLASSES: Record<Tone, string> = {

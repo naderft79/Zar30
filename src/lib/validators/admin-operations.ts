@@ -7,6 +7,8 @@ const pagination = z.object({
   direction: z.enum(['asc', 'desc']).default('desc'),
 })
 
+export const adminPlatformQuerySchema = pagination
+
 export const adminInstallmentQuerySchema = pagination.extend({
   status: z.enum(['PENDING', 'ACTIVE', 'COMPLETED', 'DEFAULTED']).optional(),
 })
