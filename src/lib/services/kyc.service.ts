@@ -9,10 +9,10 @@
 // ============================================
 
 import { randomUUID } from 'node:crypto'
-import type { KycStatus, KycDocKind } from '@/generated/prisma'
+import type { AdminRole, KycStatus, KycDocKind } from '@/generated/prisma'
 import prisma from '@/lib/db/prisma'
 import { ApiError } from '@/lib/errors/api-error'
-import { writeAudit } from '@/lib/audit/audit'
+import { toAuditData, writeAudit } from '@/lib/audit/audit'
 import { logger } from '@/lib/logger/logger'
 import {
   encryptBuffer,
@@ -32,6 +32,7 @@ import {
 interface Meta {
   ip?: string
   userAgent?: string
+  requestId?: string
 }
 
 // ---- انتقال‌های مجاز state machine — منع هر جهش نامعتبر ----
@@ -431,32 +432,52 @@ export const kycService = {
   },
 
   // گرفتن پرونده برای بررسی — SUBMITTED → UNDER_REVIEW
-  async claim(adminId: string, submissionId: string, meta: Meta) {
+  // اتمیک: updateMany با predicate وضعیت + audit داخل همان transaction
+  async claim(adminId: string, adminRole: AdminRole, submissionId: string, meta: Meta) {
     const sub = await prisma.kycSubmission.findUnique({
       where: { id: submissionId },
-      select: { status: true },
+      select: { status: true, userId: true },
     })
     if (!sub) throw ApiError.notFound('درخواست یافت نشد')
     assertTransition(sub.status, 'UNDER_REVIEW')
-    const updated = await prisma.kycSubmission.update({
-      where: { id: submissionId },
-      data: { status: 'UNDER_REVIEW', reviewedBy: adminId },
-      select: submissionSelect,
-    })
-    await writeAudit({
-      actorType: 'admin',
-      actorId: adminId,
-      action: 'KYC_UNDER_REVIEW',
-      entityType: 'kyc_submission',
-      entityId: submissionId,
-      ...meta,
+
+    const updated = await prisma.$transaction(async (tx) => {
+      // گارد concurrency — فقط وقتی هنوز SUBMITTED است claim موفق است
+      const claimed = await tx.kycSubmission.updateMany({
+        where: { id: submissionId, status: 'SUBMITTED' },
+        data: { status: 'UNDER_REVIEW', reviewedBy: adminId },
+      })
+      if (claimed.count !== 1) {
+        throw ApiError.conflict('این پرونده هم‌اکنون توسط بررسی‌کننده دیگری گرفته شده است')
+      }
+      // audit strict — شکست آن کل transaction را rollback می‌کند
+      await tx.auditLog.create({
+        data: toAuditData({
+          actorType: 'admin',
+          actorId: adminId,
+          actorRole: adminRole,
+          action: 'KYC_UNDER_REVIEW',
+          entityType: 'kyc_submission',
+          entityId: submissionId,
+          targetUserId: sub.userId,
+          before: { status: 'SUBMITTED' },
+          after: { status: 'UNDER_REVIEW' },
+          ...meta,
+        }),
+      })
+      return tx.kycSubmission.findUniqueOrThrow({
+        where: { id: submissionId },
+        select: submissionSelect,
+      })
     })
     return toPublic(updated)
   },
 
   // تصمیم نهایی — approve / reject / request_changes
+  // اتمیک: status update + kycLevel + notification + strict audit در یک transaction
   async review(
     adminId: string,
+    adminRole: AdminRole,
     submissionId: string,
     decision: 'approve' | 'reject' | 'request_changes',
     reason: string | undefined,
@@ -488,16 +509,19 @@ export const kycService = {
     }
 
     const updated = await prisma.$transaction(async (tx) => {
-      const s = await tx.kycSubmission.update({
-        where: { id: submissionId },
+      // گارد concurrency — predicate وضعیت؛ فقط یک reviewer موفق می‌شود
+      const transitioned = await tx.kycSubmission.updateMany({
+        where: { id: submissionId, status: { in: ['SUBMITTED', 'UNDER_REVIEW'] } },
         data: {
           status: target,
           reviewedBy: adminId,
           reviewedAt: new Date(),
           rejectionReason: decision === 'approve' ? null : (reason ?? null),
         },
-        select: submissionSelect,
       })
+      if (transitioned.count !== 1) {
+        throw ApiError.conflict(`وضعیت ${sub.status} قابل بررسی نیست`)
+      }
       if (decision === 'approve') {
         // ارتقای سطح KYC کاربر — اثر مالی واقعی تصمیم ادمین
         await tx.user.update({
@@ -526,24 +550,33 @@ export const kycService = {
       await tx.notification.create({
         data: { userId: sub.userId, ...notif, channel: 'IN_APP', status: 'SENT' },
       })
-      return s
+      // audit strict داخل همان transaction — شکست → rollback کل تصمیم
+      await tx.auditLog.create({
+        data: toAuditData({
+          actorType: 'admin',
+          actorId: adminId,
+          actorRole: adminRole,
+          action:
+            decision === 'approve'
+              ? 'KYC_APPROVED'
+              : decision === 'reject'
+                ? 'KYC_REJECTED'
+                : 'KYC_NEEDS_RESUBMISSION',
+          entityType: 'kyc_submission',
+          entityId: submissionId,
+          targetUserId: sub.userId,
+          reason,
+          before: { status: sub.status },
+          after: { status: target, reason },
+          ...meta,
+        }),
+      })
+      return tx.kycSubmission.findUniqueOrThrow({
+        where: { id: submissionId },
+        select: submissionSelect,
+      })
     })
 
-    await writeAudit({
-      actorType: 'admin',
-      actorId: adminId,
-      action:
-        decision === 'approve'
-          ? 'KYC_APPROVED'
-          : decision === 'reject'
-            ? 'KYC_REJECTED'
-            : 'KYC_NEEDS_RESUBMISSION',
-      entityType: 'kyc_submission',
-      entityId: submissionId,
-      before: { status: sub.status },
-      after: { status: target, reason },
-      ...meta,
-    })
     return toPublic(updated)
   },
 }

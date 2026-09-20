@@ -13,7 +13,7 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from '@/lib/auth/jwt'
-import { hasPermission, requirePermission, PERMISSIONS } from '@/lib/auth/rbac'
+import { hasPermission, requirePermission, resolvePermissions, PERMISSIONS } from '@/lib/auth/rbac'
 
 describe('Password Security', () => {
   it('hash رمز عبور قابل verify است', async () => {
@@ -85,23 +85,29 @@ describe('JWT', () => {
 
 describe('RBAC', () => {
   it('SUPER_ADMIN همه permissionها را دارد', () => {
+    const perms = resolvePermissions('SUPER_ADMIN', null)
     for (const p of Object.values(PERMISSIONS)) {
-      expect(hasPermission('SUPER_ADMIN', p)).toBe(true)
+      expect(hasPermission(perms, p)).toBe(true)
     }
   })
 
-  it('USER هیچ permission ادمینی ندارد', () => {
-    expect(hasPermission('USER', PERMISSIONS.USERS_READ)).toBe(false)
-    expect(hasPermission('USER', PERMISSIONS.LEDGER_READ)).toBe(false)
+  it('READ_ONLY هیچ permission مدیریتی ندارد', () => {
+    const perms = resolvePermissions('READ_ONLY', null)
+    expect(hasPermission(perms, PERMISSIONS.USERS_READ)).toBe(true)
+    expect(hasPermission(perms, PERMISSIONS.USERS_UPDATE)).toBe(false)
+    expect(hasPermission(perms, PERMISSIONS.SETTINGS_MANAGE)).toBe(false)
   })
 
-  it('SUPPORT فقط ticket/users read دارد', () => {
-    expect(hasPermission('SUPPORT', PERMISSIONS.TICKETS_REPLY)).toBe(true)
-    expect(hasPermission('SUPPORT', PERMISSIONS.WITHDRAWALS_APPROVE)).toBe(false)
+  it('SUPPORT ticket دارد ولی approve مالی ندارد', () => {
+    const perms = resolvePermissions('SUPPORT', null)
+    expect(hasPermission(perms, PERMISSIONS.TICKETS_REPLY)).toBe(true)
+    expect(hasPermission(perms, PERMISSIONS.WITHDRAWALS_APPROVE)).toBe(false)
   })
 
   it('requirePermission برای نقش نامجاز خطا می‌دهد', () => {
-    expect(() => requirePermission('USER', PERMISSIONS.SETTINGS_MANAGE)).toThrow()
-    expect(() => requirePermission('SUPER_ADMIN', PERMISSIONS.SETTINGS_MANAGE)).not.toThrow()
+    const support = resolvePermissions('SUPPORT', null)
+    expect(() => requirePermission(support, PERMISSIONS.SETTINGS_MANAGE)).toThrow()
+    const superAdmin = resolvePermissions('SUPER_ADMIN', null)
+    expect(() => requirePermission(superAdmin, PERMISSIONS.SETTINGS_MANAGE)).not.toThrow()
   })
 })

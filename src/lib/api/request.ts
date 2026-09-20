@@ -26,6 +26,7 @@ export function getSessionMeta(req: Request, deviceInfo?: string) {
   return {
     ip: getClientIp(req),
     userAgent: req.headers.get('user-agent') ?? undefined,
+    requestId: req.headers.get('x-request-id') ?? undefined,
     deviceInfo,
   }
 }

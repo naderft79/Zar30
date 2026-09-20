@@ -5,9 +5,10 @@
 // Web (cookie) و Mobile (Bearer) هر دو پشتیبانی می‌شوند
 // ============================================
 
-import type { KycLevel } from '@/generated/prisma'
+import type { AdminRole, KycLevel } from '@/generated/prisma'
 import prisma from '@/lib/db/prisma'
 import { ApiError } from '@/lib/errors/api-error'
+import { hasPermission, resolvePermissions, type Permission } from './rbac'
 import { verifyAccessToken } from './jwt'
 import { ACCESS_COOKIE } from './cookies'
 
@@ -83,17 +84,47 @@ export async function getOptionalAuth(req: Request): Promise<AuthContext | null>
 
 export interface AdminContext extends AuthContext {
   adminId: string
-  adminRole: string
+  adminRole: AdminRole
+  permissions: readonly Permission[]
 }
 
-// احراز ادمین — کاربر احرازشده + رکورد فعال در admin_users
+// احراز ادمین — کاربر احرازشده + رکورد فعال در admin_users + permissionهای resolve‌شده
 // صدور توکن ادمین در Phase مربوط به پنل ادمین می‌آید؛ این guard همان session کاربر را نیاز دارد
 export async function requireAdmin(req: Request): Promise<AdminContext> {
   const auth = await requireAuth(req)
   const admin = await prisma.adminUser.findUnique({
     where: { userId: auth.userId },
-    select: { id: true, role: true, active: true },
+    select: { id: true, role: true, active: true, permissions: true },
   })
   if (!admin || !admin.active) throw ApiError.forbidden('دسترسی ادمین لازم است')
-  return { ...auth, adminId: admin.id, adminRole: admin.role }
+  return {
+    ...auth,
+    adminId: admin.id,
+    adminRole: admin.role,
+    permissions: resolvePermissions(admin.role, admin.permissions),
+  }
+}
+
+// احراز ادمین + enforce یک permission granular
+export async function requireAdminPermission(
+  req: Request,
+  permission: Permission,
+): Promise<AdminContext> {
+  const ctx = await requireAdmin(req)
+  if (!hasPermission(ctx.permissions, permission)) {
+    throw ApiError.forbidden('دسترسی لازم برای این عملیات را ندارید')
+  }
+  return ctx
+}
+
+// احراز ادمین + حداقل یکی از permissionها — بدون هیچ تطبیقی forbidden
+export async function requireAnyAdminPermission(
+  req: Request,
+  permissions: readonly Permission[],
+): Promise<AdminContext> {
+  const ctx = await requireAdmin(req)
+  if (!permissions.some((p) => hasPermission(ctx.permissions, p))) {
+    throw ApiError.forbidden('دسترسی لازم برای این عملیات را ندارید')
+  }
+  return ctx
 }
