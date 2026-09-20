@@ -152,3 +152,31 @@
 
 - **Edge**: proxy روی `/dashboard/*` — بدون cookie → redirect به `/login?callbackUrl=...`
 - **API**: `requireAuth` — verify JWT + بررسی status کاربر + بررسی نشست فعال (`sid`)
+
+## Phase 4 — KYC
+
+### داده حساس و رمزنگاری
+
+- فیلدهای بانکی (`cardNumberEnc`/`ibanEnc`) با **AES-256-GCM** در DB رمزنگاری می‌شوند — plaintext هرگز ذخیره/در API برگردانده نمی‌شود (فقط masked)
+- کلید: `KYC_ENCRYPTION_KEY` (env) — ۳۲ بایت hex؛ در production از secrets manager
+- فایل‌های مدارک قبل از upload به `iv|tag|ciphertext` رمزنگاری می‌شوند — دستکاری با auth tag شکست می‌خورد
+
+### File Upload Security
+
+- **MIME sniff با magic bytes** — header کلاینت قابل‌اعتماد نیست؛ فقط JPEG/PNG/WebP
+- Cap ۵MB + فایل خالی رد می‌شود
+- Key تصادفی `kyc/{userId}/{submissionId}/{docId}` — بدون path traversal، غیرقابل‌حدس
+- **Bucket خصوصی** — هیچ Public URL؛ GET فقط از route احرازشده با `no-store` + `nosniff`
+- Rate limit `kyc.upload` (۱۲/ساعت per user)
+
+### Authorization
+
+- `userId` فقط از JWT — IDOR با 404 پاسخ می‌دهد
+- `requireAdmin`: session کاربر + رکورد فعال `admin_users` — برای queue/claim/review و دانلود مدرک کاربران
+- State machine سروری — هیچ انتقال نامعتبری (مثل claim روی draft یا submit دوباره) `409`
+
+### Audit
+
+`KYC_STARTED`، `KYC_DOC_UPLOADED` (kind+sha256)، `KYC_DOC_DELETED`، `KYC_SUBMITTED`، `KYC_UNDER_REVIEW`، `KYC_APPROVED`، `KYC_REJECTED`، `KYC_NEEDS_RESUBMISSION` — با actor (user/admin)، before/after status، reason.
+
+`LEGAL REVIEW REQUIRED`: سیاست نگه‌داری (retention) مدارک، مدت‌زمان و شرایط حذف نیازمند بررسی حقوقی است.

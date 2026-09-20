@@ -254,6 +254,25 @@ Shared Codebase (src/)
 
 **دلیل:** خروج از ظاهر «کارت‌های پشت سر هم» به تجربه Premium Private Banking؛ آماده‌سازی بستر UI برای Phase 4 (KYC).
 
+---
+
+## ADR-020: KYC Identity Verification — Secure Storage & State Machine
+
+**تصمیم:** احراز هویت چندمرحله‌ای (سطح ۲) با draft سروری، مدارک رمزنگاری‌شده در Object Storage خصوصی، و state machine صریح server-side.
+
+**اجزای کلیدی:**
+
+- **State Machine** — انتقال‌های مجاز در `kyc.service.ts` هاردکد و enforce می‌شوند: `NOT_STARTED → IN_PROGRESS → SUBMITTED → UNDER_REVIEW → APPROVED | REJECTED | NEEDS_RESUBMISSION`. `NEEDS_RESUBMISSION/REJECTED` پایان آن submission است — submission جدید با prefill ساخته می‌شود (تاریخچه immutable).
+- **Draft سروری** — `KycSubmission` با `status=IN_PROGRESS` و `currentStep` ذخیره می‌شود؛ کاربر می‌تواند هر وقت برگردد. فیلدهای بانکی (`cardNumberEnc`, `ibanEnc`) با AES-256-GCM در DB رمزنگاری می‌شوند — plaintext هرگز ذخیره/برگردانده نمی‌شود (API فقط masked برمی‌گرداند).
+- **مدارک** (`KycDocument`) — آپلود سروری multipart → MIME **magic bytes** sniff (نه صرفاً header) → cap ۵MB → AES-256-GCM → S3/MinIO bucket خصوصی با key تصادفی `kyc/{userId}/{submissionId}/{docId}`. **هیچ Public URL نیست** — GET از طریق route احرازشده با `Cache-Control: private, no-store`.
+- **IDOR** — همه دسترسی‌ها فقط از `userId` داخل JWT؛ مالکیت در service بررسی می‌شود و 404 برمی‌گردد (وجود منبع فاش نمی‌شود).
+- **Admin Review** — `requireAdmin` (session کاربر + رکورد فعال `admin_users`); queue/claim/review با دلیل اجباری برای reject/request_changes؛ approve در یک transaction `kycLevel` کاربر را ارتقا و Notification می‌سازد؛ همه تصمیم‌ها در `audit_logs` (actor admin, before/after status, reason).
+- **Encryption at rest** — `src/lib/crypto/aes-gcm.ts`؛ کلید `KYC_ENCRYPTION_KEY` (env، ۳۲ بایت hex). فایل‌ها: `iv|tag|ciphertext` باینری در object؛ فیلدهای متنی: `v1:iv:tag:data` base64 در DB.
+
+**دلیل:** اطلاعات KYC حساس‌ترین داده‌های کاربر هستند — رمزنگاری at-rest + bucket خصوصی + بدون public URL، سطح دفاع مطلوب برای فین‌تک است. resubmission به‌جای mutate، submission جدید می‌سازد تا audit trail کامل بماند.
+
+**DECISION REQUIRED:** سطح ۳ (سلفی ویدیویی + face match با face-api.js + OCR tesseract.js) و Admin Review UI در پنل ادمین — در Phase مربوطه پیاده می‌شود. این Phase فقط APIهای admin را پیاده کرده است.
+
 ## تصمیم‌های معلق (DECISION REQUIRED)
 
 - [ ] تایید نتایج PWA Spike روی دستگاه واقعی (Chrome Android, Safari iOS)

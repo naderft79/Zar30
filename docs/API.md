@@ -122,9 +122,47 @@
 | GET    | `/price`            | قیمت طلا — فعلاً `isLive: false` + `source: "demo"`                  |
 | GET    | `/dev/otp/{mobile}` | فقط dev/test — نیازمند `DEV_OTP_ENDPOINT=true` + `SMS_PROVIDER=mock` |
 
+## KYC (Phase 4)
+
+### GET /kyc
+
+وضعیت کاربر جاری: `{ kycLevel, active, history }` — `active` آخرین submission قابل‌اقدام (`IN_PROGRESS`/`SUBMITTED`/`UNDER_REVIEW`/`NEEDS_RESUBMISSION`).
+
+### POST /kyc/start
+
+شروع/ادامه draft — idempotent؛ اگر `IN_PROGRESS` باشد همان برمی‌گردد؛ اگر در حال بررسی باشد `409`. پس از `REJECTED`/`NEEDS_RESUBMISSION` draft جدید با prefill ساخته می‌شود.
+
+### PUT /kyc/draft
+
+ذخیره میان‌مرحله‌ای — هر subset از `firstName/lastName/birthDate/nationalCode/shenasnamehNo/cardNumber/iban/currentStep`؛ فقط در `IN_PROGRESS`. داده‌های بانکی با AES-256-GCM رمزنگاری می‌شوند و در پاسخ فقط masked برمی‌گردند (`cardMasked`/`ibanMasked`/`bankComplete`).
+
+### POST /kyc/documents (multipart)
+
+`kind` (`ID_CARD_FRONT` | `ID_CARD_BACK` | `SELFIE`) + `file` — MIME sniff با magic bytes (JPEG/PNG/WebP)، حداکثر ۵MB، AES-256-GCM، S3 private bucket با key تصادفی. جایگزینی مدرک همان‌نوع مجاز است. Rate limit: `kyc.upload`.
+
+### GET /kyc/documents/:id
+
+دانلود رمزگشایی‌شده — فقط مالک یا ادمین فعال؛ `Cache-Control: private, no-store`؛ سایر کاربران `404`.
+
+### DELETE /kyc/documents/:id
+
+حذف مدرک — فقط مالک، فقط در `IN_PROGRESS`.
+
+### POST /kyc/submit
+
+ارسال نهایی — کامل‌بودن همه مراحل server-side الزامی است (شخصی + هویتی + بانکی + کارت ملی)؛ ناقص → `422` با لیست کمبود.
+
+### GET /admin/kyc/queue — POST /admin/kyc/:id/claim — POST /admin/kyc/:id/review
+
+فقط ادمین فعال (`requireAdmin`). review: `{ decision: approve|reject|request_changes, reason? }` — دلیل برای غیر-approve اجباری. approve → ارتقای `kycLevel` + اعلان نتیجه + audit.
+
+### State Machine
+
+`NOT_STARTED → IN_PROGRESS → SUBMITTED → UNDER_REVIEW → APPROVED | REJECTED | NEEDS_RESUBMISSION` — هر انتقال نامعتبر `409`.
+
 ## Rate Limiting
 
-از `RateLimitConfig` (قابل تنظیم بدون deploy): `api.general`، `otp.send`، `otp.verify`، `auth.login`، `auth.register`، `auth.password_reset` — سرریز → `429` با پیام زمان retry.
+از `RateLimitConfig` (قابل تنظیم بدون deploy): `api.general`، `otp.send`، `otp.verify`، `auth.login`، `auth.register`، `auth.password_reset`، `kyc.upload` — سرریز → `429` با پیام زمان retry.
 
 ## خطاها
 

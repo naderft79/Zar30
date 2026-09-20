@@ -24,6 +24,7 @@ const FALLBACK_RULES: Record<string, RateLimitRule> = {
   'auth.login': { limit: 10, windowSeconds: 3600, scope: 'mobile' },
   'auth.register': { limit: 10, windowSeconds: 3600, scope: 'ip' },
   'auth.password_reset': { limit: 5, windowSeconds: 3600, scope: 'mobile' },
+  'kyc.upload': { limit: 12, windowSeconds: 3600, scope: 'user' },
 }
 
 let cachedRules: { rules: Record<string, RateLimitRule>; loadedAt: number } | null = null

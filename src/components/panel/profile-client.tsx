@@ -11,6 +11,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft,
+  BadgeCheck,
   Bell,
   FileText,
   Gift,
@@ -40,6 +41,12 @@ const KYC_LABELS: Record<string, string> = {
 
 // بخش‌های فرعی پروفایل — طبق قرارداد ناوبری همه زیر «پروفایل»
 const PROFILE_SECTIONS = [
+  {
+    href: '/dashboard/profile/kyc',
+    icon: BadgeCheck,
+    title: 'احراز هویت',
+    description: 'تایید هویت و ارتقای سطح حساب',
+  },
   {
     href: '/dashboard/profile/security',
     icon: ShieldCheck,

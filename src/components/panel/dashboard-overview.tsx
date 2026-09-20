@@ -221,7 +221,7 @@ export function DashboardOverview() {
               : 'برای فعال شدن خرید و فروش، احراز هویت را تکمیل کنید.'
           }
           progress={kycDone ? 100 : 25}
-          action={{ label: 'مدیریت احراز هویت', href: '/dashboard/profile' }}
+          action={{ label: 'مدیریت احراز هویت', href: '/dashboard/profile/kyc' }}
         />
         <StatusCard
           icon={MonitorSmartphone}

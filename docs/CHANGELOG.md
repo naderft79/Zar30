@@ -1,5 +1,33 @@
 # Zar30 — Changelog
 
+## [0.6.0] — Phase 4: KYC & Identity Verification (ADR-020)
+
+### Added
+
+- **KYC Flow سطح ۲** — wizard چندمرحله‌ای در `/dashboard/profile/kyc`: اطلاعات شخصی (نام + تاریخ تولد جلالی) → هویتی (کد ملی + شناسنامه) → بانکی (کارت + شبا) → مدارک → بازبینی → ارسال
+- **State Machine سروری** — `IN_PROGRESS → SUBMITTED → UNDER_REVIEW → APPROVED/REJECTED/NEEDS_RESUBMISSION` با انتقال‌های مجاز هاردکد؛ resubmission با prefill
+- **`/api/v1/kyc/*`** — `GET /kyc` (status+history)، `POST /kyc/start` (idempotent)، `PUT /kyc/draft`، `POST /kyc/documents` (multipart)، `GET/DELETE /kyc/documents/:id`، `POST /kyc/submit`
+- **`/api/v1/admin/kyc/*`** — `GET /queue`، `POST /:id/claim`، `POST /:id/review` (approve/reject/request_changes + reason) — `requireAdmin`
+- **ذخیره‌سازی امن** — `src/lib/storage/s3.ts` (MinIO/S3 private bucket) + `src/lib/crypto/aes-gcm.ts` (AES-256-GCM برای فایل‌ها و فیلدهای بانکی) + SHA-256 integrity
+- **Validators واقعی** — کد ملی checksum، شبا mod-97 IBAN، کارت ۱۶ رقم، تاریخ تولد ۱۸+، تبدیل جلالی↔میلادی (`src/lib/utils/jalali.ts`)
+- **MIME sniffing** — magic bytes (JPEG/PNG/WebP) به‌جای اعتماد به header؛ cap ۵MB؛ key تصادفی غیرقابل‌حدس
+- **اعلان نتیجه** — approve/reject/resubmission در `notifications` + audit کامل (`KYC_*` actions)
+- **UI** — `kyc-client.tsx` با step rail طلایی، progress، upload با progress bar، مشاهده/حذف مدرک، status hero، تاریخچه — لینک از Profile hub + کارت داشبورد
+- **تست‌ها** — ۱۲ unit (validators/crypto/jalali) + ۸ integration (state machine/IDOR/upload/MinIO واقعی/admin review) + ۴ E2E (فلو کامل، validation، 401، nav contract) روی ۳ viewport
+
+### Security
+
+- مدارک بدون Public URL — GET فقط با session مالک یا ادمین فعال + `Cache-Control: no-store`
+- `KYC_ENCRYPTION_KEY` در env — فیلدهای بانکی هرگز plaintext ذخیره نمی‌شوند؛ API فقط masked برمی‌گرداند
+- Rate limit `kyc.upload` (۱۲/ساعت per user)
+- فایل آپلودی قبل از ذخیره رمزنگاری می‌شود؛ تغییر ciphertext با GCM auth tag شکست می‌خورد
+
+### Notes
+
+- Navigation Contract دست‌نخورده — KYC صفحه‌ای زیر «پروفایل» است، نه nav item
+- سطح ۳ (ویدیو/selfie + face match + OCR) و Admin Review UI به Phaseهای بعدی موکول شد — APIهای admin آماده‌اند
+- `LEGAL REVIEW REQUIRED`: سیاست نگه‌داری مدارک و شرایط حریم خصوصی نیازمند بررسی حقوقی است
+
 ## [0.5.0] — Full User Panel Redesign (ADR-019)
 
 ### Added

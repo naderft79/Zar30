@@ -304,20 +304,56 @@ model KycSubmission {
   birthDate       DateTime? @map("birth_date")
   firstName       String?   @map("first_name")
   lastName        String?   @map("last_name")
+  shenasnamehNo   String?   @map("shenasnameh_no")
+  // داده‌های حساس بانکی — AES-256-GCM رمزنگاری‌شده در حال استراحت
+  cardNumberEnc   String?   @map("card_number_enc")
+  ibanEnc         String?   @map("iban_enc")
   idCardImageUrl  String?   @map("id_card_image_url")
   selfieImageUrl  String?   @map("selfie_image_url")
   videoUrl        String?   @map("video_url")
+  // آخرین step تکمیل‌شده برای resume — draft قابل ویرایش تا SUBMITTED
+  currentStep     Int       @default(0) @map("current_step")
+  submittedAt     DateTime? @map("submitted_at")
   rejectionReason String?   @map("rejection_reason")
   reviewedBy      String?   @map("reviewed_by")
   reviewedAt      DateTime? @map("reviewed_at")
   createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
 
-  user       User       @relation(fields: [userId], references: [id])
-  reviewer   AdminUser? @relation(fields: [reviewedBy], references: [id])
+  user       User          @relation(fields: [userId], references: [id])
+  reviewer   AdminUser?    @relation(fields: [reviewedBy], references: [id])
+  documents  KycDocument[]
 
   @@index([userId])
   @@index([status])
   @@map("kyc_submissions")
+}
+
+enum KycDocKind {
+  ID_CARD_FRONT
+  ID_CARD_BACK
+  SELFIE
+  VIDEO
+}
+
+// مدارک KYC — کلید Object Storage خصوصی + checksum؛ فایل‌ها رمزنگاری‌شده
+// هرگز URL عمومی ندارند — دانلود فقط از مسیر API احرازشده
+model KycDocument {
+  id           String     @id @default(uuid())
+  submissionId String     @map("submission_id")
+  kind         KycDocKind
+  storageKey   String     @map("storage_key")
+  fileName     String     @map("file_name")
+  mimeType     String     @map("mime_type")
+  sizeBytes    Int        @map("size_bytes")
+  sha256       String
+  encrypted    Boolean    @default(true)
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  submission KycSubmission @relation(fields: [submissionId], references: [id])
+
+  @@index([submissionId])
+  @@map("kyc_documents")
 }
 
 // ============================================

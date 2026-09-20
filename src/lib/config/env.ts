@@ -17,6 +17,20 @@ const envSchema = z.object({
   // Redis
   REDIS_URL: z.string().default('redis://localhost:6379'),
 
+  // Object Storage (MinIO dev / S3 production) — مدارک KYC خصوصی
+  S3_ENDPOINT: z.string().default('http://localhost:9000'),
+  S3_REGION: z.string().default('us-east-1'),
+  S3_BUCKET: z.string().default('zar30'),
+  S3_ACCESS_KEY: z.string().default('zar30'),
+  S3_SECRET_KEY: z.string().default('zar30_dev_password'),
+  S3_FORCE_PATH_STYLE: z.coerce.boolean().default(true),
+
+  // KYC — کلید AES-256-GCM برای مدارک و داده‌های بانکی (64 hex = 32 bytes)
+  KYC_ENCRYPTION_KEY: z
+    .string()
+    .regex(/^[0-9a-fA-F]{64}$/, 'KYC_ENCRYPTION_KEY must be 64 hex chars (32 bytes)')
+    .default('5a1f3c9e7b2d4a6081f4c6e9a3b5d7f02e8c4a6b9d1f3e5c7a9b0d2f4e6c8a0b'),
+
   // Auth
   JWT_ACCESS_SECRET: z.string().min(32, 'JWT_ACCESS_SECRET must be at least 32 chars'),
   JWT_REFRESH_SECRET: z.string().min(32, 'JWT_REFRESH_SECRET must be at least 32 chars'),

@@ -366,6 +366,25 @@
 
 ---
 
+## Phase 4 — KYC & Identity Verification (ADR-020) — 2026-09-20
+
+**وضعیت:** ✅ DONE — احراز هویت سطح ۲ (core flow) — گزارش کامل: `docs/phases/PHASE-04-REPORT.md`
+
+| بخش           | نتیجه                                                                                                          |
+| ------------- | -------------------------------------------------------------------------------------------------------------- |
+| Flow          | wizard ۵‌مرحله‌ای در `/dashboard/profile/kyc` (زیر «پروفایل» — nav contract دست‌نخورده)                        |
+| State machine | `NOT_STARTED→IN_PROGRESS→SUBMITTED→UNDER_REVIEW→APPROVED/REJECTED/NEEDS_RESUBMISSION` سروری                    |
+| DB            | `kyc_submissions` گسترش‌یافته (draft سروری + فیلدهای بانکی enc) + `kyc_documents` — migration `20260920061737` |
+| API           | `/api/v1/kyc/*` (status/start/draft/documents/submit) + `/api/v1/admin/kyc/*` (queue/claim/review)             |
+| امنیت         | AES-256-GCM (فایل + فیلدهای بانکی)، S3 private، MIME sniff، IDOR 404، rate limit، audit کامل                   |
+| تست           | ۱۲ unit + ۸ integration (DB+MinIO واقعی) + ۴ E2E × ۳ viewport                                                  |
+
+**خارج از دامنه:** سطح ۳ (ویدیو/face-match/OCR)، Admin Review UI، operation limits بر اساس kycLevel — Phaseهای بعدی.
+
+**Verification:** lint ✅ / typecheck ✅ / test 93/93 ✅ / e2e (kyc+auth+panel) ✅ / build ✅
+
+---
+
 ## Permanent Design Language — ثبت قانون دائمی (2026-09-19)
 
 **ADR-016: Zar30 Navy Luxury Design Language** — از این تاریخ برای **تمام Phaseهای بعدی و همه platformها** (User Panel، Admin، Landing، PWA، Android/iOS) لازم‌الاجرا است.

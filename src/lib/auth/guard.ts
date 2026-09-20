@@ -80,3 +80,20 @@ export async function getOptionalAuth(req: Request): Promise<AuthContext | null>
     return null
   }
 }
+
+export interface AdminContext extends AuthContext {
+  adminId: string
+  adminRole: string
+}
+
+// احراز ادمین — کاربر احرازشده + رکورد فعال در admin_users
+// صدور توکن ادمین در Phase مربوط به پنل ادمین می‌آید؛ این guard همان session کاربر را نیاز دارد
+export async function requireAdmin(req: Request): Promise<AdminContext> {
+  const auth = await requireAuth(req)
+  const admin = await prisma.adminUser.findUnique({
+    where: { userId: auth.userId },
+    select: { id: true, role: true, active: true },
+  })
+  if (!admin || !admin.active) throw ApiError.forbidden('دسترسی ادمین لازم است')
+  return { ...auth, adminId: admin.id, adminRole: admin.role }
+}

@@ -88,6 +88,21 @@ export async function apiDelete<T>(path: string): Promise<ApiResult<T>> {
   }
 }
 
+// آپلود فایل (multipart) — برای مدارک KYC
+export async function apiUpload<T>(path: string, form: FormData): Promise<ApiResult<T>> {
+  try {
+    const res = await fetch(path, { method: 'POST', credentials: 'include', body: form })
+    const json = (await res.json().catch(() => null)) as ApiSuccessBody<T> | ApiErrorBody | null
+    if (!res.ok || !json?.success) {
+      const err = json && !json.success ? json.error : undefined
+      return { ok: false, error: err?.detail ?? err?.title ?? 'آپلود ناموفق بود' }
+    }
+    return { ok: true, data: json.data }
+  } catch {
+    return { ok: false, error: 'خطای اتصال — اینترنت خود را بررسی کنید' }
+  }
+}
+
 // access token منقضی → یک بار refresh و retry (برای page load که فقط refresh cookie دارد)
 export async function apiGetWithRefresh<T>(path: string): Promise<ApiResult<T>> {
   let res = await apiGet<T>(path)

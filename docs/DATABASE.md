@@ -58,7 +58,8 @@ FinancialTransaction
 | `admin_users`            | ادمین‌ها (RBAC)         |
 | `sessions`               | نشست‌ها                 |
 | `otp_codes`              | کدهای OTP               |
-| `kyc_submissions`        | احراز هویت              |
+| `kyc_submissions`        | احراز هویت (درخواست‌ها) |
+| `kyc_documents`          | مدارک KYC (S3 metadata) |
 | `wallets`                | کیف پول (container)     |
 | `asset_accounts`         | حساب‌های دارایی         |
 | `ledger_accounts`        | حساب‌های دفتری          |
@@ -97,3 +98,13 @@ FinancialTransaction
 3. PostgreSQL مرجع نهایی — Redis هرگز مرجع نیست
 4. Idempotency در DB — Redis فقط acceleration
 5. Row-level locking با SELECT FOR UPDATE
+
+## KYC (Phase 4)
+
+`kyc_submissions` — درخواست‌ها immutable به‌عنوان تاریخچه نگه‌داری می‌شوند؛ resubmission = رکورد جدید (نه mutate). فیلدهای `card_number_enc`/`iban_enc` رمزنگاری‌شده (AES-256-GCM، قالب `v1:iv:tag:data` base64). `current_step` برای draft سروری. `submitted_at`/`reviewed_at`/`reviewed_by`/`rejection_reason` برای چرخه بررسی.
+
+`kyc_documents` — فقط metadata (kind، mimeType، sizeBytes، sha256، storageKey، encrypted). خود فایل در S3/MinIO خصوصی با AES-256-GCM است — `storage_key` تصادفی و غیرقابل‌حدس.
+
+State machine: `NOT_STARTED → IN_PROGRESS → SUBMITTED → UNDER_REVIEW → APPROVED | REJECTED | NEEDS_RESUBMISSION` — enforce در `kyc.service.ts` (نه در DB constraint) برای پیام‌های خطای واضح‌تر.
+
+Migration: `20260920061737_kyc_flow`

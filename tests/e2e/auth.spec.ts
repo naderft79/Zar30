@@ -61,9 +61,8 @@ test.describe('Authentication', () => {
     await page.getByLabel('رمز عبور').fill(PASSWORD)
     await page.getByRole('button', { name: 'ورود', exact: true }).click()
 
-    // ۵. داشبورد — پنل کاربر Phase 3 (main همیشه visible است؛ sidebar در موبایل hidden است)
+    // ۵. داشبورد — greeting در Wealth Hero (موبایل در کارت کاربر sidebar است که در موبایل hidden است)
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 })
-    await expect(page.locator('main').getByText(mobile)).toBeVisible({ timeout: 30_000 })
     await expect(page.getByRole('heading', { name: /خوش آمدید/ })).toBeVisible({ timeout: 30_000 })
 
     // ۶. خروج → بازگشت به login
