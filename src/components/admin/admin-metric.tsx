@@ -50,7 +50,12 @@ export function AdminMetric({
 }: AdminMetricProps) {
   const display = typeof value === 'number' ? toPersianDigits(value) : value
   return (
-    <div className={cn('bg-card border-border/60 rounded-xl border p-4 shadow-xs', className)}>
+    <div
+      className={cn(
+        'bg-card border-border/60 min-w-0 overflow-hidden rounded-xl border p-4 shadow-xs',
+        className,
+      )}
+    >
       <div className="flex items-center justify-between gap-3">
         <p className="text-muted-foreground text-[11px] font-medium">{label}</p>
         {Icon && (
@@ -65,7 +70,12 @@ export function AdminMetric({
           </span>
         )}
       </div>
-      <p className={cn('mt-2 text-xl font-bold tabular-nums sm:text-2xl', TONE_CLASSES[tone])}>
+      <p
+        className={cn(
+          'mt-2 min-w-0 text-lg leading-tight font-bold [overflow-wrap:anywhere] break-words tabular-nums sm:text-xl xl:text-2xl',
+          TONE_CLASSES[tone],
+        )}
+      >
         {display}
         {unit && <span className="text-muted-foreground mr-1 text-xs font-normal">{unit}</span>}
       </p>

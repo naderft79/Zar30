@@ -1,5 +1,27 @@
 # Zar30 — Changelog
 
+## [0.7.0] — Admin Operations Center Foundation (ADR-021)
+
+### Added
+
+- AdminShell مستقل و responsive در `/admin/*` با sidebar گروه‌بندی‌شده، mobile drawer، breadcrumb و Ctrl/Cmd+K command search
+- RBAC واقعی با ۶۶ permission، ۹ نقش، custom grant/revoke و enforcement سمت سرور
+- strict privileged audit با actor role، target user، request ID و reason؛ KYC review concurrency/ownership-safe
+- ۳۰ مقصد navigation مرکزی و ۲۱ ماژول UI/API واقعی: Dashboard، Users، KYC، Accounts، Wallets، Gold، Orders، Transactions، Deposits، Withdrawals، Pricing، Installments، Investments، Referrals، Support، Notifications، Security Sessions، Audit Logs، Team، Content و Feature Flags
+- server-side pagination/search/filter؛ table→mobile cards؛ exact BigInt/Decimal string formatting
+- financial transaction→journal→ledger→audit explorer؛ IBAN masked و permission-scoped detail payloads
+- Admin E2E access control/RBAC روی desktop/tablet/mobile + screenshot واقعی هر سه viewport
+
+### Security
+
+- هیچ admin API فقط به UI gate متکی نیست؛ active session→active admin→permission→resource/state guard
+- KYC document access IDOR-safe، no-store و audit fail-closed
+- عملیات مالی اجرایی تا وجود engine authoritative عمداً غیرفعال و read-only است
+
+### Known Limitations
+
+Risk/Fraud engine، financial approvals/mutations، support conversation، reports/export، system health، API keys/webhooks، CMS publish workflow و team/role mutations هنوز پیاده نشده‌اند و mock نشده‌اند.
+
 ## [0.6.0] — Phase 4: KYC & Identity Verification (ADR-020)
 
 ### Added

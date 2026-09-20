@@ -273,6 +273,23 @@ Shared Codebase (src/)
 
 **DECISION REQUIRED:** سطح ۳ (سلفی ویدیویی + face match با face-api.js + OCR tesseract.js) و Admin Review UI در پنل ادمین — در Phase مربوطه پیاده می‌شود. این Phase فقط APIهای admin را پیاده کرده است.
 
+---
+
+## ADR-021: Separate Admin Operations Architecture
+
+**تصمیم:** مرکز عملیات زرسی زیر `/admin/*` و APIهای آن زیر `/api/v1/admin/*` از User Panel جدا است، اما authentication/session و domain modelهای موجود را reuse می‌کند.
+
+- RBAC مرکزی با permissionهای `domain.action`، role defaults و grant/revoke؛ enforcement همیشه server-side.
+- Admin navigation و breadcrumb یک Source of Truth مرکزی دارند؛ Navigation پنج‌آیتمی User Panel تغییر نکرد.
+- privileged mutationها به strict audit اتمیک نیاز دارند؛ AuditLog قابل ویرایش نیست.
+- مالی: PostgreSQL/ledger منبع حقیقت؛ پنل فعلی explorer واقعی و read-only است و هیچ engine مالی را دور نمی‌زند.
+- UI: AdminShell مستقل، RTL responsive، Navy-first با Gold کنترل‌شده، table→mobile cards و command search permission-aware.
+- تاریخ date-only ادمین بر مبنای UTC calendar day تفسیر می‌شود.
+
+**دلیل:** پنل عملیات باید least privilege، قابل ردیابی و سازگار با صحت مالی باشد؛ ساخت CRUD موازی یا shortcut مالی خطرناک و مغایر معماری زرسی است.
+
+**جزئیات:** `docs/admin/ADMIN_ARCHITECTURE.md` و `docs/admin/ADMIN_ARCHITECTURE_GAP_REPORT.md`.
+
 ## تصمیم‌های معلق (DECISION REQUIRED)
 
 - [ ] تایید نتایج PWA Spike روی دستگاه واقعی (Chrome Android, Safari iOS)

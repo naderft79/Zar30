@@ -395,3 +395,25 @@
 - Token-based اجباری — hardcode رنگ/style در کامپوننت ممنوع؛ تغییر بنیادی فقط با ADR
 - Source of Truth: `src/app/globals.css` (tokens) + `/design-system` (preview) + `AGENTS.md › PERMANENT ZAR30 DESIGN LANGUAGE`
 - Anti-patterns: white/cream-first، neon crypto، excessive glass/glow، generic SaaS/Bootstrap look — ممنوع
+
+---
+
+## Admin Operations Center (ADR-021) — 2026-09-21
+
+**وضعیت:** ✅ DONE — مرکز عملیات ادمین `/admin/*` — معماری: `docs/admin/ADMIN_ARCHITECTURE.md` و `docs/admin/ADMIN_ARCHITECTURE_GAP_REPORT.md`
+
+| بخش            | نتیجه                                                                                                                                                                                                                                                                   |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RBAC           | ۶۶ permission (`domain.action`)، ۹ نقش، grant/revoke، `requireAdminPermission` server-side روی همه routeها                                                                                                                                                              |
+| Shell          | `AdminShell` مستقل (sidebar دسکتاپ xl+، drawer موبایل)، breadcrumb، logout، permission-denied state                                                                                                                                                                     |
+| Command Search | Ctrl/Cmd+K، permission-aware، server-side، merge قطعی round-robin (۵ per category / ۲۵ total)                                                                                                                                                                           |
+| Dashboard      | KPIهای واقعی PostgreSQL (کاربران، KYC، موجودی‌ها، حجم ۲۴h، برداشت‌های pending، قیمت طلا) — بدون داده جعلی                                                                                                                                                               |
+| ماژول‌ها       | Users (list/detail/status)، KYC (queue/claim/review + document viewer)، Accounts، Wallets، Orders، Transactions، Deposits، Withdrawals، Gold، Pricing، Installments، Investments، Referrals، Support، Notifications، Sessions، Audit Logs، Team، Content، Feature Flags |
+| مالی           | فقط explorer واقعی read-only — تراکنش→journal→ledger→audit قابل ردیابی؛ هیچ shortcut مالی ساخته نشد                                                                                                                                                                     |
+| دقت عددی       | `formatExactAmount` — BigInt/Decimal به‌صورت string، بدون تبدیل به Number                                                                                                                                                                                               |
+| امنیت          | strict audit اتمیک، KYC review ownership + concurrency-safe، document IDOR→404 + no-store، request ID propagation در proxy                                                                                                                                              |
+| تست            | unit + integration (DB واقعی) + component + E2E admin (۹ تست × ۳ viewport) + Visual QA                                                                                                                                                                                  |
+
+**خارج از دامنه (mock نشده‌اند):** Risk/Fraud engine، financial approvals/mutations، پاسخ به تیکت، reports/export، system health probe، API keys/webhooks، CMS publish workflow، team/role mutations.
+
+**Verification:** lint ✅ / typecheck ✅ / test 185/185 ✅ / admin e2e 9 ✅ / build ✅ / Visual QA سه viewport ✅
