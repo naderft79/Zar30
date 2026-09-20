@@ -19,6 +19,8 @@ const eslintConfig = [
       "test-results/**",
       // کدهای تولیدشده Prisma لینت نمی شوند
       "src/generated/**",
+      // snapshot ثابت UI Skills (upstream) — بخشی از کد پروژه نیست
+      ".agent/**",
     ],
   },
   {

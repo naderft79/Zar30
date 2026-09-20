@@ -9,7 +9,7 @@ import { Footer } from '@/components/landing/footer'
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-dvh flex-col">
       {/* Skip link برای دسترس‌پذیری */}
       <a
         href="#main-content"

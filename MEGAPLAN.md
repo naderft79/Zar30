@@ -395,6 +395,20 @@ Button, Input, Select, Textarea, Checkbox, Radio, Switch, Slider, Modal, Drawer,
 
 - Empty, Loading (skeleton), Error (retry), Success, Pending, Locked, Disabled
 
+### UI SKILLS & DESIGN ENGINEERING (ADR-018 — Permanent)
+
+- **Upstream:** `ibelick/ui-skills` — https://github.com/ibelick/ui-skills
+- **Local Snapshot (Pinned):** `.agent/ui-skills/` @ `aaddae727e243b4f7a7095a8b165a1534deba2ef` (synced 2026-09-20)
+- **Source of Truth:** `docs/UI_SKILLS.md`
+- **Skill Selection:** ۱ skill پیش‌فرض — حداکثر ۲ (۳ فقط برای review وسیع) — کوچک‌ترین context مفید
+- **Workflow اجباری UI:** AGENTS → Design System → task type → skill مرتبط → implement → render → Visual QA → Responsive QA → A11y QA → test
+- **Visual QA:** هر UI مهم باید واقعاً render و در desktop + mobile دیده شود — فقط code review کافی نیست
+- **Responsive QA:** 360/390/414/768/1024/1366/1440/1920
+- **Accessibility:** keyboard، focus، contrast، semantic HTML، reduced-motion
+- **Motion:** premium/subtle — neon، bounce اغراق‌آمیز، glow شدید ممنوع
+- **قاعده حاکمیت:** UI Skills = knowledge layer؛ در تضاد، ZAR30 Design Language اولویت دارد — overrideها در `docs/UI_SKILLS.md` مستند می‌شوند. Upstream را تغییر نده.
+- **Navigation Contract** ۵‌آیتمی دائمی در همه UIها حفظ می‌شود.
+
 ---
 
 ## بخش ۱۱ — Technical Architecture

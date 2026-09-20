@@ -1,5 +1,20 @@
 # Zar30 — Changelog
 
+## [0.4.1] — Permanent UI Skills Integration (ADR-018)
+
+### Added
+
+- **UI Skills knowledge layer** — snapshot Pin‌شده از `ibelick/ui-skills` در `.agent/ui-skills/` @ `aaddae727` (synced 2026-09-20) — ۷ skill: baseline-ui، improve-ui، fixing-accessibility، fixing-metadata، fixing-motion-performance، create-design-md، ui-skills-root
+- **`docs/UI_SKILLS.md`** — Source of Truth: pin، workflow اجباری، skill selection rule (حداکثر ۳)، overrides، update strategy، review gate
+- **`PERMANENT UI ENGINEERING RULE`** در `AGENTS.md` + بخش `UI SKILLS & DESIGN ENGINEERING` در `MEGAPLAN.md`
+
+### Fixed (اجرای واقعی skill `baseline-ui`)
+
+- `min-h-screen` → `min-h-dvh` در layoutها و panel-shell
+- `tracking-*` حذف شد — letter-spacing روی متن فارسی اتصال حروف را می‌شکند (referral codes، OTP hint/input، financial-number، section eyebrow)
+- `tabular-nums` روی داده‌ها (mobile، referral code، OTP)
+- `text-balance` روی h1 داشبورد + `text-pretty` روی متن‌های body
+
 ## [0.4.0] — Global Rebranding & Technical Namespace Migration (ADR-017)
 
 ### Changed

@@ -38,9 +38,7 @@ export function Section({
         {(eyebrow || title || description) && (
           <div className={cn('mb-10 sm:mb-14', centered && 'text-center')}>
             {eyebrow && (
-              <span className="text-gold mb-3 inline-block text-sm font-semibold tracking-wide">
-                {eyebrow}
-              </span>
+              <span className="text-gold mb-3 inline-block text-sm font-semibold">{eyebrow}</span>
             )}
             {title && (
               <TitleTag className="text-foreground text-2xl font-bold sm:text-3xl lg:text-4xl">

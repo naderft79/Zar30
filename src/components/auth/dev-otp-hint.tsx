@@ -48,7 +48,7 @@ export function DevOtpHint({ mobile, refreshKey = 0 }: DevOtpHintProps) {
       <FlaskConical className="text-gold size-4 shrink-0" />
       <p className="text-foreground text-sm">
         محیط تست — کد تایید:{' '}
-        <span className="text-gold font-mono text-base font-bold tracking-[0.3em]" dir="ltr">
+        <span className="text-gold font-mono text-base font-bold tabular-nums" dir="ltr">
           {code}
         </span>
       </p>

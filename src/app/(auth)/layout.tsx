@@ -9,7 +9,7 @@ import { Logo } from '@/components/shared/logo'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-background flex min-h-screen flex-col">
+    <div className="bg-background flex min-h-dvh flex-col">
       <header className="border-border/50 flex h-16 items-center justify-center border-b">
         <Link href="/" aria-label="زرسی — صفحه اصلی">
           <Logo size="md" />

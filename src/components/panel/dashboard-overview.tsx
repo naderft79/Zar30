@@ -73,11 +73,13 @@ export function DashboardOverview() {
       {/* ============ ۱. Account Greeting ============ */}
       <div className="animate-fade-up flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-display text-foreground">
+          <h1 className="text-display text-foreground text-balance">
             خوش آمدید{displayName ? `، ${displayName}` : ''}
           </h1>
           <p className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
-            <span dir="ltr">{user.mobile}</span>
+            <span dir="ltr" className="tabular-nums">
+              {user.mobile}
+            </span>
             <span aria-hidden="true">·</span>
             <StatusBadge tone={user.status === 'ACTIVE' ? 'success' : 'error'}>
               {STATUS_LABELS[user.status] ?? user.status}
@@ -174,7 +176,7 @@ export function DashboardOverview() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-muted-foreground text-xs leading-5">
+            <p className="text-muted-foreground text-xs leading-5 text-pretty">
               طرح‌های اقساطی خرید طلا به‌زودی معرفی می‌شوند.
             </p>
             <StatusBadge tone="gold" dot={false}>
@@ -222,7 +224,7 @@ export function DashboardOverview() {
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">کد دعوت شما</span>
-              <span className="text-foreground font-mono font-semibold tracking-widest" dir="ltr">
+              <span className="text-foreground font-mono font-semibold tabular-nums" dir="ltr">
                 {user.referralCode}
               </span>
             </div>
@@ -238,7 +240,7 @@ export function DashboardOverview() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-muted-foreground text-xs leading-5">
+            <p className="text-muted-foreground text-xs leading-5 text-pretty">
               اعلان‌های مهم حساب را از مرکز اعلان‌ها دنبال کنید.
             </p>
             <SectionLink href="/dashboard/notifications">مشاهده اعلان‌ها</SectionLink>

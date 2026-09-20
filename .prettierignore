@@ -5,3 +5,6 @@ build
 coverage
 pnpm-lock.yaml
 prisma/migrations
+
+# UI Skills upstream snapshot — unchanged per ADR-018
+.agent/

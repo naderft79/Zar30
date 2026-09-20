@@ -6,7 +6,7 @@ import { config as dotenvConfig } from 'dotenv'
 dotenvConfig({ path: '.env' })
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  plugins: [tsconfigPaths({ projects: ['./tsconfig.json'] })],
   test: {
     environment: 'node',
     // integration tests روی DB واقعی چند bcrypt (cost 12) اجرا می‌کنند و زمان‌برند

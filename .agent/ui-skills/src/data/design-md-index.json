@@ -1,0 +1,152 @@
+[
+  {
+    "id": "vercel",
+    "name": "Vercel",
+    "sourceUrl": "https://vercel.com/design.md",
+    "websiteUrl": "https://vercel.com/",
+    "updatedAt": "2026-07-22",
+    "description": "The genuine design.md file published by Vercel.",
+    "previewImage": "https://assets.querrel.com/design.md/vercel/vercel-preview.webp",
+    "logoImage": "https://assets.querrel.com/design.md/vercel/vercel-logo.webp"
+  },
+  {
+    "id": "atlassian",
+    "name": "Atlassian",
+    "sourceUrl": "https://atlassian.design/DESIGN.md",
+    "websiteUrl": "https://www.atlassian.com/",
+    "updatedAt": "2026-07-22",
+    "description": "The genuine design.md file published by Atlassian.",
+    "logoImage": "https://assets.querrel.com/design.md/atlassian/atlassian-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/atlassian/atlassian-preview.webp"
+  },
+  {
+    "id": "mintlify",
+    "name": "Mintlify",
+    "sourceUrl": "https://www.mintlify.com/design.md",
+    "websiteUrl": "https://www.mintlify.com/",
+    "updatedAt": "2026-07-22",
+    "description": "The genuine design.md file published by Mintlify.",
+    "logoImage": "https://assets.querrel.com/design.md/mintlify/mintlify-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/mintlify/mintlify-preview.webp"
+  },
+  {
+    "id": "unicef",
+    "name": "Unicef",
+    "sourceUrl": "https://github.com/unicef/design.md/blob/main/DESIGN.md",
+    "websiteUrl": "https://www.unicef.org/",
+    "updatedAt": "2026-07-22",
+    "description": "The genuine design.md file published by Unicef.",
+    "logoImage": "https://assets.querrel.com/design.md/unicef/unicef-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/unicef/unicef-preview.webp"
+  },
+  {
+    "id": "dsfr",
+    "name": "Beta Gouv (DSFR)",
+    "sourceUrl": "https://github.com/betagouv/dsfr-design-md/blob/main/DESIGN.md",
+    "websiteUrl": "https://beta.gouv.fr/",
+    "updatedAt": "2026-07-22",
+    "description": "The genuine design.md file published by Beta Gouv (DSFR).",
+    "logoImage": "https://assets.querrel.com/design.md/dsfr/dsfr-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/dsfr/dsfr-preview.webp"
+  },
+  {
+    "id": "firecrawl",
+    "name": "Firecrawl",
+    "sourceUrl": "https://firecrawl.dev/design.md",
+    "websiteUrl": "https://www.firecrawl.dev/",
+    "updatedAt": "2026-07-22",
+    "description": "The genuine design.md file published by Firecrawl.",
+    "logoImage": "https://assets.querrel.com/design.md/firecrawl/firecrawl-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/firecrawl/firecrawl-preview.webp"
+  },
+  {
+    "id": "amplitude",
+    "name": "Amplitude",
+    "sourceUrl": "https://amplitude.com/design.md",
+    "websiteUrl": "https://amplitude.com/",
+    "updatedAt": "2026-07-22",
+    "description": "The genuine design.md file published by Amplitude.",
+    "logoImage": "https://assets.querrel.com/design.md/amplitude/amplitude-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/amplitude/amplitude-preview.webp"
+  },
+  {
+    "id": "heygen-hyperframes",
+    "name": "HyperFrames",
+    "sourceUrl": "https://github.com/heygen-com/hyperframes/blob/main/DESIGN.md",
+    "websiteUrl": "https://hyperframes.heygen.com/",
+    "updatedAt": "2026-07-22",
+    "description": "The genuine design.md file published by HyperFrames.",
+    "logoImage": "https://assets.querrel.com/design.md/hyperframes/hyperframes-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/hyperframes/hyperframes-preview.webp"
+  },
+  {
+    "id": "open-food-facts",
+    "name": "Open Food Facts",
+    "sourceUrl": "https://github.com/openfoodfacts/openfoodfacts-design/blob/main/DESIGN.md",
+    "websiteUrl": "https://us.openfoodfacts.org/",
+    "updatedAt": "2026-07-22",
+    "description": "The genuine design.md file published by Open Food Facts.",
+    "logoImage": "https://assets.querrel.com/design.md/openfoodfacts/openfoodfacts-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/openfoodfacts/openfoodfacts-preview.webp"
+  },
+  {
+    "id": "ant-design",
+    "name": "Ant Design",
+    "sourceUrl": "https://ant.design/design.md",
+    "websiteUrl": "https://ant.design/",
+    "updatedAt": "2026-07-27",
+    "description": "The genuine design.md file published by Ant Design.",
+    "logoImage": "https://assets.querrel.com/design.md/antdesign/antdesign-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/antdesign/antdesign-preview.webp"
+  },
+  {
+    "id": "nuxt",
+    "name": "Nuxt",
+    "sourceUrl": "https://nuxt.com/design.md",
+    "websiteUrl": "https://nuxt.com/",
+    "updatedAt": "2026-07-27",
+    "description": "The genuine design.md file published by Nuxt.",
+    "logoImage": "https://assets.querrel.com/design.md/nuxt/nuxt-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/nuxt/nuxt-preview.webp"
+  },
+  {
+    "id": "culture-amp",
+    "name": "Culture Amp",
+    "sourceUrl": "https://github.com/cultureamp/kaizen-design-system/blob/main/DESIGN.md?plain=1",
+    "websiteUrl": "https://www.cultureamp.com/",
+    "updatedAt": "2026-07-27",
+    "description": "The genuine design.md file published by Culture Amp.",
+    "logoImage": "https://assets.querrel.com/design.md/cultureamp/cultureamp-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/cultureamp/cultureamp-preview.webp"
+  },
+  {
+    "id": "voltagent",
+    "name": "VoltAgent",
+    "sourceUrl": "https://github.com/VoltAgent/voltagent/blob/main/DESIGN.md?plain=1",
+    "websiteUrl": "https://voltagent.dev/",
+    "updatedAt": "2026-07-27",
+    "description": "The genuine design.md file published by VoltAgent.",
+    "logoImage": "https://assets.querrel.com/design.md/voltagent/voltagent-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/voltagent/voltagent-preview.webp"
+  },
+  {
+    "id": "executor",
+    "name": "Executor",
+    "sourceUrl": "https://github.com/autohandai/nullexec/blob/main/design.md?plain=1",
+    "websiteUrl": "https://executor.sh/",
+    "updatedAt": "2026-07-27",
+    "description": "The genuine design.md file published by Executor.",
+    "logoImage": "https://assets.querrel.com/design.md/executor/executor-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/executor/executor-preview.webp"
+  },
+  {
+    "id": "quiverai",
+    "name": "QuiverAI",
+    "sourceUrl": "https://quiver.ai/design.md",
+    "websiteUrl": "https://quiver.ai/",
+    "updatedAt": "2026-07-29",
+    "description": "The genuine design.md file published by QuiverAI.",
+    "logoImage": "https://assets.querrel.com/design.md/quiverai/quiverai-logo.webp",
+    "previewImage": "https://assets.querrel.com/design.md/quiverai/quiverai-preview.webp"
+  }
+]

@@ -47,6 +47,34 @@ Canonical Domain: https://zar30.com
 
 ---
 
+## PERMANENT UI ENGINEERING RULE
+
+All UI/UX work must consult the project UI Skills reference before implementation.
+
+```text
+Upstream:              https://github.com/ibelick/ui-skills
+Pinned Commit:         aaddae727e243b4f7a7095a8b165a1534deba2ef
+Local Snapshot:        .agent/ui-skills/
+Local Source of Truth: docs/UI_SKILLS.md
+Design System:         ZAR30 Design System (src/app/globals.css + /design-system)
+Brand:                 زرسی / zar30
+Primary:               Navy
+Luxury Accent:         Gold
+Supporting Accent:     Cream
+```
+
+قواعد اجباری:
+
+- قبل از هر Task مرتبط با UI (صفحه، کامپوننت، navigation، responsive، animation، accessibility، typography، color، layout، forms، tables، charts، states) → skill مرتبط را از snapshot محلی Load کن.
+- Skill selection: **۱ skill** پیش‌فرض — حداکثر ۲، و فقط ۳ برای review وسیع. کوچک‌ترین context مفید.
+- **No UI from memory** — اول Design System + Brand Language + skill مرتبط + کامپوننت‌های موجود، بعد پیاده‌سازی.
+- Hierarchy: ZAR30 Product Decisions → Design Language → Design Tokens → Components → UI Skills → Feature UI. UI Skills هرگز brand language را override نمی‌کند.
+- Upstream `.agent/ui-skills/` را تغییر نده — overrideها فقط در `docs/UI_SKILLS.md` مستند می‌شوند.
+- Navigation Contract دائمی ۵‌آیتمی (ADR-015) در همه UIها حفظ می‌شود.
+- کامنت تکراری UI Skills در فایل‌های source ممنوع — referenceها فقط در AGENTS/MEGAPLAN/docs.
+
+---
+
 # 1. SOURCE OF TRUTH
 
 The repository contains several categories of project information.

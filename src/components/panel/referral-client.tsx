@@ -41,7 +41,7 @@ export function ReferralClient() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="border-gold-500/30 bg-elevated flex items-center justify-between rounded-xl border p-4 shadow-xs">
-            <span className="text-foreground font-mono text-xl font-bold tracking-widest" dir="ltr">
+            <span className="text-foreground font-mono text-xl font-bold tabular-nums" dir="ltr">
               {user.referralCode}
             </span>
             <button

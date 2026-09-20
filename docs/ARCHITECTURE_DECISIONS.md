@@ -219,6 +219,21 @@ Shared Codebase (src/)
 
 **قانون:** Agentهای آینده حق استفاده از نام LEGACY را ندارند مگر با برچسب `LEGACY` در مستندات Migration. مرجع اجرایی: `AGENTS.md › PERMANENT BRAND IDENTITY`
 
+## ADR-018: Permanent UI Skills Engineering Workflow
+
+**تصمیم:** `ibelick/ui-skills` به‌عنوان مرجع دائمی و اجباری UI/UX Engineering — snapshot Pin‌شده در `.agent/ui-skills/` @ `aaddae727` (synced 2026-09-20) — داخل Repository و مستقل از سیستم خاص.
+
+**قواعد:**
+
+- قبل از هر UI Task → skill مرتبط از snapshot محلی Load شود (۱ پیش‌فرض، حداکثر ۲، ۳ فقط review وسیع)
+- No UI from memory — Design System + Brand Language + skill + کامپوننت‌های موجود اول
+- Hierarchy: Product Decisions → Design Language → Design Tokens → Components → UI Skills → Feature UI
+- UI Skills هرگز Brand Language یا Navigation Contract (ADR-015) را override نمی‌کند — overrideها در `docs/UI_SKILLS.md`
+- Upstream تغییر نمی‌کند؛ update فقط با workflow مستند (check → review → repin → regression → docs)
+- Source of Truth: `docs/UI_SKILLS.md` + `AGENTS.md › PERMANENT UI ENGINEERING RULE`
+
+**دلیل:** کیفیت UI قابل‌تکرار و مبتنی بر مرجع مهندسی — نه سلیقه لحظه‌ای agent؛ reproducibility با pin؛ استقلال از ابزار خاص.
+
 ## تصمیم‌های معلق (DECISION REQUIRED)
 
 - [ ] تایید نتایج PWA Spike روی دستگاه واقعی (Chrome Android, Safari iOS)

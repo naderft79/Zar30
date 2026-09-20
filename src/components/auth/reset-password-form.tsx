@@ -79,7 +79,7 @@ export function ResetPasswordForm() {
           required
           maxLength={6}
           dir="ltr"
-          className="text-center text-lg tracking-widest"
+          className="text-center text-lg tabular-nums"
           autoComplete="one-time-code"
           value={code}
           onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}

@@ -51,7 +51,7 @@ export function usePanelUser(): PanelContextValue {
 // ---- اسکلت بارگذاری — شکل کلی shell را تقلید می‌کند ----
 function PanelLoadingSkeleton() {
   return (
-    <div className="bg-background min-h-screen" aria-busy="true" aria-label="در حال بارگذاری پنل">
+    <div className="bg-background min-h-dvh" aria-busy="true" aria-label="در حال بارگذاری پنل">
       {/* Sidebar skeleton — desktop */}
       <div className="bg-navy-950 fixed inset-y-0 right-0 z-30 hidden w-64 flex-col p-4 md:flex">
         <div className="skeleton-shimmer mb-8 h-8 w-28 rounded-lg" />
@@ -143,7 +143,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
 
   return (
     <PanelContext.Provider value={{ user, reload: load, logout }}>
-      <div className="bg-background min-h-screen">
+      <div className="bg-background min-h-dvh">
         {/* ============ Desktop — Premium Navy Sidebar ============ */}
         <aside className="bg-navy-950 fixed inset-y-0 right-0 z-30 hidden w-64 flex-col md:flex">
           {/* لوگو */}

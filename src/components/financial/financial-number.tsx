@@ -29,8 +29,8 @@ interface FinancialNumberProps {
 const sizeClasses = {
   sm: 'text-sm font-semibold',
   md: 'text-base font-bold',
-  lg: 'text-xl font-bold tracking-tight',
-  xl: 'text-3xl font-extrabold tracking-tight',
+  lg: 'text-xl font-bold',
+  xl: 'text-3xl font-extrabold',
 }
 
 const unitSizeClasses = {
