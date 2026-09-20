@@ -2,6 +2,7 @@
 // Zar30 - Browser API Client
 // ============================================
 // fetch wrapper برای فرم‌های client-side — cookie-based auth
+// status: کد HTTP پاسخ — در network error (fetch throw) ست نمی‌شود
 // ============================================
 
 'use client'
@@ -10,6 +11,8 @@ export interface ApiResult<T> {
   ok: boolean
   data?: T
   error?: string
+  /** HTTP status پاسخ — برای network error تعریف‌نشده است */
+  status?: number
 }
 
 interface ApiSuccessBody<T> {
@@ -33,9 +36,13 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<ApiResul
     const json = (await res.json().catch(() => null)) as ApiSuccessBody<T> | ApiErrorBody | null
     if (!res.ok || !json?.success) {
       const err = json && !json.success ? json.error : undefined
-      return { ok: false, error: err?.detail ?? err?.title ?? 'خطایی رخ داد — دوباره تلاش کنید' }
+      return {
+        ok: false,
+        status: res.status,
+        error: err?.detail ?? err?.title ?? 'خطایی رخ داد — دوباره تلاش کنید',
+      }
     }
-    return { ok: true, data: json.data }
+    return { ok: true, status: res.status, data: json.data }
   } catch {
     return { ok: false, error: 'خطای اتصال — اینترنت خود را بررسی کنید' }
   }
@@ -47,9 +54,9 @@ export async function apiGet<T>(path: string): Promise<ApiResult<T>> {
     const json = (await res.json().catch(() => null)) as ApiSuccessBody<T> | ApiErrorBody | null
     if (!res.ok || !json?.success) {
       const err = json && !json.success ? json.error : undefined
-      return { ok: false, error: err?.detail ?? err?.title ?? 'خطایی رخ داد' }
+      return { ok: false, status: res.status, error: err?.detail ?? err?.title ?? 'خطایی رخ داد' }
     }
-    return { ok: true, data: json.data }
+    return { ok: true, status: res.status, data: json.data }
   } catch {
     return { ok: false, error: 'خطای اتصال' }
   }
@@ -66,9 +73,9 @@ export async function apiPut<T>(path: string, body?: unknown): Promise<ApiResult
     const json = (await res.json().catch(() => null)) as ApiSuccessBody<T> | ApiErrorBody | null
     if (!res.ok || !json?.success) {
       const err = json && !json.success ? json.error : undefined
-      return { ok: false, error: err?.detail ?? err?.title ?? 'خطایی رخ داد' }
+      return { ok: false, status: res.status, error: err?.detail ?? err?.title ?? 'خطایی رخ داد' }
     }
-    return { ok: true, data: json.data }
+    return { ok: true, status: res.status, data: json.data }
   } catch {
     return { ok: false, error: 'خطای اتصال' }
   }
@@ -80,9 +87,9 @@ export async function apiDelete<T>(path: string): Promise<ApiResult<T>> {
     const json = (await res.json().catch(() => null)) as ApiSuccessBody<T> | ApiErrorBody | null
     if (!res.ok || !json?.success) {
       const err = json && !json.success ? json.error : undefined
-      return { ok: false, error: err?.detail ?? 'خطایی رخ داد' }
+      return { ok: false, status: res.status, error: err?.detail ?? 'خطایی رخ داد' }
     }
-    return { ok: true, data: json.data }
+    return { ok: true, status: res.status, data: json.data }
   } catch {
     return { ok: false, error: 'خطای اتصال' }
   }
@@ -95,18 +102,23 @@ export async function apiUpload<T>(path: string, form: FormData): Promise<ApiRes
     const json = (await res.json().catch(() => null)) as ApiSuccessBody<T> | ApiErrorBody | null
     if (!res.ok || !json?.success) {
       const err = json && !json.success ? json.error : undefined
-      return { ok: false, error: err?.detail ?? err?.title ?? 'آپلود ناموفق بود' }
+      return {
+        ok: false,
+        status: res.status,
+        error: err?.detail ?? err?.title ?? 'آپلود ناموفق بود',
+      }
     }
-    return { ok: true, data: json.data }
+    return { ok: true, status: res.status, data: json.data }
   } catch {
     return { ok: false, error: 'خطای اتصال — اینترنت خود را بررسی کنید' }
   }
 }
 
-// access token منقضی → یک بار refresh و retry (برای page load که فقط refresh cookie دارد)
+// access token منقضی (401) → یک بار refresh و retry
+// فقط 401 باعث refresh می‌شود؛ 403 و خطاهای validation همان‌طور برمی‌گردند
 export async function apiGetWithRefresh<T>(path: string): Promise<ApiResult<T>> {
   let res = await apiGet<T>(path)
-  if (!res.ok) {
+  if (res.status === 401) {
     const refreshed = await apiPost('/api/v1/auth/refresh', {})
     if (refreshed.ok) res = await apiGet<T>(path)
   }

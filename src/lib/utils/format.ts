@@ -41,6 +41,35 @@ export function formatGoldGrams(
   return `${formatAmount(value, { ...options, decimals: 3 })} گرم`
 }
 
+// مقدار مالی دقیق — برای string/bigint هیچ Number conversion و هیچ round/truncate
+// فقط نمایش: grouping سه‌رقمی + حذف اختیاری صفرهای انتهایی اعشار
+export function formatExactAmount(
+  value: string | bigint,
+  options: { digits?: 'fa' | 'en'; trimTrailingZeros?: boolean } = {},
+): string {
+  const { digits = 'fa', trimTrailingZeros = true } = options
+  const invalid = digits === 'fa' ? '۰' : '0'
+
+  const raw = String(value).trim()
+  if (!/^-?\d+(?:\.\d+)?$/.test(raw)) return invalid
+
+  const negative = raw.startsWith('-')
+  const unsigned = negative ? raw.slice(1) : raw
+  const dotIndex = unsigned.indexOf('.')
+  const intPart = dotIndex === -1 ? unsigned : unsigned.slice(0, dotIndex)
+  const fracPart = dotIndex === -1 ? '' : unsigned.slice(dotIndex + 1)
+
+  // leading zeros → یک صفر؛ مثلاً «۰۰۷» → «۷»
+  const int = intPart.replace(/^0+(?=\d)/, '')
+  const grouped = int.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+  let frac = fracPart ?? ''
+  if (trimTrailingZeros) frac = frac.replace(/0+$/, '')
+
+  const body = `${negative ? '-' : ''}${grouped}${frac ? `.${frac}` : ''}`
+  return digits === 'fa' ? toPersianDigits(body) : body
+}
+
 // درصد تغییر با علامت — مثال: +۲٫۳۵٪ یا −۱٫۲۰٪
 export function formatPercentChange(value: number, options: { digits?: 'fa' | 'en' } = {}): string {
   const { digits = 'fa' } = options
