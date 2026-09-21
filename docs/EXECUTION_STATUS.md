@@ -418,6 +418,15 @@
 
 **Verification:** lint ✅ / typecheck ✅ / test 185/185 ✅ / admin e2e 9 ✅ / build ✅ / Visual QA سه viewport ✅
 
+### Navigation + Sidebar Redesign — 2026-09-21 (به‌روزرسانی)
+
+- navigation به ۴۹ مقصد در ۹ بخش گسترش یافت؛ هر section آیکون اختصاصی دارد.
+- مقصدهای جدید (معاملات آنی/پیشرفته، تراکنش‌های تومان، انتقال دارایی، محدودیت‌ها، کارمزد، خروجی‌ها، حسابداری، واحدها، محصولات، دسته‌بندی، تخفیف، ارسال پستی، تحویل فیزیکی، شعب، سطوح، تنظیمات، پروفایل مدیر) architecture target هستند → catch-all + `admin/not-found.tsx` وضعیت «در نقشه راه» را داخل shell نشان می‌دهد؛ هیچ feature جعلی ساخته نشد.
+- سایدبار دسکتاپ جمع‌شونده (۲۸۸px↔۷۶px، ترجیح در localStorage)؛ هویت مدیر و خروج به هدر اصلی منتقل شد.
+- رفع تداخل z-index هدر sticky با هدر سایدبار؛ تست E2E به‌روزرسانی (۴۹ لینک، collapse، architecture target، هویت در هدر).
+
+**Verification:** lint ✅ / typecheck ✅ / test 186/186 ✅ / admin e2e 9 × ۳ viewport ✅ / build ✅
+
 ---
 
 ## Gerami-style Landing Redesign (ADR-022) — 2026-09-21

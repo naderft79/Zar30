@@ -47,9 +47,32 @@ test.describe('Admin Operations Center', () => {
     await page.screenshot({ path: testInfo.outputPath('admin-dashboard.png'), fullPage: true })
 
     const nav = await openAdminNav(page)
-    await expect(nav.getByRole('link')).toHaveCount(30)
-    await expect(nav.getByRole('link', { name: 'کاربران' })).toBeVisible()
+    await expect(nav.getByRole('link')).toHaveCount(49)
+    await expect(nav.getByRole('link', { name: 'کاربران', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: 'لاگ ممیزی' })).toBeVisible()
+
+    // بستن drawer — تا وقتی باز است، هدر از درخت دسترس‌پذیری مخفی است
+    if ((page.viewportSize()?.width ?? 1440) < 1280) {
+      await page.keyboard.press('Escape')
+      await expect(nav).toBeHidden()
+    }
+
+    // هویت مدیر و خروج در هدر اصلی
+    await expect(page.getByRole('button', { name: 'خروج از حساب' })).toBeVisible()
+
+    // مقصد architecture target → وضعیت صادقانه داخل shell، نه ۴۰۴ خام
+    await page.goto('/admin/trades')
+    await expect(page.getByRole('heading', { name: 'این بخش در نقشه راه است' })).toBeVisible()
+
+    // جمع‌شدن سایدبار فقط در دسکتاپ (xl)
+    if ((page.viewportSize()?.width ?? 1440) >= 1280) {
+      const collapseBtn = page.getByRole('button', { name: 'جمع کردن سایدبار' })
+      await collapseBtn.click()
+      await expect(page.getByRole('button', { name: 'باز کردن سایدبار' })).toBeVisible()
+      await expect(nav.getByRole('link')).toHaveCount(49)
+      await page.getByRole('button', { name: 'باز کردن سایدبار' }).click()
+      await expect(collapseBtn).toBeVisible()
+    }
 
     await page.goto('/admin/users')
     await expect(page.getByRole('heading', { name: 'کاربران', exact: true })).toBeVisible()
@@ -69,7 +92,7 @@ test.describe('Admin Operations Center', () => {
     const admin = await createAdmin('SUPPORT')
     await login(page, admin.mobile)
     const nav = await openAdminNav(page)
-    await expect(nav.getByRole('link', { name: 'کاربران' })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'کاربران', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: 'پشتیبانی' })).toBeVisible()
     await expect(nav.getByRole('link', { name: 'برداشت‌ها' })).toHaveCount(0)
     const response = await page.request.get('/api/v1/admin/withdrawals')

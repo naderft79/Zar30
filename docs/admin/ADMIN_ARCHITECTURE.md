@@ -53,7 +53,7 @@ Roles: `SUPER_ADMIN`, `FINANCE`, `SUPPORT`, `KYC`, `RISK`, `CONTENT`, `OPERATION
 | Content           | `/admin/content`                    | `/api/v1/admin/content`           | CMS oversight/read-only          |
 | Feature Flags     | `/admin/feature-flags`              | `/api/v1/admin/feature-flags`     | Read-only                        |
 
-The navigation has 30 centrally configured destinations. Routes not listed above are architecture targets and remain unavailable until their authoritative domain/service exists.
+The navigation has 49 centrally configured destinations in 9 sections. Routes not listed above are architecture targets: they render an in-shell "roadmap" state (`admin/not-found.tsx` via the `[...slug]` catch-all) and remain unavailable until their authoritative domain/service exists.
 
 ## Financial Safety
 
@@ -82,7 +82,8 @@ Database timestamps are UTC. Admin date-only filters (`YYYY-MM-DD`) represent th
 
 - Separate responsive `AdminShell`; no user-panel navigation changes.
 - Navy canvas, restrained gold authority accent, controlled cream contrast.
-- Desktop fixed sidebar; tablet/mobile accessible drawer.
+- Desktop collapsible sidebar (288px ↔ 76px, persisted, section icons); tablet/mobile accessible drawer.
+- Admin identity and logout live in the main header, not the sidebar footer.
 - Tables are server-paginated and transform to cards on mobile.
 - Search uses Ctrl/Cmd+K and permission-aware server queries.
 - Motion is transform/opacity based and reduced-motion compatible.

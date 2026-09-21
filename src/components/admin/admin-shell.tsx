@@ -2,8 +2,9 @@
 // Zar30 - Admin Shell (مرکز عملیات)
 // ============================================
 // Auth/permission gate + chrome ناوبری برای همه صفحات /admin/*
-// Desktop (>=xl): سایدبار ثابت ۲۸۸px گروه‌بندی‌شده — Mobile/Tablet: header + drawer
-// Source of Truth ناوبری: src/config/admin-navigation.ts — هر دو viewport از آن
+// Desktop (>=xl): سایدبار جمع‌شونده (۲۸۸px ↔ ۷۶px) با آیکون بخش‌ها
+// هویت مدیر و خروج در هدر اصلی — Mobile/Tablet: header + drawer
+// Source of Truth ناوبری: src/config/admin-navigation.ts
 // ============================================
 
 'use client'
@@ -11,7 +12,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronLeft, LogOut, Menu, ShieldX, X } from 'lucide-react'
+import { ChevronLeft, ChevronsLeft, ChevronsRight, LogOut, Menu, ShieldX, X } from 'lucide-react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import type { Permission } from '@/lib/auth/rbac'
 import { Logo } from '@/components/shared/logo'
@@ -20,6 +21,7 @@ import {
   canSeeAdminItem,
   getAdminBreadcrumbs,
   isAdminNavItemActive,
+  isAdminNavSectionActive,
   type AdminNavItem,
 } from '@/config/admin-navigation'
 import { AdminCommand } from '@/components/admin/admin-command'
@@ -66,6 +68,9 @@ const ROLE_LABELS: Record<string, string> = {
   READ_ONLY: 'فقط‌خواندنی',
 }
 
+// وضعیت جمع‌شدگی سایدبار بین reloadها حفظ می‌شود
+const SIDEBAR_PREF_KEY = 'zar30-admin-sidebar-collapsed'
+
 // ============================================
 // Navigation (مشترک بین sidebar و drawer)
 // ============================================
@@ -74,21 +79,51 @@ function AdminNav({
   permissions,
   pathname,
   onNavigate,
+  collapsed = false,
 }: {
   permissions: readonly Permission[]
   pathname: string
   onNavigate?: () => void
+  collapsed?: boolean
 }) {
   return (
-    <nav aria-label="ناوبری مرکز عملیات" className="flex-1 overflow-y-auto px-3 py-4">
+    <nav
+      aria-label="ناوبری مرکز عملیات"
+      className="flex-1 overflow-x-hidden overflow-y-auto px-3 py-4"
+    >
       {ADMIN_NAV_SECTIONS.map((section) => {
         const visible = section.items.filter((item) => canSeeAdminItem(item, permissions))
         if (visible.length === 0) return null
+        const SectionIcon = section.icon
+        const sectionActive = isAdminNavSectionActive(section, pathname)
         return (
           <div key={section.key} className="mb-5 last:mb-0">
-            <p className="text-navy-300/50 mb-1.5 px-2 text-[10px] font-semibold">
-              {section.label}
-            </p>
+            {/* سربرگ بخش — آیکون + عنوان */}
+            <div
+              className={cn(
+                'mb-1.5 flex h-8 items-center gap-2 px-2',
+                collapsed && 'justify-center px-0',
+              )}
+            >
+              <span
+                className={cn(
+                  'inline-flex size-6 shrink-0 items-center justify-center rounded-md transition-colors duration-(--duration-normal)',
+                  sectionActive
+                    ? 'bg-gold-500/15 text-gold-400'
+                    : 'bg-navy-800/60 text-navy-300/70',
+                )}
+              >
+                <SectionIcon className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
+              </span>
+              <p
+                className={cn(
+                  'text-navy-300/50 truncate text-[10px] font-semibold tracking-wide transition-opacity duration-200',
+                  collapsed ? 'pointer-events-none w-0 opacity-0' : 'opacity-100',
+                )}
+              >
+                {section.label}
+              </p>
+            </div>
             <ul className="space-y-0.5">
               {visible.map((item) => (
                 <AdminNavLink
@@ -96,6 +131,7 @@ function AdminNav({
                   item={item}
                   pathname={pathname}
                   onNavigate={onNavigate}
+                  collapsed={collapsed}
                 />
               ))}
             </ul>
@@ -110,23 +146,27 @@ function AdminNavLink({
   item,
   pathname,
   onNavigate,
+  collapsed = false,
 }: {
   item: AdminNavItem
   pathname: string
   onNavigate?: () => void
+  collapsed?: boolean
 }) {
   const active = isAdminNavItemActive(item, pathname)
   const Icon = item.icon
   return (
-    <li>
+    <li className={cn(collapsed && 'flex justify-center')}>
       <Link
         href={item.href}
         onClick={onNavigate}
         aria-current={active ? 'page' : undefined}
-        title={item.description}
+        aria-label={collapsed ? item.label : undefined}
+        title={collapsed ? item.label : item.description}
         className={cn(
-          'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] transition-colors duration-(--duration-normal)',
+          'group relative flex items-center rounded-lg text-[13px] transition-colors duration-(--duration-normal)',
           'focus-visible:ring-gold-500/60 focus-visible:ring-2 focus-visible:outline-none',
+          collapsed ? 'size-10 justify-center' : 'gap-3 px-3 py-2.5',
           active
             ? 'bg-gold-500/12 text-gold-300 font-semibold'
             : 'text-navy-200/70 hover:bg-navy-800/70 hover:text-cream-100',
@@ -139,33 +179,54 @@ function AdminNavLink({
             active ? 'opacity-100' : 'opacity-0 group-hover:opacity-30',
           )}
         />
-        <Icon className="size-[18px] shrink-0" strokeWidth={active ? 2 : 1.75} />
-        {item.label}
+        <Icon
+          className="size-[18px] shrink-0 transition-transform duration-(--duration-normal) group-hover:scale-[1.06]"
+          strokeWidth={active ? 2 : 1.75}
+        />
+        <span
+          className={cn(
+            'truncate transition-opacity duration-200',
+            collapsed ? 'pointer-events-none w-0 opacity-0' : 'opacity-100',
+          )}
+        >
+          {item.label}
+        </span>
       </Link>
     </li>
   )
 }
 
 // ============================================
-// Admin identity block
+// Header identity — هویت مدیر در هدر اصلی
 // ============================================
 
-function AdminIdentityBlock({ admin }: { admin: AdminIdentity }) {
+function AdminHeaderIdentity({ admin, onLogout }: { admin: AdminIdentity; onLogout: () => void }) {
   const displayName = [admin.firstName, admin.lastName].filter(Boolean).join(' ') || admin.mobile
   return (
-    <div className="bg-navy-900/80 border-navy-700/30 flex items-center gap-3 rounded-xl border px-3 py-2.5">
+    <div className="border-border/60 bg-card/60 flex items-center gap-2 rounded-xl border py-1 pr-1 pl-1.5 sm:gap-2.5 sm:py-1.5 sm:pr-1.5 sm:pl-3">
       <span
         aria-hidden="true"
-        className="from-gold-500/25 to-gold-600/15 text-gold-300 ring-gold-500/30 flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1"
+        className="from-gold-500/30 to-gold-600/20 text-gold-300 ring-gold-500/30 flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-[11px] font-bold ring-1"
       >
         {displayName.slice(0, 2)}
       </span>
-      <span className="min-w-0 flex-1">
-        <span className="text-cream-100 block truncate text-xs font-medium">{displayName}</span>
-        <span className="text-navy-300/60 block truncate text-[10px]">
+      <span className="hidden min-w-0 leading-tight sm:block">
+        <span className="text-foreground block max-w-36 truncate text-xs font-semibold">
+          {displayName}
+        </span>
+        <span className="text-muted-foreground block truncate text-[10px]">
           {ROLE_LABELS[admin.role] ?? admin.role}
         </span>
       </span>
+      <button
+        type="button"
+        onClick={onLogout}
+        aria-label="خروج از حساب"
+        title="خروج از حساب"
+        className="text-muted-foreground hover:bg-error/10 hover:text-error focus-visible:ring-error/40 ml-1 flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
+      >
+        <LogOut className="size-4" strokeWidth={1.75} />
+      </button>
     </div>
   )
 }
@@ -191,7 +252,7 @@ function AdminLoadingSkeleton() {
           ))}
         </div>
       </div>
-      <div className="border-border/60 bg-background/80 sticky top-0 z-30 flex h-16 items-center justify-between border-b px-4 backdrop-blur-md xl:pr-76 xl:pl-8">
+      <div className="border-border/60 bg-background/80 sticky top-0 z-30 flex h-16 items-center justify-between border-b px-4 backdrop-blur-md xl:pr-80 xl:pl-8">
         <div className="skeleton-shimmer h-7 w-24 rounded-lg" />
         <div className="skeleton-shimmer h-9 w-40 rounded-lg" />
       </div>
@@ -240,6 +301,17 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [admin, setAdmin] = useState<AdminIdentity | null>(null)
   const [denied, setDenied] = useState(false)
   const [navOpen, setNavOpen] = useState(false)
+  // ترجیح جمع‌شدگی — skeleton به collapsed وابسته نیست، پس mismatch نداریم
+  const [collapsed, setCollapsed] = useState(
+    () => typeof window !== 'undefined' && localStorage.getItem(SIDEBAR_PREF_KEY) === 'collapsed',
+  )
+
+  function toggleCollapsed() {
+    setCollapsed((v) => {
+      localStorage.setItem(SIDEBAR_PREF_KEY, v ? 'expanded' : 'collapsed')
+      return !v
+    })
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -277,37 +349,93 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <AdminContext.Provider value={{ admin, logout }}>
       <div className="bg-background min-h-dvh">
-        {/* ============ Desktop — Sidebar ثابت ۲۸۸px ============ */}
-        <aside className="bg-navy-950 border-navy-700/40 fixed inset-y-0 right-0 z-30 hidden w-72 flex-col border-l xl:flex">
-          <div className="border-navy-700/40 flex h-16 items-center justify-between border-b px-5">
-            <Link href="/admin/dashboard" aria-label="مرکز عملیات — داشبورد">
+        {/* ============ Desktop — Sidebar جمع‌شونده ============ */}
+        <aside
+          className={cn(
+            'bg-navy-950 border-navy-700/40 fixed inset-y-0 right-0 z-40 hidden flex-col border-l xl:flex',
+            'transition-[width] duration-300 ease-(--ease-out)',
+            collapsed ? 'w-[76px]' : 'w-72',
+          )}
+        >
+          {/* سربرگ سایدبار — لوگو + کلید جمع‌کردن */}
+          <div
+            className={cn(
+              'border-navy-700/40 flex h-16 shrink-0 items-center border-b',
+              collapsed ? 'justify-center px-2' : 'justify-between px-5',
+            )}
+          >
+            <Link
+              href="/admin/dashboard"
+              aria-label="مرکز عملیات — داشبورد"
+              className={cn('flex min-w-0 items-center', collapsed && 'w-0 overflow-hidden')}
+            >
               <Logo size="sm" textClassName="text-cream-100" />
             </Link>
-            <span className="text-navy-300/60 text-[10px] font-semibold">مرکز عملیات</span>
-          </div>
-          <AdminNav permissions={admin.permissions} pathname={pathname} />
-          <div className="border-navy-700/40 space-y-2 border-t p-4">
-            <AdminIdentityBlock admin={admin} />
             <button
               type="button"
-              onClick={logout}
-              className="text-navy-200/60 hover:bg-error/10 hover:text-error focus-visible:ring-error/40 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              onClick={toggleCollapsed}
+              aria-label={collapsed ? 'باز کردن سایدبار' : 'جمع کردن سایدبار'}
+              aria-expanded={!collapsed}
+              title={collapsed ? 'باز کردن سایدبار' : 'جمع کردن سایدبار'}
+              className="text-navy-300/70 hover:bg-navy-800/70 hover:text-cream-100 focus-visible:ring-gold-500/60 flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
-              <LogOut className="size-4" strokeWidth={1.75} />
-              خروج از حساب
+              {collapsed ? (
+                <ChevronsLeft className="size-4" strokeWidth={1.75} />
+              ) : (
+                <ChevronsRight className="size-4" strokeWidth={1.75} />
+              )}
             </button>
+          </div>
+
+          {/* خط طلایی ظریف زیر سربرگ */}
+          <div
+            aria-hidden="true"
+            className="from-gold-500/40 via-gold-500/10 h-px bg-gradient-to-l to-transparent"
+          />
+
+          <AdminNav permissions={admin.permissions} pathname={pathname} collapsed={collapsed} />
+
+          {/* نسخه/برند پایین سایدبار — فشرده */}
+          <div
+            className={cn(
+              'border-navy-700/40 shrink-0 border-t',
+              collapsed
+                ? 'flex justify-center py-3'
+                : 'flex items-center justify-between px-5 py-3',
+            )}
+          >
+            <span
+              className={cn('text-navy-300/40 text-[10px] font-semibold', collapsed && 'hidden')}
+            >
+              مرکز عملیات زرسی
+            </span>
+            <span
+              aria-hidden="true"
+              className={cn(
+                'bg-gold-500/10 text-gold-300/70 inline-flex size-6 items-center justify-center rounded-md',
+              )}
+            >
+              <span className="text-[9px] font-bold">ز</span>
+            </span>
           </div>
         </aside>
 
-        {/* ============ Header ============ */}
-        <header className="border-border/60 bg-background/80 sticky top-0 z-(--z-sticky) flex h-16 items-center gap-3 border-b px-4 backdrop-blur-md xl:pr-80 xl:pl-8">
+        {/* ============ Header — breadcrumbs + command + هویت ============ */}
+        <header
+          className={cn(
+            'border-border/60 bg-background/80 sticky top-0 z-(--z-sticky) flex h-16 items-center gap-3 border-b px-4 backdrop-blur-md',
+            'transition-[padding] duration-300 ease-(--ease-out)',
+            collapsed ? 'xl:pr-[100px]' : 'xl:pr-[312px]',
+            'xl:pl-8',
+          )}
+        >
           {/* موبایل/تبلت — دکمه منو */}
           <button
             type="button"
             onClick={() => setNavOpen(true)}
             aria-label="باز کردن ناوبری مرکز عملیات"
             aria-expanded={navOpen}
-            className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex size-10 items-center justify-center rounded-xl transition-colors focus-visible:ring-2 focus-visible:outline-none xl:hidden"
+            className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex size-10 shrink-0 items-center justify-center rounded-xl transition-colors focus-visible:ring-2 focus-visible:outline-none xl:hidden"
           >
             <Menu className="size-5" strokeWidth={1.75} />
           </button>
@@ -349,13 +477,19 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <AdminCommand />
-          <span className="border-border/60 hidden items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[11px] sm:flex">
-            <span className="text-muted-foreground">{ROLE_LABELS[admin.role] ?? admin.role}</span>
-          </span>
+
+          {/* هویت مدیر + خروج — منتقل‌شده از پایین سایدبار */}
+          <AdminHeaderIdentity admin={admin} onLogout={logout} />
         </header>
 
         {/* ============ Content ============ */}
-        <main className="pb-24 xl:pr-72 xl:pb-8">
+        <main
+          className={cn(
+            'pb-24 xl:pb-8',
+            'transition-[padding] duration-300 ease-(--ease-out)',
+            collapsed ? 'xl:pr-[76px]' : 'xl:pr-72',
+          )}
+        >
           <div key={pathname} className="animate-page-in mx-auto max-w-[1400px] p-4 py-6 sm:px-6">
             {children}
           </div>
@@ -393,17 +527,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               pathname={pathname}
               onNavigate={() => setNavOpen(false)}
             />
-            <div className="border-navy-700/40 shrink-0 space-y-2 border-t p-4">
-              <AdminIdentityBlock admin={admin} />
-              <button
-                type="button"
-                onClick={logout}
-                className="text-navy-200/60 hover:bg-error/10 hover:text-error focus-visible:ring-error/40 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
-              >
-                <LogOut className="size-4" strokeWidth={1.75} />
-                خروج از حساب
-              </button>
-            </div>
           </DialogContent>
         </Dialog>
       </div>

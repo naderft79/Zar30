@@ -2,41 +2,60 @@
 // Zar30 - Admin Navigation Source of Truth
 // ============================================
 // Sidebar/Desktop + Drawer/Mobile هر دو از همین config استفاده می‌کنند
-// هر item فقط وقتی دیده می‌شود که permission متناظر resolve‌شده وجود داشته باشد
+// هر section آیکون اختصاصی دارد؛ هر item فقط با permission متناظر دیده می‌شود
 // API همیشه enforce می‌کند؛ این فقط presentation gate است
+// itemهایی که route عملیاتی ندارند architecture target هستند
 // ============================================
 
 import {
   Activity,
+  ArrowLeftRight,
   ArrowDownToLine,
   ArrowUpFromLine,
-  ArrowLeftRight,
+  Banknote,
   BarChart3,
   Bell,
+  Calculator,
   CalendarClock,
+  CandlestickChart,
   ClipboardList,
   Code2,
   Coins,
+  FileDown,
   FileText,
   Flag,
+  FolderTree,
+  Gauge,
   Globe,
   HeartPulse,
   KeyRound,
   Landmark,
   LayoutDashboard,
+  Layers,
   LifeBuoy,
+  Lock,
+  MapPin,
   MonitorSmartphone,
+  Package,
+  PackageCheck,
+  Percent,
   ScrollText,
   Settings,
   Share2,
   ShieldAlert,
   ShieldCheck,
+  ShoppingBag,
+  SlidersHorizontal,
+  Store,
   Tag,
+  TicketPercent,
   TrendingUp,
   UserCheck,
+  UserCog,
   Users,
   UsersRound,
   Wallet,
+  Zap,
   type LucideIcon,
 } from 'lucide-react'
 import { PERMISSIONS, type Permission } from '@/lib/auth/rbac'
@@ -54,6 +73,7 @@ export interface AdminNavItem {
 export interface AdminNavSection {
   key: string
   label: string
+  icon: LucideIcon
   items: readonly AdminNavItem[]
 }
 
@@ -63,6 +83,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
   {
     key: 'overview',
     label: 'نمای کلی',
+    icon: LayoutDashboard,
     items: [
       {
         key: 'dashboard',
@@ -77,6 +98,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
   {
     key: 'customers',
     label: 'مشتریان',
+    icon: UsersRound,
     items: [
       {
         key: 'users',
@@ -114,23 +136,24 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
   },
   {
     key: 'finance',
-    label: 'مالی',
+    label: 'معاملات و مالی',
+    icon: ArrowLeftRight,
     items: [
       {
-        key: 'wallets',
-        label: 'کیف پول‌ها',
-        href: '/admin/wallets',
-        icon: Wallet,
-        description: 'موجودی و وضعیت کیف پول‌ها',
-        permissions: [PERMISSIONS.WALLETS_READ],
+        key: 'trades',
+        label: 'معاملات آنی',
+        href: '/admin/trades',
+        icon: Zap,
+        description: 'خرید و فروش آنی طلا',
+        permissions: [PERMISSIONS.ORDERS_READ],
       },
       {
-        key: 'gold',
-        label: 'دارایی طلا',
-        href: '/admin/gold',
-        icon: Coins,
-        description: 'موجودی و ذخایر طلا',
-        permissions: [PERMISSIONS.GOLD_READ],
+        key: 'orderbooks',
+        label: 'معاملات پیشرفته',
+        href: '/admin/orderbooks',
+        icon: CandlestickChart,
+        description: 'دفتر سفارشات و معاملات پیشرفته',
+        permissions: [PERMISSIONS.ORDERS_READ],
       },
       {
         key: 'orders',
@@ -146,6 +169,22 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         href: '/admin/transactions',
         icon: ArrowLeftRight,
         description: 'تراکنش‌های مالی',
+        permissions: [PERMISSIONS.TRANSACTIONS_READ],
+      },
+      {
+        key: 'fiat-transactions',
+        label: 'تراکنش‌های تومان',
+        href: '/admin/fiat-transactions',
+        icon: Banknote,
+        description: 'واریز و برداشت ریالی',
+        permissions: [PERMISSIONS.TRANSACTIONS_READ],
+      },
+      {
+        key: 'transfers',
+        label: 'انتقال دارایی',
+        href: '/admin/transfers',
+        icon: ArrowLeftRight,
+        description: 'انتقال‌های داخلی بین کاربران',
         permissions: [PERMISSIONS.TRANSACTIONS_READ],
       },
       {
@@ -165,6 +204,22 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         permissions: [PERMISSIONS.WITHDRAWALS_READ],
       },
       {
+        key: 'wallets',
+        label: 'کیف پول‌ها',
+        href: '/admin/wallets',
+        icon: Wallet,
+        description: 'موجودی و وضعیت کیف پول‌ها',
+        permissions: [PERMISSIONS.WALLETS_READ],
+      },
+      {
+        key: 'gold',
+        label: 'دارایی طلا',
+        href: '/admin/gold',
+        icon: Coins,
+        description: 'موجودی و ذخایر طلا',
+        permissions: [PERMISSIONS.GOLD_READ],
+      },
+      {
         key: 'pricing',
         label: 'قیمت‌گذاری',
         href: '/admin/pricing',
@@ -172,12 +227,77 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         description: 'قیمت و اسپرد طلا',
         permissions: [PERMISSIONS.PRICING_READ],
       },
+      {
+        key: 'user-fees',
+        label: 'کارمزد کاربران',
+        href: '/admin/user-fees',
+        icon: Percent,
+        description: 'کارمزدهای اختصاصی کاربران',
+        permissions: [PERMISSIONS.PRICING_READ],
+      },
+      {
+        key: 'withdraw-limits',
+        label: 'محدودیت برداشت',
+        href: '/admin/withdraw-limits',
+        icon: Lock,
+        description: 'سقف‌ها و محدودیت‌های برداشت',
+        permissions: [PERMISSIONS.WITHDRAWALS_READ],
+      },
+      {
+        key: 'trade-limits',
+        label: 'محدودیت معاملات',
+        href: '/admin/trade-limits',
+        icon: SlidersHorizontal,
+        description: 'سقف‌ها و محدودیت‌های معاملات',
+        permissions: [PERMISSIONS.ORDERS_READ],
+      },
+      {
+        key: 'financial',
+        label: 'حسابداری',
+        href: '/admin/financial',
+        icon: Calculator,
+        description: 'دفتر کل، اسناد و گزارش‌های مالی',
+        permissions: [PERMISSIONS.LEDGER_READ],
+      },
     ],
   },
   {
     key: 'products',
-    label: 'محصولات',
+    label: 'محصولات و دارایی‌ها',
+    icon: Package,
     items: [
+      {
+        key: 'tradeables',
+        label: 'واحدهای قابل معامله',
+        href: '/admin/tradeables',
+        icon: Coins,
+        description: 'واحدها و دارایی‌های قابل معامله',
+        permissions: [PERMISSIONS.GOLD_READ],
+      },
+      {
+        key: 'products',
+        label: 'محصولات',
+        href: '/admin/products',
+        icon: ShoppingBag,
+        description: 'محصولات قابل عرضه',
+        permissions: [PERMISSIONS.GOLD_READ],
+      },
+      {
+        key: 'product-groups',
+        label: 'دسته‌بندی‌های محصول',
+        href: '/admin/product-groups',
+        icon: FolderTree,
+        description: 'گروه‌بندی و دسته‌بندی محصولات',
+        permissions: [PERMISSIONS.CONTENT_READ],
+      },
+      {
+        key: 'discounts',
+        label: 'کدهای تخفیف',
+        href: '/admin/discounts',
+        icon: TicketPercent,
+        description: 'کدها و کمپین‌های تخفیف',
+        permissions: [PERMISSIONS.PRICING_READ],
+      },
       {
         key: 'installments',
         label: 'خرید قسطی',
@@ -202,11 +322,36 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         description: 'برنامه معرفی دوستان',
         permissions: [PERMISSIONS.REFERRALS_READ],
       },
+      {
+        key: 'product-transactions',
+        label: 'تحویل فیزیکی',
+        href: '/admin/product-transactions',
+        icon: PackageCheck,
+        description: 'درخواست‌ها و سفارش‌های تحویل فیزیکی',
+        permissions: [PERMISSIONS.GOLD_READ],
+      },
+      {
+        key: 'delivery-locations',
+        label: 'ارسال پستی محصولات',
+        href: '/admin/delivery-locations',
+        icon: MapPin,
+        description: 'تنظیمات ارسال و مناطق پستی',
+        permissions: [PERMISSIONS.SETTINGS_READ],
+      },
+      {
+        key: 'products-branch',
+        label: 'شعب و زمان‌بندی',
+        href: '/admin/products-branch',
+        icon: Store,
+        description: 'شعب حضوری و زمان‌بندی تحویل',
+        permissions: [PERMISSIONS.SETTINGS_READ],
+      },
     ],
   },
   {
     key: 'service',
     label: 'خدمات',
+    icon: LifeBuoy,
     items: [
       {
         key: 'support',
@@ -229,6 +374,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
   {
     key: 'risk-security',
     label: 'ریسک و امنیت',
+    icon: ShieldAlert,
     items: [
       {
         key: 'risk',
@@ -267,6 +413,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
   {
     key: 'content-growth',
     label: 'محتوا و رشد',
+    icon: FileText,
     items: [
       {
         key: 'content',
@@ -289,6 +436,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
   {
     key: 'intelligence',
     label: 'هوش و گزارش',
+    icon: BarChart3,
     items: [
       {
         key: 'reports',
@@ -298,11 +446,20 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         description: 'گزارش‌ها و خروجی‌ها',
         permissions: [PERMISSIONS.REPORTS_READ],
       },
+      {
+        key: 'exports',
+        label: 'تاریخچه خروجی‌ها',
+        href: '/admin/exports',
+        icon: FileDown,
+        description: 'تاریخچه فایل‌های خروجی',
+        permissions: [PERMISSIONS.REPORTS_READ],
+      },
     ],
   },
   {
     key: 'administration',
     label: 'مدیریت سیستم',
+    icon: Settings,
     items: [
       {
         key: 'team',
@@ -321,11 +478,27 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         permissions: [PERMISSIONS.ROLES_READ],
       },
       {
+        key: 'levels',
+        label: 'سطوح کاربران',
+        href: '/admin/levels',
+        icon: Layers,
+        description: 'سطوح و محدودیت‌های کاربران',
+        permissions: [PERMISSIONS.KYC_READ],
+      },
+      {
         key: 'settings',
-        label: 'تنظیمات',
+        label: 'تنظیمات سامانه',
         href: '/admin/settings',
         icon: Settings,
         description: 'تنظیمات پلتفرم',
+        permissions: [PERMISSIONS.SETTINGS_READ],
+      },
+      {
+        key: 'orderbook-settings',
+        label: 'تنظیمات معاملات پیشرفته',
+        href: '/admin/orderbook',
+        icon: Gauge,
+        description: 'پارامترهای دفتر سفارشات',
         permissions: [PERMISSIONS.SETTINGS_READ],
       },
       {
@@ -352,6 +525,14 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         description: 'وضعیت سرویس‌ها و زیرساخت',
         permissions: [PERMISSIONS.SYSTEM_READ],
       },
+      {
+        key: 'admin-profile',
+        label: 'پروفایل مدیر',
+        href: '/admin/profile',
+        icon: UserCog,
+        description: 'پروفایل و امنیت حساب مدیر',
+        permissions: [PERMISSIONS.DASHBOARD_READ],
+      },
     ],
   },
 ]
@@ -359,6 +540,11 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
 // item فقط وقتی دیده می‌شود که حداقل یکی از permissionهایش resolve شده باشد
 export function canSeeAdminItem(item: AdminNavItem, permissions: readonly Permission[]): boolean {
   return item.permissions.some((p) => permissions.includes(p))
+}
+
+// آیا هر آیتمی از این section فعال است — برای highlight آیکون بخش
+export function isAdminNavSectionActive(section: AdminNavSection, pathname: string): boolean {
+  return section.items.some((item) => isAdminNavItemActive(item, pathname))
 }
 
 // داشبورد exact؛ بقیه prefix — /admin/team روی /admin/team/roles هم active است
