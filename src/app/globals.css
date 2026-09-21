@@ -580,6 +580,76 @@ html {
   animation: nav-pop 0.3s var(--ease-spring) both;
 }
 
+/* ============================================
+   Landing — Scroll Reveal (یک‌بار اجرا)
+  .threshold 15% — فقط opacity/translateY
+   ============================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.55s var(--ease-out),
+    transform 0.55s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ورود پلکانی Hero — کل سکانس زیر ۹۰۰ms */
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hero-enter {
+  animation: hero-enter 0.5s var(--ease-out) both;
+  animation-delay: var(--hero-delay, 0ms);
+}
+@keyframes hero-enter-visual {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.hero-enter-visual {
+  animation: hero-enter-visual 0.6s var(--ease-out) both;
+  animation-delay: var(--hero-delay, 0ms);
+}
+
+/* Marquee نشان‌های اعتماد — حرکت خطی پیوسته با توقف روی hover */
+@keyframes marquee-rtl {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50%);
+  }
+}
+.marquee-track {
+  animation: marquee-rtl var(--marquee-duration, 36s) linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover,
+.marquee-track:focus-within {
+  animation-play-state: paused;
+}
+@media (max-width: 640px) {
+  .marquee-track {
+    --marquee-duration: 52s;
+  }
+}
+
 /* کاهش حرکت — احترام به prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,

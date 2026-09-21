@@ -1,26 +1,27 @@
 // ============================================
-// Zar30 - Landing Page
+// Zar30 - Landing Page (Gerami-style Redesign)
 // ============================================
-// صفحه اصلی عمومی — تمام بخش‌های Landing
-// تا حد امکان Server-rendered
+// صفحه اصلی عمومی — ترتیب بخش‌ها:
+// Hero → Trust → Market → Features → Steps → Delivery
+// → FAQ → Support → License → Final CTA → SEO Layer
+// تا حد امکان Server-rendered (فقط تعاملی‌ها Client)
 // ============================================
 
 import type { Metadata } from 'next'
+import { priceService } from '@/lib/price/price-service'
 import { Hero } from '@/components/landing/hero'
-import { PriceSection } from '@/components/landing/price-section'
-import { Features } from '@/components/landing/features'
-import { WhyZar30 } from '@/components/landing/why-zar30'
+import { TrustCards } from '@/components/landing/trust-cards'
+import { TrustStrip } from '@/components/landing/trust-strip'
+import { GoldMarketSection } from '@/components/landing/market-price'
+import { FeatureSection } from '@/components/landing/feature-section'
 import { HowItWorks } from '@/components/landing/how-it-works'
-import { Stats } from '@/components/landing/stats'
-import { InvestmentPreview } from '@/components/landing/investment-preview'
-import { InstallmentPreview } from '@/components/landing/installment-preview'
-import { SecuritySection } from '@/components/landing/security-section'
-import { PhysicalGold } from '@/components/landing/physical-gold'
-import { ReferralSection } from '@/components/landing/referral-section'
+import { PhysicalDelivery } from '@/components/landing/physical-delivery'
 import { FaqSection } from '@/components/landing/faq-section'
-import { CtaSection } from '@/components/landing/cta-section'
-import { DownloadApp } from '@/components/landing/download-app'
-import { FAQS } from '@/lib/data/landing'
+import { SupportSection } from '@/components/landing/support-section'
+import { LicenseSection } from '@/components/landing/license-section'
+import { FinalCta } from '@/components/landing/final-cta'
+import { SeoContent } from '@/components/landing/seo-content'
+import { FEATURE_SECTIONS, FAQS } from '@/lib/data/landing'
 
 export const metadata: Metadata = {
   title: 'زرسی | خرید، فروش و سرمایه‌گذاری طلای آب‌شده ۱۸ عیار',
@@ -73,24 +74,27 @@ function JsonLd() {
   )
 }
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // قیمت اولیه مشترک بین Hero و بخش بازار — یک fetch سروری
+  const price = await priceService.getCurrentPrice()
+
   return (
     <>
       <JsonLd />
-      <Hero />
-      <PriceSection />
-      <Features />
-      <WhyZar30 />
-      <Stats />
+      <Hero price={price} />
+      <TrustCards />
+      <TrustStrip />
+      <GoldMarketSection initialPrice={price} />
+      {FEATURE_SECTIONS.map((section) => (
+        <FeatureSection key={section.id} data={section} />
+      ))}
       <HowItWorks />
-      <InvestmentPreview />
-      <InstallmentPreview />
-      <SecuritySection />
-      <PhysicalGold />
-      <ReferralSection />
+      <PhysicalDelivery />
       <FaqSection />
-      <DownloadApp />
-      <CtaSection />
+      <SupportSection />
+      <LicenseSection />
+      <FinalCta />
+      <SeoContent />
     </>
   )
 }

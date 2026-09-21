@@ -290,6 +290,24 @@ Shared Codebase (src/)
 
 **جزئیات:** `docs/admin/ADMIN_ARCHITECTURE.md` و `docs/admin/ADMIN_ARCHITECTURE_GAP_REPORT.md`.
 
+---
+
+## ADR-022: Gerami-style Light Landing Page
+
+**تصمیم:** صفحه اصلی عمومی (`/`) از زبان Navy-first به یک Landing روشن Gerami-style بازطراحی شد — سفید/off-white با متن سرمه‌ای و accent طلایی کنترل‌شده.
+
+- دامنه این تصمیم **فقط Landing Page** است؛ User Panel (`/dashboard`)، Admin (`/admin`) و صفحات داخلی عمومی (about/faq/contact/…) روی زبان Navy باقی می‌مانند.
+- Header: سفید، sticky با رفتار اسکرول (~۸۰px → ~۶۸px)، dropdownهای پشتیبانی/قوانین، CTA compact طلایی.
+- ساختار بخش‌ها مطابق مرجع: Hero دوستونه + کارت قیمت زنده → کارت‌های اعتماد → marquee نشان‌ها → بخش بازار با تب روزانه/ماهانه/سالانه → بخش‌های ویژگی دوستونه → stepهای ۰۱-۰۴ → تحویل فیزیکی → FAQ → پشتیبانی → مجوزها → CTA نهایی → لایه SEO.
+- بخش‌های تیره مجاز فقط Support Section، Final CTA و Footer (سرمه‌ای + طلایی) هستند.
+- قیمت همچنان از `priceService` می‌آید؛ در حالت Demo برچسب صریح «داده نمایشی» نمایش داده می‌شود (no-fake-data حفظ شد). نمودار بازار سری نمایشی قطعی (deterministic) دارد.
+- هیچ مجوز، آمار کاربران یا شرکای ساختگی نمایش داده نمی‌شود — بخش مجوزها/شرکا فقط حقایق واقعی محصول را نشان می‌دهد.
+- Motion: فقط transform/opacity، ورود پلکانی Hero زیر ۹۰۰ms، scroll-reveal یک‌بار اجرا با کنترلر مشترک (پرش anchor را هم پوشش می‌دهد)، marquee خطی پیوسته با pause روی hover، پشتیبانی کامل prefers-reduced-motion.
+
+**دلیل:** درخواست صریح محصول برای هم‌ترازی Visual/UX Language با پلتفرم‌های حرفه‌ای فلزات؛ بازاریابی عمومی با صفحه روشن و trust-forward بهتر عمل می‌کند و تجربه اپلیکیشن مالی (پنل‌ها) روی زبان Navy premium باقی می‌ماند.
+
+**پیامدها:** صفحات داخلی عمومی فعلاً روی زبان Navy قبلی‌اند و هدر/فوتر جدید (سفید/تیره) با آن‌ها هم‌دم نیستند — همگام‌سازی آن صفحات به فاز بعدی موکول شد.
+
 ## تصمیم‌های معلق (DECISION REQUIRED)
 
 - [ ] تایید نتایج PWA Spike روی دستگاه واقعی (Chrome Android, Safari iOS)

@@ -1,42 +1,51 @@
 // ============================================
-// Zar30 - How It Works Section
+// Zar30 - How It Works (Landing)
 // ============================================
-// سفر کاربر: ثبت‌نام → احراز هویت → شارژ → خرید → مدیریت
-// Server Component
+// مراحل شماره‌گذاری‌شده Gerami-style — دسکتاپ افقی، موبایل عمودی
+// ورود پلکانی ۰/۸۰/۱۶۰/۲۴۰ms هنگام ورود به viewport
 // ============================================
 
-import { HOW_IT_WORKS } from '@/lib/data/landing'
-import { Section } from '@/components/shared/section'
+import { HOW_IT_WORKS_STEPS } from '@/lib/data/landing'
+import { Container } from '@/components/shared/container'
+import { Reveal } from './reveal'
 
 export function HowItWorks() {
   return (
-    <Section
-      id="how-it-works"
-      eyebrow="نحوه کار"
-      title="در پنج قدم، صاحب طلا شوید"
-      description="از ثبت‌نام تا مدیریت دارایی — مسیر ساده و شفاف است."
-    >
-      <ol className="relative grid gap-8 sm:grid-cols-2 lg:grid-cols-5" role="list">
-        {HOW_IT_WORKS.map((step, index) => (
-          <li key={step.title} className="relative flex flex-col items-center text-center">
-            {/* خط اتصال — فقط دسکتاپ */}
-            {index < HOW_IT_WORKS.length - 1 && (
-              <div
-                className="border-gold/30 absolute top-7 -left-1/2 hidden w-full border-t-2 border-dashed lg:block"
-                aria-hidden="true"
-              />
-            )}
-            <div className="bg-gold/15 border-gold/40 relative z-10 mb-4 flex size-14 items-center justify-center rounded-full border-2">
-              <step.icon className="text-gold size-6" />
-            </div>
-            <span className="text-gold mb-1 text-xs font-bold" aria-hidden="true">
-              مرحله {index + 1}
-            </span>
-            <h3 className="text-foreground mb-2 font-semibold">{step.title}</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>
-          </li>
-        ))}
-      </ol>
-    </Section>
+    <section id="how-it-works" className="bg-cream-50 py-16 sm:py-20" aria-labelledby="how-title">
+      <Container>
+        <div className="mb-10 text-center sm:mb-12">
+          <p className="text-gold-600 mb-2 text-sm font-semibold">شروع سریع</p>
+          <h2 id="how-title" className="text-navy-950 text-2xl font-bold sm:text-3xl">
+            در چهار قدم شروع کنید
+          </h2>
+          <p className="text-navy-500 mx-auto mt-3 max-w-lg text-sm leading-7 sm:text-[15px]">
+            از ثبت‌نام تا مدیریت دارایی، کل مسیر کمتر از چند دقیقه طول می‌کشد.
+          </p>
+        </div>
+
+        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+          {HOW_IT_WORKS_STEPS.map((step, i) => (
+            <Reveal as="li" key={step.title} delay={i * 80} className="h-full">
+              <article className="group border-navy-100/90 relative h-full rounded-2xl border bg-white p-5 transition-all duration-250 ease-out hover:-translate-y-1 hover:shadow-[0_14px_32px_-12px_rgb(16_29_56/0.14)]">
+                {/* شماره */}
+                <span
+                  className="text-gold-600/90 text-3xl leading-none font-extrabold tabular-nums select-none"
+                  aria-hidden="true"
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className="bg-cream-100 text-gold-600 absolute top-5 left-5 inline-flex size-10 items-center justify-center rounded-xl transition-transform duration-250 group-hover:scale-[1.04]">
+                  <step.icon className="size-4.5" strokeWidth={1.75} aria-hidden="true" />
+                </span>
+                <h3 className="text-navy-950 mt-4 text-[15px] font-bold">{step.title}</h3>
+                <p className="text-navy-500 mt-2 text-[13px] leading-6 text-pretty">
+                  {step.description}
+                </p>
+              </article>
+            </Reveal>
+          ))}
+        </ol>
+      </Container>
+    </section>
   )
 }

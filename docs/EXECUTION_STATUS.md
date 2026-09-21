@@ -417,3 +417,22 @@
 **خارج از دامنه (mock نشده‌اند):** Risk/Fraud engine، financial approvals/mutations، پاسخ به تیکت، reports/export، system health probe، API keys/webhooks، CMS publish workflow، team/role mutations.
 
 **Verification:** lint ✅ / typecheck ✅ / test 185/185 ✅ / admin e2e 9 ✅ / build ✅ / Visual QA سه viewport ✅
+
+---
+
+## Gerami-style Landing Redesign (ADR-022) — 2026-09-21
+
+**وضعیت:** ✅ DONE — بازطراحی کامل صفحه اصلی با ساختار Gerami-style
+
+| بخش      | نتیجه                                                                                                                                                                       |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Header   | سفید sticky، اسکرول ~۸۰px→~۶۸px، dropdown پشتیبانی/قوانین، CTA compact طلایی                                                                                                |
+| Hero     | دوستونه (متن + کارت قیمت زنده + ویژوال SVG)، ورود پلکانی زیر ۹۰۰ms                                                                                                          |
+| بخش‌ها   | Trust Cards → Marquee → بازار (تب روزانه/ماهانه/سالانه + نمودار Recharts) → ۳ Feature Section → Steps ۰۱-۰۴ → تحویل فیزیکی → FAQ → پشتیبانی → مجوزها → Final CTA → لایه SEO |
+| موشن     | فقط transform/opacity؛ scroll-reveal یک‌بار با کنترلر مشترک؛ marquee خطی با pause؛ reduced-motion کامل                                                                      |
+| صدق داده | قیمت Demo با برچسب صریح؛ بدون مجوز/آمار/شرکای ساختگی؛ بخش شرکای Gerami عمداً حذف شد                                                                                         |
+| تست      | E2E لندینگ ۳۰ pass × ۳ viewport + Visual QA programmatic در ۸ viewport                                                                                                      |
+
+**خارج از دامنه:** صفحات داخلی عمومی (about/faq/contact/…) هنوز Navy قدیمی‌اند و با هدر روشن جدید هم‌دم نیستند — فاز بعدی.
+
+**Verification:** lint ✅ / typecheck ✅ / test 187/187 ✅ / e2e landing 30 ✅ / build ✅

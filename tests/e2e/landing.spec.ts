@@ -23,16 +23,68 @@ test.describe('Landing Page', () => {
     await expect(page.locator('h1').first()).toBeVisible()
   })
 
-  test('ناوبری به بخش‌ها و صفحات عمومی کار می‌کند', async ({ page }) => {
-    test.setTimeout(90_000)
+  test('هدر — dropdown باز می‌شود و لینک‌ها کار می‌کنند', async ({ page, isMobile }) => {
+    test.skip(!!isMobile, 'فقط دسکتاپ — در موبایل dropdown وجود ندارد')
     await page.goto('/')
 
-    // لینک anchor به بخش FAQ — فقط در ناوبری دسکتاپ (در موبایل لینک فوتر به /faq است)
-    const navLink = page.locator('header nav').getByRole('link', { name: 'سوالات متداول' })
-    if (await navLink.isVisible()) {
-      await navLink.click()
-      await expect(page).toHaveURL(/#faq/)
-    }
+    // آیتم dropdown پشتیبانی
+    const dropdownButton = page.getByRole('button', { name: /^پشتیبانی$/ })
+    await expect(dropdownButton).toBeVisible()
+    await dropdownButton.click()
+
+    // پنل باز می‌شود و لینک‌های فرعی دیده می‌شوند (scope: فقط هدر)
+    const faqLink = page.locator('header').getByRole('link', { name: 'سوالات متداول' })
+    await expect(faqLink).toBeVisible()
+    await faqLink.click()
+    await expect(page).toHaveURL(/\/faq/)
+
+    // Escape پنل را می‌بندد
+    await page.goto('/')
+    await dropdownButton.click()
+    await expect(faqLink).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(faqLink).toBeHidden()
+  })
+
+  test('بخش‌های اصلی صفحه اصلی وجود دارند', async ({ page }) => {
+    await page.goto('/')
+
+    // کارت قیمت زنده در Hero
+    await expect(page.getByText('طلای آب‌شده ۱۸ عیار').first()).toBeVisible()
+
+    // کارت‌های اعتماد
+    await expect(page.getByText('پشتوانه طلای فیزیکی').first()).toBeVisible()
+
+    // بخش بازار
+    await expect(page.getByRole('heading', { name: 'قیمت طلا را دنبال کنید' })).toBeVisible()
+
+    // مراحل
+    await expect(page.getByRole('heading', { name: 'در چهار قدم شروع کنید' })).toBeVisible()
+
+    // FAQ
+    await expect(page.getByRole('heading', { name: 'سوالات متداول' })).toBeVisible()
+
+    // فوتر
+    await expect(page.getByRole('contentinfo')).toBeVisible()
+  })
+
+  test('FAQ accordion باز و بسته می‌شود', async ({ page }) => {
+    await page.goto('/#faq')
+
+    const firstQuestion = page.getByRole('button', { name: /زرسی چیست و چگونه کار می‌کند؟/ })
+    await firstQuestion.click()
+
+    // پاسخ باز می‌شود
+    await expect(page.getByText(/پلتفرمی برای خرید، فروش و نگهداری طلای آب‌شده/)).toBeVisible()
+
+    // دوباره بسته می‌شود
+    await firstQuestion.click()
+    await expect(page.getByText(/پلتفرمی برای خرید، فروش و نگهداری طلای آب‌شده/)).toBeHidden()
+  })
+
+  test('صفحات عمومی از فوتر در دسترس‌اند', async ({ page }) => {
+    test.setTimeout(90_000)
+    await page.goto('/')
 
     // صفحات عمومی مستقیم
     for (const route of [
@@ -81,26 +133,43 @@ test.describe('Landing Page', () => {
     expect(await robots.text()).toContain('Sitemap')
   })
 
-  test('ویجت قیمت داده Demo را Live نمایش نمی‌دهد', async ({ page }) => {
+  test('قیمت Demo هرگز Live نمایش داده نمی‌شود', async ({ page }) => {
     await page.goto('/')
 
-    // نباید هیچ ادعای "قیمت لحظه‌ای/زنده" بدون برچسب Demo باشد
-    const body = await page.textContent('body')
-    expect(body).not.toMatch(/قیمت لحظه‌ای بازار/)
+    // کارت قیمت باید برچسب «داده نمایشی» داشته باشد (منبع demo)
+    await expect(page.getByText('داده نمایشی').first()).toBeVisible()
+
+    // نباید هیچ ادعای «زنده» بدون منبع واقعی باشد
+    const liveBadges = await page.getByText('زنده', { exact: true }).count()
+    expect(liveBadges).toBe(0)
+  })
+
+  test('لایه SEO محتوا وجود دارد و semantic است', async ({ page }) => {
+    await page.goto('/')
+    const seo = page.locator('#about-gold')
+    await expect(seo).toBeAttached()
+    await expect(seo.getByRole('heading', { name: 'زرسی چیست؟' })).toBeAttached()
   })
 })
 
 test.describe('Responsive', () => {
-  test('در موبایل منوی همبرگری دیده می‌شود', async ({ page, isMobile }) => {
+  test('در موبایل منوی همبرگری دیده می‌شود و کار می‌کند', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'فقط موبایل')
     await page.goto('/')
 
     // دکمه منوی موبایل
-    const menuButton = page.getByRole('button', { name: /منو|menu/i }).first()
+    const menuButton = page.getByRole('button', { name: /منو/i }).first()
     await expect(menuButton).toBeVisible()
     await menuButton.click()
 
     // منو باز می‌شود
     await expect(page.getByRole('dialog')).toBeVisible()
+
+    // accordion دسته‌ها باز می‌شود
+    await page.getByRole('button', { name: /^قوانین$/ }).click()
+    await expect(page.getByRole('dialog').getByRole('link', { name: 'حریم خصوصی' })).toBeVisible()
+
+    // CTA داخل منو
+    await expect(page.getByRole('dialog').getByRole('link', { name: 'شروع خرید' })).toBeVisible()
   })
 })
