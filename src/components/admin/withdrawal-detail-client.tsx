@@ -1,7 +1,7 @@
 // ============================================
 // Zar30 - Admin Withdrawal Detail (Client)
 // ============================================
-// درخواست برداشت — شبا فقط masked؛ بدون اکشن — read-only
+// درخواست برداشت — شبا masked + اکشن‌های approve/pay/reject (server permission enforce)
 // ============================================
 
 'use client'
@@ -13,7 +13,7 @@ import type { AdminWithdrawalDetail } from '@/lib/services/admin-finance.service
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminStatus } from '@/components/admin/admin-status'
 import { FinancialValue } from '@/components/admin/financial-value'
-import { ReadOnlyNotice } from '@/components/admin/read-only-notice'
+import { FinanceAction } from '@/components/admin/finance-action'
 import {
   AuditTimeline,
   Field,
@@ -29,6 +29,7 @@ export function AdminWithdrawalDetailClient() {
     data: w,
     error,
     loading,
+    reload,
   } = useAdminDetail<AdminWithdrawalDetail>(
     `/api/v1/admin/withdrawals/${id}`,
     'withdrawal',
@@ -68,7 +69,37 @@ export function AdminWithdrawalDetailClient() {
         description={`شناسه: ${w.id}`}
         actions={<AdminStatus status={w.status} />}
       />
-      <ReadOnlyNotice className="mb-4" />
+
+      {/* اکشن‌های عملیاتی — server permission را enforce می‌کند */}
+      {(w.status === 'PENDING' || w.status === 'APPROVED') && (
+        <div className="mb-4 flex flex-wrap items-start gap-2">
+          {w.status === 'PENDING' && (
+            <FinanceAction
+              label="تایید درخواست"
+              endpoint={`/api/v1/admin/withdrawals/${w.id}/approve`}
+              tone="gold"
+              onDone={reload}
+            />
+          )}
+          {w.status === 'APPROVED' && (
+            <FinanceAction
+              label="ثبت پرداخت"
+              endpoint={`/api/v1/admin/withdrawals/${w.id}/pay`}
+              tone="gold"
+              confirmText="پرداخت نهایی را ثبت می‌کنید؟ قفل کاربر آزاد و بدهی تسویه می‌شود."
+              onDone={reload}
+            />
+          )}
+          <FinanceAction
+            label="رد درخواست"
+            endpoint={`/api/v1/admin/withdrawals/${w.id}/reject`}
+            tone="danger"
+            needsReason
+            confirmText="رد برداشت، مبلغ قفل‌شده را به موجودی کاربر برمی‌گرداند."
+            onDone={reload}
+          />
+        </div>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Section title="جزئیات درخواست">

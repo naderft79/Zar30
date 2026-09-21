@@ -9,17 +9,16 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { apiGetWithRefresh } from '@/lib/api/client'
+import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import type { AdminPriceListRow } from '@/lib/services/admin-finance.service'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminDataTable, type AdminColumn } from '@/components/admin/admin-data-table'
 import { AdminPagination } from '@/components/admin/admin-pagination'
 import { AdminFilterBar } from '@/components/admin/admin-filter-bar'
 import { AdminMetric } from '@/components/admin/admin-metric'
-import { ReadOnlyNotice } from '@/components/admin/read-only-notice'
 import { FinancialValue } from '@/components/admin/financial-value'
 import { formatExactAmount } from '@/lib/utils/format'
-import { TrendingUp } from 'lucide-react'
+import { TrendingUp, Plus } from 'lucide-react'
 
 const DEMO_SOURCE = /mock|demo/i
 
@@ -94,6 +93,37 @@ export function AdminPricingClient() {
   const [error, setError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // فرم ثبت قیمت جدید
+  const [showForm, setShowForm] = useState(false)
+  const [buyInput, setBuyInput] = useState('')
+  const [sellInput, setSellInput] = useState('')
+  const [formError, setFormError] = useState<string | null>(null)
+  const [formBusy, setFormBusy] = useState(false)
+  const [formVersion, setFormVersion] = useState(0)
+
+  async function submitPrice() {
+    if (!/^\d+$/.test(buyInput) || !/^\d+$/.test(sellInput)) {
+      setFormError('قیمت‌ها باید عدد صحیح ریال باشند')
+      return
+    }
+    setFormBusy(true)
+    setFormError(null)
+    const res = await apiPost('/api/v1/admin/pricing', {
+      buyPrice: buyInput,
+      sellPrice: sellInput,
+      source: 'admin',
+    })
+    setFormBusy(false)
+    if (!res.ok) {
+      setFormError(res.error ?? 'ثبت قیمت ناموفق بود')
+      return
+    }
+    setShowForm(false)
+    setBuyInput('')
+    setSellInput('')
+    setFormVersion((v) => v + 1)
+  }
+
   function updateParams(patch: Record<string, string>) {
     const params = new URLSearchParams(searchParams.toString())
     for (const [k, v] of Object.entries(patch)) {
@@ -143,17 +173,80 @@ export function AdminPricingClient() {
     return () => {
       cancelled = true
     }
-  }, [page, source, direction])
+  }, [page, source, direction, formVersion])
 
   return (
     <div>
       <AdminPageHeader
         title="قیمت‌گذاری"
         eyebrow="مالی"
-        description="تاریخچه قیمت طلا — فقط خواندنی؛ به‌روزرسانی قیمت از این بخش انجام نمی‌شود"
+        description="تاریخچه قیمت طلا + ثبت قیمت جدید (permission: pricing.update)"
+        actions={
+          <button
+            type="button"
+            onClick={() => setShowForm((v) => !v)}
+            className="bg-gold-500 hover:bg-gold-600 text-navy-950 flex h-9 items-center gap-1.5 rounded-lg px-4 text-xs font-semibold transition-colors"
+          >
+            <Plus className="size-4" strokeWidth={2} />
+            ثبت قیمت جدید
+          </button>
+        }
       />
 
-      <ReadOnlyNotice className="mb-4" />
+      {/* فرم ثبت قیمت — قیمت معاملات فعلی را تعیین می‌کند */}
+      {showForm && (
+        <section className="bg-card border-gold-500/30 mb-4 rounded-xl border p-5">
+          <h2 className="text-foreground mb-3 text-sm font-bold">ثبت قیمت جدید (ریال/گرم)</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="space-y-1.5">
+              <span className="text-muted-foreground text-[11px]">قیمت خرید (کاربر می‌خرد)</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                dir="ltr"
+                value={buyInput}
+                onChange={(e) => setBuyInput(e.target.value.replace(/[^\d]/g, ''))}
+                placeholder="8500000"
+                className="border-border/60 bg-background text-foreground focus-visible:ring-ring h-10 w-full rounded-lg border px-3 text-xs tabular-nums focus-visible:ring-2 focus-visible:outline-none"
+              />
+            </label>
+            <label className="space-y-1.5">
+              <span className="text-muted-foreground text-[11px]">قیمت فروش (کاربر می‌فروشد)</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                dir="ltr"
+                value={sellInput}
+                onChange={(e) => setSellInput(e.target.value.replace(/[^\d]/g, ''))}
+                placeholder="8450000"
+                className="border-border/60 bg-background text-foreground focus-visible:ring-ring h-10 w-full rounded-lg border px-3 text-xs tabular-nums focus-visible:ring-2 focus-visible:outline-none"
+              />
+            </label>
+          </div>
+          {formError && (
+            <p role="alert" className="text-error mt-2 text-[11px]">
+              {formError}
+            </p>
+          )}
+          <div className="mt-3 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={submitPrice}
+              disabled={formBusy}
+              className="bg-gold-500 hover:bg-gold-600 text-navy-950 h-9 rounded-lg px-4 text-xs font-semibold disabled:opacity-50"
+            >
+              {formBusy ? 'در حال ثبت…' : 'ثبت قیمت'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="text-muted-foreground hover:text-foreground h-9 px-3 text-xs"
+            >
+              انصراف
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* آخرین قیمت ثبت‌شده */}
       <section className="bg-card border-border/60 mb-4 rounded-xl border p-5">

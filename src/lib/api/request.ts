@@ -2,11 +2,15 @@
 // Zar30 - API Request Helpers (Phase 2)
 // ============================================
 
-import type { ZodType } from 'zod'
+import type { ZodType, ZodTypeDef } from 'zod'
 import { ApiError } from '@/lib/errors/api-error'
 
 // Parse + validate body — خطای واضح زبان فارسی به کلاینت
-export async function parseBody<T>(req: Request, schema: ZodType<T>): Promise<T> {
+// خروجی T می‌تواند transform‌شده باشد (input هر چیزی)
+export async function parseBody<T>(
+  req: Request,
+  schema: ZodType<T, ZodTypeDef, unknown>,
+): Promise<T> {
   const json = await req.json().catch(() => null)
   const parsed = schema.safeParse(json)
   if (!parsed.success) {

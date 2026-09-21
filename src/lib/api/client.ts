@@ -35,11 +35,15 @@ interface ApiErrorBody {
   error: { title?: string; detail?: string }
 }
 
-export async function apiPost<T>(path: string, body?: unknown): Promise<ApiResult<T>> {
+export async function apiPost<T>(
+  path: string,
+  body?: unknown,
+  headers?: Record<string, string>,
+): Promise<ApiResult<T>> {
   try {
     const res = await fetch(path, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...headers },
       credentials: 'include',
       body: body === undefined ? undefined : JSON.stringify(body),
     })

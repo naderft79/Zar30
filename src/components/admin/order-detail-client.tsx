@@ -13,7 +13,7 @@ import type { AdminOrderDetail } from '@/lib/services/admin-finance.service'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminStatus } from '@/components/admin/admin-status'
 import { FinancialValue } from '@/components/admin/financial-value'
-import { ReadOnlyNotice } from '@/components/admin/read-only-notice'
+import { FinanceAction } from '@/components/admin/finance-action'
 import {
   AuditTimeline,
   Field,
@@ -30,6 +30,7 @@ export function AdminOrderDetailClient() {
     data: order,
     error,
     loading,
+    reload,
   } = useAdminDetail<AdminOrderDetail>(`/api/v1/admin/orders/${id}`, 'order', 'سفارش یافت نشد')
 
   if (loading && !order) {
@@ -61,7 +62,20 @@ export function AdminOrderDetailClient() {
         description={`شناسه: ${order.id}`}
         actions={<AdminStatus status={order.status} />}
       />
-      <ReadOnlyNotice className="mb-4" />
+
+      {/* برگشت سفارش — فقط سفارش FILLED با سند POSTED */}
+      {order.status === 'FILLED' && order.journal && order.journal.status === 'POSTED' && (
+        <div className="mb-4">
+          <FinanceAction
+            label="برگشت سفارش (reversal)"
+            endpoint={`/api/v1/admin/orders/${order.id}/reverse`}
+            tone="danger"
+            needsReason
+            confirmText="برگشت، سند جبرانی ثبت و موجودی‌های کاربر را به حالت قبل برمی‌گرداند."
+            onDone={reload}
+          />
+        </div>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Section title="جزئیات سفارش">

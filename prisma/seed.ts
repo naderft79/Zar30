@@ -28,6 +28,13 @@ async function main() {
     { code: 'ASSET_GOLD', type: 'ASSET', name: 'Gold Balance', assetType: 'GOLD' },
     { code: 'ASSET_LOCKED_RIAL', type: 'ASSET', name: 'Locked Rial', assetType: 'RIAL' },
     { code: 'ASSET_LOCKED_GOLD', type: 'ASSET', name: 'Locked Gold', assetType: 'GOLD' },
+    // صندوق ریالی پلتفرم — طرف مقابل واریز/برداشت کاربران
+    {
+      code: 'ASSET_PLATFORM_RIAL',
+      type: 'ASSET',
+      name: 'Platform Rial Pool',
+      assetType: 'RIAL',
+    },
 
     // Revenue Accounts (درآمد پلتفرم)
     { code: 'REVENUE_SPREAD', type: 'REVENUE', name: 'Spread Revenue', assetType: null },
@@ -50,6 +57,12 @@ async function main() {
     { code: 'EXPENSE_OPERATIONAL', type: 'EXPENSE', name: 'Operational Expenses', assetType: null },
 
     // Liability Accounts (بدهی‌ها)
+    {
+      code: 'LIABILITY_USER_RIAL',
+      type: 'LIABILITY',
+      name: 'User Rial Deposits',
+      assetType: 'RIAL',
+    },
     {
       code: 'LIABILITY_GOLD_INVENTORY',
       type: 'LIABILITY',
@@ -91,6 +104,7 @@ async function main() {
       { key: 'auth.register', limit: 10, windowSeconds: 3600, scope: 'IP' },
       { key: 'auth.password_reset', limit: 5, windowSeconds: 3600, scope: 'MOBILE' },
       { key: 'trading.execute', limit: 30, windowSeconds: 60, scope: 'USER' },
+      { key: 'wallet.write', limit: 10, windowSeconds: 60, scope: 'USER' },
       { key: 'admin.api', limit: 200, windowSeconds: 60, scope: 'IP' },
     ]
 
@@ -157,6 +171,23 @@ async function main() {
     })
   }
   console.log('✅ Feature flags seeded')
+
+  // قیمت اولیه طلا — فقط برای dev؛ production از مسیر admin/provider می‌آید
+  const existingPrice = await prisma.goldPrice.findFirst()
+  if (!existingPrice) {
+    const buyPrice = 8_500_000n
+    await prisma.goldPrice.create({
+      data: {
+        buyPrice,
+        sellPrice: buyPrice - 50_000n,
+        rawPrice: buyPrice - 50_000n,
+        spread: 0.0059,
+        source: 'seed',
+        recordedAt: new Date(),
+      },
+    })
+    console.log('✅ Initial gold price seeded')
+  }
 
   // Installment Plans (PENDING BUSINESS DECISION - dev defaults)
   const installmentPlans = [

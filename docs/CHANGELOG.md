@@ -1,5 +1,26 @@
 # Zar30 — Changelog
 
+## [0.9.0] — Production Financial Core & Transaction Engine
+
+### Added
+
+- **Finance core** (`src/lib/finance/`): `money` (Decimal/BigInt دقیق)، `errors` (کدهای قطعی مالی)، `ledger.service` (double-entry، تراز per-currency، قفل FOR UPDATE، balanceAfter)، `wallet.service`، `idempotency` (durable، scoped per user+endpoint)
+- **Domain services**: `pricing` (قیمت اجرایی + snapshot + حداکثر سن)، `fee` (کارمزد متمرکز bps)، `order` (خرید/فروش اتمیک)، `withdrawal` (state machine با lock)، `deposit` (credit فقط از مسیر سرویس)، `reversal` (سند جبرانی، history حفظ می‌شود)، `reconciliation` (wallet vs ledger)، `limits` (KYC)، `notify` (پس از commit)
+- **User APIs**: `GET /api/v1/wallet`، `GET /api/v1/wallet/transactions`، `POST /api/v1/wallet/deposit`، `POST /api/v1/wallet/withdraw`، `GET/POST /api/v1/orders`، `GET /api/v1/orders/[id]` — همه با auth، idempotency و rate limit
+- **Admin APIs**: approve/reject/pay برداشت، credit/reject واریز، reverse سفارش و تراکنش، ثبت قیمت، reconciliation — همه با permission + audit
+- **UI**: صفحه معامله و دارایی‌ها به داده واقعی متصل؛ اکشن‌های مالی admin روی صفحات detail
+- **Integration test** `tests/integration/finance.test.ts` — ۹ سناریوی حیاتی روی PostgreSQL واقعی
+
+### Changed
+
+- مدل موجودی: `balance` = آزاد، `lockedBalance` = مسدود — قفل برداشت double-spend-safe شد
+- `OrderStatus` += `REVERSED`؛ `WithdrawalRequest` += `journalEntryId`/`reviewNote`
+- قیمت نمایشی `/api/v1/price` از `GoldPrice` می‌خواند؛ عدد ساختگی در production برنمی‌گردد (mock فقط fallback توسعه)
+
+### Verification
+
+- typecheck ✅ / lint ✅ / finance integration 9/9 روی PostgreSQL واقعی ✅
+
 ## [0.8.0] — Gerami-style Landing Redesign (ADR-022)
 
 ### Changed

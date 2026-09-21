@@ -15,7 +15,7 @@ import type { AdminTransactionDetail } from '@/lib/services/admin-finance.servic
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminStatus } from '@/components/admin/admin-status'
 import { FinancialValue } from '@/components/admin/financial-value'
-import { ReadOnlyNotice } from '@/components/admin/read-only-notice'
+import { FinanceAction } from '@/components/admin/finance-action'
 import {
   AuditTimeline,
   Field,
@@ -33,6 +33,7 @@ export function AdminTransactionDetailClient() {
     data: tx,
     error,
     loading,
+    reload,
   } = useAdminDetail<AdminTransactionDetail>(
     `/api/v1/admin/transactions/${id}`,
     'transaction',
@@ -68,7 +69,38 @@ export function AdminTransactionDetailClient() {
         description={`شناسه: ${tx.id}`}
         actions={<AdminStatus status={tx.status} />}
       />
-      <ReadOnlyNotice className="mb-4" />
+
+      {/* اکشن‌های عملیاتی — permission سمت سرور enforce می‌شود */}
+      {tx.type === 'DEPOSIT' && tx.status === 'PENDING' && (
+        <div className="mb-4 flex flex-wrap items-start gap-2">
+          <FinanceAction
+            label="اعتبارسنجی واریز"
+            endpoint={`/api/v1/admin/deposits/${tx.id}/credit`}
+            tone="gold"
+            confirmText="واریز تایید می‌شود و موجودی ریالی کاربر افزایش می‌یابد."
+            onDone={reload}
+          />
+          <FinanceAction
+            label="رد واریز"
+            endpoint={`/api/v1/admin/deposits/${tx.id}/reject`}
+            tone="danger"
+            needsReason
+            onDone={reload}
+          />
+        </div>
+      )}
+      {tx.status === 'COMPLETED' && tx.journal && tx.journal.status === 'POSTED' && (
+        <div className="mb-4">
+          <FinanceAction
+            label="برگشت تراکنش (reversal)"
+            endpoint={`/api/v1/admin/transactions/${tx.id}/reverse`}
+            tone="danger"
+            needsReason
+            confirmText="برگشت، یک سند جبرانی جدید ثبت می‌کند — تاریخچه اصلی دست‌نخورده می‌ماند."
+            onDone={reload}
+          />
+        </div>
+      )}
 
       {/* ===== زنجیره رویداد مالی ===== */}
       <ol className="mb-4 flex flex-wrap items-center gap-2 text-[11px]">

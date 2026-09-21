@@ -1,6 +1,34 @@
 # Zar30 — Execution Status
 
-> وضعیت اجرای پروژه — به‌روزرسانی شده در Phase 0 Final Gate (2026-09-18)
+> وضعیت اجرای پروژه — به‌روزرسانی شده در Phase Financial Core (2026-09-21)
+
+## Phase NEXT: Production Financial Core & Transaction Engine
+
+**وضعیت:** ✅ DONE — موتور مالی production-grade پیاده‌سازی و راستی‌آزمایی شد
+
+### خلاصه
+
+| مؤلفه               | وضعیت | توضیح                                                                   |
+| ------------------- | ----- | ----------------------------------------------------------------------- |
+| Wallet Engine       | ✅    | `wallet.service` — موجودی آزاد/مسدود، بدون direct mutation              |
+| Double-Entry Ledger | ✅    | `postJournal` — تراز per-currency، قفل FOR UPDATE، immutability         |
+| Buy/Sell Gold       | ✅    | `order.service` — اتمیک، price snapshot، fee engine                     |
+| Deposit flow        | ✅    | PENDING → COMPLETED/FAILED فقط از مسیر سرویس                            |
+| Withdrawal flow     | ✅    | PENDING → APPROVED → PAID \| REJECTED — قفل مبلغ در درخواست             |
+| Idempotency         | ✅    | `IdempotencyRecord` durable، scoped، replay/conflict/concurrent         |
+| Reversal            | ✅    | سند جبرانی + لینک به اصل؛ history حفظ می‌شود                            |
+| Reconciliation      | ✅    | `reconcileAssetAccounts` — wallet vs ledger + MISMATCH report           |
+| User APIs           | ✅    | wallet/orders/deposit/withdraw — auth + idempotency + rate limit        |
+| Admin APIs          | ✅    | withdrawal/deposit/reversal/pricing/reconciliation — permission + audit |
+| UI                  | ✅    | trade + assets واقعی؛ اکشن‌های مالی admin                               |
+| Tests               | ✅    | 9/9 سناریوی حیاتی finance روی PostgreSQL واقعی                          |
+
+### محدودیت‌های شناخته‌شده
+
+- Provider قیمت خارجی هنوز متصل نشده — قیمت اجرایی از `GoldPrice` (ثبت admin) با حداکثر سن ۱۵ دقیقه
+- درگاه پرداخت واقعی وصل نشده — credit واریز از مسیر admin/payment callback
+
+## Global Rebrand (ADR-017) — دائمی
 
 ## Global Rebrand (ADR-017) — دائمی
 

@@ -45,6 +45,7 @@ export function useAdminDetail<D>(endpoint: string, dataKey: string, fallback: s
   const [data, setData] = useState<D | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [version, setVersion] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -62,9 +63,9 @@ export function useAdminDetail<D>(endpoint: string, dataKey: string, fallback: s
     return () => {
       cancelled = true
     }
-  }, [endpoint, dataKey])
+  }, [endpoint, dataKey, version])
 
-  return { data, error, loading, notFoundMessage: fallback }
+  return { data, error, loading, notFoundMessage: fallback, reload: () => setVersion((v) => v + 1) }
 }
 
 // ---------- Ledger / Journal / Audit blocks ----------

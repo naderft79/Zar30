@@ -95,6 +95,7 @@ enum OrderStatus {
   FILLED
   CANCELLED
   FAILED
+  REVERSED
 }
 
 enum TransactionType {
@@ -421,6 +422,7 @@ model JournalEntry {
   reversedBy    JournalEntry[]   @relation("JournalReversal")
   orders        Order[]
   transactions  Transaction[]
+  withdrawals   WithdrawalRequest[]
 
   @@index([referenceType, referenceId])
   @@index([status])
@@ -506,10 +508,13 @@ model WithdrawalRequest {
   status      WithdrawalStatus @default(PENDING)
   processedBy String?          @map("processed_by")
   processedAt DateTime?        @map("processed_at")
+  reviewNote  String?          @map("review_note")
+  journalEntryId String?       @map("journal_entry_id")
   createdAt   DateTime         @default(now()) @map("created_at")
 
   user     User       @relation(fields: [userId], references: [id])
   processor AdminUser? @relation(fields: [processedBy], references: [id])
+  journalEntry JournalEntry? @relation(fields: [journalEntryId], references: [id])
 
   @@index([userId, createdAt])
   @@index([status])
