@@ -1,6 +1,30 @@
 # Zar30 — Execution Status
 
-> وضعیت اجرای پروژه — به‌روزرسانی شده در Phase Financial Core (2026-09-21)
+> وضعیت اجرای پروژه — به‌روزرسانی شده در Phase Toman Migration + Live Pricing & Payment Gateway (2026-09-22)
+
+## Phase NEXT: Toman-Native + Live Pricing & Payment Gateway
+
+**وضعیت:** ✅ DONE — سیستم کاملاً Toman-native شد؛ provider قیمت زنده و زیرساخت درگاه پرداخت پیاده‌سازی و راستی‌آزمایی شدند
+
+### خلاصه
+
+| مؤلفه                    | وضعیت | توضیح                                                                                           |
+| ------------------------ | ----- | ----------------------------------------------------------------------------------------------- |
+| Toman Migration          | ✅    | کل codebase/schema/env/UI/docs/tests — بدون conversion layer، بدون هیچ مرجع واحد قدیمی          |
+| Data Migration           | ✅    | حذف دقیق یک صفر انتهایی از مقادیر پولی؛ طلا دست‌نخورده؛ ledger متوازن؛ artifactها پاک شدند      |
+| Live Price Provider      | ✅    | abstraction + ToloChart adapter + `syncLivePrice` — validation، stale و abnormal protection     |
+| Payment Gateway          | ✅    | `PaymentGateway` + sandbox/zarinpal adapters + `payment.service` — replay/mismatch/expiry-safe  |
+| Payment → Deposit → Core | ✅    | callback verified → `creditDepositCore` اتمیک — سند متوازن + موجودی                             |
+| APIs                     | ✅    | `POST/GET /api/v1/payments`، `GET /api/v1/payments/callback`، `POST /api/v1/admin/pricing/sync` |
+| UI                       | ✅    | واریز از مسیر درگاه + بنر وضعیت برگشت — desktop/mobile هماهنگ                                   |
+| Tests                    | ✅    | payment 6/6 + pricing 6/6 + finance 9/9 — کل suite 207/207                                      |
+| Global Search            | ✅    | صفر مرجع واحد قدیمی در runtime/schema/UI/docs                                                   |
+
+### محدودیت‌های شناخته‌شده
+
+- درگاه واقعی ZarinPal پیاده‌سازی شده ولی `PAYMENT_PROVIDER` روی `sandbox` است — برای production نیاز به `PAYMENT_MERCHANT_ID` واقعی و `PAYMENT_PROVIDER=zarinpal`
+- provider قیمت `tolochart` پیاده‌سازی شده ولی بدون `PRICE_API_KEY` واقعی فعال نمی‌شود — `PRICE_API_PROVIDER=manual` یعنی فقط ثبت دستی ادمین
+- اقساط/سرمایه‌گذاری/تحویل فیزیکی در سطح سرویس هنوز فازهای بعدی هستند (schema به تومان migrate شد)
 
 ## Phase NEXT: Production Financial Core & Transaction Engine
 
@@ -378,17 +402,17 @@
 
 **وضعیت:** ✅ DONE — بازطراحی کامل UX/UI پنل کاربری (بدون تغییر Business Logic / Navigation Contract)
 
-| بخش           | تغییر                                                                                                                                                                |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Dashboard     | Wealth Hero (`.surface-wealth` + `gold-rings`) — ارزش کل + طلا/ریال + badge وضعیت؛ Quick Actions؛ ویجت قیمت با ساختار خرید/فروش؛ نمودار روند (داده نمایشی برچسب‌دار) |
-| PanelShell    | سایدبار premium (eyebrow + nav طلایی + کارت کاربر)؛ Header context-aware (عنوان + تاریخ + آواتار + bell)؛ Bottom Nav؛ `animate-page-in`                              |
-| Sessions      | جدول premium دسکتاپ + کارت موبایل + خلاصه نشست جاری                                                                                                                  |
-| Notifications | فیلتر tablist + آیکون دسته‌بندی                                                                                                                                      |
-| Profile       | Identity Header با آواتار halo طلایی                                                                                                                                 |
-| Security      | Overview Strip                                                                                                                                                       |
-| Referral      | کد + لینک + آمار پیش‌نمایش                                                                                                                                           |
-| Support       | Help Center (۴ دسته)                                                                                                                                                 |
-| Tokens        | `--shadow-glow`، `.surface-wealth`، `.gold-rings`، `animate-page-in`                                                                                                 |
+| بخش           | تغییر                                                                                                                                                                 |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dashboard     | Wealth Hero (`.surface-wealth` + `gold-rings`) — ارزش کل + طلا/تومان + badge وضعیت؛ Quick Actions؛ ویجت قیمت با ساختار خرید/فروش؛ نمودار روند (داده نمایشی برچسب‌دار) |
+| PanelShell    | سایدبار premium (eyebrow + nav طلایی + کارت کاربر)؛ Header context-aware (عنوان + تاریخ + آواتار + bell)؛ Bottom Nav؛ `animate-page-in`                               |
+| Sessions      | جدول premium دسکتاپ + کارت موبایل + خلاصه نشست جاری                                                                                                                   |
+| Notifications | فیلتر tablist + آیکون دسته‌بندی                                                                                                                                       |
+| Profile       | Identity Header با آواتار halo طلایی                                                                                                                                  |
+| Security      | Overview Strip                                                                                                                                                        |
+| Referral      | کد + لینک + آمار پیش‌نمایش                                                                                                                                            |
+| Support       | Help Center (۴ دسته)                                                                                                                                                  |
+| Tokens        | `--shadow-glow`، `.surface-wealth`، `.gold-rings`، `animate-page-in`                                                                                                  |
 
 **Verification:** typecheck ✅ / lint ✅ / unit+integration ۷۳ ✅ / E2E (panel+a11y) ✅ / build ✅ / Visual QA با screenshot ۱۴۴۰ و ۳۹۰ ✅
 

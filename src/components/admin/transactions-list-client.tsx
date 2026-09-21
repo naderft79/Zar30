@@ -47,7 +47,7 @@ export const transactionColumns: AdminColumn<AdminTransactionListRow>[] = [
   {
     key: 'amount',
     header: 'مبلغ',
-    render: (t) => <FinancialValue value={t.amount} unit="ریال" />,
+    render: (t) => <FinancialValue value={t.amount} unit="تومان" />,
   },
   {
     key: 'status',

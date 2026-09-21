@@ -11,7 +11,7 @@ import { FinancialValue } from '@/components/admin/financial-value'
 import { toPersianDigits } from '@/lib/utils/format'
 
 const ASSET_LABELS: Record<string, string> = {
-  RIAL: 'ریال',
+  TOMAN: 'تومان',
   GOLD: 'طلا',
   SILVER: 'نقره',
 }
@@ -53,7 +53,7 @@ const columns: AdminColumn<AdminAccountListRow>[] = [
     key: 'balance',
     header: 'مانده',
     render: (a) => (
-      <FinancialValue value={a.balance} unit={a.assetType === 'RIAL' ? 'ریال' : 'گرم'} />
+      <FinancialValue value={a.balance} unit={a.assetType === 'TOMAN' ? 'تومان' : 'گرم'} />
     ),
   },
   {
@@ -90,7 +90,7 @@ export function AdminAccountsClient() {
           key: 'assetType',
           label: 'همه دارایی‌ها',
           options: [
-            { value: 'RIAL', label: 'ریال' },
+            { value: 'TOMAN', label: 'تومان' },
             { value: 'GOLD', label: 'طلا' },
             { value: 'SILVER', label: 'نقره' },
           ],

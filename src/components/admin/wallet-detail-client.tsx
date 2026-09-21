@@ -21,7 +21,7 @@ import { TX_TYPE_LABELS } from '@/components/admin/transactions-list-client'
 import type { AdminTransactionListRow } from '@/lib/services/admin-finance.service'
 
 const ASSET_LABELS: Record<string, string> = {
-  RIAL: 'ریال',
+  TOMAN: 'تومان',
   GOLD: 'طلا',
   SILVER: 'نقره',
 }
@@ -44,7 +44,7 @@ const txColumns: AdminColumn<AdminTransactionListRow>[] = [
   {
     key: 'amount',
     header: 'مبلغ',
-    render: (t) => <FinancialValue value={t.amount} unit="ریال" />,
+    render: (t) => <FinancialValue value={t.amount} unit="تومان" />,
   },
   {
     key: 'status',
@@ -140,7 +140,7 @@ export function AdminWalletDetailClient() {
                     <span>
                       <FinancialValue
                         value={a.balance}
-                        unit={a.assetType === 'RIAL' ? 'ریال' : 'گرم'}
+                        unit={a.assetType === 'TOMAN' ? 'تومان' : 'گرم'}
                       />
                       <span className="text-muted-foreground block text-[10px]">
                         مسدود: <FinancialValue value={a.lockedBalance} />

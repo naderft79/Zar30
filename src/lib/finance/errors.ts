@@ -115,4 +115,29 @@ export const FinanceErrors = {
 
   walletNotFound: () =>
     new ApiError(404, 'Wallet Not Found', 'کیف پول یافت نشد', `${BASE}/wallet-not-found`),
+
+  abnormalPrice: () =>
+    new ApiError(
+      422,
+      'Abnormal Price',
+      'جهش قیمت غیرعادی شناسایی شد؛ قیمت برای بررسی ثبت نشد',
+      `${BASE}/abnormal-price`,
+    ),
+
+  paymentNotFound: () =>
+    new ApiError(404, 'Payment Not Found', 'پرداخت یافت نشد', `${BASE}/payment-not-found`),
+
+  amountMismatch: () =>
+    new ApiError(
+      409,
+      'Amount Mismatch',
+      'مبلغ برگشتی درگاه با مبلغ پرداخت مطابقت ندارد',
+      `${BASE}/amount-mismatch`,
+    ),
+
+  gatewayError: (detail = 'خطا در ارتباط با درگاه پرداخت') =>
+    new ApiError(502, 'Gateway Error', detail, `${BASE}/gateway-error`),
+
+  providerUnavailable: (detail = 'سرویس قیمت در دسترس نیست') =>
+    new ApiError(503, 'Price Provider Unavailable', detail, `${BASE}/provider-unavailable`),
 } as const

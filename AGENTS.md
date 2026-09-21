@@ -373,7 +373,7 @@ Financial correctness is a first-class engineering requirement.
 Financial features include:
 
 - Gold balances
-- Rial balances
+- Toman balances
 - Deposits
 - Withdrawals
 - Purchases
@@ -437,7 +437,7 @@ Concepts:
 - JournalEntry (atomic, balanced set of LedgerEntry)
 - LedgerAccount (account: ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
 - LedgerEntry (immutable debit/credit on a LedgerAccount)
-- Asset (RIAL, GOLD, extensible to SILVER, crypto, ...)
+- Asset (TOMAN, GOLD, extensible to SILVER, crypto, ...)
 - Balance (redundant sum of LedgerEntry per account)
 - Reference (link to Order, Deposit, Withdrawal, ...)
 - Reversal (compensating JournalEntry, not UPDATE)

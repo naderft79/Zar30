@@ -37,7 +37,7 @@ const q = z.string().trim().max(80).optional()
 
 export const adminAccountListQuerySchema = financePagination.extend({
   q,
-  assetType: z.enum(['RIAL', 'GOLD', 'SILVER']).optional(),
+  assetType: z.enum(['TOMAN', 'GOLD', 'SILVER']).optional(),
 })
 
 export const adminWalletListQuerySchema = financePagination.extend({

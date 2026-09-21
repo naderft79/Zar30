@@ -9,6 +9,9 @@ export default defineConfig({
   plugins: [tsconfigPaths({ projects: ['./tsconfig.json'] })],
   test: {
     environment: 'node',
+    // تست‌های integration یک PostgreSQL مشترک دارند — اجرای موازی فایل‌ها
+    // باعث race روی state مشترک (مثل آخرین GoldPrice) می‌شود
+    fileParallelism: false,
     // integration tests روی DB واقعی چند bcrypt (cost 12) اجرا می‌کنند و زمان‌برند
     testTimeout: 30_000,
     globals: true,

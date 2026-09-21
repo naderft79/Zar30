@@ -24,16 +24,16 @@ async function main() {
     assetType: AssetType | null
   }[] = [
     // Asset Accounts (دارایی‌های کاربران)
-    { code: 'ASSET_RIAL', type: 'ASSET', name: 'Rial Balance', assetType: 'RIAL' },
+    { code: 'ASSET_TOMAN', type: 'ASSET', name: 'Toman Balance', assetType: 'TOMAN' },
     { code: 'ASSET_GOLD', type: 'ASSET', name: 'Gold Balance', assetType: 'GOLD' },
-    { code: 'ASSET_LOCKED_RIAL', type: 'ASSET', name: 'Locked Rial', assetType: 'RIAL' },
+    { code: 'ASSET_LOCKED_TOMAN', type: 'ASSET', name: 'Locked Toman', assetType: 'TOMAN' },
     { code: 'ASSET_LOCKED_GOLD', type: 'ASSET', name: 'Locked Gold', assetType: 'GOLD' },
-    // صندوق ریالی پلتفرم — طرف مقابل واریز/برداشت کاربران
+    // صندوق تومانی پلتفرم — طرف مقابل واریز/برداشت کاربران
     {
-      code: 'ASSET_PLATFORM_RIAL',
+      code: 'ASSET_PLATFORM_TOMAN',
       type: 'ASSET',
-      name: 'Platform Rial Pool',
-      assetType: 'RIAL',
+      name: 'Platform Toman Pool',
+      assetType: 'TOMAN',
     },
 
     // Revenue Accounts (درآمد پلتفرم)
@@ -58,10 +58,10 @@ async function main() {
 
     // Liability Accounts (بدهی‌ها)
     {
-      code: 'LIABILITY_USER_RIAL',
+      code: 'LIABILITY_USER_TOMAN',
       type: 'LIABILITY',
-      name: 'User Rial Deposits',
-      assetType: 'RIAL',
+      name: 'User Toman Deposits',
+      assetType: 'TOMAN',
     },
     {
       code: 'LIABILITY_GOLD_INVENTORY',
@@ -175,7 +175,7 @@ async function main() {
   // قیمت اولیه طلا — فقط برای dev؛ production از مسیر admin/provider می‌آید
   const existingPrice = await prisma.goldPrice.findFirst()
   if (!existingPrice) {
-    const buyPrice = 8_500_000n
+    const buyPrice = 7_500_000n
     await prisma.goldPrice.create({
       data: {
         buyPrice,
@@ -197,8 +197,8 @@ async function main() {
       downPaymentPercent: 20,
       interestRate: 10,
       fee: 2,
-      minAmount: 5000000,
-      maxAmount: 500000000,
+      minAmount: 500000,
+      maxAmount: 50000000,
       active: true,
     },
     {
@@ -207,8 +207,8 @@ async function main() {
       downPaymentPercent: 30,
       interestRate: 12,
       fee: 2,
-      minAmount: 5000000,
-      maxAmount: 1000000000,
+      minAmount: 500000,
+      maxAmount: 100000000,
       active: true,
     },
     {
@@ -217,8 +217,8 @@ async function main() {
       downPaymentPercent: 40,
       interestRate: 15,
       fee: 2,
-      minAmount: 10000000,
-      maxAmount: 2000000000,
+      minAmount: 1000000,
+      maxAmount: 200000000,
       active: true,
     },
   ]
@@ -315,21 +315,21 @@ async function main() {
       key: 'deposit_success',
       channels: ['PUSH', 'SMS'],
       titleTemplate: 'شارژ موفق',
-      bodyTemplate: 'حساب شما {amount} ریال شارژ شد',
+      bodyTemplate: 'حساب شما {amount} تومان شارژ شد',
       variables: { amount: '' },
     },
     {
       key: 'withdrawal_pending',
       channels: ['PUSH'],
       titleTemplate: 'درخواست برداشت',
-      bodyTemplate: 'درخواست برداشت {amount} ریال شما ثبت شد',
+      bodyTemplate: 'درخواست برداشت {amount} تومان شما ثبت شد',
       variables: { amount: '' },
     },
     {
       key: 'withdrawal_paid',
       channels: ['PUSH', 'SMS'],
       titleTemplate: 'برداشت موفق',
-      bodyTemplate: 'مبلغ {amount} ریال به حساب شما واریز شد',
+      bodyTemplate: 'مبلغ {amount} تومان به حساب شما واریز شد',
       variables: { amount: '' },
     },
     {
@@ -429,7 +429,7 @@ async function main() {
       userId: testUser.id,
       assetAccounts: {
         create: [
-          { assetType: 'RIAL', balance: 10000000, lockedBalance: 0 },
+          { assetType: 'TOMAN', balance: 1000000, lockedBalance: 0 },
           { assetType: 'GOLD', balance: 0, lockedBalance: 0 },
         ],
       },

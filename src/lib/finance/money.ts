@@ -1,7 +1,7 @@
 // ============================================
 // Zar30 - Money Helpers (Financial Core)
 // ============================================
-// ریال: BigInt (واحد ریال — بدون اعشار)
+// تومان: BigInt (واحد تومان — بدون اعشار)
 // طلا: Decimal(18,8) — حداکثر ۸ رقم اعشار
 // هرگز Number برای محاسبات مالی استفاده نمی شود
 // ============================================
@@ -19,17 +19,17 @@ export function floorGold(value: Decimal | string): Decimal {
   return new Decimal(value).toDecimalPlaces(GOLD_DECIMALS, Decimal.ROUND_FLOOR)
 }
 
-// تبدیل ریال به مقدار طلا با قیمت واحد — همیشه رو به پایین
-export function rialToGold(rialAmount: bigint, unitPrice: bigint): Decimal {
+// تبدیل تومان به مقدار طلا با قیمت واحد — همیشه رو به پایین
+export function tomanToGold(tomanAmount: bigint, unitPrice: bigint): Decimal {
   if (unitPrice <= 0n) return new Decimal(0)
-  const gold = new Decimal(rialAmount.toString()).div(new Decimal(unitPrice.toString()))
+  const gold = new Decimal(tomanAmount.toString()).div(new Decimal(unitPrice.toString()))
   return floorGold(gold)
 }
 
-// تبدیل مقدار طلا به ریال با قیمت واحد — همیشه رو به پایین (عدد صحیح ریال)
-export function goldToRial(goldAmount: Decimal, unitPrice: bigint): bigint {
-  const rial = goldAmount.mul(new Decimal(unitPrice.toString()))
-  return BigInt(rial.toFixed(0, Decimal.ROUND_FLOOR))
+// تبدیل مقدار طلا به تومان با قیمت واحد — همیشه رو به پایین (عدد صحیح تومان)
+export function goldToToman(goldAmount: Decimal, unitPrice: bigint): bigint {
+  const toman = goldAmount.mul(new Decimal(unitPrice.toString()))
+  return BigInt(toman.toFixed(0, Decimal.ROUND_FLOOR))
 }
 
 // تبدیل امن خروجی به JSON — BigInt و Decimal به string

@@ -2,7 +2,7 @@
 // Zar30 - /api/v1/orders
 // ============================================
 // GET  → تاریخچه سفارش‌های کاربر
-// POST → معامله آنی (BUY: rialAmount | SELL: goldAmount)
+// POST → معامله آنی (BUY: tomanAmount | SELL: goldAmount)
 //        هدر Idempotency-Key الزامی — اجرای دوباره اثر مالی ندارد
 // ============================================
 
@@ -41,7 +41,7 @@ export const POST = withErrorHandler(async (req: Request) => {
     { req, userId: auth.userId, endpoint: 'orders.create', body: rawBody },
     async () =>
       parsed.data.type === 'BUY'
-        ? buyGold(auth, { rialAmount: parsed.data.rialAmount! })
+        ? buyGold(auth, { tomanAmount: parsed.data.tomanAmount! })
         : sellGold(auth, { goldAmount: new Decimal(parsed.data.goldAmount!) }),
   )
 

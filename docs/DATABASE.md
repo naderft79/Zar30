@@ -23,7 +23,7 @@ pnpm db:studio     # Prisma Studio
 ```
 User
   └── Wallet (container)
-        ├── AssetAccount (RIAL) ←── LedgerEntry
+        ├── AssetAccount (TOMAN) ←── LedgerEntry
         └── AssetAccount (GOLD) ←── LedgerEntry
 
 FinancialTransaction
@@ -34,21 +34,21 @@ FinancialTransaction
 
 ### Ledger Accounts (Seeded)
 
-| Code                       | Type      | توضیح              |
-| -------------------------- | --------- | ------------------ |
-| ASSET_RIAL                 | ASSET     | موجودی ریالی کاربر |
-| ASSET_GOLD                 | ASSET     | موجودی طلای کاربر  |
-| ASSET_LOCKED_RIAL          | ASSET     | ریال قفل‌شده       |
-| ASSET_LOCKED_GOLD          | ASSET     | طلای قفل‌شده       |
-| REVENUE_SPREAD             | REVENUE   | درآمد اسپرد        |
-| REVENUE_FEE                | REVENUE   | درآمد کارمزد       |
-| REVENUE_INSTALLMENT        | REVENUE   | درآمد قسط          |
-| REVENUE_WITHDRAWAL         | REVENUE   | کارمزد برداشت      |
-| REVENUE_DELIVERY           | REVENUE   | کارمزد تحویل       |
-| EXPENSE_OPERATIONAL        | EXPENSE   | هزینه عملیاتی      |
-| LIABILITY_GOLD_INVENTORY   | LIABILITY | موجودی طلای پلتفرم |
-| LIABILITY_INTEREST_PAYABLE | LIABILITY | سود قابل پرداخت    |
-| EQUITY_CAPITAL             | EQUITY    | سرمایه پلتفرم      |
+| Code                       | Type      | توضیح               |
+| -------------------------- | --------- | ------------------- |
+| ASSET_TOMAN                | ASSET     | موجودی تومانی کاربر |
+| ASSET_GOLD                 | ASSET     | موجودی طلای کاربر   |
+| ASSET_LOCKED_TOMAN         | ASSET     | تومان قفل‌شده       |
+| ASSET_LOCKED_GOLD          | ASSET     | طلای قفل‌شده        |
+| REVENUE_SPREAD             | REVENUE   | درآمد اسپرد         |
+| REVENUE_FEE                | REVENUE   | درآمد کارمزد        |
+| REVENUE_INSTALLMENT        | REVENUE   | درآمد قسط           |
+| REVENUE_WITHDRAWAL         | REVENUE   | کارمزد برداشت       |
+| REVENUE_DELIVERY           | REVENUE   | کارمزد تحویل        |
+| EXPENSE_OPERATIONAL        | EXPENSE   | هزینه عملیاتی       |
+| LIABILITY_GOLD_INVENTORY   | LIABILITY | موجودی طلای پلتفرم  |
+| LIABILITY_INTEREST_PAYABLE | LIABILITY | سود قابل پرداخت     |
+| EQUITY_CAPITAL             | EQUITY    | سرمایه پلتفرم       |
 
 ## جداول کلیدی
 

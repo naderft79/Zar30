@@ -176,7 +176,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         label: 'تراکنش‌های تومان',
         href: '/admin/fiat-transactions',
         icon: Banknote,
-        description: 'واریز و برداشت ریالی',
+        description: 'واریز و برداشت تومانی',
         permissions: [PERMISSIONS.TRANSACTIONS_READ],
       },
       {
@@ -192,7 +192,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         label: 'واریزها',
         href: '/admin/deposits',
         icon: ArrowDownToLine,
-        description: 'واریزهای ریالی',
+        description: 'واریزهای تومانی',
         permissions: [PERMISSIONS.DEPOSITS_READ],
       },
       {

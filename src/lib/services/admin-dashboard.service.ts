@@ -10,7 +10,7 @@ import prisma from '@/lib/db/prisma'
 export interface AdminDashboardData {
   generatedAt: string
   financial: {
-    rialBalance: string
+    tomanBalance: string
     goldBalance: string
     completedVolumeLast24Hours: string
     pendingWithdrawals: number
@@ -58,7 +58,7 @@ export async function getAdminDashboard(now = new Date()): Promise<AdminDashboar
     openTickets,
     failedTransactions,
     completedVolume,
-    rialAggregate,
+    tomanAggregate,
     goldAggregate,
     latestGoldPrice,
   ] = await prisma.$transaction([
@@ -77,7 +77,7 @@ export async function getAdminDashboard(now = new Date()): Promise<AdminDashboar
       where: { status: 'COMPLETED', createdAt: { gte: last24Hours } },
       _sum: { amount: true },
     }),
-    prisma.assetAccount.aggregate({ where: { assetType: 'RIAL' }, _sum: { balance: true } }),
+    prisma.assetAccount.aggregate({ where: { assetType: 'TOMAN' }, _sum: { balance: true } }),
     prisma.assetAccount.aggregate({ where: { assetType: 'GOLD' }, _sum: { balance: true } }),
     prisma.goldPrice.findFirst({
       orderBy: { recordedAt: 'desc' },
@@ -88,7 +88,7 @@ export async function getAdminDashboard(now = new Date()): Promise<AdminDashboar
   return {
     generatedAt: now.toISOString(),
     financial: {
-      rialBalance: (rialAggregate._sum.balance ?? 0).toString(),
+      tomanBalance: (tomanAggregate._sum.balance ?? 0).toString(),
       goldBalance: (goldAggregate._sum.balance ?? 0).toString(),
       completedVolumeLast24Hours: (completedVolume._sum.amount ?? 0).toString(),
       pendingWithdrawals,

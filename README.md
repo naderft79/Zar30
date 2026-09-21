@@ -84,7 +84,7 @@ docs/             # Documentation
 ## معماری
 
 - **Double-Entry Ledger** — هر تراکنش balanced (debit = credit)
-- **Asset Accounts** — جدا برای Rial + Gold (قابل توسعه)
+- **Asset Accounts** — جدا برای Toman + Gold (قابل توسعه)
 - **PostgreSQL** — مرجع نهایی Financial Integrity
 - **Redis** — cache/queue/coordination (نه مرجع مالی)
 - **Idempotency** — durable در DB + Redis acceleration

@@ -28,7 +28,7 @@ export function formatAmount(
   return digits === 'fa' ? toPersianDigits(formatted) : formatted
 }
 
-// مبلغ ریالی/تومانی با واحد
+// مبلغ تومانی/تومانی با واحد
 export function formatToman(value: number | string, options?: { digits?: 'fa' | 'en' }): string {
   return `${formatAmount(value, options)} تومان`
 }

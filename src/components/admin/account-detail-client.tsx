@@ -24,7 +24,7 @@ import {
 import { toPersianDigits } from '@/lib/utils/format'
 
 const ASSET_LABELS: Record<string, string> = {
-  RIAL: 'ریال',
+  TOMAN: 'تومان',
   GOLD: 'طلا',
   SILVER: 'نقره',
 }
@@ -58,7 +58,7 @@ export function AdminAccountDetailClient() {
   }
   if (!account) return null
 
-  const unit = account.assetType === 'RIAL' ? 'ریال' : 'گرم'
+  const unit = account.assetType === 'TOMAN' ? 'تومان' : 'گرم'
 
   return (
     <div>

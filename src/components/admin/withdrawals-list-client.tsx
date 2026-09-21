@@ -38,7 +38,7 @@ const columns: AdminColumn<AdminWithdrawalListRow>[] = [
   {
     key: 'amount',
     header: 'مبلغ',
-    render: (w) => <FinancialValue value={w.amount} unit="ریال" />,
+    render: (w) => <FinancialValue value={w.amount} unit="تومان" />,
   },
   {
     key: 'iban',

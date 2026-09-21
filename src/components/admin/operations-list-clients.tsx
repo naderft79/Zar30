@@ -42,12 +42,12 @@ const installmentColumns: AdminColumn<AdminInstallmentRow>[] = [
   {
     key: 'principal',
     header: 'اصل مبلغ',
-    render: (r) => <FinancialValue value={r.principal} unit="ریال" />,
+    render: (r) => <FinancialValue value={r.principal} unit="تومان" />,
   },
   {
     key: 'payable',
     header: 'کل پرداخت',
-    render: (r) => <FinancialValue value={r.totalPayable} unit="ریال" />,
+    render: (r) => <FinancialValue value={r.totalPayable} unit="تومان" />,
   },
   { key: 'payments', header: 'اقساط', render: (r) => toPersianDigits(r.paymentsCount) },
   { key: 'created', header: 'ایجاد', mobile: false, render: (r) => date(r.createdAt) },

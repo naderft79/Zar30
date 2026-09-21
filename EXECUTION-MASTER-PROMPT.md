@@ -313,7 +313,7 @@ MegaPlan را در بخش Change Log به‌روزرسانی کن.
 
 - Gold Weight
 - Gold Price
-- Rial Amount
+- Toman Amount
 - Fee
 - Profit
 - Installment

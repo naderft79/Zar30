@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { AlertCircle, TrendingDown, TrendingUp } from 'lucide-react'
-import { toPersianDigits, formatRial } from '@/lib/utils/utils'
+import { toPersianDigits, formatToman } from '@/lib/utils/utils'
 import type { GoldPrice } from '@/lib/price/types'
 import { cn } from 'cn'
 
@@ -72,7 +72,7 @@ export function LiveGoldPriceCard({ initialPrice }: LivePriceCardProps) {
           </span>
           <div>
             <p className="text-navy-950 text-sm font-bold">طلای آب‌شده ۱۸ عیار</p>
-            <p className="text-navy-400 text-[11px]">هر گرم · ریال</p>
+            <p className="text-navy-400 text-[11px]">هر گرم · تومان</p>
           </div>
         </div>
 
@@ -97,13 +97,13 @@ export function LiveGoldPriceCard({ initialPrice }: LivePriceCardProps) {
         <div className="bg-cream-50 rounded-xl p-3.5">
           <p className="text-navy-400 mb-1 text-[11px]">خرید از شما</p>
           <p className="text-navy-950 text-lg font-bold tabular-nums" dir="ltr">
-            {error ? '—' : toPersianDigits(formatRial(price.sellPrice))}
+            {error ? '—' : toPersianDigits(formatToman(price.sellPrice))}
           </p>
         </div>
         <div className="bg-cream-50 rounded-xl p-3.5">
           <p className="text-navy-400 mb-1 text-[11px]">فروش به شما</p>
           <p className="text-navy-950 text-lg font-bold tabular-nums" dir="ltr">
-            {error ? '—' : toPersianDigits(formatRial(price.buyPrice))}
+            {error ? '—' : toPersianDigits(formatToman(price.buyPrice))}
           </p>
         </div>
       </div>

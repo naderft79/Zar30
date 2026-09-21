@@ -61,7 +61,7 @@ enum KycStatus {
 }
 
 enum AssetType {
-  RIAL
+  TOMAN
   GOLD
   SILVER
 }
@@ -118,6 +118,14 @@ enum WithdrawalStatus {
   REJECTED
   PAID
   FAILED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+  EXPIRED
 }
 
 enum IdempotencyStatus {
@@ -230,6 +238,7 @@ model User {
   sessions        Session[]
   orders          Order[]
   transactions    Transaction[]
+  payments        Payment[]
   withdrawals     WithdrawalRequest[]
   adminUser       AdminUser?
   tickets         Ticket[]
@@ -436,7 +445,7 @@ model LedgerEntry {
   ledgerAccountId String         @map("ledger_account_id")
   entryType       LedgerEntryType @map("entry_type")
   amountGold      Decimal?       @db.Decimal(18, 8) @map("amount_gold")
-  amountRial      BigInt?
+  amountToman     BigInt?        @map("amount_toman")
   balanceAfter    Decimal?       @db.Decimal(18, 8) @map("balance_after")
   assetAccountId  String?        @map("asset_account_id")
   createdAt       DateTime       @default(now()) @map("created_at")
@@ -460,7 +469,7 @@ model Order {
   userId             String      @map("user_id")
   type               OrderType
   goldAmount         Decimal     @db.Decimal(18, 8) @map("gold_amount")
-  rialAmount         BigInt      @map("rial_amount")
+  tomanAmount        BigInt      @map("toman_amount")
   unitPrice          BigInt      @map("unit_price")
   spread             Decimal     @db.Decimal(8, 4)
   fee                BigInt
@@ -493,11 +502,42 @@ model Transaction {
 
   user         User          @relation(fields: [userId], references: [id])
   journalEntry JournalEntry? @relation(fields: [journalEntryId], references: [id])
+  payment      Payment?
 
   @@index([userId, createdAt])
   @@index([walletId, createdAt])
   @@index([status])
   @@map("transactions")
+}
+
+// ============================================
+// Payments (Gateway)
+// ============================================
+// رکورد پرداخت درگاه — هر Payment به یک Transaction(DEPOSIT) وصل است.
+// Financial Core فقط تومان می شناسد؛ تبدیل واحد خارجی فقط در adapter درگاه.
+model Payment {
+  id            String        @id @default(uuid())
+  userId        String        @map("user_id")
+  transactionId String?       @unique @map("transaction_id")
+  gateway       String
+  amount        BigInt // تومان
+  status        PaymentStatus @default(PENDING)
+  authority     String?       @unique // شناسه تراکنش درگاه (ZarinPal Authority)
+  refId         String?       @map("ref_id") // مرجع پرداخت پس از verify
+  cardPan       String?       @map("card_pan") // masked
+  description   String?
+  failureReason String?       @map("failure_reason")
+  verifiedAt    DateTime?     @map("verified_at")
+  expiresAt     DateTime      @map("expires_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  user        User         @relation(fields: [userId], references: [id])
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("payments")
 }
 
 model WithdrawalRequest {

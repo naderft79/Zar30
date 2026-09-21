@@ -86,16 +86,16 @@ export function AdminOrderDetailClient() {
               value={<FinancialValue value={order.goldAmount} unit="گرم" />}
             />
             <Field
-              label="مبلغ ریالی"
-              value={<FinancialValue value={order.rialAmount} unit="ریال" />}
+              label="مبلغ تومانی"
+              value={<FinancialValue value={order.tomanAmount} unit="تومان" />}
             />
             <Field
               label="قیمت واحد"
-              value={<FinancialValue value={order.unitPrice} unit="ریال" />}
+              value={<FinancialValue value={order.unitPrice} unit="تومان" />}
             />
             <Field label="اسپرد" value={<FinancialValue value={order.spread} />} />
-            <Field label="کارمزد" value={<FinancialValue value={order.fee} unit="ریال" />} />
-            <Field label="مبلغ کل" value={<FinancialValue value={order.total} unit="ریال" />} />
+            <Field label="کارمزد" value={<FinancialValue value={order.fee} unit="تومان" />} />
+            <Field label="مبلغ کل" value={<FinancialValue value={order.total} unit="تومان" />} />
             <Field label="تایید OTP" value={order.otpConfirmed ? 'انجام‌شده' : 'انجام‌نشده'} />
             <Field label="انقضای قفل قیمت" value={fmtDate(order.priceLockExpiresAt)} />
             <Field label="زمان ایجاد" value={fmtDate(order.createdAt)} />

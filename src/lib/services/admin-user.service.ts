@@ -31,8 +31,8 @@ export interface AdminUserListRow {
   riskState: null
   lastLoginAt: string | null
   createdAt: string
-  rialBalance: string
-  rialLockedBalance: string
+  tomanBalance: string
+  tomanLockedBalance: string
   goldBalance: string
   goldLockedBalance: string
   counts: { orders: number; transactions: number; tickets: number; sessions: number }
@@ -93,7 +93,7 @@ export interface AdminUserDetail {
         id: string
         type: string
         goldAmount: string
-        rialAmount: string
+        tomanAmount: string
         unitPrice: string
         spread: string
         fee: string
@@ -188,7 +188,7 @@ export async function listAdminUsers(
 
   const rows = users.map((u) => {
     const accounts = u.wallet?.assetAccounts ?? []
-    const rial = accounts.find((a) => a.assetType === 'RIAL')
+    const toman = accounts.find((a) => a.assetType === 'TOMAN')
     const gold = accounts.find((a) => a.assetType === 'GOLD')
     return {
       id: u.id,
@@ -202,8 +202,8 @@ export async function listAdminUsers(
       riskState: null,
       lastLoginAt: u.lastLoginAt?.toISOString() ?? null,
       createdAt: u.createdAt.toISOString(),
-      rialBalance: (rial?.balance ?? 0).toString(),
-      rialLockedBalance: (rial?.lockedBalance ?? 0).toString(),
+      tomanBalance: (toman?.balance ?? 0).toString(),
+      tomanLockedBalance: (toman?.lockedBalance ?? 0).toString(),
       goldBalance: (gold?.balance ?? 0).toString(),
       goldLockedBalance: (gold?.lockedBalance ?? 0).toString(),
       counts: {
@@ -313,7 +313,7 @@ export async function getAdminUserDetail(
             id: true,
             type: true,
             goldAmount: true,
-            rialAmount: true,
+            tomanAmount: true,
             unitPrice: true,
             spread: true,
             fee: true,
@@ -420,7 +420,7 @@ export async function getAdminUserDetail(
         id: o.id,
         type: o.type,
         goldAmount: o.goldAmount.toString(),
-        rialAmount: o.rialAmount.toString(),
+        tomanAmount: o.tomanAmount.toString(),
         unitPrice: o.unitPrice.toString(),
         spread: o.spread.toString(),
         fee: o.fee.toString(),

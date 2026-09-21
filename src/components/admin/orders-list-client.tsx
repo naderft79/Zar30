@@ -45,7 +45,7 @@ const columns: AdminColumn<AdminOrderListRow>[] = [
   {
     key: 'total',
     header: 'مبلغ کل',
-    render: (o) => <FinancialValue value={o.total} unit="ریال" />,
+    render: (o) => <FinancialValue value={o.total} unit="تومان" />,
   },
   {
     key: 'status',

@@ -35,7 +35,7 @@ interface OrderRow {
   id: string
   type: 'BUY' | 'SELL'
   goldAmount: string
-  rialAmount: string
+  tomanAmount: string
   unitPrice: string
   fee: string
   total: string
@@ -96,19 +96,19 @@ export function TradeClient() {
     }
   }, [])
 
-  const rial = accounts.find((a) => a.assetType === 'RIAL')
+  const toman = accounts.find((a) => a.assetType === 'TOMAN')
   const gold = accounts.find((a) => a.assetType === 'GOLD')
 
   async function submit() {
     setError(null)
     setSuccess(null)
     if (!/^\d+(\.\d{1,8})?$/.test(amount) || Number(amount) <= 0) {
-      setError(mode === 'BUY' ? 'مبلغ ریالی معتبر وارد کنید' : 'مقدار طلا معتبر وارد کنید')
+      setError(mode === 'BUY' ? 'مبلغ تومانی معتبر وارد کنید' : 'مقدار طلا معتبر وارد کنید')
       return
     }
     setBusy(true)
     const body =
-      mode === 'BUY' ? { type: 'BUY', rialAmount: amount } : { type: 'SELL', goldAmount: amount }
+      mode === 'BUY' ? { type: 'BUY', tomanAmount: amount } : { type: 'SELL', goldAmount: amount }
     const res = await apiPost<{ order: OrderRow }>('/api/v1/orders', body, {
       'Idempotency-Key': crypto.randomUUID(),
     })
@@ -121,7 +121,7 @@ export function TradeClient() {
     setSuccess(
       mode === 'BUY'
         ? `خرید انجام شد — ${formatExactAmount(o.goldAmount)} گرم طلا`
-        : `فروش انجام شد — ${formatExactAmount(o.total)} ریال به کیف پول شما واریز شد`,
+        : `فروش انجام شد — ${formatExactAmount(o.total)} تومان به کیف پول شما واریز شد`,
     )
     setAmount('')
     void loadAll()
@@ -133,9 +133,9 @@ export function TradeClient() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="pt-5 pb-4">
-            <p className="text-muted-foreground text-[11px]">موجودی ریال (آزاد)</p>
+            <p className="text-muted-foreground text-[11px]">موجودی تومان (آزاد)</p>
             <p className="text-foreground mt-1 text-lg font-bold tabular-nums">
-              {loading ? '…' : `${formatExactAmount(rial?.available ?? '0')} ریال`}
+              {loading ? '…' : `${formatExactAmount(toman?.available ?? '0')} تومان`}
             </p>
           </CardContent>
         </Card>
@@ -219,7 +219,7 @@ export function TradeClient() {
 
           <label className="block space-y-1.5">
             <span className="text-muted-foreground text-[11px]">
-              {mode === 'BUY' ? 'مبلغ خرید (ریال)' : 'مقدار فروش (گرم)'}
+              {mode === 'BUY' ? 'مبلغ خرید (تومان)' : 'مقدار فروش (گرم)'}
             </span>
             <input
               type="text"
@@ -302,7 +302,7 @@ export function TradeClient() {
                   <div className="text-left">
                     <p className="text-foreground text-xs font-semibold tabular-nums" dir="ltr">
                       {formatExactAmount(o.total)}{' '}
-                      <span className="text-muted-foreground">ریال</span>
+                      <span className="text-muted-foreground">تومان</span>
                     </p>
                     <StatusBadge tone="gold" dot={false} className="mt-1">
                       {o.status === 'FILLED'

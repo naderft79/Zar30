@@ -2,7 +2,7 @@
 // Zar30 - Utils Test
 // ============================================
 import { describe, it, expect } from 'vitest'
-import { toPersianDigits, formatRial, formatGold, generateReferralCode } from '@/lib/utils/utils'
+import { toPersianDigits, formatToman, formatGold, generateReferralCode } from '@/lib/utils/utils'
 import { formatExactAmount } from '@/lib/utils/format'
 
 describe('Utils', () => {
@@ -11,12 +11,12 @@ describe('Utils', () => {
     expect(toPersianDigits(98765)).toBe('۹۸۷۶۵')
   })
 
-  it('should format Rial amounts with Persian separator', () => {
+  it('should format Toman amounts with Persian separator', () => {
     // Intl.NumberFormat با کامای فارسی جدا می کند
-    const result = formatRial(1000000)
+    const result = formatToman(1000000)
     expect(result).toBeDefined()
     expect(result.length).toBeGreaterThan(0)
-    expect(formatRial(50000000)).toBeDefined()
+    expect(formatToman(50000000)).toBeDefined()
   })
 
   it('should format Gold amounts', () => {

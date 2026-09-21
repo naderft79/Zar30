@@ -158,8 +158,8 @@ export function AdminDashboard() {
             <div className="text-left" dir="ltr">
               <p className="text-navy-300/70 text-[10px]">آخرین قیمت طلا — {price.source}</p>
               <p className="text-gold-300 mt-0.5 text-sm font-bold tabular-nums" dir="rtl">
-                خرید {formatExactAmount(price.buyPrice)} ریال · فروش{' '}
-                {formatExactAmount(price.sellPrice)} ریال
+                خرید {formatExactAmount(price.buyPrice)} تومان · فروش{' '}
+                {formatExactAmount(price.sellPrice)} تومان
               </p>
               <p className="text-navy-300/60 mt-0.5 text-[10px] tabular-nums" dir="rtl">
                 اسپرد {formatExactAmount(price.spread)}٪ —{' '}
@@ -177,9 +177,9 @@ export function AdminDashboard() {
       {/* ===== Financial strip ===== */}
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <AdminMetric
-          label="مانده حساب‌های ریالی کاربران"
-          value={formatExactAmount(data.financial.rialBalance)}
-          unit="ریال"
+          label="مانده حساب‌های تومانی کاربران"
+          value={formatExactAmount(data.financial.tomanBalance)}
+          unit="تومان"
           icon={Wallet}
         />
         <AdminMetric
@@ -192,7 +192,7 @@ export function AdminDashboard() {
         <AdminMetric
           label="حجم تراکنش — ۲۴ ساعت اخیر"
           value={formatExactAmount(data.financial.completedVolumeLast24Hours)}
-          unit="ریال"
+          unit="تومان"
           icon={Tag}
         />
         <AdminMetric

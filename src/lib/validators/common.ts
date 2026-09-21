@@ -29,8 +29,8 @@ export const ibanSchema = z
   .string()
   .regex(/^IR\d{24}$/, 'شماره شبا باید با IR شروع و ۲۶ کاراکتر باشد')
 
-// مبلغ ریالی (مثبت)
-export const rialAmountSchema = z
+// مبلغ تومانی (مثبت)
+export const tomanAmountSchema = z
   .number()
   .int('مبلغ باید عدد صحیح باشد')
   .positive('مبلغ باید مثبت باشد')

@@ -5,7 +5,7 @@
 import { z } from 'zod'
 import { ibanSchema, paginationSchema } from './common'
 
-// مبلغ ریالی به صورت رشته عددی — BigInt-safe (بدون محدودیت Number)
+// مبلغ تومانی به صورت رشته عددی — BigInt-safe (بدون محدودیت Number)
 const bigIntAmount = z
   .string()
   .regex(/^\d+$/, 'مبلغ باید عدد صحیح مثبت باشد')
@@ -21,11 +21,11 @@ const goldAmount = z
 export const createOrderSchema = z
   .object({
     type: z.enum(['BUY', 'SELL']),
-    rialAmount: bigIntAmount.optional(),
+    tomanAmount: bigIntAmount.optional(),
     goldAmount: goldAmount.optional(),
   })
-  .refine((d) => (d.type === 'BUY' ? !!d.rialAmount : !!d.goldAmount), {
-    message: 'برای خرید rialAmount و برای فروش goldAmount الزامی است',
+  .refine((d) => (d.type === 'BUY' ? !!d.tomanAmount : !!d.goldAmount), {
+    message: 'برای خرید tomanAmount و برای فروش goldAmount الزامی است',
   })
 
 export const createDepositSchema = z.object({

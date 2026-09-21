@@ -41,12 +41,12 @@ const columns: AdminColumn<AdminPriceListRow>[] = [
   {
     key: 'buy',
     header: 'قیمت خرید',
-    render: (p) => <FinancialValue value={p.buyPrice} unit="ریال" />,
+    render: (p) => <FinancialValue value={p.buyPrice} unit="تومان" />,
   },
   {
     key: 'sell',
     header: 'قیمت فروش',
-    render: (p) => <FinancialValue value={p.sellPrice} unit="ریال" />,
+    render: (p) => <FinancialValue value={p.sellPrice} unit="تومان" />,
   },
   {
     key: 'spread',
@@ -103,7 +103,7 @@ export function AdminPricingClient() {
 
   async function submitPrice() {
     if (!/^\d+$/.test(buyInput) || !/^\d+$/.test(sellInput)) {
-      setFormError('قیمت‌ها باید عدد صحیح ریال باشند')
+      setFormError('قیمت‌ها باید عدد صحیح تومان باشند')
       return
     }
     setFormBusy(true)
@@ -196,7 +196,7 @@ export function AdminPricingClient() {
       {/* فرم ثبت قیمت — قیمت معاملات فعلی را تعیین می‌کند */}
       {showForm && (
         <section className="bg-card border-gold-500/30 mb-4 rounded-xl border p-5">
-          <h2 className="text-foreground mb-3 text-sm font-bold">ثبت قیمت جدید (ریال/گرم)</h2>
+          <h2 className="text-foreground mb-3 text-sm font-bold">ثبت قیمت جدید (تومان/گرم)</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="space-y-1.5">
               <span className="text-muted-foreground text-[11px]">قیمت خرید (کاربر می‌خرد)</span>
@@ -256,14 +256,14 @@ export function AdminPricingClient() {
             <AdminMetric
               label="خرید"
               value={formatExactAmount(latest.buyPrice)}
-              unit="ریال"
+              unit="تومان"
               icon={TrendingUp}
               tone="gold"
             />
             <AdminMetric
               label="فروش"
               value={formatExactAmount(latest.sellPrice)}
-              unit="ریال"
+              unit="تومان"
               icon={TrendingUp}
             />
             <div className="bg-card border-border/60 rounded-xl border p-4">

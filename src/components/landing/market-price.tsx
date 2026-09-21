@@ -12,7 +12,7 @@ import { useMemo, useState } from 'react'
 import { AlertCircle, TrendingDown, TrendingUp } from 'lucide-react'
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { GoldPrice } from '@/lib/price/types'
-import { toPersianDigits, formatRial } from '@/lib/utils/utils'
+import { toPersianDigits, formatToman } from '@/lib/utils/utils'
 import { cn } from 'cn'
 
 type Range = 'daily' | 'monthly' | 'yearly'
@@ -44,7 +44,7 @@ function ChartTooltip({ active, payload }: { active?: boolean; payload?: { p: nu
   if (!active || !payload?.length) return null
   return (
     <div className="border-navy-100 text-navy-900 rounded-lg border bg-white px-3 py-2 text-xs font-semibold tabular-nums shadow-md">
-      {toPersianDigits(formatRial(payload[0]!.p))} ریال
+      {toPersianDigits(formatToman(payload[0]!.p))} تومان
     </div>
   )
 }
@@ -83,8 +83,8 @@ export function GoldMarketSection({ initialPrice }: { initialPrice: GoldPrice })
                   className="text-navy-950 text-xl font-extrabold tabular-nums sm:text-2xl"
                   dir="ltr"
                 >
-                  {toPersianDigits(formatRial(base))}
-                  <span className="text-navy-400 mr-1.5 text-xs font-normal">ریال / گرم</span>
+                  {toPersianDigits(formatToman(base))}
+                  <span className="text-navy-400 mr-1.5 text-xs font-normal">تومان / گرم</span>
                 </p>
                 <p className="mt-1 flex items-center gap-2 text-xs">
                   <span

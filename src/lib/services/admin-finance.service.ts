@@ -45,7 +45,7 @@ export interface AdminLedgerEntryRow {
   id: string
   entryType: LedgerEntryType
   amountGold: string | null
-  amountRial: string | null
+  amountToman: string | null
   balanceAfter: string | null
   createdAt: string
   ledgerAccount: {
@@ -117,7 +117,7 @@ export interface AdminOrderListRow {
   type: OrderType
   status: OrderStatus
   goldAmount: string
-  rialAmount: string
+  tomanAmount: string
   unitPrice: string
   spread: string
   fee: string
@@ -213,7 +213,7 @@ const ledgerEntrySelect = {
   id: true,
   entryType: true,
   amountGold: true,
-  amountRial: true,
+  amountToman: true,
   balanceAfter: true,
   createdAt: true,
   ledgerAccount: {
@@ -235,7 +235,7 @@ type RawLedgerEntry = {
   id: string
   entryType: LedgerEntryType
   amountGold: { toString(): string } | null
-  amountRial: bigint | null
+  amountToman: bigint | null
   balanceAfter: { toString(): string } | null
   createdAt: Date
   ledgerAccount: {
@@ -259,7 +259,7 @@ function serializeLedgerEntry(e: RawLedgerEntry): AdminLedgerEntryRow {
     id: e.id,
     entryType: e.entryType,
     amountGold: e.amountGold?.toString() ?? null,
-    amountRial: e.amountRial?.toString() ?? null,
+    amountToman: e.amountToman?.toString() ?? null,
     balanceAfter: e.balanceAfter?.toString() ?? null,
     createdAt: e.createdAt.toISOString(),
     ledgerAccount: e.ledgerAccount,
@@ -616,7 +616,7 @@ const orderSelect = {
   type: true,
   status: true,
   goldAmount: true,
-  rialAmount: true,
+  tomanAmount: true,
   unitPrice: true,
   spread: true,
   fee: true,
@@ -633,7 +633,7 @@ type RawOrder = {
   type: OrderType
   status: OrderStatus
   goldAmount: { toString(): string }
-  rialAmount: bigint
+  tomanAmount: bigint
   unitPrice: bigint
   spread: { toString(): string }
   fee: bigint
@@ -651,7 +651,7 @@ function serializeOrder(o: RawOrder): AdminOrderListRow {
     type: o.type,
     status: o.status,
     goldAmount: o.goldAmount.toString(),
-    rialAmount: o.rialAmount.toString(),
+    tomanAmount: o.tomanAmount.toString(),
     unitPrice: o.unitPrice.toString(),
     spread: o.spread.toString(),
     fee: o.fee.toString(),

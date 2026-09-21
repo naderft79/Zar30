@@ -42,8 +42,8 @@ async function fundUser(userId: string, amount: bigint) {
   await creditDeposit(ADMIN, dep.id, AUDIT)
 }
 
-async function rialOf(userId: string) {
-  const acct = await ensureAssetAccount(prisma, userId, 'RIAL')
+async function tomanOf(userId: string) {
+  const acct = await ensureAssetAccount(prisma, userId, 'TOMAN')
   return { balance: new Decimal(acct.balance), locked: new Decimal(acct.lockedBalance) }
 }
 
@@ -140,21 +140,21 @@ describe('Financial Core (Real PostgreSQL)', () => {
     const deposit = 10_000_000n
     await fundUser(userId, deposit)
 
-    const before = await rialOf(userId)
+    const before = await tomanOf(userId)
     expect(before.balance.toString()).toBe(deposit.toString())
 
-    const buyRial = 4_250_000n // دقیقاً نیم گرم با قیمت ۸.۵م
-    const order = await buyGold({ userId, kycLevel: 'LEVEL_3' }, { rialAmount: buyRial })
-    const fee = (buyRial * FEE_BPS) / 10_000n
-    const total = buyRial + fee
+    const buyToman = 4_250_000n // دقیقاً نیم گرم با قیمت ۸.۵م
+    const order = await buyGold({ userId, kycLevel: 'LEVEL_3' }, { tomanAmount: buyToman })
+    const fee = (buyToman * FEE_BPS) / 10_000n
+    const total = buyToman + fee
 
     expect(new Decimal(order.goldAmount).toString()).toBe('0.5')
     expect(order.status).toBe('FILLED')
 
     // موجودی‌ها
-    const afterRial = await rialOf(userId)
+    const afterToman = await tomanOf(userId)
     const afterGold = await goldOf(userId)
-    expect(afterRial.balance.toString()).toBe((deposit - total).toString())
+    expect(afterToman.balance.toString()).toBe((deposit - total).toString())
     expect(afterGold.balance.toString()).toBe('0.5')
 
     // سند متوازن
@@ -163,24 +163,24 @@ describe('Financial Core (Real PostgreSQL)', () => {
       where: { id: dbOrder.journalEntryId! },
       include: { ledgerEntries: true },
     })
-    const dRial = journal.ledgerEntries
+    const dToman = journal.ledgerEntries
       .filter((e) => e.entryType === 'DEBIT')
-      .reduce((s, e) => s + (e.amountRial ?? 0n), 0n)
-    const cRial = journal.ledgerEntries
+      .reduce((s, e) => s + (e.amountToman ?? 0n), 0n)
+    const cToman = journal.ledgerEntries
       .filter((e) => e.entryType === 'CREDIT')
-      .reduce((s, e) => s + (e.amountRial ?? 0n), 0n)
+      .reduce((s, e) => s + (e.amountToman ?? 0n), 0n)
     const dGold = journal.ledgerEntries
       .filter((e) => e.entryType === 'DEBIT')
       .reduce((s, e) => s.add(e.amountGold ?? 0), new Decimal(0))
     const cGold = journal.ledgerEntries
       .filter((e) => e.entryType === 'CREDIT')
       .reduce((s, e) => s.add(e.amountGold ?? 0), new Decimal(0))
-    expect(dRial).toBe(cRial)
+    expect(dToman).toBe(cToman)
     expect(dGold.equals(cGold)).toBe(true)
   })
 
-  it('۲) فروش طلا → ریال خالص (منهای کارمزد) به کیف پول می‌رسد', async () => {
-    const before = await rialOf(userId)
+  it('۲) فروش طلا → تومان خالص (منهای کارمزد) به کیف پول می‌رسد', async () => {
+    const before = await tomanOf(userId)
     const goldBefore = await goldOf(userId)
     const sellGold0 = new Decimal('0.2')
     const order = await sellGold({ userId, kycLevel: 'LEVEL_3' }, { goldAmount: sellGold0 })
@@ -194,14 +194,14 @@ describe('Financial Core (Real PostgreSQL)', () => {
     expect(order.type).toBe('SELL')
     expect(order.total).toBe(net.toString())
 
-    const after = await rialOf(userId)
+    const after = await tomanOf(userId)
     const afterGold = await goldOf(userId)
     expect(after.balance.toString()).toBe(before.balance.add(net.toString()).toString())
     expect(afterGold.balance.toString()).toBe(goldBefore.balance.sub(sellGold0).toString())
   })
 
   it('۳) debit همزمان — یکی باید شکست بخورد، موجودی منفی هرگز', async () => {
-    const current = await rialOf(userId)
+    const current = await tomanOf(userId)
     const big = current.balance // کل موجودی آزاد
     if (big.lte(0)) throw new Error('test setup: empty balance')
 
@@ -220,7 +220,7 @@ describe('Financial Core (Real PostgreSQL)', () => {
     expect(succeeded.length).toBeLessThanOrEqual(1)
     expect(failed.length).toBeGreaterThanOrEqual(1)
 
-    const after = await rialOf(userId)
+    const after = await tomanOf(userId)
     // مدل موجودی: balance = آزاد، locked = مسدود — هر دو ≥ 0
     expect(after.balance.gte(0)).toBe(true)
     expect(after.locked.gte(0)).toBe(true)
@@ -237,7 +237,7 @@ describe('Financial Core (Real PostgreSQL)', () => {
       }
     }
 
-    const current = await rialOf(userId)
+    const current = await tomanOf(userId)
     // balance = موجودی آزاد — مبلغ از همین محاسبه می‌شود
     const amount = BigInt(current.balance.toDecimalPlaces(0, Decimal.ROUND_FLOOR).toString())
     const w = await requestWithdrawal(
@@ -287,8 +287,8 @@ describe('Financial Core (Real PostgreSQL)', () => {
   })
 
   it('۶) سند نامتوازن → postJournal رد می‌کند و هیچ اثری نمی‌ماند', async () => {
-    const rial = await ensureAssetAccount(prisma, userId, 'RIAL')
-    const before = await rialOf(userId)
+    const toman = await ensureAssetAccount(prisma, userId, 'TOMAN')
+    const before = await tomanOf(userId)
 
     await expect(
       prisma.$transaction(async (tx) => {
@@ -296,18 +296,18 @@ describe('Financial Core (Real PostgreSQL)', () => {
           description: 'TEST_imbalanced',
           legs: [
             {
-              account: 'ASSET_RIAL',
+              account: 'ASSET_TOMAN',
               side: 'DEBIT',
-              amountRial: 1000n,
-              assetAccountId: rial.id,
+              amountToman: 1000n,
+              assetAccountId: toman.id,
             },
-            { account: 'LIABILITY_USER_RIAL', side: 'CREDIT', amountRial: 999n },
+            { account: 'LIABILITY_USER_TOMAN', side: 'CREDIT', amountToman: 999n },
           ],
         })
       }),
     ).rejects.toThrow()
 
-    const after = await rialOf(userId)
+    const after = await tomanOf(userId)
     expect(after.balance.toString()).toBe(before.balance.toString())
   })
 
@@ -323,7 +323,7 @@ describe('Financial Core (Real PostgreSQL)', () => {
     })
     const journalId = order.journalEntryId!
 
-    const rialBefore = await rialOf(userId)
+    const tomanBefore = await tomanOf(userId)
     const goldBefore = await goldOf(userId)
 
     const result = await reverseJournalEntry(ADMIN, journalId, 'test reversal', AUDIT)
@@ -340,11 +340,11 @@ describe('Financial Core (Real PostgreSQL)', () => {
     })
     expect(reversal.reversalOf).toBe(journalId)
 
-    // موجودی‌ها به حالت قبل از sell برگشتند (sell: +rial −gold → reversal: −rial +gold)
-    const rialAfter = await rialOf(userId)
+    // موجودی‌ها به حالت قبل از sell برگشتند (sell: +toman −gold → reversal: −toman +gold)
+    const tomanAfter = await tomanOf(userId)
     const goldAfter = await goldOf(userId)
     const net = BigInt(order.total)
-    expect(rialAfter.balance.toString()).toBe(rialBefore.balance.sub(net.toString()).toString())
+    expect(tomanAfter.balance.toString()).toBe(tomanBefore.balance.sub(net.toString()).toString())
     expect(goldAfter.balance.toString()).toBe(
       goldBefore.balance.add(order.goldAmount.toString()).toString(),
     )
@@ -360,20 +360,20 @@ describe('Financial Core (Real PostgreSQL)', () => {
   it('۹) تطبیق — موجودی حساب‌های تست با دفتر کل سازگار است', async () => {
     // reconcile صفحه اول — حساب‌های تست ما ممکن است در صفحه اول نباشند؛
     // برای دقت مستقیم روی ledger محاسبه می‌کنیم
-    const rial = await ensureAssetAccount(prisma, userId, 'RIAL')
+    const toman = await ensureAssetAccount(prisma, userId, 'TOMAN')
     const rows = await prisma.ledgerEntry.findMany({
-      where: { assetAccountId: rial.id },
+      where: { assetAccountId: toman.id },
       include: { ledgerAccount: { select: { code: true } } },
     })
     let expected = new Decimal(0)
     let expectedLocked = new Decimal(0)
     for (const e of rows) {
-      const amt = new Decimal((e.amountRial ?? 0n).toString())
+      const amt = new Decimal((e.amountToman ?? 0n).toString())
       const signed = e.entryType === 'DEBIT' ? amt : amt.neg()
-      if (e.ledgerAccount.code === 'ASSET_RIAL') expected = expected.add(signed)
-      if (e.ledgerAccount.code === 'ASSET_LOCKED_RIAL') expectedLocked = expectedLocked.add(signed)
+      if (e.ledgerAccount.code === 'ASSET_TOMAN') expected = expected.add(signed)
+      if (e.ledgerAccount.code === 'ASSET_LOCKED_TOMAN') expectedLocked = expectedLocked.add(signed)
     }
-    const acct = await prisma.assetAccount.findUniqueOrThrow({ where: { id: rial.id } })
+    const acct = await prisma.assetAccount.findUniqueOrThrow({ where: { id: toman.id } })
     expect(new Decimal(acct.balance).toString()).toBe(expected.toString())
     expect(new Decimal(acct.lockedBalance).toString()).toBe(expectedLocked.toString())
 

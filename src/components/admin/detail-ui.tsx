@@ -127,9 +127,9 @@ export function LedgerEntriesTable({ entries }: { entries: AdminLedgerEntryRow[]
                 <AdminStatus status={e.entryType} />
               </td>
               <td className="px-3 py-2 whitespace-nowrap">
-                {e.amountRial !== null && <FinancialValue value={e.amountRial} unit="ریال" />}
+                {e.amountToman !== null && <FinancialValue value={e.amountToman} unit="تومان" />}
                 {e.amountGold !== null && <FinancialValue value={e.amountGold} unit="گرم" />}
-                {e.amountRial === null && e.amountGold === null && '—'}
+                {e.amountToman === null && e.amountGold === null && '—'}
               </td>
               <td className="px-3 py-2 whitespace-nowrap">
                 {e.balanceAfter !== null ? <FinancialValue value={e.balanceAfter} /> : '—'}

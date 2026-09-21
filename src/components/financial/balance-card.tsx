@@ -5,7 +5,7 @@ import { TrendBadge } from './trend-badge'
 
 // ============================================
 // Balance Card — کارت موجودی دارایی
-// variant: gold (طلایی) | fiat (ریالی) | total
+// variant: gold (طلایی) | fiat (تومانی) | total
 // ============================================
 
 interface BalanceCardProps {
@@ -33,7 +33,7 @@ const variantConfig = {
   },
   fiat: {
     icon: Wallet,
-    title: 'موجودی ریالی',
+    title: 'موجودی تومانی',
     unit: 'تومان',
     cardClass:
       'border-navy-500/20 bg-gradient-to-bl from-navy-500/10 via-card to-card dark:from-navy-400/10',

@@ -36,7 +36,7 @@ const prisma = new PrismaClient({ adapter })
 - `JournalEntry` → مجموعه atomic متوازن (debit = credit)
 - `LedgerAccount` → حساب دفتری (ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
 - `LedgerEntry` → رکورد immutable debit/credit
-- `AssetAccount` → حساب دارایی کاربر (RIAL, GOLD, قابل توسعه)
+- `AssetAccount` → حساب دارایی کاربر (TOMAN, GOLD, قابل توسعه)
 - `Balance` → جمع LedgerEntryها (redundant + reconciliation)
 - `Reversal` → compensating transaction (نه UPDATE)
 
@@ -52,7 +52,7 @@ const prisma = new PrismaClient({ adapter })
 **تصمیم:** Wallet به‌عنوان Container + Asset Accountهای جدا
 
 ```
-User → Wallet → AssetAccount(RIAL) + AssetAccount(GOLD) + [آینده: SILVER, ...]
+User → Wallet → AssetAccount(TOMAN) + AssetAccount(GOLD) + [آینده: SILVER, ...]
 ```
 
 **مزیت:** اضافه کردن Asset جدید بدون تغییر بنیادی معماری
@@ -140,18 +140,18 @@ Shared Codebase (src/)
 
 **تصمیم:** تمام مقادیر تجاری به‌صورت configurable با پیش‌فرض موقت
 
-| مقدار                 | پیش‌فرض dev  | وضعیت   |
-| --------------------- | ------------ | ------- |
-| Spread                | 0.5%         | PENDING |
-| Trading Fee           | 0.5%         | PENDING |
-| Withdrawal Limit      | 50M Rial/day | PENDING |
-| Investment Rate       | 15%/year     | PENDING |
-| Installment Rate      | 10%/year     | PENDING |
-| Referral Commission   | 5%           | PENDING |
-| Physical Delivery Min | 100g         | PENDING |
-| SMS Provider          | Kavenegar    | PENDING |
-| Payment Gateway       | Zarinpal     | PENDING |
-| Price API             | ToloChart    | PENDING |
+| مقدار                 | پیش‌فرض dev   | وضعیت   |
+| --------------------- | ------------- | ------- |
+| Spread                | 0.5%          | PENDING |
+| Trading Fee           | 0.5%          | PENDING |
+| Withdrawal Limit      | 50M Toman/day | PENDING |
+| Investment Rate       | 15%/year      | PENDING |
+| Installment Rate      | 10%/year      | PENDING |
+| Referral Commission   | 5%            | PENDING |
+| Physical Delivery Min | 100g          | PENDING |
+| SMS Provider          | Kavenegar     | PENDING |
+| Payment Gateway       | Zarinpal      | PENDING |
+| Price API             | ToloChart     | PENDING |
 
 ## ADR-013: Next.js 16 — Middleware → Proxy
 
@@ -240,7 +240,7 @@ Shared Codebase (src/)
 
 **اجزای کلیدی:**
 
-- **Wealth Hero** (`wealth-hero.tsx`): سطح ممتاز `.surface-wealth` — Navy لایه‌ای + halo طلایی کنترل‌شده + `gold-rings` تزئینی؛ عدد شاخص «ارزش کل دارایی» + تفکیک طلا/ریال.
+- **Wealth Hero** (`wealth-hero.tsx`): سطح ممتاز `.surface-wealth` — Navy لایه‌ای + halo طلایی کنترل‌شده + `gold-rings` تزئینی؛ عدد شاخص «ارزش کل دارایی» + تفکیک طلا/تومان.
 - **PanelShell:** سایدبار با eyebrow «پنل کاربری»، آیتم‌های nav با گرادیان طلایی active + نشانگر نوار طلایی؛ کارت کاربر → پروفایل؛ Header با عنوان صفحه context-aware + تاریخ + آواتار + bell؛ Bottom Nav با pill فعال. انتقال صفحه با `animate-page-in` (key={pathname}).
 - **Sessions:** دسکتاپ = جدول داده premium (thead معنایی) — موبایل = کارت تعاملی. خلاصه «نشست جاری» همیشه‌نمایان در header کارت.
 - **Notifications:** فیلتر tablist «همه / خوانده‌نشده» + آیکون دسته‌بندی بر اساس نوع.

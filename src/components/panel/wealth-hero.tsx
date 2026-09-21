@@ -17,7 +17,7 @@ interface WealthHeroProps {
   dateLabel?: string
   totalValue: number | string
   goldGrams: number | string
-  rialBalance: number | string
+  tomanBalance: number | string
   changePercent?: number
   statusLabel?: string
   statusTone?: 'success' | 'warning' | 'error'
@@ -30,7 +30,7 @@ export function WealthHero({
   dateLabel,
   totalValue,
   goldGrams,
-  rialBalance,
+  tomanBalance,
   changePercent,
   statusLabel,
   statusTone = 'success',
@@ -88,7 +88,7 @@ export function WealthHero({
         )}
       </div>
 
-      {/* تفکیک دارایی — طلا / ریال */}
+      {/* تفکیک دارایی — طلا / تومان */}
       <div className="border-cream-50/10 relative mt-8 grid grid-cols-1 gap-4 border-t pt-5 sm:grid-cols-2">
         <div className="flex items-center gap-3">
           <span className="bg-gold-500/15 text-gold-400 ring-gold-500/25 flex size-10 shrink-0 items-center justify-center rounded-xl ring-1">
@@ -115,12 +115,12 @@ export function WealthHero({
             <Wallet className="size-5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
-            <p className="text-navy-200/70 text-[11px]">موجودی ریالی</p>
+            <p className="text-navy-200/70 text-[11px]">موجودی تومانی</p>
             {loading ? (
               <div className="skeleton-shimmer mt-1 h-6 w-24 rounded" />
             ) : (
               <FinancialNumber
-                value={rialBalance}
+                value={tomanBalance}
                 unit="تومان"
                 size="md"
                 decimals={0}

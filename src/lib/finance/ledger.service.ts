@@ -12,8 +12,8 @@
 // قراردادها:
 // - هر Journal باید به ازای هر ارز تراز باشد: ΣDEBIT = ΣCREDIT
 // - legهای دارای assetAccountId موجودی حساب را جابه‌جا می‌کنند:
-//     ASSET_RIAL/ASSET_GOLD        → balance (آزاد)
-//     ASSET_LOCKED_RIAL/GOLD       → lockedBalance
+//     ASSET_TOMAN/ASSET_GOLD        → balance (آزاد)
+//     ASSET_LOCKED_TOMAN/GOLD       → lockedBalance
 //     DEBIT → افزایش | CREDIT → کاهش
 // - balance و lockedBalance هرگز منفی نمی‌شوند → race-safe
 // - قفل ردیفی (SELECT ... FOR UPDATE) روی هر حساب قبل از تغییر
@@ -29,7 +29,7 @@ type Tx = Prisma.TransactionClient
 export interface JournalLeg {
   account: string // code حساب دفتر کل
   side: 'DEBIT' | 'CREDIT'
-  amountRial?: bigint
+  amountToman?: bigint
   amountGold?: Decimal | string
   assetAccountId?: string // فقط برای legهای سمت کاربر
 }
@@ -49,8 +49,8 @@ interface LockedAssetAccount {
 
 // نگاشت code حساب → فیلد موجودی روی AssetAccount
 const ACCOUNT_EFFECT: Record<string, 'balance' | 'lockedBalance'> = {
-  ASSET_RIAL: 'balance',
-  ASSET_LOCKED_RIAL: 'lockedBalance',
+  ASSET_TOMAN: 'balance',
+  ASSET_LOCKED_TOMAN: 'lockedBalance',
   ASSET_GOLD: 'balance',
   ASSET_LOCKED_GOLD: 'lockedBalance',
 }
@@ -77,7 +77,7 @@ async function applyLegEffect(
 
   const account = await lockAssetAccount(tx, leg.assetAccountId)
   const amount =
-    leg.amountRial != null ? new Decimal(leg.amountRial.toString()) : new Decimal(leg.amountGold!)
+    leg.amountToman != null ? new Decimal(leg.amountToman.toString()) : new Decimal(leg.amountGold!)
   const signed = leg.side === 'DEBIT' ? amount : amount.neg()
   const current = new Decimal(account[field])
   const next = current.add(signed)
@@ -110,35 +110,35 @@ export async function postJournal(tx: Tx, input: PostJournalInput) {
   for (const leg of input.legs) {
     const acct = byCode.get(leg.account)
     if (!acct) throw FinanceErrors.ledgerAccountMissing(leg.account)
-    const hasRial = leg.amountRial != null
+    const hasToman = leg.amountToman != null
     const hasGold = leg.amountGold != null
-    if (hasRial === hasGold) throw FinanceErrors.ledgerImbalance()
-    if (hasRial && leg.amountRial! <= 0n) throw FinanceErrors.invalidAmount()
+    if (hasToman === hasGold) throw FinanceErrors.ledgerImbalance()
+    if (hasToman && leg.amountToman! <= 0n) throw FinanceErrors.invalidAmount()
     if (hasGold && new Decimal(leg.amountGold!).lte(0)) throw FinanceErrors.invalidAmount()
-    // حساب assetType=GOLD فقط leg طلایی می‌پذیرد؛ سایر حساب‌ها فقط ریال
+    // حساب assetType=GOLD فقط leg طلایی می‌پذیرد؛ سایر حساب‌ها فقط تومان
     if (acct.assetType === 'GOLD' && !hasGold) throw FinanceErrors.ledgerImbalance()
     if (acct.assetType !== 'GOLD' && hasGold) throw FinanceErrors.ledgerImbalance()
   }
 
   // قانون تراز — جداگانه برای هر ارز
-  let debitRial = 0n
-  let creditRial = 0n
+  let debitToman = 0n
+  let creditToman = 0n
   let debitGold = new Decimal(0)
   let creditGold = new Decimal(0)
   for (const leg of input.legs) {
-    if (leg.amountRial != null) {
-      if (leg.side === 'DEBIT') debitRial += leg.amountRial
-      else creditRial += leg.amountRial
+    if (leg.amountToman != null) {
+      if (leg.side === 'DEBIT') debitToman += leg.amountToman
+      else creditToman += leg.amountToman
     } else {
       const g = new Decimal(leg.amountGold!)
       if (leg.side === 'DEBIT') debitGold = debitGold.add(g)
       else creditGold = creditGold.add(g)
     }
   }
-  if (debitRial !== creditRial || !debitGold.equals(creditGold)) {
+  if (debitToman !== creditToman || !debitGold.equals(creditGold)) {
     throw FinanceErrors.ledgerImbalance()
   }
-  if (debitRial === 0n && debitGold.isZero()) {
+  if (debitToman === 0n && debitGold.isZero()) {
     throw FinanceErrors.ledgerImbalance()
   }
 
@@ -158,7 +158,7 @@ export async function postJournal(tx: Tx, input: PostJournalInput) {
         journalEntryId: journal.id,
         ledgerAccountId: acct.id,
         entryType: leg.side,
-        amountRial: leg.amountRial ?? null,
+        amountToman: leg.amountToman ?? null,
         amountGold: leg.amountGold != null ? new Decimal(leg.amountGold) : null,
         assetAccountId: effect?.assetAccountId ?? leg.assetAccountId ?? null,
         balanceAfter: effect?.balanceAfter ?? null,
@@ -194,7 +194,7 @@ export async function reverseJournal(
   const legs: JournalLeg[] = entries.map((e) => ({
     account: e.ledgerAccount.code,
     side: e.entryType === 'DEBIT' ? 'CREDIT' : 'DEBIT',
-    amountRial: e.amountRial ?? undefined,
+    amountToman: e.amountToman ?? undefined,
     amountGold: e.amountGold ?? undefined,
     assetAccountId: e.assetAccountId ?? undefined,
   }))

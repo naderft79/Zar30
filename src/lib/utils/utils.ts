@@ -16,8 +16,8 @@ export function toPersianDigits(input: number | string): string {
   return String(input).replace(/\d/g, (d) => persianDigits.charAt(Number(d)))
 }
 
-// فرمت مبلغ ریالی با جداکننده هزارگان
-export function formatRial(amount: number | bigint): string {
+// فرمت مبلغ تومانی با جداکننده هزارگان
+export function formatToman(amount: number | bigint): string {
   return new Intl.NumberFormat('fa-IR').format(Number(amount))
 }
 

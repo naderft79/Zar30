@@ -5,9 +5,9 @@
 //
 // امنیت مالی:
 // - در لحظه درخواست، مبلغ از balance به lockedBalance منتقل می‌شود
-//   (D ASSET_LOCKED_RIAL / C ASSET_RIAL) → double-spend ممکن نیست
-// - pay: آزادسازی قفل + انقضای بدهی (C ASSET_LOCKED_RIAL / D LIABILITY_USER_RIAL)
-// - reject/fail: بازگشت قفل به موجودی (D ASSET_RIAL / C ASSET_LOCKED_RIAL)
+//   (D ASSET_LOCKED_TOMAN / C ASSET_TOMAN) → double-spend ممکن نیست
+// - pay: آزادسازی قفل + انقضای بدهی (C ASSET_LOCKED_TOMAN / D LIABILITY_USER_TOMAN)
+// - reject/fail: بازگشت قفل به موجودی (D ASSET_TOMAN / C ASSET_LOCKED_TOMAN)
 // - همه تغییر وضعیت‌ها داخل transaction + FOR UPDATE روی درخواست
 // ============================================
 
@@ -17,7 +17,7 @@ import { toAuditData, type AuditEntry } from '@/lib/audit/audit'
 import { FinanceErrors } from './errors'
 import { postJournal } from './ledger.service'
 import { ensureAssetAccount } from './wallet.service'
-import { MIN_WITHDRAWAL_RIAL } from './fee.service'
+import { MIN_WITHDRAWAL_TOMAN } from './fee.service'
 import { KYC_LIMITS } from './limits'
 import { notifyFinancial } from './notify'
 
@@ -37,37 +37,37 @@ export async function requestWithdrawal(
   ctx: { userId: string; kycLevel: KycLevel },
   input: { amount: bigint; iban: string },
 ) {
-  if (input.amount < MIN_WITHDRAWAL_RIAL) {
+  if (input.amount < MIN_WITHDRAWAL_TOMAN) {
     throw FinanceErrors.invalidAmount(
-      `حداقل مبلغ برداشت ${MIN_WITHDRAWAL_RIAL.toLocaleString('en')} ریال است`,
+      `حداقل مبلغ برداشت ${MIN_WITHDRAWAL_TOMAN.toLocaleString('en')} تومان است`,
     )
   }
-  const limit = KYC_LIMITS[ctx.kycLevel].withdrawalRial
+  const limit = KYC_LIMITS[ctx.kycLevel].withdrawalToman
   if (limit === 0n) throw FinanceErrors.kycRequired('برای برداشت، احراز هویت سطح ۲ لازم است')
   if (limit !== null && input.amount > limit) {
     throw FinanceErrors.limitExceeded('مبلغ بیش از سقف برداشت روزانه شماست')
   }
 
   const result = await prisma.$transaction(async (tx) => {
-    const rial = await ensureAssetAccount(tx, ctx.userId, 'RIAL')
+    const toman = await ensureAssetAccount(tx, ctx.userId, 'TOMAN')
 
     // قفل مبلغ — موجودی آزاد کم و مسدودشده زیاد می‌شود
     const journal = await postJournal(tx, {
       referenceType: 'WITHDRAWAL_LOCK',
       referenceId: ctx.userId,
-      description: `Withdrawal lock — ${input.amount.toString()} IRR`,
+      description: `Withdrawal lock — ${input.amount.toString()} TOMAN`,
       legs: [
         {
-          account: 'ASSET_LOCKED_RIAL',
+          account: 'ASSET_LOCKED_TOMAN',
           side: 'DEBIT',
-          amountRial: input.amount,
-          assetAccountId: rial.id,
+          amountToman: input.amount,
+          assetAccountId: toman.id,
         },
         {
-          account: 'ASSET_RIAL',
+          account: 'ASSET_TOMAN',
           side: 'CREDIT',
-          amountRial: input.amount,
-          assetAccountId: rial.id,
+          amountToman: input.amount,
+          assetAccountId: toman.id,
         },
       ],
     })
@@ -84,7 +84,7 @@ export async function requestWithdrawal(
 
     const transaction = await tx.transaction.create({
       data: {
-        walletId: rial.walletId,
+        walletId: toman.walletId,
         userId: ctx.userId,
         type: 'WITHDRAW',
         amount: input.amount,
@@ -172,20 +172,20 @@ export async function payWithdrawal(
     if (w.status !== 'APPROVED') throw FinanceErrors.withdrawalAlreadyProcessed()
 
     const request = await tx.withdrawalRequest.findUniqueOrThrow({ where: { id } })
-    const rial = await ensureAssetAccount(tx, request.userId, 'RIAL')
+    const toman = await ensureAssetAccount(tx, request.userId, 'TOMAN')
 
     const journal = await postJournal(tx, {
       referenceType: 'WITHDRAWAL_PAY',
       referenceId: id,
-      description: `Withdrawal pay — ${request.amount.toString()} IRR`,
+      description: `Withdrawal pay — ${request.amount.toString()} TOMAN`,
       legs: [
         {
-          account: 'ASSET_LOCKED_RIAL',
+          account: 'ASSET_LOCKED_TOMAN',
           side: 'CREDIT',
-          amountRial: request.amount,
-          assetAccountId: rial.id,
+          amountToman: request.amount,
+          assetAccountId: toman.id,
         },
-        { account: 'LIABILITY_USER_RIAL', side: 'DEBIT', amountRial: request.amount },
+        { account: 'LIABILITY_USER_TOMAN', side: 'DEBIT', amountToman: request.amount },
       ],
     })
 
@@ -246,25 +246,25 @@ export async function rejectWithdrawal(
     }
 
     const request = await tx.withdrawalRequest.findUniqueOrThrow({ where: { id } })
-    const rial = await ensureAssetAccount(tx, request.userId, 'RIAL')
+    const toman = await ensureAssetAccount(tx, request.userId, 'TOMAN')
 
     // آزادسازی قفل — بازگشت به موجودی آزاد
     await postJournal(tx, {
       referenceType: 'WITHDRAWAL_RELEASE',
       referenceId: id,
-      description: `Withdrawal release (rejected) — ${request.amount.toString()} IRR`,
+      description: `Withdrawal release (rejected) — ${request.amount.toString()} TOMAN`,
       legs: [
         {
-          account: 'ASSET_RIAL',
+          account: 'ASSET_TOMAN',
           side: 'DEBIT',
-          amountRial: request.amount,
-          assetAccountId: rial.id,
+          amountToman: request.amount,
+          assetAccountId: toman.id,
         },
         {
-          account: 'ASSET_LOCKED_RIAL',
+          account: 'ASSET_LOCKED_TOMAN',
           side: 'CREDIT',
-          amountRial: request.amount,
-          assetAccountId: rial.id,
+          amountToman: request.amount,
+          assetAccountId: toman.id,
         },
       ],
     })

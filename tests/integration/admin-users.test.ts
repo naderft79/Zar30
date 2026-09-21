@@ -94,7 +94,7 @@ describe('Admin Users Service (DB واقعی)', () => {
     // ردیف‌ها riskState:null و مقادیر مالی string دارند
     const row = found.rows.find((r) => r.id === user.id)!
     expect(row.riskState).toBeNull()
-    expect(typeof row.rialBalance).toBe('string')
+    expect(typeof row.tomanBalance).toBe('string')
     expect(typeof row.goldBalance).toBe('string')
 
     // nulls-last — sort روی lastLoginAt؛ هیچ کاربرِ login‌نکرده‌ای قبل از login‌کرده نمی‌آید

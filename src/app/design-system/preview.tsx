@@ -255,7 +255,7 @@ export function DesignSystemPreview() {
           <EmptyState
             icon={Coins}
             title="هنوز دارایی ندارید"
-            description="با اولین واریز، کیف پول طلا و ریالی شما ساخته می‌شود."
+            description="با اولین واریز، کیف پول طلا و تومانی شما ساخته می‌شود."
             badge="پیش‌نمایش"
           />
           <ErrorState

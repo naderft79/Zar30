@@ -23,9 +23,9 @@ export interface ReconciliationRow {
 
 // نگاشت code حساب → بعد موجودی
 const FIELD_BY_CODE: Record<string, 'balance' | 'lockedBalance'> = {
-  ASSET_RIAL: 'balance',
+  ASSET_TOMAN: 'balance',
   ASSET_GOLD: 'balance',
-  ASSET_LOCKED_RIAL: 'lockedBalance',
+  ASSET_LOCKED_TOMAN: 'lockedBalance',
   ASSET_LOCKED_GOLD: 'lockedBalance',
 }
 
@@ -46,7 +46,7 @@ export async function reconcileAssetAccounts(page: number, limit: number) {
   const sums = await prisma.ledgerEntry.groupBy({
     by: ['assetAccountId', 'ledgerAccountId', 'entryType'],
     where: { assetAccountId: { in: ids } },
-    _sum: { amountRial: true, amountGold: true },
+    _sum: { amountToman: true, amountGold: true },
   })
 
   const accountCodes = new Map(
@@ -68,7 +68,7 @@ export async function reconcileAssetAccounts(page: number, limit: number) {
       const amount =
         acct.assetType === 'GOLD'
           ? new Decimal(s._sum.amountGold ?? 0)
-          : new Decimal((s._sum.amountRial ?? 0n).toString())
+          : new Decimal((s._sum.amountToman ?? 0n).toString())
       const signed = s.entryType === 'DEBIT' ? amount : amount.neg()
       if (field === 'balance') expectedBalance = expectedBalance.add(signed)
       else expectedLocked = expectedLocked.add(signed)

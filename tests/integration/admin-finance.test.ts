@@ -40,10 +40,10 @@ async function createVerifiedUser() {
 
 async function createWalletWithAccounts(userId: string) {
   const wallet = await prisma.wallet.create({ data: { userId } })
-  const rial = await prisma.assetAccount.create({
+  const toman = await prisma.assetAccount.create({
     data: {
       walletId: wallet.id,
-      assetType: 'RIAL',
+      assetType: 'TOMAN',
       // بیشینه دقت numeric(18,8) — float64 نمی‌تواند دقیق نگه دارد
       balance: '9999999999.99999999',
       lockedBalance: '5',
@@ -52,13 +52,13 @@ async function createWalletWithAccounts(userId: string) {
   const gold = await prisma.assetAccount.create({
     data: { walletId: wallet.id, assetType: 'GOLD', balance: '12.34567890' },
   })
-  return { wallet, rial, gold }
+  return { wallet, toman, gold }
 }
 
 describe('Admin Finance — Accounts/Wallets/Gold', () => {
   it('accounts list — pagination + Decimal های بزرگ دقیقاً string می‌مانند', async () => {
     const user = await createVerifiedUser()
-    const { rial } = await createWalletWithAccounts(user.id)
+    const { toman } = await createWalletWithAccounts(user.id)
 
     const { rows, total } = await listAdminAccounts({
       page: 1,
@@ -67,7 +67,7 @@ describe('Admin Finance — Accounts/Wallets/Gold', () => {
       direction: 'desc',
     })
     expect(total).toBeGreaterThanOrEqual(2)
-    const row = rows.find((r) => r.id === rial.id)!
+    const row = rows.find((r) => r.id === toman.id)!
     expect(row.balance).toBe('9999999999.99999999')
     expect(row.wallet.user.mobile).toBe(user.mobile)
     // هیچ Number/BigInt/Decimal شیء در خروجی نیست
@@ -76,27 +76,32 @@ describe('Admin Finance — Accounts/Wallets/Gold', () => {
 
   it('account detail — آخرین ledger entries با journal/account', async () => {
     const user = await createVerifiedUser()
-    const { rial } = await createWalletWithAccounts(user.id)
+    const { toman } = await createWalletWithAccounts(user.id)
     const ledgerAccount = await prisma.ledgerAccount.create({
-      data: { code: `TEST-${rial.id.slice(0, 8)}`, type: 'ASSET', name: 'تست', assetType: 'RIAL' },
+      data: {
+        code: `TEST-${toman.id.slice(0, 8)}`,
+        type: 'ASSET',
+        name: 'تست',
+        assetType: 'TOMAN',
+      },
     })
     const journal = await prisma.journalEntry.create({
-      data: { referenceType: 'test', referenceId: rial.id, description: 'تست' },
+      data: { referenceType: 'test', referenceId: toman.id, description: 'تست' },
     })
     await prisma.ledgerEntry.create({
       data: {
         journalEntryId: journal.id,
         ledgerAccountId: ledgerAccount.id,
         entryType: 'DEBIT',
-        amountRial: 1000n,
+        amountToman: 1000n,
         balanceAfter: '1000',
-        assetAccountId: rial.id,
+        assetAccountId: toman.id,
       },
     })
 
-    const detail = await getAdminAccountDetail(rial.id)
+    const detail = await getAdminAccountDetail(toman.id)
     expect(detail.ledgerEntries.length).toBe(1)
-    expect(detail.ledgerEntries[0]!.amountRial).toBe('1000')
+    expect(detail.ledgerEntries[0]!.amountToman).toBe('1000')
     expect(detail.ledgerEntries[0]!.entryType).toBe('DEBIT')
     expect(detail.ledgerEntries[0]!.ledgerAccount.code).toContain('TEST-')
     expect(detail.wallet.user.id).toBe(user.id)
@@ -121,7 +126,7 @@ describe('Admin Finance — Accounts/Wallets/Gold', () => {
 
     const detail = await getAdminWalletDetail(wallet.id)
     expect(detail.user.id).toBe(user.id)
-    expect(detail.accounts.map((a) => a.assetType)).toContain('RIAL')
+    expect(detail.accounts.map((a) => a.assetType)).toContain('TOMAN')
   })
 
   it('gold holdings — aggregate دقیق و لیست GOLD', async () => {
@@ -139,13 +144,13 @@ describe('Admin Finance — Accounts/Wallets/Gold', () => {
 describe('Admin Finance — Orders/Transactions/Deposits', () => {
   it('transaction detail — زنجیره journal + دو entry متوازن + audit', async () => {
     const user = await createVerifiedUser()
-    const { wallet, rial } = await createWalletWithAccounts(user.id)
+    const { wallet, toman } = await createWalletWithAccounts(user.id)
     const ledgerAccount = await prisma.ledgerAccount.create({
       data: {
-        code: `REV-${rial.id.slice(0, 8)}`,
+        code: `REV-${toman.id.slice(0, 8)}`,
         type: 'REVENUE',
         name: 'تست درآمد',
-        assetType: 'RIAL',
+        assetType: 'TOMAN',
       },
     })
     const journal = await prisma.journalEntry.create({
@@ -157,15 +162,15 @@ describe('Admin Finance — Orders/Transactions/Deposits', () => {
           journalEntryId: journal.id,
           ledgerAccountId: ledgerAccount.id,
           entryType: 'DEBIT',
-          amountRial: 5000n,
+          amountToman: 5000n,
           balanceAfter: '5000',
-          assetAccountId: rial.id,
+          assetAccountId: toman.id,
         },
         {
           journalEntryId: journal.id,
           ledgerAccountId: ledgerAccount.id,
           entryType: 'CREDIT',
-          amountRial: 5000n,
+          amountToman: 5000n,
           balanceAfter: null,
           assetAccountId: null,
         },
@@ -269,7 +274,7 @@ describe('Admin Finance — Orders/Transactions/Deposits', () => {
         userId: user.id,
         type: 'BUY',
         goldAmount: '1.5',
-        rialAmount: 10_000_000n,
+        tomanAmount: 10_000_000n,
         unitPrice: 6_666_666n,
         spread: '0.5',
         fee: 1000n,

@@ -12,7 +12,7 @@ import { FinancialValue } from '@/components/admin/financial-value'
 import { toPersianDigits } from '@/lib/utils/format'
 
 const ASSET_LABELS: Record<string, string> = {
-  RIAL: 'ریال',
+  TOMAN: 'تومان',
   GOLD: 'طلا',
   SILVER: 'نقره',
 }

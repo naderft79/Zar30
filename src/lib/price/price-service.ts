@@ -40,13 +40,13 @@ class DbPriceService implements PriceService {
 
 // MOCK — فقط fallback توسعه وقتی هیچ قیمتی در DB نیست
 // این عدد هیچ ارتباطی با قیمت واقعی بازار ندارد
-const MOCK_BASE_PRICE_RIAL = 8_500_000
+const MOCK_BASE_PRICE_TOMAN = 8_500_000
 
 class MockPriceService implements PriceService {
   async getCurrentPrice(): Promise<GoldPrice> {
     // نوسان کوچک تصادفی برای شبیه سازی بازار (فقط Demo)
     const jitter = Math.round((Math.random() - 0.5) * 20_000)
-    const buyPrice = MOCK_BASE_PRICE_RIAL + jitter
+    const buyPrice = MOCK_BASE_PRICE_TOMAN + jitter
     return {
       buyPrice,
       sellPrice: buyPrice - 50_000,

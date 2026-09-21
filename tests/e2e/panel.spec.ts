@@ -73,7 +73,7 @@ test.describe('User Panel', () => {
     // --- Dashboard: خلاصه مالی + placeholderها (نه داده واقعی) ---
     await expect(page.getByText('ارزش کل دارایی')).toBeVisible()
     await expect(page.getByText('موجودی طلا')).toBeVisible()
-    await expect(page.getByText('موجودی ریالی')).toBeVisible()
+    await expect(page.getByText('موجودی تومانی')).toBeVisible()
     await expect(page.getByText(/قیمت لحظه‌ای به‌زودی/)).toBeVisible()
     await expect(page.getByText(/هنوز تراکنشی ثبت نشده/)).toBeVisible()
 

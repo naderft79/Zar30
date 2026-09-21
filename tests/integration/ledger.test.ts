@@ -14,13 +14,13 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
 const prisma = new PrismaClient({ adapter })
 
 describe('Double-Entry Ledger (Real PostgreSQL)', () => {
-  let assetRial: { id: string }
+  let assetToman: { id: string }
   let revenueFee: { id: string }
   let equityCapital: { id: string }
 
   beforeAll(async () => {
-    assetRial = await prisma.ledgerAccount.findUniqueOrThrow({
-      where: { code: 'ASSET_RIAL' },
+    assetToman = await prisma.ledgerAccount.findUniqueOrThrow({
+      where: { code: 'ASSET_TOMAN' },
       select: { id: true },
     })
     revenueFee = await prisma.ledgerAccount.findUniqueOrThrow({
@@ -57,13 +57,13 @@ describe('Double-Entry Ledger (Real PostgreSQL)', () => {
         },
       })
 
-      // Debit: دارایی ریال +1,000,000
+      // Debit: دارایی تومان +1,000,000
       await tx.ledgerEntry.create({
         data: {
           journalEntryId: journal.id,
-          ledgerAccountId: assetRial.id,
+          ledgerAccountId: assetToman.id,
           entryType: 'DEBIT',
-          amountRial: 1_000_000n,
+          amountToman: 1_000_000n,
         },
       })
 
@@ -73,7 +73,7 @@ describe('Double-Entry Ledger (Real PostgreSQL)', () => {
           journalEntryId: journal.id,
           ledgerAccountId: equityCapital.id,
           entryType: 'CREDIT',
-          amountRial: 1_000_000n,
+          amountToman: 1_000_000n,
         },
       })
 
@@ -87,10 +87,10 @@ describe('Double-Entry Ledger (Real PostgreSQL)', () => {
 
     const debits = entries
       .filter((e) => e.entryType === 'DEBIT')
-      .reduce((sum, e) => sum + (e.amountRial ?? 0n), 0n)
+      .reduce((sum, e) => sum + (e.amountToman ?? 0n), 0n)
     const credits = entries
       .filter((e) => e.entryType === 'CREDIT')
-      .reduce((sum, e) => sum + (e.amountRial ?? 0n), 0n)
+      .reduce((sum, e) => sum + (e.amountToman ?? 0n), 0n)
 
     expect(debits).toBe(credits)
     expect(entries.length).toBe(2)
@@ -113,9 +113,9 @@ describe('Double-Entry Ledger (Real PostgreSQL)', () => {
         await tx.ledgerEntry.create({
           data: {
             journalEntryId: journal.id,
-            ledgerAccountId: assetRial.id,
+            ledgerAccountId: assetToman.id,
             entryType: 'DEBIT',
-            amountRial: 500n,
+            amountToman: 500n,
           },
         })
 
@@ -167,16 +167,16 @@ describe('Double-Entry Ledger (Real PostgreSQL)', () => {
       prisma.ledgerEntry.create({
         data: {
           journalEntryId: 'nonexistent-journal-id',
-          ledgerAccountId: assetRial.id,
+          ledgerAccountId: assetToman.id,
           entryType: 'DEBIT',
-          amountRial: 100n,
+          amountToman: 100n,
         },
       }),
     ).rejects.toThrow()
   })
 
   it('multi-entry journal: fee split stays balanced', async () => {
-    // سناریو: خرید 1,000,000 ریال + 5,000 ریال کارمزد
+    // سناریو: خرید 1,000,000 تومان + 5,000 تومان کارمزد
     const result = await prisma.$transaction(async (tx) => {
       const journal = await tx.journalEntry.create({
         data: {
@@ -186,13 +186,13 @@ describe('Double-Entry Ledger (Real PostgreSQL)', () => {
         },
       })
 
-      // کاربر 1,005,000 ریال پرداخت می کند
+      // کاربر 1,005,000 تومان پرداخت می کند
       await tx.ledgerEntry.create({
         data: {
           journalEntryId: journal.id,
-          ledgerAccountId: assetRial.id,
+          ledgerAccountId: assetToman.id,
           entryType: 'DEBIT',
-          amountRial: 1_005_000n,
+          amountToman: 1_005_000n,
         },
       })
 
@@ -202,7 +202,7 @@ describe('Double-Entry Ledger (Real PostgreSQL)', () => {
           journalEntryId: journal.id,
           ledgerAccountId: equityCapital.id,
           entryType: 'CREDIT',
-          amountRial: 1_000_000n,
+          amountToman: 1_000_000n,
         },
       })
       await tx.ledgerEntry.create({
@@ -210,7 +210,7 @@ describe('Double-Entry Ledger (Real PostgreSQL)', () => {
           journalEntryId: journal.id,
           ledgerAccountId: revenueFee.id,
           entryType: 'CREDIT',
-          amountRial: 5_000n,
+          amountToman: 5_000n,
         },
       })
 
@@ -223,10 +223,10 @@ describe('Double-Entry Ledger (Real PostgreSQL)', () => {
 
     const debits = entries
       .filter((e) => e.entryType === 'DEBIT')
-      .reduce((s, e) => s + (e.amountRial ?? 0n), 0n)
+      .reduce((s, e) => s + (e.amountToman ?? 0n), 0n)
     const credits = entries
       .filter((e) => e.entryType === 'CREDIT')
-      .reduce((s, e) => s + (e.amountRial ?? 0n), 0n)
+      .reduce((s, e) => s + (e.amountToman ?? 0n), 0n)
 
     expect(debits).toBe(credits)
     expect(debits).toBe(1_005_000n)

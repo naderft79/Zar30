@@ -64,8 +64,23 @@ export function AssetsClient() {
   const [amount, setAmount] = useState('')
   const [iban, setIban] = useState('')
   const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  // وضعیت برگشت از درگاه پرداخت — ?payment=success|cancelled|expired|failed|replayed
+  const [error, setError] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null
+    const p = new URLSearchParams(window.location.search).get('payment')
+    if (p === 'cancelled') return 'پرداخت توسط شما لغو شد'
+    if (p === 'expired') return 'مهلت پرداخت به پایان رسیده بود — لطفاً دوباره تلاش کنید'
+    if (p === 'failed' || p === 'invalid')
+      return 'پرداخت ناموفق بود — در صورت کسر مبلغ، طبق قوانین درگاه برگشت داده می‌شود'
+    return null
+  })
+  const [success, setSuccess] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null
+    const p = new URLSearchParams(window.location.search).get('payment')
+    if (p === 'success') return 'پرداخت شما با موفقیت انجام شد — موجودی کیف پول شارژ شد'
+    if (p === 'replayed') return 'این پرداخت قبلاً با موفقیت ثبت شده است'
+    return null
+  })
 
   async function loadAll() {
     const [walletRes, txRes] = await Promise.all([
@@ -94,9 +109,9 @@ export function AssetsClient() {
     }
   }, [])
 
-  const rial = accounts.find((a) => a.assetType === 'RIAL')
+  const toman = accounts.find((a) => a.assetType === 'TOMAN')
   const gold = accounts.find((a) => a.assetType === 'GOLD')
-  const total = Number(rial?.available ?? 0)
+  const total = Number(toman?.available ?? 0)
 
   async function submit() {
     setError(null)
@@ -110,19 +125,32 @@ export function AssetsClient() {
       return
     }
     setBusy(true)
-    const endpoint = form === 'deposit' ? '/api/v1/wallet/deposit' : '/api/v1/wallet/withdraw'
-    const body = form === 'deposit' ? { amount } : { amount, iban }
-    const res = await apiPost(endpoint, body, { 'Idempotency-Key': crypto.randomUUID() })
+    if (form === 'deposit') {
+      // واریز از مسیر درگاه پرداخت — پاسخ: redirectUrl به درگاه
+      const res = await apiPost<{ payment?: { redirectUrl?: string } }>(
+        '/api/v1/payments',
+        { amount },
+        { 'Idempotency-Key': crypto.randomUUID() },
+      )
+      setBusy(false)
+      if (!res.ok || !res.data?.payment?.redirectUrl) {
+        setError(res.ok ? 'درگاه پرداخت در دسترس نیست' : (res.error ?? 'عملیات ناموفق بود'))
+        return
+      }
+      window.location.href = res.data.payment.redirectUrl
+      return
+    }
+    const res = await apiPost(
+      '/api/v1/wallet/withdraw',
+      { amount, iban },
+      { 'Idempotency-Key': crypto.randomUUID() },
+    )
     setBusy(false)
     if (!res.ok) {
       setError(res.error ?? 'عملیات ناموفق بود')
       return
     }
-    setSuccess(
-      form === 'deposit'
-        ? 'درخواست واریز ثبت شد — پس از تایید به موجودی شما اضافه می‌شود'
-        : 'درخواست برداشت ثبت شد — مبلغ تا پرداخت مسدود می‌شود',
-    )
+    setSuccess('درخواست برداشت ثبت شد — مبلغ تا پرداخت مسدود می‌شود')
     setForm(null)
     setAmount('')
     setIban('')
@@ -141,16 +169,16 @@ export function AssetsClient() {
         />
         <BalanceCard
           variant="fiat"
-          amount={rial?.available ?? '0'}
-          unit="ریال"
-          subtitle="کیف پول ریالی"
+          amount={toman?.available ?? '0'}
+          unit="تومان"
+          subtitle="کیف پول تومانی"
           loading={loading}
         />
         <BalanceCard
           variant="total"
           amount={String(Math.round(total))}
-          unit="ریال"
-          subtitle="مجموع دارایی ریالی شما"
+          unit="تومان"
+          subtitle="مجموع دارایی تومانی شما"
           loading={loading}
           className="sm:col-span-2 lg:col-span-1"
         />
@@ -187,12 +215,12 @@ export function AssetsClient() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              {form === 'deposit' ? 'درخواست واریز' : 'درخواست برداشت'}
+              {form === 'deposit' ? 'واریز از درگاه پرداخت' : 'درخواست برداشت'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <label className="block space-y-1.5">
-              <span className="text-muted-foreground text-[11px]">مبلغ (ریال)</span>
+              <span className="text-muted-foreground text-[11px]">مبلغ (تومان)</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -223,9 +251,15 @@ export function AssetsClient() {
                 {error}
               </p>
             )}
+            {form === 'deposit' && (
+              <p className="text-muted-foreground text-[11px] leading-5">
+                پس از ثبت، به درگاه امن پرداخت هدایت می‌شوید؛ مبلغ بلافاصله پس از پرداخت موفق به کیف
+                پول شما اضافه می‌شود.
+              </p>
+            )}
             <div className="flex items-center gap-2">
               <Button variant="gold" onClick={submit} disabled={busy}>
-                {busy ? 'در حال ثبت…' : 'ثبت درخواست'}
+                {busy ? 'در حال ثبت…' : form === 'deposit' ? 'پرداخت' : 'ثبت درخواست'}
               </Button>
               <Button variant="ghost" onClick={() => setForm(null)} disabled={busy}>
                 انصراف
@@ -276,7 +310,7 @@ export function AssetsClient() {
                     <div className="text-left">
                       <p className="text-foreground text-xs font-semibold tabular-nums" dir="ltr">
                         {formatExactAmount(t.amount)}{' '}
-                        <span className="text-muted-foreground">ریال</span>
+                        <span className="text-muted-foreground">تومان</span>
                       </p>
                       <StatusBadge tone="gold" dot={false} className="mt-1">
                         {TX_STATUS[t.status] ?? t.status}
@@ -296,11 +330,11 @@ export function AssetsClient() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {Number(gold?.balance ?? 0) === 0 && Number(rial?.balance ?? 0) === 0 ? (
+            {Number(gold?.balance ?? 0) === 0 && Number(toman?.balance ?? 0) === 0 ? (
               <EmptyState
                 icon={PieChart}
                 title="دارایی فعالی ندارید"
-                description="نمودار ترکیب طلا و ریال پس از اولین تراکنش نمایش داده می‌شود."
+                description="نمودار ترکیب طلا و تومان پس از اولین تراکنش نمایش داده می‌شود."
               />
             ) : (
               <dl className="divide-border/40 divide-y text-xs">
@@ -311,16 +345,16 @@ export function AssetsClient() {
                   </dd>
                 </div>
                 <div className="flex items-center justify-between py-2">
-                  <dt className="text-muted-foreground">ریال</dt>
+                  <dt className="text-muted-foreground">تومان</dt>
                   <dd className="text-foreground font-semibold tabular-nums" dir="ltr">
-                    {formatExactAmount(rial?.balance ?? '0')} ریال
+                    {formatExactAmount(toman?.balance ?? '0')} تومان
                   </dd>
                 </div>
-                {Number(gold?.lockedBalance ?? 0) + Number(rial?.lockedBalance ?? 0) > 0 && (
+                {Number(gold?.lockedBalance ?? 0) + Number(toman?.lockedBalance ?? 0) > 0 && (
                   <div className="flex items-center justify-between py-2">
                     <dt className="text-muted-foreground">مسدود شده</dt>
                     <dd className="text-foreground font-semibold tabular-nums" dir="ltr">
-                      {formatExactAmount(rial?.lockedBalance ?? '0')} ریال +{' '}
+                      {formatExactAmount(toman?.lockedBalance ?? '0')} تومان +{' '}
                       {formatExactAmount(gold?.lockedBalance ?? '0')} گرم
                     </dd>
                   </div>

@@ -191,8 +191,8 @@ export function AdminUserDetailClient() {
                 <Field
                   key={a.assetType}
                   label={
-                    a.assetType === 'RIAL'
-                      ? 'ریال'
+                    a.assetType === 'TOMAN'
+                      ? 'تومان'
                       : a.assetType === 'GOLD'
                         ? 'طلا (گرم)'
                         : a.assetType
@@ -260,7 +260,7 @@ export function AdminUserDetailClient() {
                     <div>
                       <span className="text-foreground font-medium">{t.type}</span>
                       <span className="text-muted-foreground mr-2 tabular-nums">
-                        {formatExactAmount(t.amount)} ریال
+                        {formatExactAmount(t.amount)} تومان
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -293,7 +293,7 @@ export function AdminUserDetailClient() {
                         {o.type === 'BUY' ? 'خرید' : 'فروش'} {formatExactAmount(o.goldAmount)} گرم
                       </span>
                       <span className="text-muted-foreground mr-2 tabular-nums">
-                        {formatExactAmount(o.total)} ریال
+                        {formatExactAmount(o.total)} تومان
                       </span>
                     </div>
                     <div className="flex items-center gap-2">

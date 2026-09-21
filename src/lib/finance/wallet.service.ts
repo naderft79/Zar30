@@ -12,7 +12,7 @@ import { Decimal } from './money'
 type Tx = Prisma.TransactionClient
 type Client = Tx | typeof prisma
 
-// اطمینان از وجود کیف پول + حساب‌های RIAL و GOLD — idempotent
+// اطمینان از وجود کیف پول + حساب‌های TOMAN و GOLD — idempotent
 export async function ensureWallet(tx: Client, userId: string) {
   const wallet = await tx.wallet.upsert({
     where: { userId },
@@ -20,7 +20,7 @@ export async function ensureWallet(tx: Client, userId: string) {
     create: { userId },
   })
 
-  const assetTypes: AssetType[] = ['RIAL', 'GOLD']
+  const assetTypes: AssetType[] = ['TOMAN', 'GOLD']
   for (const assetType of assetTypes) {
     await tx.assetAccount.upsert({
       where: { walletId_assetType: { walletId: wallet.id, assetType } },

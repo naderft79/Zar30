@@ -104,7 +104,7 @@ export function AdminWithdrawalDetailClient() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Section title="جزئیات درخواست">
           <dl className="divide-border/40 divide-y">
-            <Field label="مبلغ" value={<FinancialValue value={w.amount} unit="ریال" />} />
+            <Field label="مبلغ" value={<FinancialValue value={w.amount} unit="تومان" />} />
             <Field
               label="شبا"
               value={

@@ -1,5 +1,29 @@
 # Zar30 — Changelog
 
+## [1.0.0] — Toman-Native + Live Pricing & Payment Gateway
+
+### Added
+
+- **Global Toman migration** — کل سیستم Toman-native شد: schema (`AssetType.TOMAN`, `LedgerEntry.amountToman`, `Order.tomanAmount`)، Financial Core، API، validators، UI، seeds، tests، env (`MIN_*_TOMAN`/`MAX_*_TOMAN`)، مستندات — بدون هیچ conversion layer یا helper تبدیل
+- **Data migration** `20260922011851_toman_native_payments` — حذف دقیق یک صفر انتهایی از تمام مقادیر پولی موجود (X0→X)؛ مقادیر طلا دست‌نخورده؛ تراز ledger حفظ شد؛ اسناد artifact غیرقابل‌تقسیم به‌همراه orderهای ناسازگار پاک شدند
+- **Live Price Provider** (`src/lib/price/providers/`): abstraction + adapter ToloChart + factory — خروجی همیشه تومان/گرم؛ `syncLivePrice` با اعتبارسنجی مرز (مثبت، sell≤buy، timestamp نه قدیمی و نه آینده‌نگر)، abnormal-movement check (سقف انحراف `PRICE_MAX_DEVIATION_PERCENT`)، stale protection (`PRICE_MAX_AGE_MINUTES`) — قیمت نامعتبر هرگز وارد Core نمی‌شود
+- **`POST /api/v1/admin/pricing/sync`** — همگام‌سازی دستی قیمت زنده با permission + audit
+- **Payment Gateway** (`src/lib/payment/`): abstraction `PaymentGateway` + adapterهای `sandbox` (dev/test) و `zarinpal` (v4) — تبدیل واحد درگاه فقط داخل adapter؛ `payment.service` با قفل ردیفی، replay protection، amount-mismatch check (`AMOUNT_MISMATCH`)، انقضا (۱۵ دقیقه) و credit اتمیک از مسیر `creditDepositCore`
+- **Payment APIs**: `GET/POST /api/v1/payments` (ایجاد جلسه پرداخت با idempotency) و `GET /api/v1/payments/callback` (verify + redirect) — مدل `Payment` در schema
+- **UI**: فرم واریز به درگاه پرداخت متصل شد (redirect به `redirectUrl`) + بنر وضعیت برگشت از درگاه در صفحه دارایی‌ها
+
+### Changed
+
+- `deposit.service` — هسته credit به `creditDepositCore` استخراج شد تا هم ادمین و هم callback درگاه از همان مسیر اتمیک استفاده کنند
+- `pricing.service` — `recordPrice` با abnormal-movement check؛ `getExecutablePrice` با stale check؛ `syncLivePrice` برای provider
+- مقادیر پیش‌فرض envهای مالی به مقیاس تومان اصلاح شد (`MIN_DEPOSIT_TOMAN=5000` و …)
+- vitest: `fileParallelism: false` — تست‌های integration یک PostgreSQL مشترک دارند و اجرای موازی فایل‌ها race روی state مشترک ایجاد می‌کرد
+
+### Verification
+
+- typecheck ✅ / payment integration 6/6 ✅ / pricing integration 6/6 ✅ / کل suite: 207/207 ✅
+- Global search: صفر مرجع واحد قدیمی در کد، schema، UI، tests، seeds و مستندات
+
 ## [0.9.0] — Production Financial Core & Transaction Engine
 
 ### Added
@@ -104,7 +128,7 @@ Risk/Fraud engine، financial approvals/mutations، support conversation، repor
 
 ### Added
 
-- **Wealth Hero** (`panel/wealth-hero.tsx`) — سطح ممتاز `.surface-wealth` + `gold-rings`: ارزش کل دارایی + تفکیک طلا/ریال + badgeهای وضعیت
+- **Wealth Hero** (`panel/wealth-hero.tsx`) — سطح ممتاز `.surface-wealth` + `gold-rings`: ارزش کل دارایی + تفکیک طلا/تومان + badgeهای وضعیت
 - **PanelShell** — سایدبار با nav طلایی‌گرادیانی + کارت کاربر → پروفایل؛ Header context-aware (عنوان صفحه + تاریخ + آواتار + bell)؛ انتقال صفحه `animate-page-in`
 - **Sessions** — جدول داده premium روی دسکتاپ + کارت تعاملی روی موبایل + خلاصه «نشست جاری» همیشه‌نمایان
 - **Notifications** — فیلتر «همه / خوانده‌نشده» + آیکون دسته‌بندی نوع اعلان
@@ -332,7 +356,7 @@ Risk/Fraud engine، financial approvals/mutations، support conversation، repor
 - Tailwind CSS v4 + پالت navy/gold/cream + تم تیره
 - فونت Vazirmatn + RTL + lang="fa"
 - Prisma 7.10.0 + PostgreSQL 18 + Double-Entry Ledger schema (20+ models)
-- Asset Accounts (Rial + Gold, extensible)
+- Asset Accounts (Toman + Gold, extensible)
 - IdempotencyRecord + RateLimitConfig tables
 - Docker Compose (PostgreSQL 18 + Redis 7 + MinIO)
 - Capacitor 8 (Android platform — دو Target: Web + Mobile)

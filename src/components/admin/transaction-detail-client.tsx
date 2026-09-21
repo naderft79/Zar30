@@ -77,7 +77,7 @@ export function AdminTransactionDetailClient() {
             label="اعتبارسنجی واریز"
             endpoint={`/api/v1/admin/deposits/${tx.id}/credit`}
             tone="gold"
-            confirmText="واریز تایید می‌شود و موجودی ریالی کاربر افزایش می‌یابد."
+            confirmText="واریز تایید می‌شود و موجودی تومانی کاربر افزایش می‌یابد."
             onDone={reload}
           />
           <FinanceAction
@@ -140,7 +140,7 @@ export function AdminTransactionDetailClient() {
               }
             />
             <Field label="نوع" value={TX_TYPE_LABELS[tx.type] ?? tx.type} />
-            <Field label="مبلغ" value={<FinancialValue value={tx.amount} unit="ریال" />} />
+            <Field label="مبلغ" value={<FinancialValue value={tx.amount} unit="تومان" />} />
             <Field label="وضعیت" value={<AdminStatus status={tx.status} />} />
             <Field
               label="کیف پول"

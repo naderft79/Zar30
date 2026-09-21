@@ -28,7 +28,7 @@
 | سوددهی                | به صورت طلا (تورم‌زدا)                                                                                               |
 | نوتیفیکیشن            | Web Push + FCM + APNs + درون‌اپ + SMS + ایمیل                                                                        |
 | **Ledger**            | **Double-Entry Ledger** (Transaction, Journal, Account, Entry) — نه signed ledger ساده                               |
-| **Wallet**            | Container با **Asset Accountهای جدا** (Rial, Gold، قابل توسعه)                                                       |
+| **Wallet**            | Container با **Asset Accountهای جدا** (Toman, Gold، قابل توسعه)                                                      |
 | **Financial Offline** | **ممنوع** — تمام عملیات مالی Online و Server-authoritative                                                           |
 | **Concurrency**       | **PostgreSQL Transaction + Row Lock** مرجع نهایی؛ Redis فقط coordination                                             |
 | **Idempotency**       | **Durable در DB** (`IdempotencyRecord`) + Redis برای acceleration                                                    |
@@ -71,7 +71,7 @@
 - خرید/فروش طلا (نقدی)
 - خرید قسطی (دو مدل)
 - سوددهی روی طلا
-- کیف پول ریالی + طلا + انتقال داخلی
+- کیف پول تومانی + طلا + انتقال داخلی
 - تحویل فیزیکی (درخواست + مدیریت ادمین)
 - تیکت و پشتیبانی + چت real-time
 - دعوت از دوستان + کمیسیون
@@ -84,14 +84,14 @@
 
 - اپ iOS Native (فقط PWA)
 - صرافی ارز دیجیتال
-- وام ریالی روی طلا (V2)
+- وام تومانی روی طلا (V2)
 - کارت بانکی اختصاصی زرسی (V2)
 - بازار ثانویه طلا (V2)
 - API عمومی برای توسعه‌دهندگان (V2)
 
 ### Future Expansion
 
-- وام ریالی با پشتوانه طلا
+- وام تومانی با پشتوانه طلا
 - کارت بانکی متصل به کیف پول
 - بازار ثانویه معاملات OTC
 - صندوق‌های سرمایه‌گذاری طلا
@@ -119,7 +119,7 @@
 - حداقل موجودی برای تحویل فیزیکی
 - نرخ سوددهی طرح‌ها (نیازمند تایید حقوقی)
 - مدل کمیسیون دعوت (تک‌سطحی/چندسطحی)
-- آیا سوددهی ریالی هم ارائه شود؟ (مقررات ربوی)
+- آیا سوددهی تومانی هم ارائه شود؟ (مقررات ربوی)
 
 ---
 
@@ -166,7 +166,7 @@
 3. تنظیم رمز → حساب ایجاد (سطح KYC 1)
 4. ورود به داشبورد → کلیک «خرید طلا»
 5. وارد کردن مبلغ/گرم → پیش‌نمایش (کارمزد، spread)
-6. تایید → کسر از کیف پول ریالی (یا درخواست شارژ)
+6. تایید → کسر از کیف پول تومانی (یا درخواست شارژ)
 7. ثبت معامله → اضافه شدن طلا به Ledger
 8. فاکتور PDF + نوتیفیکیشن
 
@@ -174,7 +174,7 @@
 
 1. داشبورد → «فروش طلا»
 2. انتخاب مقدار طلا → پیش‌نمایش
-3. تایید → کسر طلا، اضافه شدن ریال به کیف پول
+3. تایید → کسر طلا، اضافه شدن تومان به کیف پول
 4. درخواست برداشت به حساب بانکی (یا نگه‌داری)
 
 ### J3: احراز هویت
@@ -209,7 +209,7 @@
 1. داشبورد → «دعوت دوستان» → کد/لینک دعوت
 2. اشتراک‌گذاری → دوست ثبت‌نام می‌کند با کد
 3. دوست KYC + اولین معامله → دعوت «فعال» می‌شود
-4. پرداخت پاداش به دعوت‌کننده (طلا یا ریال)
+4. پرداخت پاداش به دعوت‌کننده (طلا یا تومان)
 
 ---
 
@@ -323,7 +323,7 @@
 ├── پنل کاربری (نیازمند لاگین) — قرارداد دائمی ۵ مقصدی (ADR-015)
 │   ├── خانه (/dashboard): خلاصه حساب، KYC، دارایی، معاملات، اعلان‌ها، اقدام سریع، قسطی، referral، امنیت
 │   ├── معاملات (/dashboard/trade): خرید/فروش طلا، قیمت لحظه‌ای، سفارش‌ها، تاریخچه، quote
-│   ├── دارایی (/dashboard/assets): موجودی طلا/ریال، کیف پول، سود و زیان، تراکنش‌ها، واریز/برداشت
+│   ├── دارایی (/dashboard/assets): موجودی طلا/تومان، کیف پول، سود و زیان، تراکنش‌ها، واریز/برداشت
 │   ├── قسطی (/dashboard/installments): طرح‌ها، قرارداد، اقساط، سررسید، پرداخت، تاریخچه
 │   ├── پروفایل (/dashboard/profile): اطلاعات، KYC، امنیت، نشست‌ها، رمز، 2FA، اعلان‌ها، referral، پشتیبانی، legal
 ├── پنل ادمین (نیازمند نقش ادمین)
@@ -535,14 +535,14 @@ Shared Codebase (src/)
 
 #### AssetAccount (دارایی‌های جدا — قابل توسعه)
 
-- id, walletId (FK), assetType (enum: RIAL, GOLD, SILVER, ...)
+- id, walletId (FK), assetType (enum: TOMAN, GOLD, SILVER, ...)
 - balance (Decimal/BigInt بسته به asset)، lockedBalance
 - availableBalance = balance - lockedBalance (computed)
 - **نکته**: اضافه کردن Asset جدید (نقره، ارز) بدون تغییر بنیادی architecture.
 
 #### LedgerAccount (حساب دفتری — Double-Entry)
 
-- id, code (unique, e.g., "ASSET_RIAL", "ASSET_GOLD", "FEE_REVENUE", "SPREAD_REVENUE")
+- id, code (unique, e.g., "ASSET_TOMAN", "ASSET_GOLD", "FEE_REVENUE", "SPREAD_REVENUE")
 - type (ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
 - name, assetType (nullable، برای asset accounts)
 - createdAt
@@ -559,7 +559,7 @@ Shared Codebase (src/)
 
 - id, journalEntryId (FK), ledgerAccountId (FK)
 - entryType (DEBIT/CREDIT)
-- amountGold (Decimal(18,8), nullable)، amountRial (BigInt, nullable)
+- amountGold (Decimal(18,8), nullable)، amountToman (BigInt, nullable)
 - balanceAfter (redundant برای performance)
 - assetAccountId (nullable، برای asset accounts)
 - createdAt (immutable)
@@ -567,12 +567,12 @@ Shared Codebase (src/)
 
 #### Order
 
-- id, userId (FK), type (buy/sell), goldAmount, rialAmount
+- id, userId (FK), type (buy/sell), goldAmount, tomanAmount
 - unitPrice, spread, fee, total, status (pending/locked/filled/cancelled/failed)
 - priceLockExpiresAt, otpConfirmed, journalEntryId (FK، nullable)
 - createdAt
 
-#### Transaction (ریالی)
+#### Transaction (تومانی)
 
 - id, walletId (FK), type (deposit/withdraw/fee/transfer)
 - amount (signed), status (pending/completed/failed/reversed)
@@ -676,11 +676,11 @@ Shared Codebase (src/)
 - **Double-Entry Ledger**: هر JournalEntry باید balanced باشد (sum of debits = sum of credits)
 - **Immutable**: LedgerEntry, JournalEntry, AuditLog, TicketMessage, GoldPrice, KycSubmission
 - **Reversal**: اصلاح با compensating JournalEntry (نه UPDATE) — فیلد `reversalOf`
-- **Asset Accounts جدا**: Rial و Gold در AssetAccountهای متمایز (قابل توسعه به نقره، ارز)
+- **Asset Accounts جدا**: Toman و Gold در AssetAccountهای متمایز (قابل توسعه به نقره، ارز)
 - **Double-Spending Prevention**: PostgreSQL Transaction + SELECT FOR UPDATE (مرجع نهایی)؛ Redis فقط برای distributed coordination
 - **Idempotency**: `Idempotency-Key` در header → چک Redis (acceleration) → چک `IdempotencyRecord` (durable) → اجرا
 - **Reconciliation**: cron روزانه: SUM(LedgerEntry per account) = AssetAccount.balance → اگر mismatch → alert + freeze
-- **Decimal**: تمام مبالغ طلا `Decimal(18,8)`، ریالی `BigInt`
+- **Decimal**: تمام مبالغ طلا `Decimal(18,8)`، تومانی `BigInt`
 - **Soft Delete**: User با status=deleted، نه حذف فیزیکی (audit)
 
 ### Indexes
@@ -901,11 +901,11 @@ Shared Codebase (src/)
 
 ### محدودیت‌ها (قابل تنظیم ادمین)
 
-| سطح | سقف خرید روزانه     | برداشت           | تحویل فیزیکی | قسطی        |
-| --- | ------------------- | ---------------- | ------------ | ----------- |
-| ۱   | ۵ مبنای طلا         | خیر              | خیر          | خیر         |
-| ۲   | ۵۰ مبنای طلا        | تا ۵۰ مبنای ریال | خیر          | تا ۵۰ مبنای |
-| ۳   | نامحدود (با review) | کامل             | بله          | کامل        |
+| سطح | سقف خرید روزانه     | برداشت            | تحویل فیزیکی | قسطی        |
+| --- | ------------------- | ----------------- | ------------ | ----------- |
+| ۱   | ۵ مبنای طلا         | خیر               | خیر          | خیر         |
+| ۲   | ۵۰ مبنای طلا        | تا ۵۰ مبنای تومان | خیر          | تا ۵۰ مبنای |
+| ۳   | نامحدود (با review) | کامل              | بله          | کامل        |
 
 ### Audit
 
@@ -927,11 +927,11 @@ Shared Codebase (src/)
 2. lock قیمت به مدت ۶۰ ثانیه (Redis: `price:lock:{userId}`)
 3. کاربر تایید → POST /orders با Idempotency-Key
 4. backend در یک **PostgreSQL Transaction**:
-   - SELECT FOR UPDATE روی AssetAccount (Rial + Gold) — **مرجع نهایی**
+   - SELECT FOR UPDATE روی AssetAccount (Toman + Gold) — **مرجع نهایی**
    - بررسی موجودی کافی (availableBalance)
-   - ایجاد JournalEntry (balanced: debit Gold + credit Rial)
+   - ایجاد JournalEntry (balanced: debit Gold + credit Toman)
    - ایجاد LedgerEntry (DEBIT) روی AssetAccount Gold
-   - ایجاد LedgerEntry (CREDIT) روی AssetAccount Rial
+   - ایجاد LedgerEntry (CREDIT) روی AssetAccount Toman
    - ایجاد LedgerEntry (DEBIT) روی Fee Revenue account (کارمزد)
    - آپدیت AssetAccount.balance (redundant)
    - ایجاد Order (status=filled, journalEntryId)
@@ -955,7 +955,7 @@ Shared Codebase (src/)
 - **AssetAccount.balance** = جمع LedgerEntryهای آن account (redundant برای performance)
 - **Double-Spending Prevention**: **PostgreSQL Transaction + SELECT FOR UPDATE** (مرجع نهایی)؛ Redis فقط برای distributed coordination در multi-instance
 - **Idempotency**: `Idempotency-Key` در header → چک Redis (acceleration) → چک `IdempotencyRecord` (durable در DB) → اجرا → ذخیره response در DB
-- **Asset Accounts جدا**: Rial و Gold در AssetAccountهای متمایز (قابل توسعه به نقره، ارز)
+- **Asset Accounts جدا**: Toman و Gold در AssetAccountهای متمایز (قابل توسعه به نقره، ارز)
 
 ### Reconciliation
 
@@ -1011,7 +1011,7 @@ Shared Codebase (src/)
 - لینک: `https://zar30.com/r/{code}` → redirect به لندینگ با cookie referral
 - در ثبت‌نام: اگر cookie → referredById ثبت
 - شرط فعال‌سازی: referredId سطح KYC ≥ ۲ + اولین معامله ≥ threshold
-- پاداش: قابل تنظیم (طلا یا ریال) به دعوت‌کننده (و optionally به referred)
+- پاداش: قابل تنظیم (طلا یا تومان) به دعوت‌کننده (و optionally به referred)
 - تک‌سطحی در نسخه ۱ (قابل توسعه به چندسطحی)
 - Anti-abuse: یک IP/دستگاه نمی‌تواند دو دعوت فعال کند، max پاداش ماهانه
 
@@ -1070,7 +1070,7 @@ Shared Codebase (src/)
 
 ### DECISION REQUIRED
 
-- نرخ سود (نیازمند تایید حقوقی - آیا سود ریالی ربوی محسوب می‌شود؟)
+- نرخ سود (نیازمند تایید حقوقی - آیا سود تومانی ربوی محسوب می‌شود؟)
 - آیا سود طلا هم مشکل شرعی دارد؟ (مشاوره حقوقی)
 
 ---
@@ -1552,7 +1552,7 @@ zar30/
 
 1. لایوت پنل (sidebar + header + content) responsive
 2. Bottom navigation موبایل
-3. داشبورد: موجودی طلا + ریال + ارزش کل
+3. داشبورد: موجودی طلا + تومان + ارزش کل
 4. نمودار ارزش دارایی (Recharts)
 5. منوی کناری RTL با آیکون
 6. هدر: آواتار، نام، نوتیفیکیشن، خروج
@@ -1618,7 +1618,7 @@ zar30/
 
 ### Phase 7: Wallet & Transactions
 
-1. کیف پول ریالی (موجودی)
+1. کیف پول تومانی (موجودی)
 2. شارژ از درگاه (زرین‌پال)
 3. برداشت به IBAN (با تایید ادمین)
 4. تاریخچه تراکنش‌ها
@@ -1669,9 +1669,9 @@ zar30/
 
 ### Phase 10: Assets & Portfolio
 
-1. صفحه دارایی‌ها (طلا آزاد، قفل، ریال، قسطی، سوددهی)
+1. صفحه دارایی‌ها (طلا آزاد، قفل، تومان، قسطی، سوددهی)
 2. نمودار توزیع (donut)
-3. ارزش کل (ریال + گرم طلا)
+3. ارزش کل (تومان + گرم طلا)
 4. سود/زیان محقق نشده
 5. نمودار ارزش در زمان
 6. گزارش PDF
@@ -2070,7 +2070,7 @@ zar30/
 
 ### Phase 7: Wallet
 
-- [ ] 7.1 کیف پول ریالی
+- [ ] 7.1 کیف پول تومانی
 - [ ] 7.2 شارژ درگاه
 - [ ] 7.3 برداشت
 - [ ] 7.4 تاریخچه
@@ -2357,7 +2357,7 @@ zar30/
 
 ## بخش ۳۶ — Future Expansion (پس از V1)
 
-- وام ریالی با پشتوانه طلا
+- وام تومانی با پشتوانه طلا
 - کارت بانکی زرسی
 - بازار ثانویه OTC
 - صندوق‌های سرمایه‌گذاری
@@ -2373,9 +2373,9 @@ zar30/
 ## بخش ۳۷ — Assumptions
 
 1. کاربران ایرانی با موبایل ایرانی ثبت‌نام می‌کنند (کد +۹۸)
-2. واحد پول: ریال (display به تومان اختیاری)
+2. واحد پول: تومان (display به تومان اختیاری)
 3. واحد طلا: گرم (۱۸ عیار)
-4. قیمت طلا به ریال/گرم
+4. قیمت طلا به تومان/گرم
 5. بازار ۲۴ ساعته (بدون توقف)
 6. زبان پیش‌فرض: فارسی RTL
 7. پشتیبانی از شماره موبایل ایرانی (۰۹x)
@@ -2405,10 +2405,10 @@ zar30/
 6. نرخ سود قسطی (مقررات اسلامی)
 7. مدل جریمه دیرکرد قسط
 8. مدل کمیسیون دعوت (تک/چند سطحی)
-9. آیا سوددهی ریالی هم ارائه شود؟ (مقررات ربوی)
+9. آیا سوددهی تومانی هم ارائه شود؟ (مقررات ربوی)
 10. آیا نیاز به Pen-test شخص ثالث؟
 11. استاندارد PCI-DSS مورد نیاز؟
-12. آیا وام ریالی در V1؟ (خیر، V2)
+12. آیا وام تومانی در V1؟ (خیر، V2)
 13. آیا کارت بانکی اختصاصی؟ (خیر، V2)
 14. سقف معاملات روزانه per KYC level
 15. آیا تحویل فیزیکی در همه شهرها؟

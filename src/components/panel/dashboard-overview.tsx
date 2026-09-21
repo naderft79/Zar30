@@ -85,7 +85,7 @@ export function DashboardOverview() {
         dateLabel={today}
         totalValue={0}
         goldGrams={0}
-        rialBalance={0}
+        tomanBalance={0}
         statusLabel={STATUS_LABELS[user.status] ?? user.status}
         statusTone={user.status === 'ACTIVE' ? 'success' : 'error'}
       />

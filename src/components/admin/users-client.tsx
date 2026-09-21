@@ -63,9 +63,9 @@ const columns: AdminColumn<AdminUserListRow>[] = [
     render: (u) => <AdminStatus status={u.status} />,
   },
   {
-    key: 'rial',
-    header: 'مانده ریال',
-    render: (u) => <span className="tabular-nums">{formatExactAmount(u.rialBalance)}</span>,
+    key: 'toman',
+    header: 'مانده تومان',
+    render: (u) => <span className="tabular-nums">{formatExactAmount(u.tomanBalance)}</span>,
   },
   {
     key: 'gold',

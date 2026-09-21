@@ -44,14 +44,14 @@ export interface AuthUser {
 }
 
 // Asset Types
-export type AssetType = 'RIAL' | 'GOLD' | 'SILVER'
+export type AssetType = 'TOMAN' | 'GOLD' | 'SILVER'
 
 // Ledger Types (Double-Entry)
 export interface LedgerEntryInput {
   ledgerAccountId: string
   entryType: 'DEBIT' | 'CREDIT'
   amountGold?: number
-  amountRial?: bigint
+  amountToman?: bigint
   assetAccountId?: string
 }
 

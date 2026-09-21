@@ -48,7 +48,7 @@ Phase 0 (Setup & Infrastructure + PWA Spike) کامل شد و Final Gate با م
 - `LedgerAccount` — حساب‌های دفتری (ASSET/LIABILITY/EQUITY/REVENUE/EXPENSE)
 - `JournalEntry` — رویداد حسابداری (balanced)
 - `LedgerEntry` — رکورد debit/credit (immutable)
-- `AssetAccount` — حساب دارایی کاربر (RIAL + GOLD)
+- `AssetAccount` — حساب دارایی کاربر (TOMAN + GOLD)
 - `IdempotencyRecord` — idempotency durable در DB
 - `RateLimitConfig` — rate limits configurable
 - `AuditLog` — لاگ ممیزی
