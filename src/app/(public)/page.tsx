@@ -3,7 +3,7 @@
 // ============================================
 // صفحه اصلی عمومی — ترتیب بخش‌ها:
 // Hero → Trust → Market → Features → Steps → Delivery
-// → FAQ → Support → License → Final CTA → SEO Layer
+// → FAQ → Support → License → Final CTA
 // تا حد امکان Server-rendered (فقط تعاملی‌ها Client)
 // ============================================
 
@@ -20,7 +20,6 @@ import { FaqSection } from '@/components/landing/faq-section'
 import { SupportSection } from '@/components/landing/support-section'
 import { LicenseSection } from '@/components/landing/license-section'
 import { FinalCta } from '@/components/landing/final-cta'
-import { SeoContent } from '@/components/landing/seo-content'
 import { FEATURE_SECTIONS, FAQS } from '@/lib/data/landing'
 
 export const metadata: Metadata = {
@@ -94,7 +93,6 @@ export default async function LandingPage() {
       <SupportSection />
       <LicenseSection />
       <FinalCta />
-      <SeoContent />
     </>
   )
 }

@@ -143,13 +143,6 @@ test.describe('Landing Page', () => {
     const liveBadges = await page.getByText('زنده', { exact: true }).count()
     expect(liveBadges).toBe(0)
   })
-
-  test('لایه SEO محتوا وجود دارد و semantic است', async ({ page }) => {
-    await page.goto('/')
-    const seo = page.locator('#about-gold')
-    await expect(seo).toBeAttached()
-    await expect(seo.getByRole('heading', { name: 'زرسی چیست؟' })).toBeAttached()
-  })
 })
 
 test.describe('Responsive', () => {

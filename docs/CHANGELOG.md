@@ -7,14 +7,13 @@
 - بازطراحی کامل صفحه اصلی با ساختار و ریتم Gerami-style — سفید/روشن با accent طلایی کنترل‌شده
 - Header سفید sticky با رفتار اسکرول (~۸۰px → ~۶۸px)، dropdownهای پشتیبانی/قوانین و CTA compact
 - Hero دوستونه با ورود پلکانی زیر ۹۰۰ms و کارت قیمت زنده (LiveGoldPriceCard) با polling
-- ترتیب جدید بخش‌ها: Trust Cards → Marquee → بازار با تب روزانه/ماهانه/سالانه و نمودار → سه Feature Section دوستونه → stepهای ۰۱-۰۴ → تحویل فیزیکی → FAQ → پشتیبانی → مجوزها → Final CTA → لایه SEO
+- ترتیب جدید بخش‌ها: Trust Cards → Marquee → بازار با تب روزانه/ماهانه/سالانه و نمودار → سه Feature Section دوستونه → stepهای ۰۱-۰۴ → تحویل فیزیکی → FAQ → پشتیبانی → مجوزها → Final CTA
 
 ### Added
 
 - `Reveal` — کنترلر مشترک scroll-reveal (یک‌بار اجرا، پوشش پرش anchor، rAF-throttled)
 - `NavDropdown`، `MobileMenu` بازنویسی‌شده با accordion و touch target ≥ ۴۴px
 - `GoldVisuals` — ویژوال‌های SVG اختصاصی برند (شمش/نمودار/تقویم اقساط)
-- لایه محتوای SEO مینیمال و semantic (۹ بلوک، max-w ۹۵۰px، leading 2)
 
 ### Removed
 

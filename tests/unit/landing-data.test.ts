@@ -12,7 +12,6 @@ import {
   HOW_IT_WORKS_STEPS,
   FEATURE_SECTIONS,
   FOOTER_LINKS,
-  SEO_CONTENT,
 } from '@/lib/data/landing'
 
 describe('Landing Data', () => {
@@ -74,17 +73,6 @@ describe('Landing Data', () => {
       expect(group.links.length).toBeGreaterThan(0)
       for (const link of group.links) {
         expect(link.href).toMatch(/^\//)
-      }
-    }
-  })
-
-  it('SEO_CONTENT محتوای معتبر و غیرخالی دارد', () => {
-    expect(SEO_CONTENT.length).toBeGreaterThanOrEqual(6)
-    for (const block of SEO_CONTENT) {
-      expect(block.heading.trim().length).toBeGreaterThan(3)
-      expect(block.paragraphs.length).toBeGreaterThanOrEqual(1)
-      for (const paragraph of block.paragraphs) {
-        expect(paragraph.trim().length).toBeGreaterThan(50)
       }
     }
   })
