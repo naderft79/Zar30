@@ -35,9 +35,8 @@ const variantConfig = {
     icon: Wallet,
     title: 'موجودی تومانی',
     unit: 'تومان',
-    cardClass:
-      'border-navy-500/20 bg-gradient-to-bl from-navy-500/10 via-card to-card dark:from-navy-400/10',
-    iconClass: 'bg-navy-500/10 text-navy-500 dark:bg-navy-400/15 dark:text-navy-200',
+    cardClass: 'border-cream-400/15 bg-gradient-to-bl from-cream-50/6 via-card to-card',
+    iconClass: 'bg-cream-50/10 text-cream-300',
   },
   total: {
     icon: Wallet,

@@ -58,9 +58,9 @@ Local Snapshot:        .agent/ui-skills/
 Local Source of Truth: docs/UI_SKILLS.md
 Design System:         ZAR30 Design System (src/app/globals.css + /design-system)
 Brand:                 زرسی / zar30
-Primary:               Navy
-Luxury Accent:         Gold
-Supporting Accent:     Cream
+Primary:               Black / Graphite
+Luxury Signature:      Rich Gold
+Supporting Accent:     Warm Cream
 ```
 
 قواعد اجباری:
@@ -2522,16 +2522,16 @@ Navigation اصلی User Panel یک **قرارداد دائمی محصول** ا�
 
 ### ۱. اولویت رنگ (ترتیب ثابت)
 
-1. **Navy → Primary/Dominant** — Canvas اصلی همه UI (`navy-950…100`)
-2. **Gold → Luxury Accent/Action** — CTA، nav فعال، متریک‌های مهم، قیمت طلا، focus
-3. **Cream → Supporting Accent** — فقط text روی navy، highlight، warmth — رنگ اصلی UI نیست
+1. **Black/Graphite → Primary/Dominant** — Canvas اصلی همه UI (سیاه گرم `#0b0a08` تا `#282119`)
+2. **Gold → Luxury Signature/Action** — CTA، nav فعال، متریک‌های مهم، قیمت طلا، focus (`gold-500 #d4af37`)
+3. **Cream → Supporting Accent** — فقط text روی سطوح تیره، highlight، warmth — رنگ اصلی UI نیست
 4. **Neutral → Text/Border/Secondary**
 
-### ۲. Dark/Navy-First
+### ۲. Dark/Black-First
 
-- حالت اصلی و Premium برند **dark/navy** است (`:root` = navy، `<html class="dark">`)
-- Light Mode فقط opt-in با کلاس `.light` و همچنان navy-primary (نه cream-first)
-- لایه‌های navy: app background → sidebar → card → elevated → modal → input — عمق واقعی، نه `#000`
+- حالت اصلی و Premium برند **dark/black-graphtie** است (`:root` = warm black، `<html class="dark">`)
+- Light Mode فقط opt-in با کلاس `.light`
+- لایه‌های graphite: app background → sidebar → card → elevated → modal → input — عمق واقعی، نه `#000` خالص
 
 ### ۳. قواعد استفاده
 

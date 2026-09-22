@@ -60,7 +60,12 @@ export function AssetsClient() {
   const [txs, setTxs] = useState<TxRow[]>([])
   const [loading, setLoading] = useState(true)
 
-  const [form, setForm] = useState<'deposit' | 'withdraw' | null>(null)
+  // ?action=deposit|withdraw — ورود سریع از کارت موجودی داشبورد
+  const [form, setForm] = useState<'deposit' | 'withdraw' | null>(() => {
+    if (typeof window === 'undefined') return null
+    const a = new URLSearchParams(window.location.search).get('action')
+    return a === 'deposit' || a === 'withdraw' ? a : null
+  })
   const [amount, setAmount] = useState('')
   const [iban, setIban] = useState('')
   const [busy, setBusy] = useState(false)

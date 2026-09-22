@@ -333,12 +333,12 @@ function KycIntro({
           <h2 className="text-cream-50 text-lg font-bold text-balance sm:text-xl">
             {approved ? 'هویت شما تایید شده است' : 'احراز هویت سطح ۲'}
           </h2>
-          <p className="text-navy-200/80 mt-2 max-w-prose text-sm leading-6 text-pretty">
+          <p className="text-cream-200/70 mt-2 max-w-prose text-sm leading-6 text-pretty">
             {approved
               ? 'احراز هویت شما کامل شده و از تمام خدمات زرسی می‌توانید استفاده کنید.'
               : 'با تکمیل احراز هویت، خرید و فروش طلا، برداشت و خدمات مالی کامل برای شما فعال می‌شود. فرایند کمتر از چند دقیقه طول می‌کشد و اطلاعات شما رمزنگاری‌شده نگه‌داری می‌شود.'}
           </p>
-          <ul className="text-navy-200/70 mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs">
+          <ul className="text-cream-300/60 mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs">
             {['اطلاعات شخصی', 'کد ملی و شناسنامه', 'شبا و کارت بانکی', 'تصویر کارت ملی'].map(
               (s) => (
                 <li key={s} className="flex items-center gap-1.5">
@@ -388,9 +388,9 @@ function StatusView({ submission }: { submission: KycSubmission }) {
           <Loader2 className="size-7 animate-spin" style={{ animationDuration: '3s' }} />
         </span>
         <h2 className="text-cream-50 mt-4 text-lg font-bold">{meta.label}</h2>
-        <p className="text-navy-200/80 mx-auto mt-2 max-w-md text-sm leading-6">{meta.desc}</p>
+        <p className="text-cream-200/70 mx-auto mt-2 max-w-md text-sm leading-6">{meta.desc}</p>
         {submission.submittedAt && (
-          <p className="text-navy-300/60 mt-3 text-xs tabular-nums">
+          <p className="text-cream-300/50 mt-3 text-xs tabular-nums">
             ارسال‌شده در{' '}
             {new Date(submission.submittedAt).toLocaleDateString('fa-IR', { dateStyle: 'long' })}
           </p>
@@ -627,7 +627,7 @@ function Wizard({
                   <span
                     className={`flex size-5 items-center justify-center rounded-full text-[10px] ${
                       done
-                        ? 'bg-gold-500 text-navy-950'
+                        ? 'bg-gold-500 text-[#171105]'
                         : current
                           ? 'bg-gold-500/20 text-gold-400'
                           : 'bg-muted text-muted-foreground'

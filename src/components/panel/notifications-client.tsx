@@ -40,7 +40,7 @@ const TYPE_ICONS: Record<string, { icon: LucideIcon; className: string }> = {
   SECURITY: { icon: ShieldCheck, className: 'bg-error/10 text-error' },
   ORDER: { icon: Repeat, className: 'bg-gold-500/15 text-gold-600 dark:text-gold-400' },
   TRANSACTION: { icon: Wallet, className: 'bg-info/10 text-info' },
-  INSTALLMENT: { icon: CalendarClock, className: 'bg-navy-500/10 text-navy-300' },
+  INSTALLMENT: { icon: CalendarClock, className: 'bg-muted text-muted-foreground' },
 }
 
 function typeVisual(type: string) {

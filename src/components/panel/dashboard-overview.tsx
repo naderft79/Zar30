@@ -1,35 +1,37 @@
 // ============================================
-// Zar30 - Dashboard Overview (Full Panel Redesign)
+// Zar30 - Dashboard Overview (Luxury Home)
 // ============================================
-// سلسله‌مراتب: Wealth Hero → Quick Actions → بازار → نمودار دارایی →
-// فعالیت اخیر → قسطی → امنیت/KYC → معرفی/اعلان
-// داده‌های مالی Placeholder هستند — Financial Core در Phaseهای بعدی
+// Mobile-first: Hero Balance Card → قیمت لحظه‌ای → بنر سرمایه‌گذاری →
+// تراکنش‌های اخیر → کارت‌های وضعیت — همه با داده واقعی
 // ============================================
 
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   ArrowDownLeft,
   ArrowLeft,
   ArrowUpLeft,
   Bell,
-  CalendarClock,
+  Coins,
   Gift,
   History,
   LineChart,
   MonitorSmartphone,
+  Repeat,
   ShieldCheck,
-  Timer,
   Wallet,
 } from 'lucide-react'
+import { apiGetWithRefresh } from '@/lib/api/client'
+import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
 import { WealthHero } from './wealth-hero'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusCard } from '@/components/financial/status-card'
-import { PortfolioChart } from '@/components/financial/portfolio-chart'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
+import { cn } from 'cn'
 
 const KYC_LABELS: Record<string, string> = {
   LEVEL_0: 'احراز نشده',
@@ -44,27 +46,66 @@ const STATUS_LABELS: Record<string, string> = {
   DELETED: 'حذف‌شده',
 }
 
-// اکشن‌های سریع — ورود به مقصدهای قرارداد ناوبری
-const QUICK_ACTIONS = [
-  { href: '/dashboard/trade', label: 'خرید طلا', icon: ArrowDownLeft, accent: 'gold' },
-  { href: '/dashboard/trade', label: 'فروش طلا', icon: ArrowUpLeft, accent: 'navy' },
-  { href: '/dashboard/assets', label: 'کیف پول', icon: Wallet, accent: 'navy' },
-  { href: '/dashboard/installments', label: 'خرید قسطی', icon: CalendarClock, accent: 'navy' },
-] as const
+const TX_LABELS: Record<string, string> = {
+  DEPOSIT: 'واریز',
+  WITHDRAW: 'برداشت',
+  FEE: 'کارمزد',
+  TRANSFER: 'انتقال',
+  BUY: 'خرید طلا',
+  SELL: 'فروش طلا',
+}
 
-// داده نمایشی نمودار — صرفاً برای پیش‌نمایش بصری؛ صراحتاً برچسب‌دار است
-const DEMO_SERIES = [42, 44, 43.5, 46, 45, 48, 47.5, 50, 49, 52, 51.5, 54]
+const TX_STATUS: Record<string, string> = {
+  PENDING: 'در انتظار',
+  COMPLETED: 'موفق',
+  FAILED: 'ناموفق',
+  REVERSED: 'برگشت‌خورده',
+}
+
+interface WalletAccount {
+  assetType: string
+  balance: string
+  lockedBalance: string
+  available: string
+}
+
+interface TxRow {
+  id: string
+  type: string
+  amount: string
+  status: string
+  createdAt: string
+}
+
+interface PriceData {
+  buyPrice: number
+  sellPrice: number
+  isLive: boolean
+  updatedAt: string
+}
 
 function SectionLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link
       href={href}
-      className="text-gold-600 dark:text-gold-400 inline-flex items-center gap-1 text-xs font-medium transition-colors hover:underline"
+      className="text-gold-400 hover:text-gold-300 inline-flex items-center gap-1 text-xs font-medium transition-colors"
     >
       {children}
       <ArrowLeft className="size-3.5" />
     </Link>
   )
+}
+
+// آیکون جهت تراکنش — واریزی طلایی/سبز، برداشتی خنثی
+function txIcon(type: string) {
+  if (type === 'DEPOSIT' || type === 'BUY') return ArrowDownLeft
+  if (type === 'WITHDRAW' || type === 'SELL') return ArrowUpLeft
+  if (type === 'TRANSFER') return Repeat
+  return Wallet
+}
+
+function isIncoming(type: string) {
+  return type === 'DEPOSIT' || type === 'SELL'
 }
 
 export function DashboardOverview() {
@@ -77,139 +118,213 @@ export function DashboardOverview() {
     month: 'long',
   })
 
+  const [accounts, setAccounts] = useState<WalletAccount[]>([])
+  const [txs, setTxs] = useState<TxRow[]>([])
+  const [price, setPrice] = useState<PriceData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const [walletRes, txRes, priceRes] = await Promise.all([
+        apiGetWithRefresh<{ accounts: WalletAccount[] }>('/api/v1/wallet'),
+        apiGetWithRefresh<{ transactions: TxRow[] }>('/api/v1/wallet/transactions?limit=5'),
+        apiGetWithRefresh<PriceData>('/api/v1/price'),
+      ])
+      if (cancelled) return
+      if (walletRes.ok) setAccounts(walletRes.data?.accounts ?? [])
+      if (txRes.ok) setTxs(txRes.data?.transactions ?? [])
+      if (priceRes.ok && priceRes.data) setPrice(priceRes.data)
+      setLoading(false)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const toman = accounts.find((a) => a.assetType === 'TOMAN')
+  const gold = accounts.find((a) => a.assetType === 'GOLD')
+  // ارزش کل = موجودی تومانی + ارزش تقریبی طلا با نرخ فروش لحظه‌ای
+  const goldValue = price && gold ? Number(gold.balance) * price.sellPrice : 0
+  const totalValue = Number(toman?.balance ?? 0) + goldValue
+
   return (
     <div className="animate-stagger space-y-5">
-      {/* ============ ۱. Wealth Hero — قلب بصری ============ */}
-      <WealthHero
-        greeting={`خوش آمدید${displayName ? `، ${displayName}` : ''}`}
-        dateLabel={today}
-        totalValue={0}
-        goldGrams={0}
-        tomanBalance={0}
-        statusLabel={STATUS_LABELS[user.status] ?? user.status}
-        statusTone={user.status === 'ACTIVE' ? 'success' : 'error'}
-      />
-
-      {/* ============ ۲. Quick Actions ============ */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {QUICK_ACTIONS.map(({ href, label, icon: Icon, accent }) => (
-          <Link
-            key={label}
-            href={href}
-            className={
-              accent === 'gold'
-                ? 'border-gold-500/30 from-gold-500/12 to-card hover:border-gold-500/50 hover:shadow-gold group flex items-center gap-3 rounded-xl border bg-gradient-to-bl p-4 transition-all duration-(--duration-normal) hover:-translate-y-0.5 sm:flex-col sm:items-center sm:gap-2.5 sm:text-center'
-                : 'border-border/60 bg-card hover:border-gold-500/20 group flex items-center gap-3 rounded-xl border p-4 transition-all duration-(--duration-normal) hover:-translate-y-0.5 hover:shadow-md sm:flex-col sm:items-center sm:gap-2.5 sm:text-center'
-            }
-          >
-            <span
-              className={
-                accent === 'gold'
-                  ? 'bg-gold-500/15 text-gold-600 dark:text-gold-400 flex size-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-105'
-                  : 'bg-muted text-muted-foreground group-hover:text-gold-500 flex size-10 shrink-0 items-center justify-center rounded-xl transition-all duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-105'
-              }
-            >
-              <Icon className="size-5" strokeWidth={1.75} />
-            </span>
-            <span className="text-foreground text-sm font-medium">{label}</span>
-          </Link>
-        ))}
-      </div>
-
+      {/* ============ ۱. Hero — کارت موجودی اصلی ============ */}
       <div className="grid gap-5 lg:grid-cols-5">
-        {/* ============ ۳. بازار — قیمت لحظه‌ای ============ */}
-        <Card className="lg:col-span-3">
+        <WealthHero
+          greeting={`سلام${displayName ? `، ${displayName}` : ''}`}
+          dateLabel={today}
+          totalValue={Math.round(totalValue)}
+          goldGrams={gold?.balance ?? '0'}
+          tomanBalance={toman?.available ?? '0'}
+          lockedToman={toman?.lockedBalance ?? '0'}
+          statusLabel={STATUS_LABELS[user.status] ?? user.status}
+          statusTone={user.status === 'ACTIVE' ? 'success' : 'error'}
+          loading={loading}
+          className="lg:col-span-3"
+        />
+
+        {/* ============ ۲. قیمت لحظه‌ای طلا ============ */}
+        <Card className="border-gold-500/20 lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <LineChart className="text-gold-500 size-5" strokeWidth={1.75} />
+              <LineChart className="text-gold-400 size-5" strokeWidth={1.75} />
               قیمت لحظه‌ای طلا
-              <StatusBadge tone="gold" dot={false}>
-                پیش‌نمایش
-              </StatusBadge>
+              {price && !price.isLive && (
+                <StatusBadge tone="warning" dot={false}>
+                  نمایشی
+                </StatusBadge>
+              )}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {/* ساختار واقعی ویجت قیمت — خرید/فروش با مقادیر pending */}
+          <CardContent className="flex h-full flex-col justify-between gap-4">
             <div className="divide-border/40 grid grid-cols-2 divide-x divide-x-reverse">
-              <div className="px-4 py-1 text-center">
+              <div className="px-3 py-1 text-center">
                 <p className="text-muted-foreground text-label mb-1.5">نرخ خرید</p>
-                <p className="text-financial-lg text-foreground/40">—</p>
-                <p className="text-muted-foreground text-[10px]">تومان / گرم</p>
+                {loading ? (
+                  <div className="skeleton-shimmer mx-auto h-8 w-24 rounded-md" />
+                ) : price ? (
+                  <>
+                    <p className="text-financial-lg text-success" dir="ltr">
+                      {formatExactAmount(String(Math.round(price.buyPrice)))}
+                    </p>
+                    <p className="text-muted-foreground text-[10px]">تومان / گرم</p>
+                  </>
+                ) : (
+                  <p className="text-financial-lg text-foreground/40">—</p>
+                )}
               </div>
-              <div className="px-4 py-1 text-center">
+              <div className="px-3 py-1 text-center">
                 <p className="text-muted-foreground text-label mb-1.5">نرخ فروش</p>
-                <p className="text-financial-lg text-foreground/40">—</p>
-                <p className="text-muted-foreground text-[10px]">تومان / گرم</p>
+                {loading ? (
+                  <div className="skeleton-shimmer mx-auto h-8 w-24 rounded-md" />
+                ) : price ? (
+                  <>
+                    <p className="text-financial-lg text-gold-400" dir="ltr">
+                      {formatExactAmount(String(Math.round(price.sellPrice)))}
+                    </p>
+                    <p className="text-muted-foreground text-[10px]">تومان / گرم</p>
+                  </>
+                ) : (
+                  <p className="text-financial-lg text-foreground/40">—</p>
+                )}
               </div>
             </div>
-            <EmptyState
-              icon={Timer}
-              title="قیمت لحظه‌ای به‌زودی فعال می‌شود"
-              description="نرخ لحظه‌ای خرید و فروش طلای آب‌شده پس از راه‌اندازی موتور قیمت‌گذاری اینجا نمایش داده می‌شود."
-              badge="به‌زودی — پیش‌نمایش"
-            />
+            <Link
+              href="/dashboard/trade"
+              className="from-gold-500 to-gold-600 text-primary-foreground shadow-gold focus-visible:ring-gold-500/60 flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-gradient-to-l text-sm font-bold transition-all duration-(--duration-normal) hover:brightness-110 focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <Coins className="size-4" strokeWidth={2} />
+              شروع معامله
+            </Link>
           </CardContent>
         </Card>
-
-        {/* ============ ۴. نمودار دارایی — داده نمایشی ============ */}
-        <div className="lg:col-span-2">
-          <PortfolioChart
-            data={DEMO_SERIES}
-            changePercent={4.2}
-            title="روند دارایی (داده نمایشی)"
-            height={170}
-            className="h-full"
-          />
-          <p className="text-muted-foreground mt-2 flex items-center gap-1.5 text-[10px]">
-            <StatusBadge tone="neutral" dot={false} className="text-[9px]">
-              داده نمایشی
-            </StatusBadge>
-            نمودار واقعی پس از اولین تراکنش فعال می‌شود.
-          </p>
-        </div>
       </div>
 
-      {/* ============ ۵. فعالیت اخیر — stream ============ */}
+      {/* ============ ۳. بنر سرمایه‌گذاری — premium ============ */}
+      <Link
+        href="/dashboard/trade"
+        className="group surface-wealth relative flex items-center justify-between gap-4 overflow-hidden rounded-2xl border p-5 transition-all duration-(--duration-normal) hover:-translate-y-0.5 sm:p-6"
+      >
+        <div className="relative min-w-0">
+          <p className="text-gold-400 text-[11px] font-semibold">سرمایه‌گذاری طلای آب‌شده</p>
+          <p className="text-cream-50 mt-1.5 text-base font-bold text-balance sm:text-lg">
+            همراه شما در مسیر سرمایه‌گذاری امن
+          </p>
+          <p className="text-cream-300/60 mt-1 text-xs leading-5">
+            حتی با مبالغ بسیار کم — خرید آنی، شفاف و بدون واسطه
+          </p>
+        </div>
+        {/* abstract شمش طلا */}
+        <div aria-hidden="true" className="relative flex shrink-0 items-center justify-center">
+          <div className="from-gold-400 to-gold-600 shadow-gold size-14 rotate-12 rounded-xl bg-gradient-to-bl transition-transform duration-(--duration-slow) ease-(--ease-spring) group-hover:rotate-6 sm:size-16" />
+          <div className="from-gold-300/70 to-gold-500/70 absolute -bottom-2 -left-3 size-9 -rotate-6 rounded-lg bg-gradient-to-bl sm:size-11" />
+        </div>
+      </Link>
+
+      {/* ============ ۴. تراکنش‌های اخیر — real stream ============ */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <History className="text-gold-500 size-5" strokeWidth={1.75} />
-            فعالیت اخیر
+            <History className="text-gold-400 size-5" strokeWidth={1.75} />
+            تراکنش‌های اخیر
           </CardTitle>
+          <div className="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
+            <SectionLink href="/dashboard/assets">مشاهده همه</SectionLink>
+          </div>
         </CardHeader>
         <CardContent>
-          <EmptyState
-            icon={History}
-            title="هنوز تراکنشی ثبت نشده است"
-            description="خرید، فروش، واریز و برداشت شما به‌صورت زمان‌بندی‌شده اینجا نمایش داده می‌شود."
-            action={{ label: 'مشاهده دارایی', href: '/dashboard/assets' }}
-          />
+          {loading ? (
+            <ul className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <li key={i} className="skeleton-shimmer h-14 rounded-xl" />
+              ))}
+            </ul>
+          ) : txs.length === 0 ? (
+            <EmptyState
+              icon={History}
+              title="هنوز تراکنشی ثبت نشده است"
+              description="خرید، فروش، واریز و برداشت شما به‌صورت زمان‌بندی‌شده اینجا نمایش داده می‌شود."
+              action={{ label: 'مشاهده دارایی', href: '/dashboard/assets' }}
+            />
+          ) : (
+            <ul className="divide-border/40 divide-y">
+              {txs.map((t) => {
+                const Icon = txIcon(t.type)
+                const incoming = isIncoming(t.type)
+                return (
+                  <li key={t.id} className="flex items-center justify-between gap-3 py-3.5">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span
+                        className={cn(
+                          'flex size-10 shrink-0 items-center justify-center rounded-xl',
+                          incoming ? 'bg-success/12 text-success' : 'bg-gold-500/12 text-gold-400',
+                        )}
+                      >
+                        <Icon className="size-4.5" strokeWidth={1.75} />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-foreground truncate text-sm font-semibold">
+                          {TX_LABELS[t.type] ?? t.type}
+                        </p>
+                        <p className="text-muted-foreground mt-0.5 text-[10px] tabular-nums">
+                          {new Date(t.createdAt).toLocaleString('fa-IR', {
+                            dateStyle: 'short',
+                            timeStyle: 'short',
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-left">
+                      <p
+                        className={cn(
+                          'text-sm font-bold tabular-nums',
+                          incoming ? 'text-success' : 'text-foreground',
+                        )}
+                        dir="ltr"
+                      >
+                        {incoming ? '+' : '-'}
+                        {formatExactAmount(t.amount)}
+                      </p>
+                      <StatusBadge
+                        tone={t.status === 'COMPLETED' ? 'success' : 'neutral'}
+                        dot={false}
+                        className="mt-1"
+                      >
+                        {TX_STATUS[t.status] ?? t.status}
+                      </StatusBadge>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
         </CardContent>
       </Card>
 
+      {/* ============ ۵. وضعیت حساب — KYC + امنیت + قسطی ============ */}
       <div className="grid gap-5 lg:grid-cols-3">
-        {/* ============ ۶. خلاصه قسطی ============ */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <CalendarClock className="text-gold-500 size-5" strokeWidth={1.75} />
-              خرید قسطی
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-muted-foreground text-xs leading-5 text-pretty">
-              طرح‌های اقساطی خرید طلا به‌زودی معرفی می‌شوند.
-            </p>
-            <StatusBadge tone="gold" dot={false}>
-              به‌زودی — پیش‌نمایش
-            </StatusBadge>
-            <div>
-              <SectionLink href="/dashboard/installments">مشاهده طرح‌ها</SectionLink>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* ============ ۷. امنیت و KYC ============ */}
         <StatusCard
           icon={ShieldCheck}
           title="احراز هویت"
@@ -231,14 +346,10 @@ export function DashboardOverview() {
           description="نشست‌ها، رمز عبور و احراز دو مرحله‌ای را مدیریت کنید."
           action={{ label: 'مرکز امنیت', href: '/dashboard/profile/security' }}
         />
-      </div>
-
-      {/* ============ ۸. معرفی + اعلان ============ */}
-      <div className="grid gap-5 lg:grid-cols-2">
         <Card className="border-gold-500/25 from-gold-500/10 via-card to-card bg-gradient-to-bl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Gift className="text-gold-500 size-5" strokeWidth={1.75} />
+              <Gift className="text-gold-400 size-5" strokeWidth={1.75} />
               معرفی دوستان
             </CardTitle>
           </CardHeader>
@@ -252,22 +363,18 @@ export function DashboardOverview() {
             <SectionLink href="/dashboard/profile/referral">جزئیات و پاداش</SectionLink>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Bell className="text-gold-500 size-5" strokeWidth={1.75} />
-              اعلان‌ها
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-muted-foreground text-xs leading-5 text-pretty">
-              اعلان‌های مهم حساب را از مرکز اعلان‌ها دنبال کنید.
-            </p>
-            <SectionLink href="/dashboard/notifications">مشاهده اعلان‌ها</SectionLink>
-          </CardContent>
-        </Card>
       </div>
+
+      {/* ============ ۶. اعلان‌ها ============ */}
+      <Card>
+        <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-6">
+          <p className="text-muted-foreground flex items-center gap-2 text-xs leading-5">
+            <Bell className="text-gold-400 size-4" strokeWidth={1.75} />
+            اعلان‌های مهم حساب را از مرکز اعلان‌ها دنبال کنید.
+          </p>
+          <SectionLink href="/dashboard/notifications">مشاهده اعلان‌ها</SectionLink>
+        </CardContent>
+      </Card>
     </div>
   )
 }

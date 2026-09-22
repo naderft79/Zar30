@@ -67,7 +67,7 @@ npx ui-skills get <slug>
 ```text
 ZAR30 Product Decisions
         ↓
-ZAR30 Design Language (Permanent — Navy + Gold + Cream)
+ZAR30 Design Language (Permanent — Black + Rich Gold + Cream)
         ↓
 ZAR30 Design Tokens (src/app/globals.css)
         ↓
@@ -84,14 +84,14 @@ Feature UI
 
 | قانون Skill            | Override زرسی                                             |
 | ---------------------- | --------------------------------------------------------- |
-| light/white background | Navy-first — `.dark` پیش‌فرض روی `<html>`                 |
+| light/white background | Black/Graphite-first — `.dark` پیش‌فرض روی `<html>`       |
 | generic accent         | Gold فقط برای CTA/active/focus/متریک مهم — کنترل‌شده      |
 | default shadows/radius | Tokenهای `globals.css` — hardcode ممنوع                   |
 | هر IA پیشنهادی         | Navigation Contract دائمی ۵‌آیتمی (ADR-015) تغییر نمی‌کند |
 
 ## قواعد دائمی UI زرسی
 
-- Navy = dominant؛ Gold = luxury accent؛ Cream = supporting فقط — هرگز cream/white-first
+- Black/Graphite = canvas؛ Rich Gold = dominant signature accent؛ Cream = supporting warmth — هرگز cream/white-first
 - هیچ UI از حافظه/سلیقه — ابتدا Design System + skill مرتبط + کامپوننت‌های موجود
 - Token-based اجباری: colors/radius/shadows/spacing/typography/motion/z-index
 - کامپوننت جدید = reusable + accessible + responsive + theme-aware + token-based
@@ -123,7 +123,7 @@ Update docs
 
 ## UI Review Gate (قبل از DONE)
 
-- [ ] Navy dominant؟ Gold luxury accent؟ Cream controlled؟ Premium و brand-consistent؟
+- [ ] Black/Graphite canvas؟ Gold dominant signature؟ Cream controlled؟ Premium و brand-consistent؟
 - [ ] Hierarchy واضح؟ CTA مشخص؟ Spacing درست؟ Responsive؟
 - [ ] Reusable؟ Token-based؟ Accessible؟ Performance OK؟
 - [ ] Render شده و دیده شده؟ تست؟ موبایل چک؟ صفحات موجود نشکسته؟

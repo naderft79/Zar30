@@ -17,7 +17,7 @@ export const GET = withErrorHandler(async (req: Request) => {
   const authority = url.searchParams.get('Authority') ?? url.searchParams.get('authority')
   const status = url.searchParams.get('Status') ?? url.searchParams.get('status')
 
-  const redirectBase = `${url.origin}/panel/assets`
+  const redirectBase = `${url.origin}/dashboard/assets`
 
   if (!authority || !status) {
     return NextResponse.redirect(`${redirectBase}?payment=invalid`)

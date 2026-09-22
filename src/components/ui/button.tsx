@@ -18,7 +18,7 @@ const buttonVariants = cva(
         ghost: 'hover:bg-muted/70 hover:text-foreground dark:hover:bg-card',
         link: 'text-primary underline-offset-4 hover:underline active:scale-100',
         // Gold CTA — دکمه اصلی اکشن‌های مالی (خرید/فروش/واریز)
-        gold: 'bg-gold-500 text-navy-950 shadow-gold hover:bg-gold-400 hover:shadow-lg dark:text-navy-950',
+        gold: 'bg-gold-500 text-[#171105] shadow-gold hover:bg-gold-400 hover:shadow-lg',
         // Success — تایید/پرداخت موفق
         success:
           'bg-success text-success-foreground shadow-xs hover:bg-success/90 hover:shadow-sm focus-visible:ring-success/30',

@@ -1,11 +1,15 @@
 // ============================================
-// Zar30 - Wealth Hero — قلب بصری داشبورد
+// Zar30 - Wealth Hero — کارت موجودی اصلی داشبورد
 // ============================================
-// سطح ممتاز «Luxury Private Banking»: Navy لایه‌ای + halo طلایی کنترل‌شده
-// مقادیر فعلاً Placeholder هستند — Financial Core در Phaseهای بعدی
+// سطح ممتاز «Luxury Private Banking»: گرافیت لایه‌ای + halo طلایی
+// الگوی مرجع: موجودی بزرگ + visibility toggle + اکشن‌های داخل کارت
 // ============================================
 
-import { Coins, Wallet } from 'lucide-react'
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import { ArrowDownLeft, ArrowUpLeft, CalendarClock, Coins, Eye, EyeOff, Wallet } from 'lucide-react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -18,6 +22,8 @@ interface WealthHeroProps {
   totalValue: number | string
   goldGrams: number | string
   tomanBalance: number | string
+  /** موجودی مسدودشده تومانی */
+  lockedToman?: number | string
   changePercent?: number
   statusLabel?: string
   statusTone?: 'success' | 'warning' | 'error'
@@ -25,51 +31,80 @@ interface WealthHeroProps {
   className?: string
 }
 
+// اکشن‌های مالی داخل کارت — ورود سریع به مقصدهای اصلی
+const HERO_ACTIONS = [
+  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: ArrowDownLeft },
+  { href: '/dashboard/assets?action=withdraw', label: 'برداشت', icon: ArrowUpLeft },
+  { href: '/dashboard/trade', label: 'خرید طلا', icon: Coins },
+  { href: '/dashboard/installments', label: 'قسطی', icon: CalendarClock },
+] as const
+
 export function WealthHero({
   greeting,
   dateLabel,
   totalValue,
   goldGrams,
   tomanBalance,
+  lockedToman,
   changePercent,
   statusLabel,
   statusTone = 'success',
   loading = false,
   className,
 }: WealthHeroProps) {
+  // مخفی‌سازی مقادیر مالی — الگوی رایج اپ‌های بانکی
+  const [hidden, setHidden] = useState(false)
+
   return (
     <section
       aria-label="خلاصه دارایی"
       className={cn(
-        'surface-wealth gold-rings relative overflow-hidden rounded-2xl border p-6 sm:p-8',
+        'surface-wealth gold-rings relative overflow-hidden rounded-3xl border p-5 sm:p-8',
         className,
       )}
     >
       {/* halo تزئینی — صرفاً بصری */}
       <div
         aria-hidden="true"
-        className="from-gold-500/10 pointer-events-none absolute -top-24 -left-24 size-72 rounded-full bg-gradient-to-br to-transparent blur-2xl"
+        className="from-gold-500/15 pointer-events-none absolute -top-24 -left-24 size-72 rounded-full bg-gradient-to-br to-transparent blur-2xl"
       />
 
       {/* ردیف بالا — سلامت + وضعیت */}
       <div className="relative flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-display text-cream-50 text-balance">{greeting}</h1>
-          {dateLabel && <p className="text-navy-200/70 mt-1.5 text-sm">{dateLabel}</p>}
+          {dateLabel && <p className="text-cream-300/60 mt-1.5 text-sm">{dateLabel}</p>}
         </div>
-        <div className="flex items-center gap-2">
-          {statusLabel && <StatusBadge tone={statusTone}>{statusLabel}</StatusBadge>}
-          <StatusBadge tone="gold" dot={false}>
-            پیش‌نمایش
-          </StatusBadge>
-        </div>
+        {statusLabel && <StatusBadge tone={statusTone}>{statusLabel}</StatusBadge>}
       </div>
 
-      {/* ارزش کل — عدد شاخص مالی */}
-      <div className="relative mt-8 sm:mt-10">
-        <p className="text-cream-300/80 text-label mb-2">ارزش کل دارایی</p>
+      {/* موجودی کل — عدد شاخص + چشم */}
+      <div className="relative mt-7 sm:mt-9">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="bg-gold-500/15 text-gold-400 flex size-7 items-center justify-center rounded-lg">
+            <Wallet className="size-3.5" strokeWidth={1.75} />
+          </span>
+          <p className="text-cream-300/80 text-label">موجودی کل</p>
+          <button
+            type="button"
+            onClick={() => setHidden((v) => !v)}
+            aria-label={hidden ? 'نمایش موجودی' : 'مخفی کردن موجودی'}
+            aria-pressed={hidden}
+            className="text-cream-300/60 hover:text-gold-300 focus-visible:ring-ring ms-1 flex size-7 items-center justify-center rounded-lg transition-colors focus-visible:ring-2"
+          >
+            {hidden ? (
+              <EyeOff className="size-4" strokeWidth={1.75} />
+            ) : (
+              <Eye className="size-4" strokeWidth={1.75} />
+            )}
+          </button>
+        </div>
         {loading ? (
           <div className="skeleton-shimmer h-12 w-56 rounded-lg" />
+        ) : hidden ? (
+          <p className="text-cream-50 text-4xl font-extrabold tracking-widest sm:text-5xl">
+            ••••••
+          </p>
         ) : (
           <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
             <FinancialNumber
@@ -79,7 +114,7 @@ export function WealthHero({
               decimals={0}
               animate
               className="text-cream-50 text-4xl sm:text-5xl"
-              unitClassName="text-base text-navy-200/70"
+              unitClassName="text-base text-cream-300/60"
             />
             {changePercent !== undefined && (
               <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" className="mb-2" />
@@ -88,16 +123,35 @@ export function WealthHero({
         )}
       </div>
 
-      {/* تفکیک دارایی — طلا / تومان */}
-      <div className="border-cream-50/10 relative mt-8 grid grid-cols-1 gap-4 border-t pt-5 sm:grid-cols-2">
+      {/* اکشن‌های مالی — داخل کارت، thumb-friendly */}
+      <div className="relative mt-7 grid grid-cols-4 gap-2 sm:mt-8 sm:gap-3">
+        {HERO_ACTIONS.map(({ href, label, icon: Icon }) => (
+          <Link
+            key={label}
+            href={href}
+            className="group bg-cream-50/6 hover:bg-gold-500/15 border-cream-50/8 hover:border-gold-500/30 focus-visible:ring-gold-500/60 flex min-h-[44px] flex-col items-center justify-center gap-1.5 rounded-2xl border py-2.5 transition-all duration-(--duration-normal) ease-(--ease-out) focus-visible:ring-2 focus-visible:outline-none sm:flex-row sm:gap-2"
+          >
+            <Icon
+              className="text-gold-400 size-4.5 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-110 sm:size-4"
+              strokeWidth={1.75}
+            />
+            <span className="text-cream-100 text-[10px] font-medium sm:text-xs">{label}</span>
+          </Link>
+        ))}
+      </div>
+
+      {/* تفکیک دارایی — طلا / تومان / مسدود */}
+      <div className="border-cream-50/10 relative mt-6 grid grid-cols-2 gap-4 border-t pt-5 sm:grid-cols-3">
         <div className="flex items-center gap-3">
           <span className="bg-gold-500/15 text-gold-400 ring-gold-500/25 flex size-10 shrink-0 items-center justify-center rounded-xl ring-1">
             <Coins className="size-5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
-            <p className="text-navy-200/70 text-[11px]">موجودی طلا</p>
+            <p className="text-cream-300/60 text-[11px]">طلای آب‌شده</p>
             {loading ? (
               <div className="skeleton-shimmer mt-1 h-6 w-24 rounded" />
+            ) : hidden ? (
+              <span className="text-cream-100 text-base font-bold tracking-widest">••••</span>
             ) : (
               <FinancialNumber
                 value={goldGrams}
@@ -105,19 +159,21 @@ export function WealthHero({
                 size="md"
                 decimals={3}
                 className="text-cream-100"
-                unitClassName="text-navy-200/60"
+                unitClassName="text-cream-300/50"
               />
             )}
           </div>
         </div>
-        <div className="sm:border-cream-50/10 flex items-center gap-3 sm:border-r sm:pr-4">
-          <span className="bg-navy-500/30 text-navy-100 ring-navy-400/30 flex size-10 shrink-0 items-center justify-center rounded-xl ring-1">
+        <div className="flex items-center gap-3">
+          <span className="bg-cream-50/8 text-cream-200 ring-cream-50/15 flex size-10 shrink-0 items-center justify-center rounded-xl ring-1">
             <Wallet className="size-5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
-            <p className="text-navy-200/70 text-[11px]">موجودی تومانی</p>
+            <p className="text-cream-300/60 text-[11px]">موجودی آزاد</p>
             {loading ? (
               <div className="skeleton-shimmer mt-1 h-6 w-24 rounded" />
+            ) : hidden ? (
+              <span className="text-cream-100 text-base font-bold tracking-widest">••••</span>
             ) : (
               <FinancialNumber
                 value={tomanBalance}
@@ -125,11 +181,30 @@ export function WealthHero({
                 size="md"
                 decimals={0}
                 className="text-cream-100"
-                unitClassName="text-navy-200/60"
+                unitClassName="text-cream-300/50"
               />
             )}
           </div>
         </div>
+        {lockedToman !== undefined && Number(lockedToman) > 0 && (
+          <div className="col-span-2 flex items-center gap-3 sm:col-span-1">
+            <div className="sm:border-cream-50/10 min-w-0 sm:border-r sm:pr-4">
+              <p className="text-cream-300/60 text-[11px]">مسدود شده</p>
+              {hidden ? (
+                <span className="text-warning text-base font-bold tracking-widest">••••</span>
+              ) : (
+                <FinancialNumber
+                  value={lockedToman}
+                  unit="تومان"
+                  size="md"
+                  decimals={0}
+                  className="text-warning"
+                  unitClassName="text-cream-300/50"
+                />
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )

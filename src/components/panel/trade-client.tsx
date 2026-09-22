@@ -149,7 +149,7 @@ export function TradeClient() {
         </Card>
         <Card className="surface-wealth gold-rings relative overflow-hidden">
           <CardContent className="relative pt-5 pb-4">
-            <p className="text-navy-200/70 flex items-center gap-1.5 text-[11px]">
+            <p className="text-cream-300/60 flex items-center gap-1.5 text-[11px]">
               <LineChart className="text-gold-400 size-3.5" strokeWidth={1.75} />
               نرخ لحظه‌ای (هر گرم)
             </p>
@@ -168,7 +168,7 @@ export function TradeClient() {
                 )}
               </div>
             ) : (
-              <p className="text-navy-200/60 mt-1 text-xs">
+              <p className="text-cream-300/50 mt-1 text-xs">
                 {loading ? '…' : 'قیمت در دسترس نیست'}
               </p>
             )}
@@ -182,7 +182,8 @@ export function TradeClient() {
           <CardTitle className="text-base">معامله آنی</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-2">
+          {/* Segmented control — pill لوکس با indicator طلایی */}
+          <div className="bg-muted border-border/50 grid grid-cols-2 gap-1 rounded-2xl border p-1">
             <button
               type="button"
               onClick={() => {
@@ -190,10 +191,11 @@ export function TradeClient() {
                 setError(null)
                 setSuccess(null)
               }}
-              className={`flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-colors ${
+              aria-pressed={mode === 'BUY'}
+              className={`flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-(--duration-normal) ${
                 mode === 'BUY'
-                  ? 'bg-gold-500 text-navy-950'
-                  : 'border-border/60 bg-card text-foreground border'
+                  ? 'bg-gold-500 shadow-gold text-[#171105]'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               <ArrowDownLeft className="size-4" strokeWidth={2} />
@@ -206,10 +208,11 @@ export function TradeClient() {
                 setError(null)
                 setSuccess(null)
               }}
-              className={`flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-colors ${
+              aria-pressed={mode === 'SELL'}
+              className={`flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-(--duration-normal) ${
                 mode === 'SELL'
-                  ? 'bg-gold-500 text-navy-950'
-                  : 'border-border/60 bg-card text-foreground border'
+                  ? 'bg-gold-500 shadow-gold text-[#171105]'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               <ArrowUpLeft className="size-4" strokeWidth={2} />
@@ -278,7 +281,7 @@ export function TradeClient() {
                       className={`flex size-9 items-center justify-center rounded-xl ${
                         o.type === 'BUY'
                           ? 'bg-gold-500/15 text-gold-500'
-                          : 'bg-navy-500/10 text-navy-500 dark:text-navy-300'
+                          : 'bg-muted text-muted-foreground'
                       }`}
                     >
                       {o.type === 'BUY' ? (

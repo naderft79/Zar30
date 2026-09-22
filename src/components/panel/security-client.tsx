@@ -103,7 +103,7 @@ export function SecurityClient() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-cream-50 text-base font-bold">امنیت حساب شما</p>
-            <p className="text-navy-200/70 mt-1 text-xs leading-5 text-pretty">
+            <p className="text-cream-300/60 mt-1 text-xs leading-5 text-pretty">
               نشست‌های فعال، رمز عبور و رویدادهای امنیتی حساب زیر نظر گرفته می‌شوند.
             </p>
           </div>

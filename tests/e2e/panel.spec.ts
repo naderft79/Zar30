@@ -46,7 +46,7 @@ async function login(page: Page, mobile: string) {
   await page.getByRole('button', { name: 'ورود', exact: true }).click()
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 })
   // صبر تا پنل کاربر لود شود
-  await expect(page.getByRole('heading', { name: /خوش آمدید/ })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /^سلام/ })).toBeVisible({
     timeout: 30_000,
   })
 }
@@ -70,18 +70,18 @@ test.describe('User Panel', () => {
     const mobile = await createUser()
     await login(page, mobile)
 
-    // --- Dashboard: خلاصه مالی + placeholderها (نه داده واقعی) ---
-    await expect(page.getByText('ارزش کل دارایی')).toBeVisible()
-    await expect(page.getByText('موجودی طلا')).toBeVisible()
-    await expect(page.getByText('موجودی تومانی')).toBeVisible()
-    await expect(page.getByText(/قیمت لحظه‌ای به‌زودی/)).toBeVisible()
+    // --- Dashboard: کارت موجودی واقعی + قیمت لحظه‌ای ---
+    await expect(page.getByText('موجودی کل')).toBeVisible()
+    await expect(page.getByText('طلای آب‌شده').first()).toBeVisible()
+    await expect(page.getByText('موجودی آزاد')).toBeVisible()
+    await expect(page.getByText(/قیمت لحظه‌ای طلا/)).toBeVisible()
     await expect(page.getByText(/هنوز تراکنشی ثبت نشده/)).toBeVisible()
 
     // --- Trade (preview) ---
     await page.goto('/dashboard/trade')
     await expect(page.getByRole('heading', { name: 'معاملات', exact: true })).toBeVisible()
     await expect(page.getByText('خرید طلا').first()).toBeVisible()
-    await expect(page.getByText(/سفارش بازی ندارید/)).toBeVisible()
+    await expect(page.getByText(/هنوز معامله‌ای/)).toBeVisible()
 
     // --- Assets (preview) ---
     await page.goto('/dashboard/assets')

@@ -24,7 +24,7 @@ const kindConfig: Record<TransactionKind, { icon: LucideIcon; label: string; ico
     sell: {
       icon: Repeat,
       label: 'فروش طلا',
-      iconClass: 'bg-navy-500/10 text-navy-500 dark:text-navy-200',
+      iconClass: 'bg-muted text-muted-foreground',
     },
     installment: { icon: CalendarClock, label: 'پرداخت قسط', iconClass: 'bg-info/10 text-info' },
     transfer: { icon: Wallet, label: 'انتقال', iconClass: 'bg-muted text-muted-foreground' },

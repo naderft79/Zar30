@@ -1,8 +1,8 @@
 // ============================================
-// Zar30 - User Panel Shell (Full Panel Redesign)
+// Zar30 - User Panel Shell (Luxury Redesign)
 // ============================================
 // Auth gate + navigation chrome برای همه صفحات /dashboard/*
-// Desktop: Premium navy sidebar — Mobile: bottom nav (۵ آیتم قرارداد)
+// Desktop: sidebar گرافیت لوکس — Mobile: floating bottom nav (۵ آیتم قرارداد)
 // Source of Truth ناوبری: src/config/navigation.ts (PANEL_NAV_ITEMS)
 // ============================================
 
@@ -73,8 +73,8 @@ function PanelLoadingSkeleton() {
   return (
     <div className="bg-background min-h-dvh" aria-busy="true" aria-label="در حال بارگذاری پنل">
       {/* Sidebar skeleton — desktop */}
-      <div className="bg-navy-950 border-navy-700/40 fixed inset-y-0 right-0 left-auto z-30 hidden w-64 flex-col border-l md:flex">
-        <div className="border-navy-700/40 flex h-16 items-center border-b px-5">
+      <div className="bg-surface border-border/60 fixed inset-y-0 right-0 left-auto z-30 hidden w-64 flex-col border-l md:flex">
+        <div className="border-border/60 flex h-16 items-center border-b px-5">
           <div className="skeleton-shimmer h-8 w-28 rounded-lg" />
         </div>
         <div className="space-y-2 p-4">
@@ -105,13 +105,15 @@ function PanelLoadingSkeleton() {
           ))}
         </div>
       </div>
-      {/* Bottom nav skeleton — mobile */}
-      <div className="bg-card/95 border-border/60 fixed inset-x-0 bottom-0 z-30 grid h-16 grid-cols-5 border-t pb-[env(safe-area-inset-bottom)] md:hidden">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex items-center justify-center">
-            <div className="skeleton-shimmer size-6 rounded-lg" />
-          </div>
-        ))}
+      {/* Bottom nav skeleton — mobile — pill شناور */}
+      <div className="fixed inset-x-4 bottom-4 z-30 md:hidden">
+        <div className="bg-card/95 border-border/60 grid h-16 grid-cols-5 rounded-2xl border shadow-xl backdrop-blur-xl">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-center">
+              <div className="skeleton-shimmer size-6 rounded-lg" />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -123,15 +125,30 @@ function NotificationBell() {
     <Link
       href={UTILITY_ROUTES.notifications}
       aria-label="مرکز اعلان‌ها"
-      className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring relative flex size-10 items-center justify-center rounded-xl transition-colors focus-visible:ring-2"
+      className="text-muted-foreground hover:bg-muted hover:text-gold-400 focus-visible:ring-ring border-border/50 bg-card/60 relative flex size-10 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2"
     >
       <Bell className="size-5" strokeWidth={1.75} />
     </Link>
   )
 }
 
+const KYC_LABELS: Record<string, string> = {
+  LEVEL_0: 'حساب شخصی',
+  LEVEL_1: 'حساب شخصی',
+  LEVEL_2: 'حساب تاییدشده',
+  LEVEL_3: 'حساب ممتاز',
+}
+
 // ---- آواتار کاربر — حروف اول نام روی halo طلایی ----
-function UserAvatar({ user, size = 'md' }: { user: PanelUser; size?: 'sm' | 'md' }) {
+function UserAvatar({
+  user,
+  size = 'md',
+  className,
+}: {
+  user: PanelUser
+  size?: 'sm' | 'md'
+  className?: string
+}) {
   const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.mobile
   const cls = size === 'sm' ? 'size-9 text-[11px]' : 'size-10 text-xs'
   return (
@@ -140,8 +157,9 @@ function UserAvatar({ user, size = 'md' }: { user: PanelUser; size?: 'sm' | 'md'
       aria-label="پروفایل کاربر"
       title={displayName}
       className={cn(
-        'from-gold-500/25 to-gold-600/15 text-gold-300 ring-gold-500/30 hover:ring-gold-400/60 hover:shadow-gold flex shrink-0 items-center justify-center rounded-full bg-gradient-to-bl font-bold ring-1 transition-all duration-(--duration-normal) focus-visible:ring-2',
+        'from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/35 hover:ring-gold-400/60 hover:shadow-gold flex shrink-0 items-center justify-center rounded-full bg-gradient-to-bl font-bold ring-1 transition-all duration-(--duration-normal) focus-visible:ring-2',
         cls,
+        className,
       )}
     >
       {displayName.slice(0, 2)}
@@ -197,18 +215,20 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   return (
     <PanelContext.Provider value={{ user, reload: load, logout }}>
       <div className="bg-background min-h-dvh">
-        {/* ============ Desktop — Premium Navy Sidebar ============ */}
-        <aside className="bg-navy-950 border-navy-700/40 fixed inset-y-0 right-0 z-30 hidden w-64 flex-col border-l md:flex">
+        {/* ============ Desktop — Sidebar گرافیت لوکس ============ */}
+        <aside className="bg-surface border-border/60 fixed inset-y-0 right-0 z-30 hidden w-64 flex-col border-l md:flex">
           {/* لوگو */}
-          <div className="border-navy-700/40 flex h-16 items-center border-b px-5">
+          <div className="border-border/60 flex h-16 items-center border-b px-5">
             <Link href="/" aria-label="زرسی — صفحه اصلی">
-              <Logo size="md" textClassName="text-cream-100" />
+              <Logo size="md" textClassName="text-foreground" />
             </Link>
           </div>
 
           {/* Navigation — از Source of Truth مرکزی */}
           <nav aria-label="ناوبری اصلی پنل" className="flex-1 overflow-y-auto px-4 py-5">
-            <p className="text-navy-300/50 mb-3 px-2 text-[10px] font-semibold">پنل کاربری</p>
+            <p className="text-muted-foreground/60 mb-3 px-2 text-[10px] font-semibold">
+              پنل کاربری
+            </p>
             <ul className="space-y-1.5">
               {PANEL_NAV_ITEMS.map((item) => {
                 const active = isNavItemActive(item, pathname)
@@ -223,8 +243,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                         'group relative flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm transition-all duration-(--duration-normal) ease-(--ease-out)',
                         'focus-visible:ring-gold-500/60 focus-visible:ring-2 focus-visible:outline-none',
                         active
-                          ? 'from-gold-500/15 to-gold-500/5 text-gold-300 bg-gradient-to-l font-semibold shadow-sm'
-                          : 'text-navy-200/70 hover:bg-navy-800/70 hover:text-cream-100',
+                          ? 'from-gold-500/18 to-gold-500/5 text-gold-300 bg-gradient-to-l font-semibold shadow-sm'
+                          : 'text-text-secondary/80 hover:bg-card hover:text-foreground',
                       )}
                     >
                       {/* نشانگر active — نوار طلایی سمت راست (شروع RTL) */}
@@ -252,30 +272,30 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* بخش کاربر + خروج */}
-          <div className="border-navy-700/40 space-y-2 border-t p-4">
+          <div className="border-border/60 space-y-2 border-t p-4">
             <Link
               href="/dashboard/profile"
-              className="group bg-navy-900/80 hover:bg-navy-800/80 border-navy-700/30 hover:border-gold-500/30 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all duration-(--duration-normal)"
+              className="group bg-card/80 hover:bg-elevated border-border/50 hover:border-gold-500/30 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all duration-(--duration-normal)"
             >
-              <span className="from-gold-500/25 to-gold-600/15 text-gold-300 ring-gold-500/30 flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1">
+              <span className="from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/35 flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1">
                 {displayName.slice(0, 2)}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="text-cream-100 block truncate text-xs font-medium">
+                <span className="text-foreground block truncate text-xs font-medium">
                   {displayName}
                 </span>
                 <span
-                  className="text-navy-300/60 block truncate text-[10px] tabular-nums"
+                  className="text-muted-foreground/70 block truncate text-[10px] tabular-nums"
                   dir="ltr"
                 >
                   {user.mobile}
                 </span>
               </span>
-              <ChevronLeft className="text-navy-300/50 group-hover:text-gold-400 size-4 shrink-0 transition-colors" />
+              <ChevronLeft className="text-muted-foreground/60 group-hover:text-gold-400 size-4 shrink-0 transition-colors" />
             </Link>
             <button
               onClick={logout}
-              className="text-navy-200/60 hover:bg-error/10 hover:text-error focus-visible:ring-error/40 flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              className="text-text-secondary/70 hover:bg-error/10 hover:text-error focus-visible:ring-error/40 flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               <LogOut className="size-4" strokeWidth={1.75} />
               خروج از حساب
@@ -284,9 +304,24 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* ============ Header — context-aware ============ */}
-        <header className="border-border/60 bg-background/80 sticky top-0 z-(--z-sticky) flex h-16 items-center justify-between gap-4 border-b px-4 backdrop-blur-md md:pr-68 md:pl-8">
-          <Link href="/" className="md:hidden" aria-label="زرسی — صفحه اصلی">
-            <Logo size="sm" />
+        <header className="border-border/50 bg-background/80 sticky top-0 z-(--z-sticky) flex h-16 items-center justify-between gap-4 border-b px-4 backdrop-blur-md sm:px-6 md:pr-68 md:pl-8">
+          {/* موبایل — هویت کاربر: avatar + نام + وضعیت حساب */}
+          <Link
+            href="/dashboard/profile"
+            className="flex min-w-0 items-center gap-2.5 md:hidden"
+            aria-label="پروفایل کاربر"
+          >
+            <span className="from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/40 shadow-gold flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1">
+              {displayName.slice(0, 2)}
+            </span>
+            <span className="min-w-0">
+              <span className="text-foreground block truncate text-sm font-semibold">
+                {displayName}
+              </span>
+              <span className="text-gold-400/90 mt-0.5 block text-[10px] font-medium">
+                {KYC_LABELS[user.kycLevel] ?? 'حساب شخصی'}
+              </span>
+            </span>
           </Link>
           {/* دسکتاپ — عنوان صفحه + تاریخ امروز */}
           <div className="hidden min-w-0 md:block">
@@ -295,51 +330,54 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           </div>
           <div className="flex items-center gap-1.5">
             <NotificationBell />
-            <UserAvatar user={user} size="sm" />
+            <UserAvatar user={user} size="sm" className="hidden md:flex" />
           </div>
         </header>
 
         {/* ============ Content ============ */}
-        <main className="pb-24 md:pr-64 md:pb-8">
-          <div key={pathname} className="animate-page-in mx-auto max-w-6xl p-4 py-6 sm:px-6">
+        <main className="pb-28 md:pr-64 md:pb-8">
+          <div
+            key={pathname}
+            className="animate-page-in mx-auto max-w-6xl p-4 py-5 sm:px-6 sm:py-6"
+          >
             {children}
           </div>
         </main>
 
-        {/* ============ Mobile — Bottom Navigation (۵ آیتم قرارداد) ============ */}
+        {/* ============ Mobile — Floating Bottom Nav (۵ آیتم قرارداد) ============ */}
         <nav
           aria-label="ناوبری اصلی موبایل"
-          className="bg-card/95 border-border/60 fixed inset-x-0 bottom-0 z-(--z-sticky) grid grid-cols-5 border-t pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-12px_rgb(0_0_0/0.5)] backdrop-blur-md md:hidden"
+          className="fixed inset-x-4 bottom-3 z-(--z-sticky) pb-[env(safe-area-inset-bottom)] md:hidden"
         >
-          {PANEL_NAV_ITEMS.map((item) => {
-            const active = isNavItemActive(item, pathname)
-            const Icon = item.icon
-            return (
-              <Link
-                key={item.key}
-                href={item.href}
-                aria-current={active ? 'page' : undefined}
-                aria-label={item.label}
-                className={cn(
-                  'flex min-h-[62px] flex-col items-center justify-center gap-1 py-2 text-[10px] transition-colors duration-(--duration-fast)',
-                  'focus-visible:bg-muted focus-visible:outline-none',
-                  active
-                    ? 'text-gold-600 dark:text-gold-400 font-semibold'
-                    : 'text-muted-foreground',
-                )}
-              >
-                <span
+          <div className="bg-card/90 border-border/70 grid h-[68px] grid-cols-5 rounded-2xl border shadow-[0_12px_40px_-8px_rgb(0_0_0/0.7),0_0_0_1px_rgb(212_175_55/0.06)] backdrop-blur-xl">
+            {PANEL_NAV_ITEMS.map((item) => {
+              const active = isNavItemActive(item, pathname)
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  aria-current={active ? 'page' : undefined}
+                  aria-label={item.label}
                   className={cn(
-                    'relative flex items-center justify-center rounded-xl px-3 py-1 transition-all duration-(--duration-normal) ease-(--ease-spring)',
-                    active && 'bg-gold-500/12 animate-nav-pop',
+                    'flex min-h-[44px] flex-col items-center justify-center gap-1 rounded-xl text-[10px] transition-colors duration-(--duration-fast)',
+                    'focus-visible:bg-muted focus-visible:outline-none',
+                    active ? 'text-gold-400 font-semibold' : 'text-muted-foreground',
                   )}
                 >
-                  <Icon className="size-5" strokeWidth={active ? 2 : 1.75} />
-                </span>
-                {item.label}
-              </Link>
-            )
-          })}
+                  <span
+                    className={cn(
+                      'relative flex items-center justify-center rounded-xl px-3.5 py-1 transition-all duration-(--duration-normal) ease-(--ease-spring)',
+                      active && 'bg-gold-500/15 shadow-gold animate-nav-pop',
+                    )}
+                  >
+                    <Icon className="size-5" strokeWidth={active ? 2 : 1.75} />
+                  </span>
+                  {item.label}
+                </Link>
+              )
+            })}
+          </div>
         </nav>
       </div>
     </PanelContext.Provider>
