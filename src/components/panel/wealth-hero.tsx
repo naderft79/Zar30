@@ -9,8 +9,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { CalendarClock, Coins, Eye, EyeOff, Package, TrendingUp, Wallet } from 'lucide-react'
-import { HandDeposit, HandWithdraw } from '@phosphor-icons/react'
+import { CalendarClock, Eye, EyeOff, Package, TrendingUp, Wallet } from 'lucide-react'
+import { HandDeposit, HandWithdraw, Vault } from '@phosphor-icons/react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { cn } from 'cn'
@@ -32,6 +32,7 @@ interface WealthHeroProps {
 const HERO_ACTIONS = [
   { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: HandDeposit },
   { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: HandWithdraw },
+  { href: '/dashboard/assets', label: 'مدیریت دارایی', icon: Vault },
 ] as const
 
 // بنرهای چرخان داخل کارت — هر ۵ ثانیه بنر بعدی
@@ -64,9 +65,6 @@ const BANNER_INTERVAL_MS = 5_000
 export function WealthHero({
   dateLabel,
   totalValue,
-  goldGrams,
-  tomanBalance,
-  lockedToman,
   changePercent,
   loading = false,
   className,
@@ -154,82 +152,17 @@ export function WealthHero({
       </div>
 
       {/* اکشن‌های مالی — شیشه‌ای سورمه‌ای، بدون سایه/نئون/طلایی */}
-      <div className="relative mt-4 grid grid-cols-2 gap-2.5">
+      <div className="relative mt-4 grid grid-cols-3 gap-2.5">
         {HERO_ACTIONS.map(({ href, label, icon: Icon }) => (
           <Link
             key={label}
             href={href}
-            className="group bg-navy-300/20 ring-cream-50/15 hover:bg-navy-300/30 focus-visible:ring-cream-50/40 flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl ring-1 backdrop-blur-xl transition-colors duration-(--duration-normal) ease-(--ease-out) ring-inset focus-visible:ring-2 focus-visible:outline-none"
+            className="group bg-navy-300/20 ring-cream-50/15 hover:bg-navy-300/30 focus-visible:ring-cream-50/40 flex min-h-[52px] items-center justify-center gap-2 rounded-2xl ring-1 backdrop-blur-xl transition-colors duration-(--duration-normal) ease-(--ease-out) ring-inset focus-visible:ring-2 focus-visible:outline-none"
           >
             <Icon className="text-cream-50 size-6 shrink-0" weight="duotone" aria-hidden="true" />
-            <span className="text-cream-50 text-sm font-bold">{label}</span>
+            <span className="text-cream-50 text-[11px] font-bold sm:text-xs">{label}</span>
           </Link>
         ))}
-      </div>
-
-      {/* تفکیک دارایی — کیف پول‌های طلایی/تومانی */}
-      <div className="relative mt-4 grid grid-cols-2 gap-2.5">
-        <div className="bg-cream-50/6 ring-cream-50/10 flex items-center gap-3 rounded-2xl px-3.5 py-3 ring-1">
-          <span className="from-gold-400/25 to-gold-600/25 text-gold-400 ring-gold-500/30 flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ring-1">
-            <Coins className="size-4.5" strokeWidth={1.75} />
-          </span>
-          <div className="min-w-0">
-            <p className="text-cream-300/60 text-[10px] font-medium">کیف پول طلایی</p>
-            {loading ? (
-              <div className="skeleton-shimmer mt-1 h-5 w-20 rounded" />
-            ) : hidden ? (
-              <span className="text-cream-50 text-sm font-bold tracking-widest">••••</span>
-            ) : (
-              <FinancialNumber
-                value={goldGrams}
-                unit="گرم"
-                size="md"
-                decimals={3}
-                className="text-cream-50 text-sm font-bold"
-                unitClassName="text-cream-300/50 text-[10px]"
-              />
-            )}
-          </div>
-        </div>
-        <div className="bg-cream-50/6 ring-cream-50/10 flex items-center gap-3 rounded-2xl px-3.5 py-3 ring-1">
-          <span className="bg-cream-50/10 text-cream-200 ring-cream-50/15 flex size-9 shrink-0 items-center justify-center rounded-xl ring-1">
-            <Wallet className="size-4.5" strokeWidth={1.75} />
-          </span>
-          <div className="min-w-0">
-            <p className="text-cream-300/60 text-[10px] font-medium">کیف پول تومانی</p>
-            {loading ? (
-              <div className="skeleton-shimmer mt-1 h-5 w-20 rounded" />
-            ) : hidden ? (
-              <span className="text-cream-50 text-sm font-bold tracking-widest">••••</span>
-            ) : (
-              <FinancialNumber
-                value={tomanBalance}
-                unit="تومان"
-                size="md"
-                decimals={0}
-                className="text-cream-50 text-sm font-bold"
-                unitClassName="text-cream-300/50 text-[10px]"
-              />
-            )}
-          </div>
-        </div>
-        {lockedToman !== undefined && Number(lockedToman) > 0 && (
-          <div className="bg-warning/8 ring-warning/20 col-span-2 flex items-center justify-between rounded-2xl px-3.5 py-2 ring-1">
-            <p className="text-cream-300/70 text-[10px] font-medium">مسدود شده</p>
-            {hidden ? (
-              <span className="text-warning text-sm font-bold tracking-widest">••••</span>
-            ) : (
-              <FinancialNumber
-                value={lockedToman}
-                unit="تومان"
-                size="md"
-                decimals={0}
-                className="text-warning text-sm font-bold"
-                unitClassName="text-cream-300/50 text-[10px]"
-              />
-            )}
-          </div>
-        )}
       </div>
 
       {/* بنر چرخان — سفید، داخل کارت؛ هر ۵ ثانیه بنر بعدی */}
