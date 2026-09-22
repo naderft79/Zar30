@@ -9,10 +9,11 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { CalendarClock, Eye, EyeOff, Package, TrendingUp, Wallet } from 'lucide-react'
+import { CalendarClock, Eye, EyeOff, Package, TrendingUp } from 'lucide-react'
 import { HandDeposit, HandWithdraw, Vault } from '@phosphor-icons/react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
+import { toPersianWords } from '@/lib/utils/format'
 import { cn } from 'cn'
 
 interface WealthHeroProps {
@@ -109,9 +110,6 @@ export function WealthHero({
       {/* موجودی کل — عدد شاخص + چشم */}
       <div className="relative mt-3">
         <div className="mb-1.5 flex items-center gap-2">
-          <span className="bg-gold-500/15 text-gold-400 flex size-7 items-center justify-center rounded-lg">
-            <Wallet className="size-3.5" strokeWidth={1.75} />
-          </span>
           <p className="text-cream-300/80 text-label">موجودی کل</p>
           <button
             type="button"
@@ -126,11 +124,16 @@ export function WealthHero({
               <Eye className="size-4" strokeWidth={1.75} />
             )}
           </button>
+          {!loading && !hidden && Number(totalValue) > 0 && (
+            <p className="text-cream-300/55 min-w-0 truncate text-[10px] sm:text-[11px]">
+              {toPersianWords(totalValue)}
+            </p>
+          )}
         </div>
         {loading ? (
-          <div className="skeleton-shimmer h-10 w-56 rounded-lg" />
+          <div className="skeleton-shimmer h-12 w-64 rounded-lg" />
         ) : hidden ? (
-          <p className="text-cream-50 text-2xl font-extrabold tracking-widest sm:text-3xl">
+          <p className="text-cream-50 text-3xl font-extrabold tracking-widest sm:text-4xl">
             ••••••
           </p>
         ) : (
@@ -141,8 +144,8 @@ export function WealthHero({
               size="xl"
               decimals={0}
               animate
-              className="text-cream-50 text-2xl sm:text-3xl"
-              unitClassName="text-sm text-cream-300/60"
+              className="text-cream-50 text-4xl sm:text-5xl"
+              unitClassName="text-gold-400 text-base font-bold sm:text-lg"
             />
             {changePercent !== undefined && (
               <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" className="mb-2" />
