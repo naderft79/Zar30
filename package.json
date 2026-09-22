@@ -33,6 +33,7 @@
     "@capacitor/push-notifications": "^8.1.2",
     "@capacitor/share": "^8.0.2",
     "@hookform/resolvers": "5.1.0",
+    "@phosphor-icons/react": "^2.1.10",
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
     "@prisma/client-runtime-utils": "7.10.0",

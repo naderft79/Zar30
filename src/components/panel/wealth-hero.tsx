@@ -9,17 +9,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import {
-  BanknoteArrowDown,
-  BanknoteArrowUp,
-  CalendarClock,
-  Coins,
-  Eye,
-  EyeOff,
-  Package,
-  TrendingUp,
-  Wallet,
-} from 'lucide-react'
+import { CalendarClock, Coins, Eye, EyeOff, Package, TrendingUp, Wallet } from 'lucide-react'
+import { HandDeposit, HandWithdraw } from '@phosphor-icons/react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { cn } from 'cn'
@@ -39,8 +30,8 @@ interface WealthHeroProps {
 
 // اکشن‌های مالی داخل کارت — ورود سریع به مقصدهای اصلی
 const HERO_ACTIONS = [
-  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: BanknoteArrowDown },
-  { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: BanknoteArrowUp },
+  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: HandDeposit },
+  { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: HandWithdraw },
 ] as const
 
 // بنرهای چرخان داخل کارت — هر ۵ ثانیه بنر بعدی
@@ -162,18 +153,16 @@ export function WealthHero({
         )}
       </div>
 
-      {/* اکشن‌های مالی — شیشه‌ای سورمه‌ای، بدون سایه/نئون */}
+      {/* اکشن‌های مالی — شیشه‌ای سورمه‌ای، بدون سایه/نئون/طلایی */}
       <div className="relative mt-4 grid grid-cols-2 gap-2.5">
         {HERO_ACTIONS.map(({ href, label, icon: Icon }) => (
           <Link
             key={label}
             href={href}
-            className="group bg-navy-400/20 ring-cream-50/10 hover:bg-navy-400/30 focus-visible:ring-gold-500/60 flex min-h-[46px] items-center justify-center gap-2.5 rounded-2xl ring-1 backdrop-blur-md transition-colors duration-(--duration-normal) ease-(--ease-out) focus-visible:ring-2 focus-visible:outline-none"
+            className="group bg-navy-300/20 ring-cream-50/15 hover:bg-navy-300/30 focus-visible:ring-cream-50/40 flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl ring-1 backdrop-blur-xl transition-colors duration-(--duration-normal) ease-(--ease-out) ring-inset focus-visible:ring-2 focus-visible:outline-none"
           >
-            <span className="bg-cream-50/8 ring-cream-50/10 flex size-7 items-center justify-center rounded-full ring-1">
-              <Icon className="text-gold-300 size-4" strokeWidth={1.75} />
-            </span>
-            <span className="text-cream-50 text-xs font-bold">{label}</span>
+            <Icon className="text-cream-50 size-6 shrink-0" weight="duotone" aria-hidden="true" />
+            <span className="text-cream-50 text-sm font-bold">{label}</span>
           </Link>
         ))}
       </div>
