@@ -159,86 +159,83 @@ export function WealthHero({
         )}
       </div>
 
-      {/* اکشن‌های مالی — داخل کارت، thumb-friendly */}
-      <div className="relative mt-4 grid grid-cols-2 gap-2 sm:gap-3">
+      {/* اکشن‌های مالی — pill سفید، آیکون و متن هم‌خط */}
+      <div className="relative mt-4 grid grid-cols-2 gap-2.5">
         {HERO_ACTIONS.map(({ href, label, icon: Icon }) => (
           <Link
             key={label}
             href={href}
-            className="group bg-cream-50/6 hover:bg-gold-500/15 border-cream-50/8 hover:border-gold-500/30 focus-visible:ring-gold-500/60 flex min-h-[44px] flex-col items-center justify-center gap-1.5 rounded-2xl border py-2.5 transition-all duration-(--duration-normal) ease-(--ease-out) focus-visible:ring-2 focus-visible:outline-none sm:flex-row sm:gap-2"
+            className="group bg-cream-50 hover:bg-cream-100 focus-visible:ring-gold-500/70 flex min-h-[46px] items-center justify-center gap-2 rounded-full shadow-[0_8px_20px_-8px_rgb(0_0_0/0.45)] transition-all duration-(--duration-normal) ease-(--ease-spring) hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:outline-none"
           >
-            <Icon
-              className="text-gold-400 size-4.5 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-110 sm:size-4"
-              strokeWidth={1.75}
-            />
-            <span className="text-cream-100 text-[10px] font-medium sm:text-xs">{label}</span>
+            <span className="bg-gold-500/15 text-gold-600 flex size-7 items-center justify-center rounded-full transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-110">
+              <Icon className="size-4" strokeWidth={2} />
+            </span>
+            <span className="text-navy-800 text-xs font-bold">{label}</span>
           </Link>
         ))}
       </div>
 
-      {/* تفکیک دارایی — طلا / تومان / مسدود */}
-      <div className="border-cream-50/10 relative mt-4 grid grid-cols-2 gap-4 border-t pt-3.5 sm:grid-cols-3">
-        <div className="flex items-center gap-3">
-          <span className="bg-gold-500/15 text-gold-400 ring-gold-500/25 flex size-9 shrink-0 items-center justify-center rounded-xl ring-1">
-            <Coins className="size-5" strokeWidth={1.75} />
+      {/* تفکیک دارایی — کیف پول‌های طلایی/تومانی */}
+      <div className="relative mt-4 grid grid-cols-2 gap-2.5">
+        <div className="bg-cream-50/6 ring-cream-50/10 flex items-center gap-3 rounded-2xl px-3.5 py-3 ring-1">
+          <span className="from-gold-400/25 to-gold-600/25 text-gold-400 ring-gold-500/30 flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ring-1">
+            <Coins className="size-4.5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
-            <p className="text-cream-300/60 text-[11px]">کیف پول طلایی</p>
+            <p className="text-cream-300/60 text-[10px] font-medium">کیف پول طلایی</p>
             {loading ? (
-              <div className="skeleton-shimmer mt-1 h-6 w-24 rounded" />
+              <div className="skeleton-shimmer mt-1 h-5 w-20 rounded" />
             ) : hidden ? (
-              <span className="text-cream-100 text-base font-bold tracking-widest">••••</span>
+              <span className="text-cream-50 text-sm font-bold tracking-widest">••••</span>
             ) : (
               <FinancialNumber
                 value={goldGrams}
                 unit="گرم"
                 size="md"
                 decimals={3}
-                className="text-cream-100"
-                unitClassName="text-cream-300/50"
+                className="text-cream-50 text-sm font-bold"
+                unitClassName="text-cream-300/50 text-[10px]"
               />
             )}
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="bg-cream-50/8 text-cream-200 ring-cream-50/15 flex size-9 shrink-0 items-center justify-center rounded-xl ring-1">
-            <Wallet className="size-5" strokeWidth={1.75} />
+        <div className="bg-cream-50/6 ring-cream-50/10 flex items-center gap-3 rounded-2xl px-3.5 py-3 ring-1">
+          <span className="bg-cream-50/10 text-cream-200 ring-cream-50/15 flex size-9 shrink-0 items-center justify-center rounded-xl ring-1">
+            <Wallet className="size-4.5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
-            <p className="text-cream-300/60 text-[11px]">کیف پول تومانی</p>
+            <p className="text-cream-300/60 text-[10px] font-medium">کیف پول تومانی</p>
             {loading ? (
-              <div className="skeleton-shimmer mt-1 h-6 w-24 rounded" />
+              <div className="skeleton-shimmer mt-1 h-5 w-20 rounded" />
             ) : hidden ? (
-              <span className="text-cream-100 text-base font-bold tracking-widest">••••</span>
+              <span className="text-cream-50 text-sm font-bold tracking-widest">••••</span>
             ) : (
               <FinancialNumber
                 value={tomanBalance}
                 unit="تومان"
                 size="md"
                 decimals={0}
-                className="text-cream-100"
-                unitClassName="text-cream-300/50"
+                className="text-cream-50 text-sm font-bold"
+                unitClassName="text-cream-300/50 text-[10px]"
               />
             )}
           </div>
         </div>
         {lockedToman !== undefined && Number(lockedToman) > 0 && (
-          <div className="col-span-2 flex items-center gap-3 sm:col-span-1">
-            <div className="sm:border-cream-50/10 min-w-0 sm:border-r sm:pr-4">
-              <p className="text-cream-300/60 text-[11px]">مسدود شده</p>
-              {hidden ? (
-                <span className="text-warning text-base font-bold tracking-widest">••••</span>
-              ) : (
-                <FinancialNumber
-                  value={lockedToman}
-                  unit="تومان"
-                  size="md"
-                  decimals={0}
-                  className="text-warning"
-                  unitClassName="text-cream-300/50"
-                />
-              )}
-            </div>
+          <div className="bg-warning/8 ring-warning/20 col-span-2 flex items-center justify-between rounded-2xl px-3.5 py-2 ring-1">
+            <p className="text-cream-300/70 text-[10px] font-medium">مسدود شده</p>
+            {hidden ? (
+              <span className="text-warning text-sm font-bold tracking-widest">••••</span>
+            ) : (
+              <FinancialNumber
+                value={lockedToman}
+                unit="تومان"
+                size="md"
+                decimals={0}
+                className="text-warning text-sm font-bold"
+                unitClassName="text-cream-300/50 text-[10px]"
+              />
+            )}
           </div>
         )}
       </div>
