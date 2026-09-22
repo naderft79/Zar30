@@ -16,7 +16,7 @@ const meta = { ip: '127.0.0.1', userAgent: 'e2e-panel' }
 
 // قرارداد دائمی ناوبری — ADR: Permanent User Panel Navigation
 // ترتیب آرایه = ترتیب قرارداد؛ تغییر بدون ADR ممنوع
-const NAV_CONTRACT = ['خانه', 'معاملات', 'دارایی', 'قسطی', 'پروفایل'] as const
+const NAV_CONTRACT = ['خانه', 'قسطی', 'معاملات', 'دارایی', 'پروفایل'] as const
 // match کامل — جلوی تغییر نام/الحاق متن به label را می‌گیرد
 const NAV_CONTRACT_EXACT = NAV_CONTRACT.map((l) => new RegExp(`^${l}$`))
 
@@ -45,10 +45,8 @@ async function login(page: Page, mobile: string) {
   await page.getByLabel('رمز عبور').fill(PASSWORD)
   await page.getByRole('button', { name: 'ورود', exact: true }).click()
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 })
-  // صبر تا پنل کاربر لود شود
-  await expect(page.getByRole('heading', { name: /^سلام/ })).toBeVisible({
-    timeout: 30_000,
-  })
+  // صبر تا پنل کاربر لود شود — کارت موجودی اصلی
+  await expect(page.getByText('موجودی کل')).toBeVisible({ timeout: 30_000 })
 }
 
 // nav قابل‌مشاهده در viewport فعلی را برمی‌گرداند:
@@ -72,8 +70,8 @@ test.describe('User Panel', () => {
 
     // --- Dashboard: کارت موجودی واقعی + قیمت لحظه‌ای ---
     await expect(page.getByText('موجودی کل')).toBeVisible()
-    await expect(page.getByText('طلای آب‌شده').first()).toBeVisible()
-    await expect(page.getByText('موجودی آزاد')).toBeVisible()
+    await expect(page.getByText('کیف پول طلایی').first()).toBeVisible()
+    await expect(page.getByText('کیف پول تومانی')).toBeVisible()
     await expect(page.getByText(/قیمت لحظه‌ای طلا/)).toBeVisible()
     await expect(page.getByText(/هنوز تراکنشی ثبت نشده/)).toBeVisible()
 

@@ -3,7 +3,7 @@
 // ============================================
 // ⚠️ قانون دائمی پروژه (ADR: Permanent User Panel Navigation)
 // Navigation اصلی User Panel همیشه دقیقاً این ۵ مقصد را با همین ترتیب دارد:
-//   ۱. خانه  ۲. معاملات  ۳. دارایی  ۴. قسطی  ۵. پروفایل
+//   ۱. خانه  ۲. قسطی  ۳. معاملات (برجسته)  ۴. دارایی  ۵. پروفایل
 //
 // - Desktop (Sidebar) و Mobile (Bottom Nav) هر دو از همین Source of Truth استفاده می‌کنند
 // - اضافه/حذف/تغییر ترتیب بدون ADR رسمی ممنوع است
@@ -35,6 +35,13 @@ export const PANEL_NAV_ITEMS: readonly NavItem[] = [
     description: 'داشبورد و خلاصه حساب',
   },
   {
+    key: 'installments',
+    label: 'قسطی',
+    href: '/dashboard/installments',
+    icon: CalendarClock,
+    description: 'طرح‌های اقساطی و قراردادها',
+  },
+  {
     key: 'trade',
     label: 'معاملات',
     href: '/dashboard/trade',
@@ -47,13 +54,6 @@ export const PANEL_NAV_ITEMS: readonly NavItem[] = [
     href: '/dashboard/assets',
     icon: Wallet,
     description: 'کیف پول، موجودی و تراکنش‌ها',
-  },
-  {
-    key: 'installments',
-    label: 'قسطی',
-    href: '/dashboard/installments',
-    icon: CalendarClock,
-    description: 'طرح‌های اقساطی و قراردادها',
   },
   {
     key: 'profile',

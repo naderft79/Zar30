@@ -344,15 +344,55 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           </div>
         </main>
 
-        {/* ============ Mobile — Floating Bottom Nav (۵ آیتم قرارداد) ============ */}
+        {/* ============ Mobile — Liquid Glass Bottom Nav (۵ آیتم قرارداد) ============ */}
         <nav
           aria-label="ناوبری اصلی موبایل"
           className="fixed inset-x-4 bottom-3 z-(--z-sticky) pb-[env(safe-area-inset-bottom)] md:hidden"
         >
-          <div className="bg-navy-800/95 border-navy-600/50 grid h-[68px] grid-cols-5 rounded-2xl border shadow-[0_16px_44px_-10px_rgb(10_18_36/0.55),0_0_0_1px_rgb(212_175_55/0.08)] backdrop-blur-xl">
+          <div className="grid h-[68px] grid-cols-5 rounded-[1.75rem] bg-white/55 shadow-[0_18px_48px_-12px_rgb(16_29_56/0.35),inset_0_1px_0_rgb(255_255_255/0.6)] backdrop-blur-2xl">
             {PANEL_NAV_ITEMS.map((item) => {
               const active = isNavItemActive(item, pathname)
               const Icon = item.icon
+
+              // معاملات — اکشن مرکزی برجسته: دایره طلایی بیرون‌زده از نوار
+              if (item.key === 'trade') {
+                return (
+                  <Link
+                    key={item.key}
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    aria-label={item.label}
+                    className="group flex min-h-[44px] flex-col items-center justify-end gap-0.5 pb-1.5 focus-visible:outline-none"
+                  >
+                    <span
+                      className={cn(
+                        'from-gold-400 via-gold-500 to-gold-600 ring-gold-500/30 shadow-gold relative -mt-9 mb-1 flex size-14 items-center justify-center rounded-full bg-gradient-to-bl ring-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-active:scale-95',
+                        active && 'animate-nav-pop',
+                      )}
+                    >
+                      {/* برق شیشه‌ای روی دایره */}
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-1.5 top-1 h-4 rounded-full bg-white/35 blur-[3px]"
+                      />
+                      <Icon
+                        className="size-6 text-[#171105]"
+                        strokeWidth={2.25}
+                        aria-hidden="true"
+                      />
+                    </span>
+                    <span
+                      className={cn(
+                        'text-[10px] font-bold transition-colors',
+                        active ? 'text-gold-700' : 'text-navy-800/70',
+                      )}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                )
+              }
+
               return (
                 <Link
                   key={item.key}
@@ -361,14 +401,14 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                   aria-label={item.label}
                   className={cn(
                     'flex min-h-[44px] flex-col items-center justify-center gap-1 rounded-xl text-[10px] transition-colors duration-(--duration-fast)',
-                    'focus-visible:bg-navy-700 focus-visible:outline-none',
-                    active ? 'text-gold-300 font-semibold' : 'text-white/55',
+                    'focus-visible:bg-navy-500/10 focus-visible:outline-none',
+                    active ? 'text-navy-800 font-semibold' : 'text-navy-800/55',
                   )}
                 >
                   <span
                     className={cn(
                       'relative flex items-center justify-center rounded-xl px-3.5 py-1 transition-all duration-(--duration-normal) ease-(--ease-spring)',
-                      active && 'bg-gold-500/20 animate-nav-pop',
+                      active && 'bg-navy-500/12 animate-nav-pop',
                     )}
                   >
                     <Icon className="size-5" strokeWidth={active ? 2 : 1.75} />
