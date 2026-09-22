@@ -10,8 +10,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
-  ArrowDownLeft,
-  ArrowUpLeft,
+  BanknoteArrowDown,
+  BanknoteArrowUp,
   CalendarClock,
   Coins,
   Eye,
@@ -39,8 +39,8 @@ interface WealthHeroProps {
 
 // اکشن‌های مالی داخل کارت — ورود سریع به مقصدهای اصلی
 const HERO_ACTIONS = [
-  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: ArrowDownLeft },
-  { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: ArrowUpLeft },
+  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: BanknoteArrowDown },
+  { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: BanknoteArrowUp },
 ] as const
 
 // بنرهای چرخان داخل کارت — هر ۵ ثانیه بنر بعدی
@@ -162,19 +162,18 @@ export function WealthHero({
         )}
       </div>
 
-      {/* اکشن‌های مالی — گرادیان طلایی، آیکون و متن هم‌خط */}
+      {/* اکشن‌های مالی — شیشه‌ای سورمه‌ای، بدون سایه/نئون */}
       <div className="relative mt-4 grid grid-cols-2 gap-2.5">
         {HERO_ACTIONS.map(({ href, label, icon: Icon }) => (
           <Link
             key={label}
             href={href}
-            className="group from-gold-300 via-gold-400 to-gold-500 focus-visible:ring-gold-200/80 flex min-h-[46px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-bl shadow-[0_10px_24px_-8px_rgb(212_175_55/0.55)] transition-all duration-(--duration-normal) ease-(--ease-spring) hover:-translate-y-0.5 hover:shadow-[0_14px_28px_-8px_rgb(212_175_55/0.65)] hover:brightness-105 focus-visible:ring-2 focus-visible:outline-none active:translate-y-0"
+            className="group bg-navy-400/20 ring-cream-50/10 hover:bg-navy-400/30 focus-visible:ring-gold-500/60 flex min-h-[46px] items-center justify-center gap-2.5 rounded-2xl ring-1 backdrop-blur-md transition-colors duration-(--duration-normal) ease-(--ease-out) focus-visible:ring-2 focus-visible:outline-none"
           >
-            <Icon
-              className="text-navy-900/80 size-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-110"
-              strokeWidth={2.25}
-            />
-            <span className="text-navy-900 text-xs font-extrabold">{label}</span>
+            <span className="bg-cream-50/8 ring-cream-50/10 flex size-7 items-center justify-center rounded-full ring-1">
+              <Icon className="text-gold-300 size-4" strokeWidth={1.75} />
+            </span>
+            <span className="text-cream-50 text-xs font-bold">{label}</span>
           </Link>
         ))}
       </div>
