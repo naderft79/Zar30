@@ -200,28 +200,7 @@ export function DashboardOverview() {
         loading={loading}
       />
 
-      {/* ============ ۳. بنر سرمایه‌گذاری — premium ============ */}
-      <Link
-        href="/dashboard/trade"
-        className="group surface-wealth relative flex items-center justify-between gap-4 overflow-hidden rounded-2xl border p-5 transition-all duration-(--duration-normal) hover:-translate-y-0.5 sm:p-6"
-      >
-        <div className="relative min-w-0">
-          <p className="text-gold-400 text-[11px] font-semibold">سرمایه‌گذاری طلای آب‌شده</p>
-          <p className="text-cream-50 mt-1.5 text-base font-bold text-balance sm:text-lg">
-            همراه شما در مسیر سرمایه‌گذاری امن
-          </p>
-          <p className="text-cream-300/60 mt-1 text-xs leading-5">
-            حتی با مبالغ بسیار کم — خرید آنی، شفاف و بدون واسطه
-          </p>
-        </div>
-        {/* abstract شمش طلا */}
-        <div aria-hidden="true" className="relative flex shrink-0 items-center justify-center">
-          <div className="from-gold-400 to-gold-600 shadow-gold size-14 rotate-12 rounded-xl bg-gradient-to-bl transition-transform duration-(--duration-slow) ease-(--ease-spring) group-hover:rotate-6 sm:size-16" />
-          <div className="from-gold-300/70 to-gold-500/70 absolute -bottom-2 -left-3 size-9 -rotate-6 rounded-lg bg-gradient-to-bl sm:size-11" />
-        </div>
-      </Link>
-
-      {/* ============ ۴. تراکنش‌های اخیر — real stream ============ */}
+      {/* ============ ۳. تراکنش‌های اخیر — real stream ============ */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">

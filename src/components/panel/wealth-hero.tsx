@@ -7,9 +7,19 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowDownLeft, ArrowUpLeft, Coins, Eye, EyeOff, Wallet } from 'lucide-react'
+import {
+  ArrowDownLeft,
+  ArrowUpLeft,
+  CalendarClock,
+  Coins,
+  Eye,
+  EyeOff,
+  Package,
+  TrendingUp,
+  Wallet,
+} from 'lucide-react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { cn } from 'cn'
@@ -33,6 +43,30 @@ const HERO_ACTIONS = [
   { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: ArrowUpLeft },
 ] as const
 
+// بنرهای چرخان داخل کارت — هر ۵ ثانیه بنر بعدی
+const HERO_BANNERS = [
+  {
+    href: '/dashboard/trade',
+    kicker: 'سرمایه‌گذاری طلای آب‌شده',
+    title: 'همراه شما در مسیر سرمایه‌گذاری امن',
+    icon: TrendingUp,
+  },
+  {
+    href: '/dashboard/installments',
+    kicker: 'طلای قسطی',
+    title: 'طلای ۱۸ عیار را قسطی بخرید',
+    icon: CalendarClock,
+  },
+  {
+    href: '/dashboard/assets',
+    kicker: 'تحویل فیزیکی طلا',
+    title: 'طلای دیجیتال شما، قابل تحویل فیزیکی',
+    icon: Package,
+  },
+] as const
+
+const BANNER_INTERVAL_MS = 5_000
+
 export function WealthHero({
   dateLabel,
   totalValue,
@@ -45,12 +79,23 @@ export function WealthHero({
 }: WealthHeroProps) {
   // مخفی‌سازی مقادیر مالی — الگوی رایج اپ‌های بانکی
   const [hidden, setHidden] = useState(false)
+  // چرخش خودکار بنرها
+  const [bannerIdx, setBannerIdx] = useState(0)
+  useEffect(() => {
+    const t = setInterval(
+      () => setBannerIdx((i) => (i + 1) % HERO_BANNERS.length),
+      BANNER_INTERVAL_MS,
+    )
+    return () => clearInterval(t)
+  }, [])
+  const banner = HERO_BANNERS[bannerIdx]!
+  const BannerIcon = banner.icon
 
   return (
     <section
       aria-label="خلاصه دارایی"
       className={cn(
-        'surface-wealth gold-rings relative overflow-hidden rounded-3xl border p-5 sm:p-6',
+        'surface-wealth gold-rings relative overflow-hidden rounded-3xl border p-4 sm:p-5',
         className,
       )}
     >
@@ -70,8 +115,8 @@ export function WealthHero({
       )}
 
       {/* موجودی کل — عدد شاخص + چشم */}
-      <div className="relative mt-4 sm:mt-5">
-        <div className="mb-2 flex items-center gap-2">
+      <div className="relative mt-3">
+        <div className="mb-1.5 flex items-center gap-2">
           <span className="bg-gold-500/15 text-gold-400 flex size-7 items-center justify-center rounded-lg">
             <Wallet className="size-3.5" strokeWidth={1.75} />
           </span>
@@ -91,21 +136,21 @@ export function WealthHero({
           </button>
         </div>
         {loading ? (
-          <div className="skeleton-shimmer h-12 w-56 rounded-lg" />
+          <div className="skeleton-shimmer h-10 w-56 rounded-lg" />
         ) : hidden ? (
-          <p className="text-cream-50 text-3xl font-extrabold tracking-widest sm:text-4xl">
+          <p className="text-cream-50 text-2xl font-extrabold tracking-widest sm:text-3xl">
             ••••••
           </p>
         ) : (
-          <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
+          <div className="flex flex-wrap items-end gap-x-4 gap-y-1.5">
             <FinancialNumber
               value={totalValue}
               unit="تومان"
               size="xl"
               decimals={0}
               animate
-              className="text-cream-50 text-3xl sm:text-4xl"
-              unitClassName="text-base text-cream-300/60"
+              className="text-cream-50 text-2xl sm:text-3xl"
+              unitClassName="text-sm text-cream-300/60"
             />
             {changePercent !== undefined && (
               <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" className="mb-2" />
@@ -115,7 +160,7 @@ export function WealthHero({
       </div>
 
       {/* اکشن‌های مالی — داخل کارت، thumb-friendly */}
-      <div className="relative mt-5 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-3">
+      <div className="relative mt-4 grid grid-cols-2 gap-2 sm:gap-3">
         {HERO_ACTIONS.map(({ href, label, icon: Icon }) => (
           <Link
             key={label}
@@ -132,9 +177,9 @@ export function WealthHero({
       </div>
 
       {/* تفکیک دارایی — طلا / تومان / مسدود */}
-      <div className="border-cream-50/10 relative mt-5 grid grid-cols-2 gap-4 border-t pt-4 sm:grid-cols-3">
+      <div className="border-cream-50/10 relative mt-4 grid grid-cols-2 gap-4 border-t pt-3.5 sm:grid-cols-3">
         <div className="flex items-center gap-3">
-          <span className="bg-gold-500/15 text-gold-400 ring-gold-500/25 flex size-10 shrink-0 items-center justify-center rounded-xl ring-1">
+          <span className="bg-gold-500/15 text-gold-400 ring-gold-500/25 flex size-9 shrink-0 items-center justify-center rounded-xl ring-1">
             <Coins className="size-5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
@@ -156,7 +201,7 @@ export function WealthHero({
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="bg-cream-50/8 text-cream-200 ring-cream-50/15 flex size-10 shrink-0 items-center justify-center rounded-xl ring-1">
+          <span className="bg-cream-50/8 text-cream-200 ring-cream-50/15 flex size-9 shrink-0 items-center justify-center rounded-xl ring-1">
             <Wallet className="size-5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
@@ -196,6 +241,35 @@ export function WealthHero({
             </div>
           </div>
         )}
+      </div>
+
+      {/* بنر چرخان — سفید، داخل کارت؛ هر ۵ ثانیه بنر بعدی */}
+      <div className="relative mt-4">
+        <Link
+          key={bannerIdx}
+          href={banner.href}
+          className="animate-fade-up bg-cream-50 focus-visible:ring-gold-500/70 flex items-center justify-between gap-3 rounded-2xl px-4 py-3 transition-transform duration-(--duration-normal) ease-(--ease-spring) hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:outline-none"
+        >
+          <div className="min-w-0">
+            <p className="text-gold-600 text-[10px] font-bold">{banner.kicker}</p>
+            <p className="text-navy-800 mt-0.5 truncate text-sm font-bold">{banner.title}</p>
+          </div>
+          <span className="bg-gold-500/15 text-gold-600 flex size-9 shrink-0 items-center justify-center rounded-xl">
+            <BannerIcon className="size-4.5" strokeWidth={1.75} />
+          </span>
+        </Link>
+        {/* نشانگر بنرها */}
+        <div className="mt-2 flex items-center justify-center gap-1.5" aria-hidden="true">
+          {HERO_BANNERS.map((_, i) => (
+            <span
+              key={i}
+              className={cn(
+                'h-1 rounded-full transition-all duration-(--duration-normal)',
+                i === bannerIdx ? 'bg-gold-400 w-4' : 'bg-cream-50/25 w-1',
+              )}
+            />
+          ))}
+        </div>
       </div>
     </section>
   )
