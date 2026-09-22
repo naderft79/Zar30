@@ -82,7 +82,7 @@ export function QuoteCard({
 
       {actionLabel && (
         <div className="px-4 pb-4">
-          <Button variant="gold" className="w-full" onClick={onAction} disabled={loading}>
+          <Button variant="default" className="w-full" onClick={onAction} disabled={loading}>
             {actionLabel}
           </Button>
         </div>

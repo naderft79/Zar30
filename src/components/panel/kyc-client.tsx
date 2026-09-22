@@ -351,7 +351,7 @@ function KycIntro({
         </div>
         {!approved && (
           <Button
-            variant="gold"
+            variant="default"
             size="lg"
             onClick={() => void start()}
             disabled={starting}
@@ -449,7 +449,7 @@ function ResubmitView({
             {err}
           </p>
         )}
-        <Button variant="gold" onClick={() => void restart()} disabled={starting}>
+        <Button variant="default" onClick={() => void restart()} disabled={starting}>
           {starting ? (
             <Loader2 className="size-4 animate-spin" />
           ) : (
@@ -649,7 +649,7 @@ function Wizard({
           <CardTitle className="flex items-center gap-2 text-base">
             {(() => {
               const Icon = WIZARD_STEPS[step]!.icon
-              return <Icon className="text-gold-500 size-5" strokeWidth={1.75} />
+              return <Icon className="text-gold-600 size-5" strokeWidth={1.75} />
             })()}
             {WIZARD_STEPS[step]!.title}
           </CardTitle>
@@ -758,7 +758,7 @@ function Wizard({
           {step === 2 && (
             <>
               <p className="text-muted-foreground bg-muted/40 flex items-start gap-2 rounded-lg px-3 py-2.5 text-xs leading-5">
-                <Banknote className="text-gold-500 mt-0.5 size-4 shrink-0" />
+                <Banknote className="text-gold-600 mt-0.5 size-4 shrink-0" />
                 حساب باید به نام خودتان و منطبق بر کد ملی باشد. اطلاعات بانکی رمزنگاری‌شده ذخیره
                 می‌شود.
               </p>
@@ -811,7 +811,7 @@ function Wizard({
                 />
               ))}
               <p className="text-muted-foreground flex items-start gap-2 text-xs leading-5">
-                <ShieldCheck className="text-gold-500 mt-0.5 size-4 shrink-0" />
+                <ShieldCheck className="text-gold-600 mt-0.5 size-4 shrink-0" />
                 مدارک رمزنگاری‌شده و فقط برای کارشناسان احراز هویت قابل مشاهده است.
               </p>
             </div>
@@ -866,7 +866,7 @@ function Wizard({
           {/* اکشن‌ها */}
           <div className="flex items-center gap-2 pt-2">
             {step < 4 ? (
-              <Button variant="gold" onClick={() => void next()} disabled={busy}>
+              <Button variant="default" onClick={() => void next()} disabled={busy}>
                 {busy ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
@@ -875,7 +875,7 @@ function Wizard({
                 {busy ? 'در حال ذخیره…' : 'مرحله بعد'}
               </Button>
             ) : (
-              <Button variant="gold" onClick={() => void submit()} disabled={busy}>
+              <Button variant="default" onClick={() => void submit()} disabled={busy}>
                 {busy ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : (
@@ -989,7 +989,7 @@ function DocUpload({
       <div className="flex items-start gap-3">
         <span
           className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${
-            doc ? 'bg-success/15 text-success' : 'bg-gold-500/12 text-gold-500'
+            doc ? 'bg-success/15 text-success' : 'bg-gold-500/12 text-gold-600'
           }`}
         >
           {doc ? <Check className="size-5" /> : <Icon className="size-5" strokeWidth={1.75} />}
@@ -1033,7 +1033,7 @@ function DocUpload({
                 href={`/api/v1/kyc/documents/${doc.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gold-500 hover:text-gold-400 text-xs underline-offset-4 hover:underline"
+                className="text-gold-600 hover:text-gold-500 text-xs underline-offset-4 hover:underline"
               >
                 مشاهده
               </a>

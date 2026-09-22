@@ -194,7 +194,7 @@ export function TradeClient() {
               aria-pressed={mode === 'BUY'}
               className={`flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-(--duration-normal) ${
                 mode === 'BUY'
-                  ? 'bg-gold-500 shadow-gold text-[#171105]'
+                  ? 'bg-navy-700 text-cream-50 shadow-md'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -211,7 +211,7 @@ export function TradeClient() {
               aria-pressed={mode === 'SELL'}
               className={`flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-(--duration-normal) ${
                 mode === 'SELL'
-                  ? 'bg-gold-500 shadow-gold text-[#171105]'
+                  ? 'bg-navy-700 text-cream-50 shadow-md'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -248,7 +248,7 @@ export function TradeClient() {
             </p>
           )}
 
-          <Button variant="gold" className="w-full" onClick={submit} disabled={busy}>
+          <Button variant="default" className="w-full" onClick={submit} disabled={busy}>
             {busy ? 'در حال انجام معامله…' : mode === 'BUY' ? 'خرید طلا' : 'فروش طلا'}
           </Button>
           <p className="text-muted-foreground text-[10px] leading-4">
@@ -261,7 +261,7 @@ export function TradeClient() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <History className="text-gold-500 size-5" strokeWidth={1.75} />
+            <History className="text-gold-600 size-5" strokeWidth={1.75} />
             تاریخچه معاملات
           </CardTitle>
         </CardHeader>
@@ -280,7 +280,7 @@ export function TradeClient() {
                     <span
                       className={`flex size-9 items-center justify-center rounded-xl ${
                         o.type === 'BUY'
-                          ? 'bg-gold-500/15 text-gold-500'
+                          ? 'bg-gold-500/15 text-gold-600'
                           : 'bg-muted text-muted-foreground'
                       }`}
                     >

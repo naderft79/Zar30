@@ -2,12 +2,12 @@
 
 > وضعیت اجرای پروژه — به‌روزرسانی شده در Phase User Panel Luxury Redesign (2026-09-22)
 
-## Phase NEXT: User Panel Luxury Redesign (Black + Rich Gold)
+## Phase NEXT: User Panel Luxury Redesign (White + Deep Navy + Gold)
 
 | مورد                                                                 | وضعیت                                  |
 | -------------------------------------------------------------------- | -------------------------------------- |
-| Design Language به Black/Graphite + Rich Gold + Cream مهاجرت کرد     | ✅ tokens + `surface-wealth` + مستندات |
-| PanelShell — sidebar گرافیت + header هویت‌محور + bottom nav شناور    | ✅                                     |
+| Design Language به White + Deep Navy + Gold مهاجرت کرد               | ✅ tokens + `surface-wealth` + مستندات |
+| PanelShell — sidebar سفید + header هویت‌محور + bottom nav navy pill  | ✅                                     |
 | Dashboard با داده واقعی wallet/price/transactions + کارت موجودی لوکس | ✅                                     |
 | Trade segmented control + ورود سریع `?action=`                       | ✅                                     |
 | Verification (typecheck/lint/e2e/visual QA)                          | ✅                                     |

@@ -67,7 +67,7 @@ npx ui-skills get <slug>
 ```text
 ZAR30 Product Decisions
         ↓
-ZAR30 Design Language (Permanent — Black + Rich Gold + Cream)
+ZAR30 Design Language (Permanent — White + Deep Navy + Gold)
         ↓
 ZAR30 Design Tokens (src/app/globals.css)
         ↓
@@ -82,16 +82,16 @@ Feature UI
 
 ## Project-specific Overrides
 
-| قانون Skill            | Override زرسی                                             |
-| ---------------------- | --------------------------------------------------------- |
-| light/white background | Black/Graphite-first — `.dark` پیش‌فرض روی `<html>`       |
-| generic accent         | Gold فقط برای CTA/active/focus/متریک مهم — کنترل‌شده      |
-| default shadows/radius | Tokenهای `globals.css` — hardcode ممنوع                   |
-| هر IA پیشنهادی         | Navigation Contract دائمی ۵‌آیتمی (ADR-015) تغییر نمی‌کند |
+| قانون Skill            | Override زرسی                                                |
+| ---------------------- | ------------------------------------------------------------ |
+| light/white background | White-first — `:root` روشن؛ سطوح ممتاز `surface-wealth` Navy |
+| generic accent         | Gold فقط برای CTA/active/focus/متریک مهم — کنترل‌شده         |
+| default shadows/radius | Tokenهای `globals.css` — hardcode ممنوع                      |
+| هر IA پیشنهادی         | Navigation Contract دائمی ۵‌آیتمی (ADR-015) تغییر نمی‌کند    |
 
 ## قواعد دائمی UI زرسی
 
-- Black/Graphite = canvas؛ Rich Gold = dominant signature accent؛ Cream = supporting warmth — هرگز cream/white-first
+- White/Off-white = canvas؛ Deep Navy = signature اکشن/متن/سطوح ممتاز؛ Gold = luxury accent کنترل‌شده؛ Cream = فقط روی سطوح navy
 - هیچ UI از حافظه/سلیقه — ابتدا Design System + skill مرتبط + کامپوننت‌های موجود
 - Token-based اجباری: colors/radius/shadows/spacing/typography/motion/z-index
 - کامپوننت جدید = reusable + accessible + responsive + theme-aware + token-based
@@ -123,7 +123,7 @@ Update docs
 
 ## UI Review Gate (قبل از DONE)
 
-- [ ] Black/Graphite canvas؟ Gold dominant signature؟ Cream controlled؟ Premium و brand-consistent؟
+- [ ] White canvas؟ Navy signature در اکشن‌ها/سطوح ممتاز؟ Gold controlled؟ Premium و brand-consistent؟
 - [ ] Hierarchy واضح؟ CTA مشخص؟ Spacing درست؟ Responsive؟
 - [ ] Reusable؟ Token-based؟ Accessible؟ Performance OK؟
 - [ ] Render شده و دیده شده؟ تست؟ موبایل چک؟ صفحات موجود نشکسته؟

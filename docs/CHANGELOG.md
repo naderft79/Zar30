@@ -1,11 +1,11 @@
 # Zar30 — Changelog
 
-## [1.1.0] — User Panel Luxury Redesign (Black + Rich Gold)
+## [1.1.0] — User Panel Luxury Redesign (White + Deep Navy + Gold)
 
 ### Changed
 
-- **Design Language** — زبان بصری پنل کاربر از Navy-first به **Black/Graphite + Rich Gold (#d4af37) + Warm Cream** مهاجرت کرد؛ semantic tokens در `globals.css` بازتعریف شدند، `surface-wealth` گرافیت‌لایه‌ای با halo طلایی شد، مستندات (`AGENTS.md`، `UI_SKILLS.md`) همگام شدند
-- **PanelShell** — sidebar دسکتاپ گرافیت لوکس، header موبایل هویت‌محور (avatar + نام + وضعیت حساب + اعلان)، **bottom nav شناور pill** با active state طلایی و safe-area
+- **Design Language** — زبان بصری پنل کاربر به **White/Off-white + Deep Navy + Rich Gold** تعریف شد؛ `:root` تم روشن است، `surface-wealth` کارت Navy عمیق با halo طلایی، دکمه‌های مهم Navy پررنگ، bottom nav موبایل pill سورمه‌ای با active طلایی، مستندات (`AGENTS.md`، `UI_SKILLS.md`) همگام شدند
+- **PanelShell** — sidebar دسکتاپ سفید با active طلایی، header موبایل هویت‌محور (avatar + نام + وضعیت حساب + اعلان)، **bottom nav شناور pill** با active state طلایی و safe-area
 - **Dashboard** — بازنویسی کامل با داده واقعی: کارت موجودی لوکس (visibility toggle + ۴ اکشن داخل کارت)، قیمت لحظه‌ای طلا، بنر سرمایه‌گذاری، تراکنش‌های اخیر واقعی از `/api/v1/wallet`
 - **Trade** — segmented control pill با indicator طلایی؛ `?action=deposit|withdraw` روی صفحه دارایی برای ورود سریع از داشبورد
 - e2e panel spec — assertionها با طراحی جدید همگام شدند

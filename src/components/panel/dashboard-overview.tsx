@@ -88,7 +88,7 @@ function SectionLink({ href, children }: { href: string; children: React.ReactNo
   return (
     <Link
       href={href}
-      className="text-gold-400 hover:text-gold-300 inline-flex items-center gap-1 text-xs font-medium transition-colors"
+      className="text-gold-600 hover:text-gold-600 inline-flex items-center gap-1 text-xs font-medium transition-colors"
     >
       {children}
       <ArrowLeft className="size-3.5" />
@@ -169,7 +169,7 @@ export function DashboardOverview() {
         <Card className="border-gold-500/20 lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <LineChart className="text-gold-400 size-5" strokeWidth={1.75} />
+              <LineChart className="text-gold-600 size-5" strokeWidth={1.75} />
               قیمت لحظه‌ای طلا
               {price && !price.isLive && (
                 <StatusBadge tone="warning" dot={false}>
@@ -201,7 +201,7 @@ export function DashboardOverview() {
                   <div className="skeleton-shimmer mx-auto h-8 w-24 rounded-md" />
                 ) : price ? (
                   <>
-                    <p className="text-financial-lg text-gold-400" dir="ltr">
+                    <p className="text-financial-lg text-gold-600" dir="ltr">
                       {formatExactAmount(String(Math.round(price.sellPrice)))}
                     </p>
                     <p className="text-muted-foreground text-[10px]">تومان / گرم</p>
@@ -213,7 +213,7 @@ export function DashboardOverview() {
             </div>
             <Link
               href="/dashboard/trade"
-              className="from-gold-500 to-gold-600 text-primary-foreground shadow-gold focus-visible:ring-gold-500/60 flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-gradient-to-l text-sm font-bold transition-all duration-(--duration-normal) hover:brightness-110 focus-visible:ring-2 focus-visible:outline-none"
+              className="bg-navy-700 text-cream-50 hover:bg-navy-600 focus-visible:ring-navy-500/60 flex min-h-[44px] items-center justify-center gap-2 rounded-xl text-sm font-bold shadow-md transition-all duration-(--duration-normal) focus-visible:ring-2 focus-visible:outline-none"
             >
               <Coins className="size-4" strokeWidth={2} />
               شروع معامله
@@ -247,7 +247,7 @@ export function DashboardOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <History className="text-gold-400 size-5" strokeWidth={1.75} />
+            <History className="text-gold-600 size-5" strokeWidth={1.75} />
             تراکنش‌های اخیر
           </CardTitle>
           <div className="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
@@ -279,7 +279,7 @@ export function DashboardOverview() {
                       <span
                         className={cn(
                           'flex size-10 shrink-0 items-center justify-center rounded-xl',
-                          incoming ? 'bg-success/12 text-success' : 'bg-gold-500/12 text-gold-400',
+                          incoming ? 'bg-success/12 text-success' : 'bg-gold-500/12 text-gold-600',
                         )}
                       >
                         <Icon className="size-4.5" strokeWidth={1.75} />
@@ -349,7 +349,7 @@ export function DashboardOverview() {
         <Card className="border-gold-500/25 from-gold-500/10 via-card to-card bg-gradient-to-bl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Gift className="text-gold-400 size-5" strokeWidth={1.75} />
+              <Gift className="text-gold-600 size-5" strokeWidth={1.75} />
               معرفی دوستان
             </CardTitle>
           </CardHeader>
@@ -369,7 +369,7 @@ export function DashboardOverview() {
       <Card>
         <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-6">
           <p className="text-muted-foreground flex items-center gap-2 text-xs leading-5">
-            <Bell className="text-gold-400 size-4" strokeWidth={1.75} />
+            <Bell className="text-gold-600 size-4" strokeWidth={1.75} />
             اعلان‌های مهم حساب را از مرکز اعلان‌ها دنبال کنید.
           </p>
           <SectionLink href="/dashboard/notifications">مشاهده اعلان‌ها</SectionLink>

@@ -145,7 +145,7 @@ export function AdminUserDetailClient() {
 
       {/* ===== Identity strip ===== */}
       <div className="bg-card border-border/60 mb-6 flex flex-wrap items-center gap-4 rounded-xl border p-4">
-        <span className="bg-navy-800 text-cream-100 flex size-11 items-center justify-center rounded-full text-sm font-bold">
+        <span className="bg-muted text-foreground flex size-11 items-center justify-center rounded-full text-sm font-bold">
           {displayName.slice(0, 2)}
         </span>
         <div className="min-w-0">

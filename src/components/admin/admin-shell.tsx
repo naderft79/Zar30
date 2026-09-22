@@ -108,16 +108,14 @@ function AdminNav({
               <span
                 className={cn(
                   'inline-flex size-6 shrink-0 items-center justify-center rounded-md transition-colors duration-(--duration-normal)',
-                  sectionActive
-                    ? 'bg-gold-500/15 text-gold-400'
-                    : 'bg-navy-800/60 text-navy-300/70',
+                  sectionActive ? 'bg-gold-500/15 text-gold-700' : 'bg-muted text-muted-foreground',
                 )}
               >
                 <SectionIcon className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
               </span>
               <p
                 className={cn(
-                  'text-navy-300/50 truncate text-[10px] font-semibold tracking-wide transition-opacity duration-200',
+                  'text-muted-foreground truncate text-[10px] font-semibold tracking-wide transition-opacity duration-200',
                   collapsed ? 'pointer-events-none w-0 opacity-0' : 'opacity-100',
                 )}
               >
@@ -168,8 +166,8 @@ function AdminNavLink({
           'focus-visible:ring-gold-500/60 focus-visible:ring-2 focus-visible:outline-none',
           collapsed ? 'size-10 justify-center' : 'gap-3 px-3 py-2.5',
           active
-            ? 'bg-gold-500/12 text-gold-300 font-semibold'
-            : 'text-navy-200/70 hover:bg-navy-800/70 hover:text-cream-100',
+            ? 'bg-gold-500/12 text-gold-700 font-semibold'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
         )}
       >
         <span
@@ -206,7 +204,7 @@ function AdminHeaderIdentity({ admin, onLogout }: { admin: AdminIdentity; onLogo
     <div className="border-border/60 bg-card/60 flex items-center gap-2 rounded-xl border py-1 pr-1 pl-1.5 sm:gap-2.5 sm:py-1.5 sm:pr-1.5 sm:pl-3">
       <span
         aria-hidden="true"
-        className="from-gold-500/30 to-gold-600/20 text-gold-300 ring-gold-500/30 flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-[11px] font-bold ring-1"
+        className="from-gold-500/30 to-gold-600/20 text-gold-700 ring-gold-500/30 flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-[11px] font-bold ring-1"
       >
         {displayName.slice(0, 2)}
       </span>
@@ -242,8 +240,8 @@ function AdminLoadingSkeleton() {
       aria-busy="true"
       aria-label="در حال بارگذاری مرکز عملیات"
     >
-      <div className="bg-navy-950 border-navy-700/40 fixed inset-y-0 right-0 left-auto z-30 hidden w-72 flex-col border-l xl:flex">
-        <div className="border-navy-700/40 flex h-16 items-center border-b px-5">
+      <div className="border-border fixed inset-y-0 right-0 left-auto z-30 hidden w-72 flex-col border-l bg-white xl:flex">
+        <div className="border-border flex h-16 items-center border-b px-5">
           <div className="skeleton-shimmer h-8 w-28 rounded-lg" />
         </div>
         <div className="space-y-2 p-4">
@@ -352,7 +350,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         {/* ============ Desktop — Sidebar جمع‌شونده ============ */}
         <aside
           className={cn(
-            'bg-navy-950 border-navy-700/40 fixed inset-y-0 right-0 z-40 hidden flex-col border-l xl:flex',
+            'border-border fixed inset-y-0 right-0 z-40 hidden flex-col border-l bg-white xl:flex',
             'transition-[width] duration-300 ease-(--ease-out)',
             collapsed ? 'w-[76px]' : 'w-72',
           )}
@@ -360,7 +358,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           {/* سربرگ سایدبار — لوگو + کلید جمع‌کردن */}
           <div
             className={cn(
-              'border-navy-700/40 flex h-16 shrink-0 items-center border-b',
+              'border-border flex h-16 shrink-0 items-center border-b',
               collapsed ? 'justify-center px-2' : 'justify-between px-5',
             )}
           >
@@ -369,7 +367,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               aria-label="مرکز عملیات — داشبورد"
               className={cn('flex min-w-0 items-center', collapsed && 'w-0 overflow-hidden')}
             >
-              <Logo size="sm" textClassName="text-cream-100" />
+              <Logo size="sm" textClassName="text-foreground" />
             </Link>
             <button
               type="button"
@@ -377,7 +375,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               aria-label={collapsed ? 'باز کردن سایدبار' : 'جمع کردن سایدبار'}
               aria-expanded={!collapsed}
               title={collapsed ? 'باز کردن سایدبار' : 'جمع کردن سایدبار'}
-              className="text-navy-300/70 hover:bg-navy-800/70 hover:text-cream-100 focus-visible:ring-gold-500/60 flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-gold-500/60 flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               {collapsed ? (
                 <ChevronsLeft className="size-4" strokeWidth={1.75} />
@@ -398,21 +396,24 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           {/* نسخه/برند پایین سایدبار — فشرده */}
           <div
             className={cn(
-              'border-navy-700/40 shrink-0 border-t',
+              'border-border shrink-0 border-t',
               collapsed
                 ? 'flex justify-center py-3'
                 : 'flex items-center justify-between px-5 py-3',
             )}
           >
             <span
-              className={cn('text-navy-300/40 text-[10px] font-semibold', collapsed && 'hidden')}
+              className={cn(
+                'text-muted-foreground text-[10px] font-semibold',
+                collapsed && 'hidden',
+              )}
             >
               مرکز عملیات زرسی
             </span>
             <span
               aria-hidden="true"
               className={cn(
-                'bg-gold-500/10 text-gold-300/70 inline-flex size-6 items-center justify-center rounded-md',
+                'bg-gold-500/10 text-gold-600/70 inline-flex size-6 items-center justify-center rounded-md',
               )}
             >
               <span className="text-[9px] font-bold">ز</span>
@@ -499,25 +500,25 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <Dialog open={navOpen} onOpenChange={setNavOpen}>
           <DialogContent
             showCloseButton={false}
-            className="bg-navy-950 border-navy-700/40 top-0 right-0 left-auto flex h-dvh w-72 max-w-[85vw] translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-l p-0"
+            className="border-border top-0 right-0 left-auto flex h-dvh w-72 max-w-[85vw] translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-l bg-white p-0"
           >
             <DialogTitle className="sr-only">ناوبری مرکز عملیات</DialogTitle>
             <DialogDescription className="sr-only">
               دسترسی به بخش‌های مرکز عملیات بر اساس سطح دسترسی شما
             </DialogDescription>
-            <div className="border-navy-700/40 flex h-16 shrink-0 items-center justify-between border-b px-5">
+            <div className="border-border flex h-16 shrink-0 items-center justify-between border-b px-5">
               <Link
                 href="/admin/dashboard"
                 onClick={() => setNavOpen(false)}
                 aria-label="مرکز عملیات — داشبورد"
               >
-                <Logo size="sm" textClassName="text-cream-100" />
+                <Logo size="sm" textClassName="text-foreground" />
               </Link>
               <button
                 type="button"
                 onClick={() => setNavOpen(false)}
                 aria-label="بستن ناوبری"
-                className="text-navy-200/70 hover:bg-navy-800/70 hover:text-cream-100 flex size-9 items-center justify-center rounded-lg transition-colors"
+                className="text-muted-foreground hover:bg-muted hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors"
               >
                 <X className="size-5" strokeWidth={1.75} />
               </button>

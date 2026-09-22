@@ -102,7 +102,7 @@ export function SessionsClient() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <MonitorSmartphone className="text-gold-500 size-5" strokeWidth={1.75} />
+            <MonitorSmartphone className="text-gold-600 size-5" strokeWidth={1.75} />
             دستگاه‌های متصل
             {sessions !== null && (
               <StatusBadge tone="neutral" dot={false}>

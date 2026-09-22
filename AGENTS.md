@@ -58,9 +58,10 @@ Local Snapshot:        .agent/ui-skills/
 Local Source of Truth: docs/UI_SKILLS.md
 Design System:         ZAR30 Design System (src/app/globals.css + /design-system)
 Brand:                 زرسی / zar30
-Primary:               Black / Graphite
-Luxury Signature:      Rich Gold
-Supporting Accent:     Warm Cream
+Primary:               White / Off-white
+Signature:             Deep Navy (سورمه‌ای پررنگ)
+Luxury Accent:         Rich Gold
+Supporting Accent:     Warm Cream (فقط روی سطوح تیره)
 ```
 
 قواعد اجباری:
@@ -2522,36 +2523,36 @@ Navigation اصلی User Panel یک **قرارداد دائمی محصول** ا�
 
 ### ۱. اولویت رنگ (ترتیب ثابت)
 
-1. **Black/Graphite → Primary/Dominant** — Canvas اصلی همه UI (سیاه گرم `#0b0a08` تا `#282119`)
-2. **Gold → Luxury Signature/Action** — CTA، nav فعال، متریک‌های مهم، قیمت طلا، focus (`gold-500 #d4af37`)
-3. **Cream → Supporting Accent** — فقط text روی سطوح تیره، highlight، warmth — رنگ اصلی UI نیست
-4. **Neutral → Text/Border/Secondary**
+1. **White/Off-white → Primary/Dominant** — Canvas اصلی همه UI (`#f4f6fa` بک‌گراند + `#ffffff` کارت‌ها)
+2. **Deep Navy → Signature/Action** — متن اصلی، دکمه‌های مهم، خطوط ریز، سطوح ممتاز (`navy-700 #16264a` تا `navy-950`)
+3. **Gold → Luxury Accent** — avatar، active indicator، متریک‌های طلا، iconهای برند، highlight ممتاز — کنترل‌شده
+4. **Cream → Supporting** — فقط text روی سطوح تیره navy (کارت ممتاز، bottom nav)
 
-### ۲. Dark/Black-First
+### ۲. Light/White-First
 
-- حالت اصلی و Premium برند **dark/black-graphtie** است (`:root` = warm black، `<html class="dark">`)
-- Light Mode فقط opt-in با کلاس `.light`
-- لایه‌های graphite: app background → sidebar → card → elevated → modal → input — عمق واقعی، نه `#000` خالص
+- حالت اصلی و Premium برند **روشن** است (`:root` = light، بدون کلاس `dark` روی `<html>`)
+- سطوح ممتاز (`surface-wealth`: کارت موجودی، بنرها) → **Deep Navy لایه‌ای + halo طلایی** — مثل کارت تیره اپ‌های fintech روی canvas سفید
+- Bottom nav موبایل → pill سورمه‌ای شناور + active طلایی
 
 ### ۳. قواعد استفاده
 
-- **Gold:** فقط CTA، active nav، متریک مهم، قیمت، border خاص، micro-interaction، focus — کنترل‌شده؛ glow ظریف فقط برای hover/CTA/active؛ Gold gradient فقط CTA/Hero/highlight مهم
-- **Cream:** text روی navy، highlight، subtle accent — هرگز background پیش‌فرض
-- **Cards:** navy surface + subtle border + gold accent محدود + controlled shadow — نه سفید، نه بیش از حد گرد، نه SaaS-like
-- **Buttons:** Primary = Gold روی Navy · Secondary = Navy/transparent + gold border · Danger = red کنترل‌شده · Success = financial green
-- **Sidebar/Bottom Nav:** navy background + gold active + cream/neutral inactive — حس Private Banking، نه Admin Template
-- **Charts:** primary=gold، secondary=cream/neutral، positive=green، negative=red، grid=نوی کم‌کنتراست
-- **Financial Numbers:** dominant — cream/gold/bright-neutral با tabular-nums
-- **Loading/Empty/Error:** navy-first — skeleton navy + gold highlight ظریف؛ error با controlled red نه قرمز سراسری
-- **Glassmorphism:** فقط navy-glass + gold border در صورت نیاز واقعی — نه زبان اصلی
+- **Navy:** دکمه‌های مهم (CTA مالی، segmented فعال)، متن اصلی، خطوط ریز، سطوح ممتاز — امضای اصلی
+- **Gold:** avatar، active nav indicator، متریک طلا، icon برند، focus accent — ظریف و کنترل‌شده
+- **Cream:** فقط text/highlight روی سطوح navy تیره — هرگز background
+- **Cards:** سفید + border ظریف + shadow نرم — سطوح ممتاز فقط `surface-wealth` navy
+- **Buttons:** Primary = Navy پررنگ + متن cream · Secondary = outline/transparent · Gold فقط برای لحظه‌های برند خاص · Danger = red کنترل‌شده
+- **Charts:** primary=navy/gold، positive=green، negative=red، grid=نوی کم‌کنتراست
+- **Financial Numbers:** dominant — navy/gold با tabular-nums؛ روی کارت navy → cream/gold-400
+- **Loading/Empty/Error:** سفید/سورمه‌ای — skeleton روشن + accent ظریف؛ error با controlled red
+- **Glassmorphism:** فقط در صورت نیاز واقعی — نه زبان اصلی
 
 ### ۴. Anti-Patterns (ممنوع)
 
-white-first UI · cream-first UI · rainbow dashboard · neon crypto styling · excessive glassmorphism/gold/gradient/glow · generic Bootstrap/SaaS dashboard · کپی UI رقبا · style تصادفی در کامپوننت
+dark-first UI · black canvas سراسری · cream-first UI · rainbow dashboard · neon crypto styling · excessive gold/gradient/glow · generic Bootstrap/SaaS dashboard · کپی UI رقبا · style تصادفی در کامپوننت
 
 ### ۵. قانون اجرا
 
 - همه تصمیم‌ها **token-based** از `globals.css` — hardcode رنگ/radius/shadow در کامپوننت ممنوع
 - تغییر بنیادی در رنگ/typography/animation/navigation فقط با ADR رسمی
-- هر Feature جدید قبل از Done: آیا navy غالب است؟ gold فقط accent؟ cream فقط supporting؟ شبیه template نیست؟ mobile/desktop یک زبان؟
-- اگر بین «UI روشن کرمی» و «UI عمیق navy با gold/cream» مردد بودی → **گزینه navy صحیح است**
+- هر Feature جدید قبل از Done: آیا canvas سفید است؟ navy امضای اکشن‌هاست؟ gold فقط accent؟ mobile/desktop یک زبان؟
+- اگر بین «UI تیره» و «UI روشن با لهجه navy/gold» مردد بودی → **گزینه روشن + navy صحیح است**

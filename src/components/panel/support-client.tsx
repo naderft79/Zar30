@@ -77,7 +77,7 @@ export function SupportClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <MessageSquare className="text-gold-500 size-5" strokeWidth={1.75} />
+              <MessageSquare className="text-gold-600 size-5" strokeWidth={1.75} />
               تیکت پشتیبانی
             </CardTitle>
           </CardHeader>
@@ -95,7 +95,7 @@ export function SupportClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Phone className="text-gold-500 size-5" strokeWidth={1.75} />
+              <Phone className="text-gold-600 size-5" strokeWidth={1.75} />
               راه‌های ارتباطی
             </CardTitle>
           </CardHeader>

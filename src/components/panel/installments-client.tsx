@@ -16,7 +16,7 @@ export function InstallmentsClient() {
       <Card className="border-gold-500/25 from-gold-500/10 via-card to-card bg-gradient-to-bl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Sparkles className="text-gold-500 size-5" strokeWidth={1.75} />
+            <Sparkles className="text-gold-600 size-5" strokeWidth={1.75} />
             طرح‌های اقساطی
             <StatusBadge tone="gold" dot={false}>
               به‌زودی
@@ -38,7 +38,7 @@ export function InstallmentsClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <FileText className="text-gold-500 size-5" strokeWidth={1.75} />
+              <FileText className="text-gold-600 size-5" strokeWidth={1.75} />
               قراردادهای من
             </CardTitle>
           </CardHeader>
@@ -53,7 +53,7 @@ export function InstallmentsClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <CalendarClock className="text-gold-500 size-5" strokeWidth={1.75} />
+              <CalendarClock className="text-gold-600 size-5" strokeWidth={1.75} />
               اقساط پیش رو
             </CardTitle>
           </CardHeader>

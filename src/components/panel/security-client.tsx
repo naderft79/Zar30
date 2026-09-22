@@ -123,7 +123,7 @@ export function SecurityClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <ShieldCheck className="text-gold-500 size-5" strokeWidth={1.75} />
+              <ShieldCheck className="text-gold-600 size-5" strokeWidth={1.75} />
               وضعیت امنیت حساب
             </CardTitle>
           </CardHeader>
@@ -166,7 +166,7 @@ export function SecurityClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <KeyRound className="text-gold-500 size-5" strokeWidth={1.75} />
+              <KeyRound className="text-gold-600 size-5" strokeWidth={1.75} />
               تغییر رمز عبور
             </CardTitle>
           </CardHeader>
@@ -206,7 +206,7 @@ export function SecurityClient() {
               )}
               <Button
                 type="submit"
-                variant="gold"
+                variant="default"
                 size="sm"
                 disabled={saving || !currentPassword || !newPassword}
               >
@@ -221,7 +221,7 @@ export function SecurityClient() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <History className="text-gold-500 size-5" strokeWidth={1.75} />
+            <History className="text-gold-600 size-5" strokeWidth={1.75} />
             رویدادهای امنیتی اخیر
           </CardTitle>
         </CardHeader>

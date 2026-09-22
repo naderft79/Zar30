@@ -144,30 +144,30 @@ export function AdminDashboard() {
       />
 
       {/* ===== Hero — context اجرایی ===== */}
-      <div className="from-navy-900 to-navy-950 border-navy-700/40 mb-6 rounded-2xl border bg-gradient-to-l p-5 sm:p-6">
+      <div className="border-border mb-6 rounded-2xl border bg-gradient-to-l from-[#f7f9fc] to-white p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-cream-100 text-sm font-semibold sm:text-base">
+            <p className="text-foreground text-sm font-semibold sm:text-base">
               آخرین وضعیت ثبت‌شده پلتفرم
             </p>
-            <p className="text-navy-300/70 mt-1 text-[11px] tabular-nums">
+            <p className="text-muted-foreground mt-1 text-[11px] tabular-nums">
               تولیدشده در {generated}
             </p>
           </div>
           {price ? (
             <div className="text-left" dir="ltr">
-              <p className="text-navy-300/70 text-[10px]">آخرین قیمت طلا — {price.source}</p>
-              <p className="text-gold-300 mt-0.5 text-sm font-bold tabular-nums" dir="rtl">
+              <p className="text-muted-foreground text-[10px]">آخرین قیمت طلا — {price.source}</p>
+              <p className="text-gold-600 mt-0.5 text-sm font-bold tabular-nums" dir="rtl">
                 خرید {formatExactAmount(price.buyPrice)} تومان · فروش{' '}
                 {formatExactAmount(price.sellPrice)} تومان
               </p>
-              <p className="text-navy-300/60 mt-0.5 text-[10px] tabular-nums" dir="rtl">
+              <p className="text-muted-foreground mt-0.5 text-[10px] tabular-nums" dir="rtl">
                 اسپرد {formatExactAmount(price.spread)}٪ —{' '}
                 {new Date(price.recordedAt).toLocaleString('fa-IR', { timeStyle: 'short' })}
               </p>
             </div>
           ) : (
-            <p className="border-navy-700/40 text-navy-300/70 rounded-lg border border-dashed px-3 py-2 text-[11px]">
+            <p className="border-border text-muted-foreground rounded-lg border border-dashed px-3 py-2 text-[11px]">
               قیمت طلا در دسترس نیست — هیچ رکوردی ثبت نشده است
             </p>
           )}

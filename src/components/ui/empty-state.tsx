@@ -50,7 +50,7 @@ export function EmptyState({
       )}
       {action && (
         <Button
-          variant="gold"
+          variant="default"
           size="sm"
           className="mt-1"
           onClick={action.onClick}

@@ -192,7 +192,7 @@ export function AssetsClient() {
       {/* اکشن‌های کیف پول */}
       <div className="flex flex-wrap items-center gap-3">
         <Button
-          variant="gold"
+          variant="default"
           onClick={() => {
             setForm('deposit')
             setError(null)
@@ -263,7 +263,7 @@ export function AssetsClient() {
               </p>
             )}
             <div className="flex items-center gap-2">
-              <Button variant="gold" onClick={submit} disabled={busy}>
+              <Button variant="default" onClick={submit} disabled={busy}>
                 {busy ? 'در حال ثبت…' : form === 'deposit' ? 'پرداخت' : 'ثبت درخواست'}
               </Button>
               <Button variant="ghost" onClick={() => setForm(null)} disabled={busy}>
@@ -286,7 +286,7 @@ export function AssetsClient() {
         <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <History className="text-gold-500 size-5" strokeWidth={1.75} />
+              <History className="text-gold-600 size-5" strokeWidth={1.75} />
               تراکنش‌های اخیر
             </CardTitle>
           </CardHeader>
@@ -330,7 +330,7 @@ export function AssetsClient() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <PieChart className="text-gold-500 size-5" strokeWidth={1.75} />
+              <PieChart className="text-gold-600 size-5" strokeWidth={1.75} />
               ترکیب دارایی
             </CardTitle>
           </CardHeader>

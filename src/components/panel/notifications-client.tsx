@@ -134,7 +134,7 @@ export function NotificationsClient() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Bell className="text-gold-500 size-5" strokeWidth={1.75} />
+            <Bell className="text-gold-600 size-5" strokeWidth={1.75} />
             اعلان‌های اخیر
           </CardTitle>
         </CardHeader>

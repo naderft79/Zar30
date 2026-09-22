@@ -170,7 +170,7 @@ export function ProfileClient() {
         <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <UserRound className="text-gold-500 size-5" strokeWidth={1.75} />
+              <UserRound className="text-gold-600 size-5" strokeWidth={1.75} />
               اطلاعات حساب
             </CardTitle>
           </CardHeader>
@@ -229,7 +229,7 @@ export function ProfileClient() {
                   </p>
                 )}
                 <div className="flex gap-2">
-                  <Button type="submit" variant="gold" disabled={saving}>
+                  <Button type="submit" variant="default" disabled={saving}>
                     <Save className="size-4" />
                     {saving ? 'در حال ذخیره…' : 'ذخیره'}
                   </Button>
@@ -311,7 +311,7 @@ export function ProfileClient() {
                 {description}
               </span>
             </span>
-            <ArrowLeft className="text-muted-foreground group-hover:text-gold-500 size-4 shrink-0 transition-colors" />
+            <ArrowLeft className="text-muted-foreground group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
           </Link>
         ))}
         {/* Legal */}

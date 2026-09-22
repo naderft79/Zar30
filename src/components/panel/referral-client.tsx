@@ -38,7 +38,7 @@ export function ReferralClient() {
       <Card className="surface-wealth relative overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Gift className="text-gold-500 size-5" strokeWidth={1.75} />
+            <Gift className="text-gold-600 size-5" strokeWidth={1.75} />
             کد دعوت شما
           </CardTitle>
         </CardHeader>

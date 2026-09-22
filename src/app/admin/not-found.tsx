@@ -13,7 +13,7 @@ export default function AdminNotFound() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
       <div className="bg-card border-border/60 w-full max-w-md rounded-2xl border p-8 text-center shadow-sm">
-        <span className="bg-gold-500/10 text-gold-400 mx-auto mb-4 flex size-12 items-center justify-center rounded-full">
+        <span className="bg-gold-500/10 text-gold-600 mx-auto mb-4 flex size-12 items-center justify-center rounded-full">
           <Waypoints className="size-6" strokeWidth={1.75} aria-hidden="true" />
         </span>
         <h1 className="text-foreground text-lg font-bold">این بخش در نقشه راه است</h1>

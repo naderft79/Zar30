@@ -125,7 +125,7 @@ function NotificationBell() {
     <Link
       href={UTILITY_ROUTES.notifications}
       aria-label="مرکز اعلان‌ها"
-      className="text-muted-foreground hover:bg-muted hover:text-gold-400 focus-visible:ring-ring border-border/50 bg-card/60 relative flex size-10 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2"
+      className="text-muted-foreground hover:bg-muted hover:text-gold-600 focus-visible:ring-ring border-border/50 bg-card/60 relative flex size-10 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2"
     >
       <Bell className="size-5" strokeWidth={1.75} />
     </Link>
@@ -157,7 +157,7 @@ function UserAvatar({
       aria-label="پروفایل کاربر"
       title={displayName}
       className={cn(
-        'from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/35 hover:ring-gold-400/60 hover:shadow-gold flex shrink-0 items-center justify-center rounded-full bg-gradient-to-bl font-bold ring-1 transition-all duration-(--duration-normal) focus-visible:ring-2',
+        'from-gold-500/30 to-gold-600/15 text-gold-700 ring-gold-500/40 hover:ring-gold-400/60 hover:shadow-gold flex shrink-0 items-center justify-center rounded-full bg-gradient-to-bl font-bold ring-1 transition-all duration-(--duration-normal) focus-visible:ring-2',
         cls,
         className,
       )}
@@ -243,8 +243,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                         'group relative flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm transition-all duration-(--duration-normal) ease-(--ease-out)',
                         'focus-visible:ring-gold-500/60 focus-visible:ring-2 focus-visible:outline-none',
                         active
-                          ? 'from-gold-500/18 to-gold-500/5 text-gold-300 bg-gradient-to-l font-semibold shadow-sm'
-                          : 'text-text-secondary/80 hover:bg-card hover:text-foreground',
+                          ? 'from-gold-500/18 to-gold-500/5 text-gold-700 bg-gradient-to-l font-semibold shadow-sm'
+                          : 'text-text-secondary/80 hover:bg-muted hover:text-foreground',
                       )}
                     >
                       {/* نشانگر active — نوار طلایی سمت راست (شروع RTL) */}
@@ -275,9 +275,9 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           <div className="border-border/60 space-y-2 border-t p-4">
             <Link
               href="/dashboard/profile"
-              className="group bg-card/80 hover:bg-elevated border-border/50 hover:border-gold-500/30 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all duration-(--duration-normal)"
+              className="group bg-muted/60 hover:bg-muted border-border hover:border-gold-500/30 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all duration-(--duration-normal)"
             >
-              <span className="from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/35 flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1">
+              <span className="from-gold-500/30 to-gold-600/15 text-gold-700 ring-gold-500/40 flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1">
                 {displayName.slice(0, 2)}
               </span>
               <span className="min-w-0 flex-1">
@@ -291,7 +291,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                   {user.mobile}
                 </span>
               </span>
-              <ChevronLeft className="text-muted-foreground/60 group-hover:text-gold-400 size-4 shrink-0 transition-colors" />
+              <ChevronLeft className="text-muted-foreground/60 group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
             </Link>
             <button
               onClick={logout}
@@ -311,14 +311,14 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
             className="flex min-w-0 items-center gap-2.5 md:hidden"
             aria-label="پروفایل کاربر"
           >
-            <span className="from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/40 shadow-gold flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1">
+            <span className="from-gold-500/30 to-gold-600/15 text-gold-700 ring-gold-500/45 shadow-gold flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1">
               {displayName.slice(0, 2)}
             </span>
             <span className="min-w-0">
               <span className="text-foreground block truncate text-sm font-semibold">
                 {displayName}
               </span>
-              <span className="text-gold-400/90 mt-0.5 block text-[10px] font-medium">
+              <span className="text-gold-600 mt-0.5 block text-[10px] font-medium">
                 {KYC_LABELS[user.kycLevel] ?? 'حساب شخصی'}
               </span>
             </span>
@@ -349,7 +349,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           aria-label="ناوبری اصلی موبایل"
           className="fixed inset-x-4 bottom-3 z-(--z-sticky) pb-[env(safe-area-inset-bottom)] md:hidden"
         >
-          <div className="bg-card/90 border-border/70 grid h-[68px] grid-cols-5 rounded-2xl border shadow-[0_12px_40px_-8px_rgb(0_0_0/0.7),0_0_0_1px_rgb(212_175_55/0.06)] backdrop-blur-xl">
+          <div className="bg-navy-800/95 border-navy-600/50 grid h-[68px] grid-cols-5 rounded-2xl border shadow-[0_16px_44px_-10px_rgb(10_18_36/0.55),0_0_0_1px_rgb(212_175_55/0.08)] backdrop-blur-xl">
             {PANEL_NAV_ITEMS.map((item) => {
               const active = isNavItemActive(item, pathname)
               const Icon = item.icon
@@ -361,14 +361,14 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                   aria-label={item.label}
                   className={cn(
                     'flex min-h-[44px] flex-col items-center justify-center gap-1 rounded-xl text-[10px] transition-colors duration-(--duration-fast)',
-                    'focus-visible:bg-muted focus-visible:outline-none',
-                    active ? 'text-gold-400 font-semibold' : 'text-muted-foreground',
+                    'focus-visible:bg-navy-700 focus-visible:outline-none',
+                    active ? 'text-gold-300 font-semibold' : 'text-white/55',
                   )}
                 >
                   <span
                     className={cn(
                       'relative flex items-center justify-center rounded-xl px-3.5 py-1 transition-all duration-(--duration-normal) ease-(--ease-spring)',
-                      active && 'bg-gold-500/15 shadow-gold animate-nav-pop',
+                      active && 'bg-gold-500/20 animate-nav-pop',
                     )}
                   >
                     <Icon className="size-5" strokeWidth={active ? 2 : 1.75} />

@@ -53,47 +53,47 @@
   --info: #3b82c4;
   --info-foreground: #ffffff;
 
-  /* ==== BLACK-FIRST (حالت اصلی برند) ==== */
-  /* لایه‌های سیاه گرم/گرافیت با عمق واقعی — کanvas اصلی پنل */
-  --background: #0b0a08;
-  --surface: #12100d;
-  --card: #181511;
-  --elevated: #1f1a14;
-  --overlay: #282119;
-  --field: #14110d;
-  --border: #2c251b;
-  --border-strong: #403523;
+  /* ==== LIGHT/NAVY-FIRST (حالت اصلی برند) ==== */
+  /* canvas سفید/آف‌وایت خنک + متن و اکشن‌های سورمه‌ای عمیق */
+  --background: #f4f6fa;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --elevated: #ffffff;
+  --overlay: #ffffff;
+  --field: #f7f9fc;
+  --border: #e4e9f2;
+  --border-strong: #c9d3e5;
 
-  --foreground: #f4eee0;
-  --text-secondary: #cfc5ae;
-  --muted-foreground: #9a8f79;
+  --foreground: #0f1a33;
+  --text-secondary: #3d4f78;
+  --muted-foreground: #64748f;
 
   --card-foreground: var(--foreground);
   --input: var(--field);
   --input-foreground: var(--foreground);
-  --primary: var(--gold-500);
-  --primary-foreground: #171105;
-  --secondary: #282119;
-  --secondary-foreground: #f4eee0;
-  --muted: #1e1a14;
+  --primary: #16264a;
+  --primary-foreground: #f7f0dd;
+  --secondary: #eef1f7;
+  --secondary-foreground: #16264a;
+  --muted: #eef1f7;
   --accent: var(--gold-500);
-  --accent-foreground: #171105;
-  --destructive: #e05c5c;
+  --accent-foreground: #101d38;
+  --destructive: #d64545;
   --destructive-foreground: #ffffff;
-  --ring: var(--gold-400);
+  --ring: #35548a;
 
   /* ---- Radius ---- */
   --radius: 0.625rem;
 
-  /* Shadows — عمیق و نرم برای عمق Dark UI */
-  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4);
-  --shadow-md: 0 4px 10px -2px rgb(0 0 0 / 0.45);
-  --shadow-lg: 0 10px 24px -6px rgb(0 0 0 / 0.55);
-  --shadow-xl: 0 20px 40px -12px rgb(0 0 0 / 0.65);
-  --shadow-gold: 0 4px 16px -4px rgb(212 175 55 / 0.3);
+  /* Shadows — نرم و سبک برای Light UI */
+  --shadow-xs: 0 1px 2px rgb(16 29 56 / 0.05);
+  --shadow-sm: 0 1px 3px rgb(16 29 56 / 0.07), 0 1px 2px rgb(16 29 56 / 0.04);
+  --shadow-md: 0 4px 10px -2px rgb(16 29 56 / 0.08), 0 2px 4px -2px rgb(16 29 56 / 0.04);
+  --shadow-lg: 0 10px 24px -6px rgb(16 29 56 / 0.12), 0 4px 8px -4px rgb(16 29 56 / 0.06);
+  --shadow-xl: 0 20px 40px -12px rgb(16 29 56 / 0.18);
+  --shadow-gold: 0 4px 14px -4px rgb(212 175 55 / 0.35);
   /* Gold glow کنترل‌شده — فقط برای سطوح ممتاز (Wealth Hero، CTA اصلی) */
-  --shadow-glow: 0 0 56px -16px rgb(212 175 55 / 0.34);
+  --shadow-glow: 0 0 56px -16px rgb(212 175 55 / 0.28);
 
   /* ---- Motion ---- */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -139,8 +139,8 @@
   --ring: var(--gold-400);
 }
 
-/* ==== Light Mode (فرعی — فقط opt-in با کلاس .light) ====
-   همچنان navy در نقش primary است؛ cream فقط accent گرم */
+/* ==== Light Mode ====
+   سازگاری با کلاس .light — مقادیر همان تم پیش‌فرض (سفید + سورمه‌ای) */
 .light {
   --background: #eef1f7;
   --surface: #e2e7f1;
@@ -291,9 +291,9 @@
 }
 
 body {
-  /* عمق ظریف — halo طلایی گرم بسیار کم‌رنگ بالای canvas سیاه */
+  /* عمق ظریف — halo سورمه‌ای بسیار کم‌رنگ بالای canvas سفید */
   background:
-    radial-gradient(1200px 600px at 85% -10%, rgb(212 175 55 / 0.08), transparent 60%),
+    radial-gradient(1200px 600px at 85% -10%, rgb(53 84 138 / 0.05), transparent 60%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-vazirmatn), Arial, Helvetica, sans-serif;
@@ -332,8 +332,8 @@ html {
 }
 
 ::selection {
-  background: var(--gold-500);
-  color: #171105;
+  background: var(--navy-600);
+  color: #ffffff;
 }
 
 /* Focus visible — حلقه طلایی یکدست */
@@ -407,21 +407,22 @@ html {
 /* ============================================
    Premium Surfaces — لایه‌های اختصاصی برند
    ============================================ */
-/* Wealth Hero — سطح ممتاز داشبورد: گرافیت لایه‌ای + halo طلایی غنی و کنترل‌شده */
+/* Wealth Hero — سطح ممتاز: Navy عمیق لایه‌ای + halo طلایی (در هر دو تم تیره است) */
 .surface-wealth {
   background:
-    radial-gradient(880px 320px at 88% -18%, rgb(212 175 55 / 0.24), transparent 58%),
-    radial-gradient(560px 380px at 6% 118%, rgb(212 175 55 / 0.1), transparent 62%),
-    linear-gradient(155deg, #26201a 0%, var(--card) 52%, #0f0d0a 100%);
-  border-color: rgb(212 175 55 / 0.3);
-  box-shadow: var(--shadow-lg), var(--shadow-glow);
+    radial-gradient(880px 320px at 88% -18%, rgb(212 175 55 / 0.22), transparent 58%),
+    radial-gradient(560px 380px at 6% 118%, rgb(53 84 138 / 0.35), transparent 62%),
+    linear-gradient(155deg, #1d3159 0%, #101d38 55%, #0a1224 100%);
+  border-color: rgb(212 175 55 / 0.28);
+  box-shadow: var(--shadow-lg);
 }
 .light .surface-wealth {
   background:
-    radial-gradient(880px 320px at 88% -18%, rgb(212 175 55 / 0.12), transparent 58%),
-    linear-gradient(155deg, var(--elevated) 0%, var(--card) 60%, var(--surface) 100%);
-  border-color: rgb(212 175 55 / 0.35);
-  box-shadow: var(--shadow-lg), var(--shadow-gold);
+    radial-gradient(880px 320px at 88% -18%, rgb(212 175 55 / 0.22), transparent 58%),
+    radial-gradient(560px 380px at 6% 118%, rgb(53 84 138 / 0.35), transparent 62%),
+    linear-gradient(155deg, #1d3159 0%, #101d38 55%, #0a1224 100%);
+  border-color: rgb(212 175 55 / 0.28);
+  box-shadow: var(--shadow-lg);
 }
 
 /* حلقه‌های تزئینی طلایی — فقط decoration در سطوح ممتاز */
@@ -433,6 +434,20 @@ html {
     rgb(212 175 55 / 0.08) 34px,
     rgb(212 175 55 / 0.08) 35px
   );
+}
+/* ترکیب Wealth + Rings — حلقه‌ها روی گرادیان navy لایه می‌شوند، نه جایگزین */
+.surface-wealth.gold-rings {
+  background-image:
+    repeating-radial-gradient(
+      circle at 100% 0%,
+      transparent 0,
+      transparent 34px,
+      rgb(212 175 55 / 0.08) 34px,
+      rgb(212 175 55 / 0.08) 35px
+    ),
+    radial-gradient(880px 320px at 88% -18%, rgb(212 175 55 / 0.22), transparent 58%),
+    radial-gradient(560px 380px at 6% 118%, rgb(53 84 138 / 0.35), transparent 62%),
+    linear-gradient(155deg, #1d3159 0%, #101d38 55%, #0a1224 100%);
 }
 
 /* ============================================
