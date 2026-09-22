@@ -14,10 +14,8 @@ import {
   ArrowLeft,
   ArrowUpLeft,
   Bell,
-  Coins,
   Gift,
   History,
-  LineChart,
   MonitorSmartphone,
   Repeat,
   ShieldCheck,
@@ -143,74 +141,64 @@ export function DashboardOverview() {
 
   return (
     <div className="animate-stagger space-y-5">
-      {/* ============ ۱. Hero — کارت موجودی اصلی ============ */}
-      <div className="grid gap-5 lg:grid-cols-5">
-        <WealthHero
-          dateLabel={today}
-          totalValue={Math.round(totalValue)}
-          goldGrams={gold?.balance ?? '0'}
-          tomanBalance={toman?.available ?? '0'}
-          lockedToman={toman?.lockedBalance ?? '0'}
-          loading={loading}
-          className="lg:col-span-3"
-        />
-
-        {/* ============ ۲. قیمت لحظه‌ای طلا ============ */}
-        <Card className="border-gold-500/20 lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <LineChart className="text-gold-600 size-5" strokeWidth={1.75} />
-              قیمت لحظه‌ای طلا
-              {price && !price.isLive && (
-                <StatusBadge tone="warning" dot={false}>
-                  نمایشی
-                </StatusBadge>
+      {/* ============ ۰. نوار قیمت لحظه‌ای — فشرده بالای صفحه ============ */}
+      <div className="border-border/60 bg-card/70 flex items-center justify-between gap-3 rounded-full border px-4 py-2 shadow-sm backdrop-blur-sm sm:px-5">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="relative flex size-2 shrink-0" aria-hidden="true">
+            {price?.isLive && (
+              <span className="bg-success/60 absolute inline-flex h-full w-full animate-ping rounded-full" />
+            )}
+            <span
+              className={cn(
+                'relative inline-flex size-2 rounded-full',
+                price?.isLive ? 'bg-success' : 'bg-muted-foreground/40',
               )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex h-full flex-col justify-between gap-4">
-            <div className="divide-border/40 grid grid-cols-2 divide-x divide-x-reverse">
-              <div className="px-3 py-1 text-center">
-                <p className="text-muted-foreground text-label mb-1.5">نرخ خرید</p>
-                {loading ? (
-                  <div className="skeleton-shimmer mx-auto h-8 w-24 rounded-md" />
-                ) : price ? (
-                  <>
-                    <p className="text-financial-lg text-success" dir="ltr">
-                      {formatExactAmount(String(Math.round(price.buyPrice)))}
-                    </p>
-                    <p className="text-muted-foreground text-[10px]">تومان / گرم</p>
-                  </>
-                ) : (
-                  <p className="text-financial-lg text-foreground/40">—</p>
-                )}
+            />
+          </span>
+          <p className="text-muted-foreground truncate text-[11px] font-medium sm:text-xs">
+            طلای ۱۸ عیار · هر گرم
+          </p>
+        </div>
+        <div className="flex items-center gap-3 sm:gap-5">
+          {loading ? (
+            <div className="skeleton-shimmer h-5 w-32 rounded-md" />
+          ) : price && price.buyPrice > 0 ? (
+            <>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-muted-foreground text-[10px]">خرید</span>
+                <span
+                  className="text-success text-sm font-bold tabular-nums sm:text-base"
+                  dir="ltr"
+                >
+                  {formatExactAmount(String(Math.round(price.buyPrice)))}
+                </span>
               </div>
-              <div className="px-3 py-1 text-center">
-                <p className="text-muted-foreground text-label mb-1.5">نرخ فروش</p>
-                {loading ? (
-                  <div className="skeleton-shimmer mx-auto h-8 w-24 rounded-md" />
-                ) : price ? (
-                  <>
-                    <p className="text-financial-lg text-gold-600" dir="ltr">
-                      {formatExactAmount(String(Math.round(price.sellPrice)))}
-                    </p>
-                    <p className="text-muted-foreground text-[10px]">تومان / گرم</p>
-                  </>
-                ) : (
-                  <p className="text-financial-lg text-foreground/40">—</p>
-                )}
+              <span className="bg-border h-4 w-px" aria-hidden="true" />
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-muted-foreground text-[10px]">فروش</span>
+                <span
+                  className="text-gold-600 text-sm font-bold tabular-nums sm:text-base"
+                  dir="ltr"
+                >
+                  {formatExactAmount(String(Math.round(price.sellPrice)))}
+                </span>
               </div>
-            </div>
-            <Link
-              href="/dashboard/trade"
-              className="bg-navy-700 text-cream-50 hover:bg-navy-600 focus-visible:ring-navy-500/60 flex min-h-[44px] items-center justify-center gap-2 rounded-xl text-sm font-bold shadow-md transition-all duration-(--duration-normal) focus-visible:ring-2 focus-visible:outline-none"
-            >
-              <Coins className="size-4" strokeWidth={2} />
-              شروع معامله
-            </Link>
-          </CardContent>
-        </Card>
+            </>
+          ) : (
+            <p className="text-muted-foreground text-[11px]">قیمت در دسترس نیست</p>
+          )}
+        </div>
       </div>
+
+      {/* ============ ۱. Hero — کارت موجودی اصلی ============ */}
+      <WealthHero
+        dateLabel={today}
+        totalValue={Math.round(totalValue)}
+        goldGrams={gold?.balance ?? '0'}
+        tomanBalance={toman?.available ?? '0'}
+        lockedToman={toman?.lockedBalance ?? '0'}
+        loading={loading}
+      />
 
       {/* ============ ۳. بنر سرمایه‌گذاری — premium ============ */}
       <Link

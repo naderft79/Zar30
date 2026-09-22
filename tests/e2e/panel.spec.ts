@@ -72,7 +72,7 @@ test.describe('User Panel', () => {
     await expect(page.getByText('موجودی کل')).toBeVisible()
     await expect(page.getByText('کیف پول طلایی').first()).toBeVisible()
     await expect(page.getByText('کیف پول تومانی')).toBeVisible()
-    await expect(page.getByText(/قیمت لحظه‌ای طلا/)).toBeVisible()
+    await expect(page.getByText('طلای ۱۸ عیار · هر گرم')).toBeVisible()
     await expect(page.getByText(/هنوز تراکنشی ثبت نشده/)).toBeVisible()
 
     // --- Trade (preview) ---
