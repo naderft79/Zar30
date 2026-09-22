@@ -6,7 +6,7 @@
 //   quote نامعتبر → رد | قیمت اجرایی stale → PRICE_UNAVAILABLE
 // ============================================
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'
 import { PrismaClient } from '../../src/generated/prisma'
 import { PrismaPg } from '@prisma/adapter-pg'
 import {
@@ -34,6 +34,14 @@ describe('Live Price Provider (Real PostgreSQL)', () => {
     // شبیه‌سازی شرایط تمیز — قیمت‌های تست قبلی حذف می‌شوند
     await prisma.goldPrice.deleteMany({
       where: { OR: [{ recordedAt: { gt: new Date() } }, { source: { startsWith: 'test' } }] },
+    })
+    // baseline تست — ممکن است آخرین قیمت واقعی (provider زنده) خیلی دور باشد؛
+    // allowAbnormal فقط برای seed اولیه، نه عبور از محافظ در سناریوهای تست
+    await recordPrice({
+      buyPrice: BUY,
+      sellPrice: SELL,
+      source: 'test-baseline',
+      allowAbnormal: true,
     })
   })
 
@@ -109,10 +117,22 @@ describe('Live Price Provider (Real PostgreSQL)', () => {
     await prisma.goldPrice.updateMany({
       data: { recordedAt: new Date(Date.now() - 60 * 60 * 1000) },
     })
-    await expect(getExecutablePrice()).rejects.toThrow()
+    // provider را نامعتبر می‌کنیم تا auto-sync شکست بخورد و stale بماند
+    vi.stubEnv('PRICE_API_PROVIDER', 'manual')
+    try {
+      await expect(getExecutablePrice()).rejects.toThrow()
+    } finally {
+      vi.unstubAllEnvs()
+    }
 
-    // بازگردانی قیمت تازه برای تست‌های دیگر
-    await recordPrice({ buyPrice: BUY, sellPrice: SELL, source: 'test-restore' })
+    // بازگردانی قیمت تازه برای تست‌های دیگر — ممکن است provider زنده
+    // هم‌زمان قیمت واقعی ثبت کرده باشد؛ seed فقط با allowAbnormal
+    await recordPrice({
+      buyPrice: BUY,
+      sellPrice: SELL,
+      source: 'test-restore',
+      allowAbnormal: true,
+    })
     const exec = await getExecutablePrice()
     expect(exec.sellPrice).toBe(SELL)
   })

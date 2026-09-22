@@ -1,5 +1,23 @@
 # Zar30 — Changelog
 
+## [1.2.0] — Real Gold Price Feed (Milli → TGJU)
+
+### Added
+
+- **Real price providers** — زنجیره fallback `auto` در `src/lib/price/providers/`: **طلای میلی** (اولویت اول، `milli.gold/api/v1/public/milli-price/external`، واحد `price18` = ۱۰۰ تومان → تومان/گرم) سپس **TGJU** (`call.tgju.org/ajax.json`، فیلد `geram18` ریال → تومان). نام provider موفق در `source` ثبت می‌شود (`auto:mili` / `auto:tgju`)
+- **Auto-refresh** — `ensureFreshPrice` با in-flight dedupe: وقتی آخرین `GoldPrice` قدیمی‌تر از `PRICE_MAX_AGE_MINUTES` است، هم مسیر نمایش (`price-service`) و هم مسیر اجرا (`getExecutablePrice`) یک sync زنده می‌کنند؛ شکست provider به کاربر نشت نمی‌کند و در production قیمت جعلی تولید نمی‌شود (`unavailable`)
+- **تخفیف ثابت فروش** — `PRICE_SELL_DISCOUNT_TOMAN` (پیش‌فرض ۲۵۰٬۰۰۰ تومان): قیمت خرید = قیمت مرجع منبع، قیمت فروش = خرید − تخفیف؛ در `providers/spread.ts` متمرکز است تا بعداً از پنل ادمین مدیریت شود
+
+### Changed
+
+- `.env` / `.env.example` — `PRICE_API_PROVIDER=auto` + `MILI_API_URL` / `TGJU_API_URL` قابل override؛ provider قدیمی `tolochart` همچنان به‌عنوان گزینه اختیاری باقی است
+- تست‌ها — `tests/unit/price-providers.test.ts` جدید (۱۰ سناریو: تبدیل واحد، fallback، پاسخ نامعتبر، شکست کامل، timestamp)؛ `pricing.test.ts` و `price-service.test.ts` با رفتار auto-sync و baseline واقعی همگام شدند
+
+### Verification
+
+- unit providers 10/10 ✅ / integration pricing 6/6 ✅ / price-service 2/2 ✅ / typecheck ✅ / lint ✅
+- `/api/v1/price` → `source: "auto:mili"` با خرید ۲۳٬۲۹۹٬۰۰۰ و فروش ۲۳٬۰۴۹٬۰۰۰ تومان (داده واقعی تأیید شد)
+
 ## [1.1.0] — User Panel Luxury Redesign (White + Deep Navy + Gold)
 
 ### Changed

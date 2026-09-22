@@ -11,6 +11,7 @@
 // ============================================
 
 import prisma from '@/lib/db/prisma'
+import { ensureFreshPrice } from '@/lib/finance/pricing.service'
 import type { GoldPrice, PriceService } from './types'
 
 // تازگی قیمت برای نشان «زنده» — هم‌راستا با PRICE_MAX_AGE_MINUTES معامله
@@ -60,10 +61,15 @@ class MockPriceService implements PriceService {
 const db = new DbPriceService()
 const mock = new MockPriceService()
 
-// در Phase 5 Provider خارجی (API + Redis cache) به DbPriceService متصل می شود
+// قیمت نمایشی — اگر stale بود، یک تلاش بهینه برای sync زنده از
+// provider می‌کند (auto: میلی → tgju) و آخرین رکورد را دوباره می‌خواند.
 export const priceService: PriceService = {
   async getCurrentPrice() {
-    const price = await db.getCurrentPrice()
+    let price = await db.getCurrentPrice()
+    if (!price.isLive) {
+      await ensureFreshPrice()
+      price = await db.getCurrentPrice()
+    }
     if (price.source === 'unavailable' && process.env.NODE_ENV !== 'production') {
       return mock.getCurrentPrice()
     }

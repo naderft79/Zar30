@@ -29,13 +29,30 @@ export interface ExecutablePrice {
   recordedAt: Date
 }
 
-// آخرین قیمت معتبر — قدیمی‌تر از MAX_AGE → PRICE_UNAVAILABLE (stale)
+let syncInFlight: Promise<unknown> | null = null
+
+// تلاش بهینه برای تازه‌سازی قیمت از provider — شکست provider
+// به caller نشت نمی‌کند؛ آخرین قیمت معتبر همچنان پاسخ می‌دهد.
+// in-flight dedupe: چند درخواست هم‌زمان فقط یک sync می‌سازند.
+export function ensureFreshPrice(): Promise<unknown> {
+  syncInFlight ??= syncLivePrice()
+    .catch(() => null)
+    .finally(() => {
+      syncInFlight = null
+    })
+  return syncInFlight
+}
+
+const isFresh = (recordedAt: Date) => Date.now() - recordedAt.getTime() <= MAX_AGE_MS
+
+// آخرین قیمت معتبر — قدیمی‌تر از MAX_AGE → تلاش برای sync زنده، بعد PRICE_UNAVAILABLE (stale)
 export async function getExecutablePrice(): Promise<ExecutablePrice> {
-  const price = await prisma.goldPrice.findFirst({ orderBy: { recordedAt: 'desc' } })
-  if (!price) throw FinanceErrors.priceUnavailable()
-  if (Date.now() - price.recordedAt.getTime() > MAX_AGE_MS) {
-    throw FinanceErrors.priceUnavailable()
+  let price = await prisma.goldPrice.findFirst({ orderBy: { recordedAt: 'desc' } })
+  if (!price || !isFresh(price.recordedAt)) {
+    await ensureFreshPrice()
+    price = await prisma.goldPrice.findFirst({ orderBy: { recordedAt: 'desc' } })
   }
+  if (!price || !isFresh(price.recordedAt)) throw FinanceErrors.priceUnavailable()
   return {
     priceId: price.id,
     buyPrice: price.buyPrice,

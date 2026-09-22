@@ -33,7 +33,7 @@
 ### محدودیت‌های شناخته‌شده
 
 - درگاه واقعی ZarinPal پیاده‌سازی شده ولی `PAYMENT_PROVIDER` روی `sandbox` است — برای production نیاز به `PAYMENT_MERCHANT_ID` واقعی و `PAYMENT_PROVIDER=zarinpal`
-- provider قیمت `tolochart` پیاده‌سازی شده ولی بدون `PRICE_API_KEY` واقعی فعال نمی‌شود — `PRICE_API_PROVIDER=manual` یعنی فقط ثبت دستی ادمین
+- قیمت زنده واقعی وصل است: `PRICE_API_PROVIDER=auto` → میلی → tgju؛ تخفیف فروش `PRICE_SELL_DISCOUNT_TOMAN=250000` (مدیریت از پنل ادمین در فاز بعد)
 - اقساط/سرمایه‌گذاری/تحویل فیزیکی در سطح سرویس هنوز فازهای بعدی هستند (schema به تومان migrate شد)
 
 ## Phase NEXT: Production Financial Core & Transaction Engine
@@ -59,7 +59,7 @@
 
 ### محدودیت‌های شناخته‌شده
 
-- Provider قیمت خارجی هنوز متصل نشده — قیمت اجرایی از `GoldPrice` (ثبت admin) با حداکثر سن ۱۵ دقیقه
+- Provider قیمت خارجی متصل است (میلی → tgju) — قیمت اجرایی از `GoldPrice` با auto-refresh روی stale و حداکثر سن ۱۵ دقیقه
 - درگاه پرداخت واقعی وصل نشده — credit واریز از مسیر admin/payment callback
 
 ## Global Rebrand (ADR-017) — دائمی
