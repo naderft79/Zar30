@@ -49,18 +49,21 @@ const HERO_BANNERS = [
     href: '/dashboard/trade',
     kicker: 'سرمایه‌گذاری طلای آب‌شده',
     title: 'همراه شما در مسیر سرمایه‌گذاری امن',
+    description: 'خرید آنی، شفاف و بدون واسطه — حتی با مبالغ بسیار کم',
     icon: TrendingUp,
   },
   {
     href: '/dashboard/installments',
     kicker: 'طلای قسطی',
     title: 'طلای ۱۸ عیار را قسطی بخرید',
+    description: 'پرداخت مرحله‌ای و آسان، مالکیت کامل طلا',
     icon: CalendarClock,
   },
   {
     href: '/dashboard/assets',
     kicker: 'تحویل فیزیکی طلا',
     title: 'طلای دیجیتال شما، قابل تحویل فیزیکی',
+    description: 'درخواست تحویل طلای فیزیکی از کیف پول طلایی',
     icon: Package,
   },
 ] as const
@@ -159,18 +162,19 @@ export function WealthHero({
         )}
       </div>
 
-      {/* اکشن‌های مالی — pill سفید، آیکون و متن هم‌خط */}
+      {/* اکشن‌های مالی — گرادیان طلایی، آیکون و متن هم‌خط */}
       <div className="relative mt-4 grid grid-cols-2 gap-2.5">
         {HERO_ACTIONS.map(({ href, label, icon: Icon }) => (
           <Link
             key={label}
             href={href}
-            className="group bg-cream-50 hover:bg-cream-100 focus-visible:ring-gold-500/70 flex min-h-[46px] items-center justify-center gap-2 rounded-full shadow-[0_8px_20px_-8px_rgb(0_0_0/0.45)] transition-all duration-(--duration-normal) ease-(--ease-spring) hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:outline-none"
+            className="group from-gold-300 via-gold-400 to-gold-500 focus-visible:ring-gold-200/80 flex min-h-[46px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-bl shadow-[0_10px_24px_-8px_rgb(212_175_55/0.55)] transition-all duration-(--duration-normal) ease-(--ease-spring) hover:-translate-y-0.5 hover:shadow-[0_14px_28px_-8px_rgb(212_175_55/0.65)] hover:brightness-105 focus-visible:ring-2 focus-visible:outline-none active:translate-y-0"
           >
-            <span className="bg-gold-500/15 text-gold-600 flex size-7 items-center justify-center rounded-full transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-110">
-              <Icon className="size-4" strokeWidth={2} />
-            </span>
-            <span className="text-navy-800 text-xs font-bold">{label}</span>
+            <Icon
+              className="text-navy-900/80 size-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-110"
+              strokeWidth={2.25}
+            />
+            <span className="text-navy-900 text-xs font-extrabold">{label}</span>
           </Link>
         ))}
       </div>
@@ -245,14 +249,19 @@ export function WealthHero({
         <Link
           key={bannerIdx}
           href={banner.href}
-          className="animate-fade-up bg-cream-50 focus-visible:ring-gold-500/70 flex items-center justify-between gap-3 rounded-2xl px-4 py-3 transition-transform duration-(--duration-normal) ease-(--ease-spring) hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:outline-none"
+          className="animate-fade-up bg-cream-50 focus-visible:ring-gold-500/70 flex items-center justify-between gap-3 rounded-2xl px-4 py-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:outline-none sm:px-5"
         >
-          <div className="min-w-0">
+          <div className="min-w-0 space-y-1">
             <p className="text-gold-600 text-[10px] font-bold">{banner.kicker}</p>
-            <p className="text-navy-800 mt-0.5 truncate text-sm font-bold">{banner.title}</p>
+            <p className="text-navy-800 text-sm leading-5 font-extrabold sm:text-base">
+              {banner.title}
+            </p>
+            <p className="text-navy-800/55 text-[11px] leading-4.5 sm:text-xs">
+              {banner.description}
+            </p>
           </div>
-          <span className="bg-gold-500/15 text-gold-600 flex size-9 shrink-0 items-center justify-center rounded-xl">
-            <BannerIcon className="size-4.5" strokeWidth={1.75} />
+          <span className="from-gold-400/20 to-gold-600/20 text-gold-600 ring-gold-500/25 flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-bl ring-1 sm:size-12">
+            <BannerIcon className="size-5" strokeWidth={1.75} />
           </span>
         </Link>
         {/* نشانگر بنرها */}
