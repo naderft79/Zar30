@@ -9,7 +9,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowDownLeft, ArrowUpLeft, CalendarClock, Coins, Eye, EyeOff, Wallet } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpLeft, Coins, Eye, EyeOff, Wallet } from 'lucide-react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { cn } from 'cn'
@@ -30,9 +30,7 @@ interface WealthHeroProps {
 // اکشن‌های مالی داخل کارت — ورود سریع به مقصدهای اصلی
 const HERO_ACTIONS = [
   { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: ArrowDownLeft },
-  { href: '/dashboard/assets?action=withdraw', label: 'برداشت', icon: ArrowUpLeft },
-  { href: '/dashboard/trade', label: 'خرید طلا', icon: Coins },
-  { href: '/dashboard/installments', label: 'قسطی', icon: CalendarClock },
+  { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: ArrowUpLeft },
 ] as const
 
 export function WealthHero({
@@ -117,7 +115,7 @@ export function WealthHero({
       </div>
 
       {/* اکشن‌های مالی — داخل کارت، thumb-friendly */}
-      <div className="relative mt-5 grid grid-cols-4 gap-2 sm:mt-6 sm:gap-3">
+      <div className="relative mt-5 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-3">
         {HERO_ACTIONS.map(({ href, label, icon: Icon }) => (
           <Link
             key={label}
@@ -140,7 +138,7 @@ export function WealthHero({
             <Coins className="size-5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
-            <p className="text-cream-300/60 text-[11px]">طلای آب‌شده</p>
+            <p className="text-cream-300/60 text-[11px]">کیف پول طلایی</p>
             {loading ? (
               <div className="skeleton-shimmer mt-1 h-6 w-24 rounded" />
             ) : hidden ? (
@@ -162,7 +160,7 @@ export function WealthHero({
             <Wallet className="size-5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
-            <p className="text-cream-300/60 text-[11px]">موجودی آزاد</p>
+            <p className="text-cream-300/60 text-[11px]">کیف پول تومانی</p>
             {loading ? (
               <div className="skeleton-shimmer mt-1 h-6 w-24 rounded" />
             ) : hidden ? (
