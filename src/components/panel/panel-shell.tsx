@@ -15,6 +15,7 @@ import { Bell, ChevronLeft, LogOut } from 'lucide-react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { Logo } from '@/components/shared/logo'
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
+import LiquidGlass from 'liquid-glass-react'
 import { cn } from 'cn'
 
 export interface PanelUser {
@@ -349,74 +350,88 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           aria-label="ناوبری اصلی موبایل"
           className="fixed inset-x-4 bottom-3 z-(--z-sticky) pb-[env(safe-area-inset-bottom)] md:hidden"
         >
-          <div className="grid h-[68px] grid-cols-5 rounded-[1.75rem] bg-white/55 shadow-[0_18px_48px_-12px_rgb(16_29_56/0.35),inset_0_1px_0_rgb(255_255_255/0.6)] backdrop-blur-2xl">
-            {PANEL_NAV_ITEMS.map((item) => {
-              const active = isNavItemActive(item, pathname)
-              const Icon = item.icon
+          <div className="relative">
+            <LiquidGlass
+              cornerRadius={30}
+              elasticity={0.2}
+              displacementScale={48}
+              blurAmount={0.08}
+              saturation={140}
+              aberrationIntensity={1.4}
+              overLight
+              padding="0"
+              className="w-full"
+            >
+              <div className="grid h-[68px] grid-cols-5">
+                {PANEL_NAV_ITEMS.map((item) => {
+                  // جایگاه مرکز برای دایره معاملات خالی می‌ماند (دایره بیرون لایه شیشه است)
+                  if (item.key === 'trade') return <span key={item.key} aria-hidden="true" />
 
-              // معاملات — اکشن مرکزی برجسته: دایره طلایی بیرون‌زده از نوار
-              if (item.key === 'trade') {
-                return (
-                  <Link
-                    key={item.key}
-                    href={item.href}
-                    aria-current={active ? 'page' : undefined}
-                    aria-label={item.label}
-                    className="group flex min-h-[44px] flex-col items-center justify-end gap-0.5 pb-1.5 focus-visible:outline-none"
-                  >
-                    <span
+                  const active = isNavItemActive(item, pathname)
+                  const Icon = item.icon
+                  return (
+                    <Link
+                      key={item.key}
+                      href={item.href}
+                      aria-current={active ? 'page' : undefined}
+                      aria-label={item.label}
                       className={cn(
-                        'from-gold-400 via-gold-500 to-gold-600 ring-gold-500/30 shadow-gold relative -mt-9 mb-1 flex size-14 items-center justify-center rounded-full bg-gradient-to-bl ring-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-active:scale-95',
-                        active && 'animate-nav-pop',
+                        'flex min-h-[44px] flex-col items-center justify-center gap-1 rounded-xl text-[10px] transition-colors duration-(--duration-fast)',
+                        'focus-visible:bg-navy-500/10 focus-visible:outline-none',
+                        active ? 'text-navy-800 font-semibold' : 'text-navy-800/55',
                       )}
                     >
-                      {/* برق شیشه‌ای روی دایره */}
                       <span
-                        aria-hidden="true"
-                        className="absolute inset-x-1.5 top-1 h-4 rounded-full bg-white/35 blur-[3px]"
-                      />
-                      <Icon
-                        className="size-6 text-[#171105]"
-                        strokeWidth={2.25}
-                        aria-hidden="true"
-                      />
-                    </span>
-                    <span
-                      className={cn(
-                        'text-[10px] font-bold transition-colors',
-                        active ? 'text-gold-700' : 'text-navy-800/70',
-                      )}
-                    >
+                        className={cn(
+                          'relative flex items-center justify-center rounded-xl px-3.5 py-1 transition-all duration-(--duration-normal) ease-(--ease-spring)',
+                          active && 'bg-navy-500/12 animate-nav-pop',
+                        )}
+                      >
+                        <Icon className="size-5" strokeWidth={active ? 2 : 1.75} />
+                      </span>
                       {item.label}
-                    </span>
-                  </Link>
-                )
-              }
+                    </Link>
+                  )
+                })}
+              </div>
+            </LiquidGlass>
 
+            {/* اکشن مرکزی — دایره طلایی بیرون‌زده از نوار شیشه‌ای */}
+            {(() => {
+              const tradeItem = PANEL_NAV_ITEMS.find((i) => i.key === 'trade')!
+              const tradeActive = isNavItemActive(tradeItem, pathname)
+              const TradeIcon = tradeItem.icon
               return (
                 <Link
-                  key={item.key}
-                  href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  aria-label={item.label}
-                  className={cn(
-                    'flex min-h-[44px] flex-col items-center justify-center gap-1 rounded-xl text-[10px] transition-colors duration-(--duration-fast)',
-                    'focus-visible:bg-navy-500/10 focus-visible:outline-none',
-                    active ? 'text-navy-800 font-semibold' : 'text-navy-800/55',
-                  )}
+                  href={tradeItem.href}
+                  aria-current={tradeActive ? 'page' : undefined}
+                  aria-label={tradeItem.label}
+                  className="group absolute -top-4 left-1/2 flex -translate-x-1/2 flex-col items-center focus-visible:outline-none"
                 >
                   <span
                     className={cn(
-                      'relative flex items-center justify-center rounded-xl px-3.5 py-1 transition-all duration-(--duration-normal) ease-(--ease-spring)',
-                      active && 'bg-navy-500/12 animate-nav-pop',
+                      'from-gold-400 via-gold-500 to-gold-600 ring-gold-500/30 shadow-gold relative flex size-14 items-center justify-center rounded-full bg-gradient-to-bl ring-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-active:scale-95',
+                      tradeActive && 'animate-nav-pop',
                     )}
                   >
-                    <Icon className="size-5" strokeWidth={active ? 2 : 1.75} />
+                    {/* برق شیشه‌ای روی دایره */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-x-1.5 top-1 h-4 rounded-full bg-white/35 blur-[3px]"
+                    />
+                    <TradeIcon className="size-6 text-[#171105]" strokeWidth={2.25} />
                   </span>
-                  {item.label}
+                  <span
+                    className={cn(
+                      'mt-1.5 text-[10px] font-bold transition-colors',
+                      tradeActive ? 'text-gold-700' : 'text-navy-800/70',
+                    )}
+                  >
+                    {tradeItem.label}
+                  </span>
                 </Link>
               )
-            })}
+            })()}
           </div>
         </nav>
       </div>
