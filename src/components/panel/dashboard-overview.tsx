@@ -40,12 +40,6 @@ const KYC_LABELS: Record<string, string> = {
   LEVEL_3: 'سطح ۳ — کامل',
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  ACTIVE: 'فعال',
-  BLOCKED: 'مسدود',
-  DELETED: 'حذف‌شده',
-}
-
 const TX_LABELS: Record<string, string> = {
   DEPOSIT: 'واریز',
   WITHDRAW: 'برداشت',
@@ -110,7 +104,6 @@ function isIncoming(type: string) {
 
 export function DashboardOverview() {
   const { user } = usePanelUser()
-  const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ')
   const kycDone = user.kycLevel !== 'LEVEL_0'
   const today = new Date().toLocaleDateString('fa-IR', {
     weekday: 'long',
@@ -153,14 +146,11 @@ export function DashboardOverview() {
       {/* ============ ۱. Hero — کارت موجودی اصلی ============ */}
       <div className="grid gap-5 lg:grid-cols-5">
         <WealthHero
-          greeting={`سلام${displayName ? `، ${displayName}` : ''}`}
           dateLabel={today}
           totalValue={Math.round(totalValue)}
           goldGrams={gold?.balance ?? '0'}
           tomanBalance={toman?.available ?? '0'}
           lockedToman={toman?.lockedBalance ?? '0'}
-          statusLabel={STATUS_LABELS[user.status] ?? user.status}
-          statusTone={user.status === 'ACTIVE' ? 'success' : 'error'}
           loading={loading}
           className="lg:col-span-3"
         />

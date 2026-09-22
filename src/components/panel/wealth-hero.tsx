@@ -12,11 +12,9 @@ import Link from 'next/link'
 import { ArrowDownLeft, ArrowUpLeft, CalendarClock, Coins, Eye, EyeOff, Wallet } from 'lucide-react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
-import { StatusBadge } from '@/components/ui/status-badge'
 import { cn } from 'cn'
 
 interface WealthHeroProps {
-  greeting: string
   /** تاریخ امروز یا context کوتاه */
   dateLabel?: string
   totalValue: number | string
@@ -25,8 +23,6 @@ interface WealthHeroProps {
   /** موجودی مسدودشده تومانی */
   lockedToman?: number | string
   changePercent?: number
-  statusLabel?: string
-  statusTone?: 'success' | 'warning' | 'error'
   loading?: boolean
   className?: string
 }
@@ -40,15 +36,12 @@ const HERO_ACTIONS = [
 ] as const
 
 export function WealthHero({
-  greeting,
   dateLabel,
   totalValue,
   goldGrams,
   tomanBalance,
   lockedToman,
   changePercent,
-  statusLabel,
-  statusTone = 'success',
   loading = false,
   className,
 }: WealthHeroProps) {
@@ -59,7 +52,7 @@ export function WealthHero({
     <section
       aria-label="خلاصه دارایی"
       className={cn(
-        'surface-wealth gold-rings relative overflow-hidden rounded-3xl border p-5 sm:p-8',
+        'surface-wealth gold-rings relative overflow-hidden rounded-3xl border p-5 sm:p-6',
         className,
       )}
     >
@@ -69,17 +62,17 @@ export function WealthHero({
         className="from-gold-500/15 pointer-events-none absolute -top-24 -left-24 size-72 rounded-full bg-gradient-to-br to-transparent blur-2xl"
       />
 
-      {/* ردیف بالا — سلامت + وضعیت */}
-      <div className="relative flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-display text-cream-50 text-balance">{greeting}</h1>
-          {dateLabel && <p className="text-cream-300/60 mt-1.5 text-sm">{dateLabel}</p>}
+      {/* ردیف بالا — تاریخ امروز */}
+      {dateLabel && (
+        <div className="relative flex justify-end">
+          <span className="bg-cream-50/8 ring-cream-50/12 text-cream-200/90 rounded-full px-3 py-1 text-[11px] font-medium tabular-nums ring-1">
+            {dateLabel}
+          </span>
         </div>
-        {statusLabel && <StatusBadge tone={statusTone}>{statusLabel}</StatusBadge>}
-      </div>
+      )}
 
       {/* موجودی کل — عدد شاخص + چشم */}
-      <div className="relative mt-7 sm:mt-9">
+      <div className="relative mt-4 sm:mt-5">
         <div className="mb-2 flex items-center gap-2">
           <span className="bg-gold-500/15 text-gold-400 flex size-7 items-center justify-center rounded-lg">
             <Wallet className="size-3.5" strokeWidth={1.75} />
@@ -102,7 +95,7 @@ export function WealthHero({
         {loading ? (
           <div className="skeleton-shimmer h-12 w-56 rounded-lg" />
         ) : hidden ? (
-          <p className="text-cream-50 text-4xl font-extrabold tracking-widest sm:text-5xl">
+          <p className="text-cream-50 text-3xl font-extrabold tracking-widest sm:text-4xl">
             ••••••
           </p>
         ) : (
@@ -113,7 +106,7 @@ export function WealthHero({
               size="xl"
               decimals={0}
               animate
-              className="text-cream-50 text-4xl sm:text-5xl"
+              className="text-cream-50 text-3xl sm:text-4xl"
               unitClassName="text-base text-cream-300/60"
             />
             {changePercent !== undefined && (
@@ -124,7 +117,7 @@ export function WealthHero({
       </div>
 
       {/* اکشن‌های مالی — داخل کارت، thumb-friendly */}
-      <div className="relative mt-7 grid grid-cols-4 gap-2 sm:mt-8 sm:gap-3">
+      <div className="relative mt-5 grid grid-cols-4 gap-2 sm:mt-6 sm:gap-3">
         {HERO_ACTIONS.map(({ href, label, icon: Icon }) => (
           <Link
             key={label}
@@ -141,7 +134,7 @@ export function WealthHero({
       </div>
 
       {/* تفکیک دارایی — طلا / تومان / مسدود */}
-      <div className="border-cream-50/10 relative mt-6 grid grid-cols-2 gap-4 border-t pt-5 sm:grid-cols-3">
+      <div className="border-cream-50/10 relative mt-5 grid grid-cols-2 gap-4 border-t pt-4 sm:grid-cols-3">
         <div className="flex items-center gap-3">
           <span className="bg-gold-500/15 text-gold-400 ring-gold-500/25 flex size-10 shrink-0 items-center justify-center rounded-xl ring-1">
             <Coins className="size-5" strokeWidth={1.75} />
