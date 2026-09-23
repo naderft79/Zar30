@@ -6,16 +6,10 @@
 // ============================================
 
 import type { Metadata } from 'next'
-import { PageHeader } from '@/components/panel/page-header'
 import { InstallmentsClient } from '@/components/panel/installments-client'
 
 export const metadata: Metadata = { title: 'خرید قسطی' }
 
 export default function InstallmentsPage() {
-  return (
-    <>
-      <PageHeader title="خرید قسطی" description="طرح‌های اقساطی و قراردادهای شما" />
-      <InstallmentsClient />
-    </>
-  )
+  return <InstallmentsClient />
 }
