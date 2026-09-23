@@ -16,9 +16,7 @@ import {
   Bell,
   Gift,
   History,
-  MonitorSmartphone,
   Repeat,
-  ShieldCheck,
   Wallet,
 } from 'lucide-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
@@ -26,17 +24,9 @@ import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
 import { WealthHero } from './wealth-hero'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { StatusCard } from '@/components/financial/status-card'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { cn } from 'cn'
-
-const KYC_LABELS: Record<string, string> = {
-  LEVEL_0: 'احراز نشده',
-  LEVEL_1: 'سطح ۱ — موبایل تایید شده',
-  LEVEL_2: 'سطح ۲ — هویتی',
-  LEVEL_3: 'سطح ۳ — کامل',
-}
 
 const TX_LABELS: Record<string, string> = {
   DEPOSIT: 'واریز',
@@ -102,7 +92,6 @@ function isIncoming(type: string) {
 
 export function DashboardOverview() {
   const { user } = usePanelUser()
-  const kycDone = user.kycLevel !== 'LEVEL_0'
   const today = new Date().toLocaleDateString('fa-IR', {
     weekday: 'long',
     day: 'numeric',
@@ -280,29 +269,8 @@ export function DashboardOverview() {
         </CardContent>
       </Card>
 
-      {/* ============ ۵. وضعیت حساب — KYC + امنیت + قسطی ============ */}
-      <div className="grid gap-5 lg:grid-cols-3">
-        <StatusCard
-          icon={ShieldCheck}
-          title="احراز هویت"
-          statusLabel={KYC_LABELS[user.kycLevel] ?? user.kycLevel}
-          statusTone={kycDone ? 'success' : 'warning'}
-          description={
-            kycDone
-              ? 'احراز هویت شما تکمیل شده است.'
-              : 'برای فعال شدن خرید و فروش، احراز هویت را تکمیل کنید.'
-          }
-          progress={kycDone ? 100 : 25}
-          action={{ label: 'مدیریت احراز هویت', href: '/dashboard/profile/kyc' }}
-        />
-        <StatusCard
-          icon={MonitorSmartphone}
-          title="امنیت حساب"
-          statusLabel={user.mobileVerifiedAt ? 'موبایل تایید شده' : 'نیاز به تایید موبایل'}
-          statusTone={user.mobileVerifiedAt ? 'success' : 'warning'}
-          description="نشست‌ها، رمز عبور و احراز دو مرحله‌ای را مدیریت کنید."
-          action={{ label: 'مرکز امنیت', href: '/dashboard/profile/security' }}
-        />
+      {/* ============ ۵. معرفی دوستان ============ */}
+      <div className="grid gap-5">
         <Card className="border-gold-500/25 from-gold-500/10 via-card to-card bg-gradient-to-bl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
