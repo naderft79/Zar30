@@ -76,12 +76,15 @@ export function InstallmentCheckoutClient() {
   const schedule = Array.from({ length: months }, (_, i) => {
     const d = new Date()
     d.setDate(d.getDate() + 30 * (i + 1))
-    return d.toLocaleDateString('fa-IR', {
+    const parts = new Intl.DateTimeFormat('fa-IR', {
       weekday: 'long',
       day: 'numeric',
-      month: 'long',
+      month: '2-digit',
       year: 'numeric',
-    })
+    }).formatToParts(d)
+    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? ''
+    // قالب: «جمعه، ۱ / ۰۸ / ۱۴۰۵»
+    return `${get('weekday')}، ${get('day')} / ${get('month')} / ${get('year')}`
   })
 
   const rows: Array<{ label: string; value: string; hint?: string; schedule?: boolean }> = [
@@ -106,20 +109,18 @@ export function InstallmentCheckoutClient() {
         بازگشت به خرید قسطی
       </Link>
 
-      {/* طلای دریافتی */}
-      <Card className="border-gold-500/30 from-gold-500/15 via-gold-500/5 bg-gradient-to-bl to-transparent">
-        <CardContent className="flex items-center justify-between py-3.5">
-          <p className="text-muted-foreground text-xs">طلای دریافتی</p>
-          {goldGrams === null ? (
-            <p className="text-muted-foreground text-lg font-bold">—</p>
-          ) : (
-            <p className="text-foreground text-xl font-bold tabular-nums">
-              {faDigits(goldGrams.toFixed(2))}
-              <span className="text-gold-600 ms-1 text-xs font-bold">گرم</span>
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      {/* طلای دریافتی — دو خط ساده بدون کارت */}
+      <div className="py-2 text-center">
+        <p className="text-muted-foreground text-xs">طلای دریافتی</p>
+        {goldGrams === null ? (
+          <p className="text-muted-foreground mt-1 text-2xl font-bold">—</p>
+        ) : (
+          <p className="text-foreground mt-1 text-2xl font-bold tabular-nums">
+            {faDigits(goldGrams.toFixed(2))}
+            <span className="text-gold-600 ms-1 text-sm font-bold">گرم</span>
+          </p>
+        )}
+      </div>
 
       {/* صورتحساب */}
       <Card>
