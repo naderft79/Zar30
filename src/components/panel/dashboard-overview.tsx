@@ -9,16 +9,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import {
-  ArrowDownLeft,
-  ArrowLeft,
-  ArrowUpLeft,
-  Bell,
-  Gift,
-  History,
-  Repeat,
-  Wallet,
-} from 'lucide-react'
+import { ArrowDownLeft, ArrowLeft, ArrowUpLeft, Gift, History, Repeat, Wallet } from 'lucide-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
@@ -289,17 +280,6 @@ export function DashboardOverview() {
           </CardContent>
         </Card>
       </div>
-
-      {/* ============ ۶. اعلان‌ها ============ */}
-      <Card>
-        <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-6">
-          <p className="text-muted-foreground flex items-center gap-2 text-xs leading-5">
-            <Bell className="text-gold-600 size-4" strokeWidth={1.75} />
-            اعلان‌های مهم حساب را از مرکز اعلان‌ها دنبال کنید.
-          </p>
-          <SectionLink href="/dashboard/notifications">مشاهده اعلان‌ها</SectionLink>
-        </CardContent>
-      </Card>
     </div>
   )
 }
