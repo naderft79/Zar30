@@ -5,6 +5,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { IconCalendarClock, IconCreditCard, IconFileText } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
@@ -39,7 +40,6 @@ export function InstallmentsClient() {
   const [amount, setAmount] = useState(100_000_000)
   const maxAmount = TERM_OPTIONS.find((t) => t.months === months)?.max ?? 500_000_000
   const [price, setPrice] = useState<PriceData | null>(null)
-  const [notice, setNotice] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -169,20 +169,14 @@ export function InstallmentsClient() {
             </div>
           </div>
 
-          {/* دکمه خرید قسطی */}
-          <button
-            type="button"
-            onClick={() => setNotice('ثبت سفارش اقساطی به‌زودی فعال می‌شود.')}
+          {/* دکمه خرید قسطی → صورتحساب */}
+          <Link
+            href={`/dashboard/installments/checkout?amount=${amount}&months=${months}`}
             className="bg-navy-700 text-cream-50 hover:bg-navy-600 focus-visible:ring-ring flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             <IconCreditCard className="size-5" stroke={1.75} />
             خرید قسطی
-          </button>
-          {notice && (
-            <p role="status" className="text-muted-foreground text-center text-xs">
-              {notice}
-            </p>
-          )}
+          </Link>
         </CardContent>
       </Card>
 
