@@ -33,7 +33,7 @@ interface WealthHeroProps {
 const HERO_ACTIONS = [
   { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: IconCashBanknotePlus },
   { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: IconTransfer },
-  { href: '/dashboard/assets', label: 'مدیریت دارایی', icon: IconWallet },
+  { href: '/dashboard/assets', label: 'دارایی', icon: IconWallet },
 ] as const
 
 // بنرهای چرخان داخل کارت — هر ۵ ثانیه بنر بعدی
