@@ -11,7 +11,14 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { IconBell, IconChevronLeft, IconLogout, IconUser } from '@tabler/icons-react'
+import {
+  IconBell,
+  IconChevronLeft,
+  IconHelpCircle,
+  IconHeadset,
+  IconLogout,
+  IconUser,
+} from '@tabler/icons-react'
 
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { Logo } from '@/components/shared/logo'
@@ -129,6 +136,26 @@ function NotificationBell() {
       className="text-muted-foreground hover:bg-muted hover:text-gold-600 focus-visible:ring-ring border-border/50 bg-card/60 relative flex size-9 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2"
     >
       <IconBell className="size-4.5" stroke={1.75} />
+    </Link>
+  )
+}
+
+// ---- اکشن دوم هدر: خانه→اعلان، پروفایل→پشتیبانی، بقیه→راهنما ----
+function HeaderAction({ pathname }: { pathname: string }) {
+  if (pathname === '/dashboard') return <NotificationBell />
+  const isProfile = pathname.startsWith('/dashboard/profile')
+  return (
+    <Link
+      href="/dashboard/support"
+      aria-label={isProfile ? 'پشتیبانی' : 'راهنمای صفحه'}
+      title={isProfile ? 'پشتیبانی' : 'راهنما'}
+      className="text-muted-foreground hover:bg-muted hover:text-gold-600 focus-visible:ring-ring border-border/50 bg-card/60 relative flex size-9 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2"
+    >
+      {isProfile ? (
+        <IconHeadset className="size-4.5" stroke={1.75} />
+      ) : (
+        <IconHelpCircle className="size-4.5" stroke={1.75} />
+      )}
     </Link>
   )
 }
@@ -308,14 +335,20 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
             <p className="text-foreground truncate text-sm font-bold">{pageTitle(pathname)}</p>
             <p className="text-muted-foreground/70 shrink-0 text-[10px] tabular-nums">{today}</p>
           </div>
-          {/* مرکز — مارک برند (فقط موبایل) */}
-          <Link href="/dashboard" aria-label="زرسی" className="justify-self-center md:hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand-mark.png" alt="زرسی" className="h-10 w-auto" />
-          </Link>
+          {/* مرکز — مارک برند در خانه، عنوان صفحه در بقیه (فقط موبایل) */}
+          {pathname === '/dashboard' ? (
+            <Link href="/dashboard" aria-label="زرسی" className="justify-self-center md:hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/brand-mark.png" alt="زرسی" className="h-8 w-auto" />
+            </Link>
+          ) : (
+            <p className="text-foreground justify-self-center truncate text-sm font-bold md:hidden">
+              {pageTitle(pathname)}
+            </p>
+          )}
           <div className="hidden md:block" />
           <div className="flex items-center gap-1.5 justify-self-end">
-            <NotificationBell />
+            <HeaderAction pathname={pathname} />
             <UserAvatar user={user} size="sm" className="hidden md:flex" />
           </div>
         </header>
