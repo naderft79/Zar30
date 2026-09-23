@@ -75,7 +75,7 @@ function PanelLoadingSkeleton() {
     <div className="bg-background min-h-dvh" aria-busy="true" aria-label="در حال بارگذاری پنل">
       {/* Sidebar skeleton — desktop */}
       <div className="bg-surface border-border/60 fixed inset-y-0 right-0 left-auto z-30 hidden w-64 flex-col border-l md:flex">
-        <div className="border-border/60 flex h-16 items-center border-b px-5">
+        <div className="border-border/60 flex h-13 items-center border-b px-5">
           <div className="skeleton-shimmer h-8 w-28 rounded-lg" />
         </div>
         <div className="space-y-2 p-4">
@@ -86,7 +86,7 @@ function PanelLoadingSkeleton() {
         </div>
       </div>
       {/* Header skeleton */}
-      <div className="border-border/60 bg-background/80 sticky top-0 z-30 flex h-16 items-center justify-between border-b px-4 backdrop-blur-md md:pr-68 md:pl-8">
+      <div className="border-border/60 bg-background/70 sticky top-0 z-30 flex h-13 items-center justify-between border-b px-4 backdrop-blur-xl md:pr-68 md:pl-8">
         <div className="skeleton-shimmer h-7 w-24 rounded-lg md:hidden" />
         <div className="hidden md:block">
           <div className="skeleton-shimmer mb-1.5 h-5 w-28 rounded-lg" />
@@ -126,9 +126,9 @@ function NotificationBell() {
     <Link
       href={UTILITY_ROUTES.notifications}
       aria-label="مرکز اعلان‌ها"
-      className="text-muted-foreground hover:bg-muted hover:text-gold-600 focus-visible:ring-ring border-border/50 bg-card/60 relative flex size-10 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2"
+      className="text-muted-foreground hover:bg-muted hover:text-gold-600 focus-visible:ring-ring border-border/50 bg-card/60 relative flex size-9 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2"
     >
-      <Bell className="size-5" strokeWidth={1.75} />
+      <Bell className="size-4.5" strokeWidth={1.75} />
     </Link>
   )
 }
@@ -200,6 +200,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   if (!user) return <PanelLoadingSkeleton />
 
   const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.mobile
+  // نام واقعی کاربر برای سلام هدر — بدون fallback به موبایل
+  const userName = [user.firstName, user.lastName].filter(Boolean).join(' ') || null
   const today = new Date().toLocaleDateString('fa-IR', {
     weekday: 'long',
     day: 'numeric',
@@ -212,7 +214,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
         {/* ============ Desktop — Sidebar گرافیت لوکس ============ */}
         <aside className="bg-surface border-border/60 fixed inset-y-0 right-0 z-30 hidden w-64 flex-col border-l md:flex">
           {/* لوگو */}
-          <div className="border-border/60 flex h-16 items-center border-b px-5">
+          <div className="border-border/60 flex h-13 items-center border-b px-5">
             <Link href="/" aria-label="زرسی — صفحه اصلی">
               <Logo size="md" textClassName="text-foreground" />
             </Link>
@@ -297,25 +299,26 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           </div>
         </aside>
 
-        {/* ============ Header — context-aware ============ */}
-        <header className="border-border/50 bg-background/80 sticky top-0 z-(--z-sticky) flex h-16 items-center justify-between gap-4 border-b px-4 backdrop-blur-md sm:px-6 md:pr-68 md:pl-8">
-          {/* موبایل — هویت کاربر: avatar + نام + وضعیت حساب */}
+        {/* ============ Header — شیشه‌ای فشرده ============ */}
+        <header className="border-border/40 bg-background/70 sticky top-0 z-(--z-sticky) flex h-13 items-center justify-between gap-3 border-b px-4 backdrop-blur-xl sm:px-6 md:pr-68 md:pl-8">
+          {/* موبایل — سلام + نام کاربر */}
           <Link
             href="/dashboard/profile"
             className="flex min-w-0 items-center gap-2.5 md:hidden"
             aria-label="پروفایل کاربر"
           >
-            <span className="from-gold-500/30 to-gold-600/15 ring-gold-500/45 shadow-gold flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1">
-              <User className="text-gold-700 size-5.5" weight="duotone" aria-hidden="true" />
+            <span className="from-gold-500/25 to-gold-600/10 ring-gold-500/35 flex size-8.5 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1">
+              <User className="text-gold-700 size-4.5" weight="duotone" aria-hidden="true" />
             </span>
-            <span className="text-foreground min-w-0 truncate text-sm font-semibold">
-              سلام، {displayName}
+            <span className="min-w-0 truncate text-sm">
+              <span className="text-muted-foreground">سلام، </span>
+              <span className="text-foreground font-bold">{userName ?? 'کاربر زرسی'}</span>
             </span>
           </Link>
           {/* دسکتاپ — عنوان صفحه + تاریخ امروز */}
-          <div className="hidden min-w-0 md:block">
+          <div className="hidden min-w-0 items-baseline gap-2.5 md:flex">
             <p className="text-foreground truncate text-sm font-bold">{pageTitle(pathname)}</p>
-            <p className="text-muted-foreground mt-0.5 text-[11px]">{today}</p>
+            <p className="text-muted-foreground/70 shrink-0 text-[10px] tabular-nums">{today}</p>
           </div>
           <div className="flex items-center gap-1.5">
             <NotificationBell />
