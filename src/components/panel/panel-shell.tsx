@@ -12,10 +12,10 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Bell, ChevronLeft, LogOut } from 'lucide-react'
+import { User } from '@phosphor-icons/react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { Logo } from '@/components/shared/logo'
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
-import LiquidGlass from 'liquid-glass-react'
 import { cn } from 'cn'
 
 export interface PanelUser {
@@ -133,14 +133,7 @@ function NotificationBell() {
   )
 }
 
-const KYC_LABELS: Record<string, string> = {
-  LEVEL_0: 'حساب شخصی',
-  LEVEL_1: 'حساب شخصی',
-  LEVEL_2: 'حساب تاییدشده',
-  LEVEL_3: 'حساب ممتاز',
-}
-
-// ---- آواتار کاربر — حروف اول نام روی halo طلایی ----
+// ---- آواتار کاربر — آیکون آدمک ثابت روی halo طلایی ----
 function UserAvatar({
   user,
   size = 'md',
@@ -151,19 +144,19 @@ function UserAvatar({
   className?: string
 }) {
   const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.mobile
-  const cls = size === 'sm' ? 'size-9 text-[11px]' : 'size-10 text-xs'
+  const cls = size === 'sm' ? 'size-9' : 'size-10'
   return (
     <Link
       href="/dashboard/profile"
       aria-label="پروفایل کاربر"
       title={displayName}
       className={cn(
-        'from-gold-500/30 to-gold-600/15 text-gold-700 ring-gold-500/40 hover:ring-gold-400/60 hover:shadow-gold flex shrink-0 items-center justify-center rounded-full bg-gradient-to-bl font-bold ring-1 transition-all duration-(--duration-normal) focus-visible:ring-2',
+        'from-gold-500/30 to-gold-600/15 ring-gold-500/40 hover:ring-gold-400/60 hover:shadow-gold flex shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1 transition-all duration-(--duration-normal) focus-visible:ring-2',
         cls,
         className,
       )}
     >
-      {displayName.slice(0, 2)}
+      <User className="text-gold-700 size-5" weight="duotone" aria-hidden="true" />
     </Link>
   )
 }
@@ -278,8 +271,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
               href="/dashboard/profile"
               className="group bg-muted/60 hover:bg-muted border-border hover:border-gold-500/30 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all duration-(--duration-normal)"
             >
-              <span className="from-gold-500/30 to-gold-600/15 text-gold-700 ring-gold-500/40 flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1">
-                {displayName.slice(0, 2)}
+              <span className="from-gold-500/30 to-gold-600/15 ring-gold-500/40 flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1">
+                <User className="text-gold-700 size-5" weight="duotone" aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="text-foreground block truncate text-xs font-medium">
@@ -312,16 +305,11 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
             className="flex min-w-0 items-center gap-2.5 md:hidden"
             aria-label="پروفایل کاربر"
           >
-            <span className="from-gold-500/30 to-gold-600/15 text-gold-700 ring-gold-500/45 shadow-gold flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xs font-bold ring-1">
-              {displayName.slice(0, 2)}
+            <span className="from-gold-500/30 to-gold-600/15 ring-gold-500/45 shadow-gold flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1">
+              <User className="text-gold-700 size-5.5" weight="duotone" aria-hidden="true" />
             </span>
-            <span className="min-w-0">
-              <span className="text-foreground block truncate text-sm font-semibold">
-                {displayName}
-              </span>
-              <span className="text-gold-600 mt-0.5 block text-[10px] font-medium">
-                {KYC_LABELS[user.kycLevel] ?? 'حساب شخصی'}
-              </span>
+            <span className="text-foreground min-w-0 truncate text-sm font-semibold">
+              سلام، {displayName}
             </span>
           </Link>
           {/* دسکتاپ — عنوان صفحه + تاریخ امروز */}
@@ -350,88 +338,74 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           aria-label="ناوبری اصلی موبایل"
           className="fixed inset-x-4 bottom-3 z-(--z-sticky) pb-[env(safe-area-inset-bottom)] md:hidden"
         >
-          <div className="relative">
-            <LiquidGlass
-              cornerRadius={30}
-              elasticity={0.2}
-              displacementScale={48}
-              blurAmount={0.08}
-              saturation={140}
-              aberrationIntensity={1.4}
-              overLight
-              padding="0"
-              className="w-full"
-            >
-              <div className="grid h-[68px] grid-cols-5">
-                {PANEL_NAV_ITEMS.map((item) => {
-                  // جایگاه مرکز برای دایره معاملات خالی می‌ماند (دایره بیرون لایه شیشه است)
-                  if (item.key === 'trade') return <span key={item.key} aria-hidden="true" />
+          <div className="grid h-[68px] grid-cols-5 rounded-[1.75rem] bg-white/55 shadow-[0_18px_48px_-12px_rgb(16_29_56/0.35),inset_0_1px_0_rgb(255_255_255/0.6)] backdrop-blur-2xl">
+            {PANEL_NAV_ITEMS.map((item) => {
+              const active = isNavItemActive(item, pathname)
+              const Icon = item.icon
 
-                  const active = isNavItemActive(item, pathname)
-                  const Icon = item.icon
-                  return (
-                    <Link
-                      key={item.key}
-                      href={item.href}
-                      aria-current={active ? 'page' : undefined}
-                      aria-label={item.label}
+              // معاملات — اکشن مرکزی برجسته: دایره طلایی بیرون‌زده از نوار
+              if (item.key === 'trade') {
+                return (
+                  <Link
+                    key={item.key}
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    aria-label={item.label}
+                    className="group flex min-h-[44px] flex-col items-center justify-end gap-0.5 pb-1.5 focus-visible:outline-none"
+                  >
+                    <span
                       className={cn(
-                        'flex min-h-[44px] flex-col items-center justify-center gap-1 rounded-xl text-[10px] transition-colors duration-(--duration-fast)',
-                        'focus-visible:bg-navy-500/10 focus-visible:outline-none',
-                        active ? 'text-navy-800 font-semibold' : 'text-navy-800/55',
+                        'from-gold-400 via-gold-500 to-gold-600 ring-gold-500/30 shadow-gold relative -mt-9 mb-1 flex size-14 items-center justify-center rounded-full bg-gradient-to-bl ring-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-active:scale-95',
+                        active && 'animate-nav-pop',
                       )}
                     >
+                      {/* برق شیشه‌ای روی دایره */}
                       <span
-                        className={cn(
-                          'relative flex items-center justify-center rounded-xl px-3.5 py-1 transition-all duration-(--duration-normal) ease-(--ease-spring)',
-                          active && 'bg-navy-500/12 animate-nav-pop',
-                        )}
-                      >
-                        <Icon className="size-5" strokeWidth={active ? 2 : 1.75} />
-                      </span>
+                        aria-hidden="true"
+                        className="absolute inset-x-1.5 top-1 h-4 rounded-full bg-white/35 blur-[3px]"
+                      />
+                      <Icon
+                        className="size-6 text-[#171105]"
+                        strokeWidth={2.25}
+                        aria-hidden="true"
+                      />
+                    </span>
+                    <span
+                      className={cn(
+                        'text-[10px] font-bold transition-colors',
+                        active ? 'text-gold-700' : 'text-navy-800/70',
+                      )}
+                    >
                       {item.label}
-                    </Link>
-                  )
-                })}
-              </div>
-            </LiquidGlass>
+                    </span>
+                  </Link>
+                )
+              }
 
-            {/* اکشن مرکزی — دایره طلایی بیرون‌زده از نوار شیشه‌ای */}
-            {(() => {
-              const tradeItem = PANEL_NAV_ITEMS.find((i) => i.key === 'trade')!
-              const tradeActive = isNavItemActive(tradeItem, pathname)
-              const TradeIcon = tradeItem.icon
               return (
                 <Link
-                  href={tradeItem.href}
-                  aria-current={tradeActive ? 'page' : undefined}
-                  aria-label={tradeItem.label}
-                  className="group absolute -top-4 left-1/2 flex -translate-x-1/2 flex-col items-center focus-visible:outline-none"
+                  key={item.key}
+                  href={item.href}
+                  aria-current={active ? 'page' : undefined}
+                  aria-label={item.label}
+                  className={cn(
+                    'flex min-h-[44px] flex-col items-center justify-center gap-1 rounded-xl text-[10px] transition-colors duration-(--duration-fast)',
+                    'focus-visible:bg-navy-500/10 focus-visible:outline-none',
+                    active ? 'text-navy-800 font-semibold' : 'text-navy-800/55',
+                  )}
                 >
                   <span
                     className={cn(
-                      'from-gold-400 via-gold-500 to-gold-600 ring-gold-500/30 shadow-gold relative flex size-14 items-center justify-center rounded-full bg-gradient-to-bl ring-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-active:scale-95',
-                      tradeActive && 'animate-nav-pop',
+                      'relative flex items-center justify-center rounded-xl px-3.5 py-1 transition-all duration-(--duration-normal) ease-(--ease-spring)',
+                      active && 'bg-navy-500/12 animate-nav-pop',
                     )}
                   >
-                    {/* برق شیشه‌ای روی دایره */}
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-x-1.5 top-1 h-4 rounded-full bg-white/35 blur-[3px]"
-                    />
-                    <TradeIcon className="size-6 text-[#171105]" strokeWidth={2.25} />
+                    <Icon className="size-5" strokeWidth={active ? 2 : 1.75} />
                   </span>
-                  <span
-                    className={cn(
-                      'mt-1.5 text-[10px] font-bold transition-colors',
-                      tradeActive ? 'text-gold-700' : 'text-navy-800/70',
-                    )}
-                  >
-                    {tradeItem.label}
-                  </span>
+                  {item.label}
                 </Link>
               )
-            })()}
+            })}
           </div>
         </nav>
       </div>
