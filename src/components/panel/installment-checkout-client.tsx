@@ -7,10 +7,18 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { IconReceipt, IconScale, IconShieldCheck } from '@tabler/icons-react'
+import Link from 'next/link'
+import { IconArrowRight, IconHelpCircle, IconReceipt, IconShieldCheck } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { cn } from 'cn'
 
 interface PriceData {
@@ -37,6 +45,7 @@ export function InstallmentCheckoutClient() {
   const [price, setPrice] = useState<PriceData | null>(null)
   const [agreed, setAgreed] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
+  const [scheduleOpen, setScheduleOpen] = useState(false)
 
   // اعتبارسنجی پارامترهای ورودی — مقادیر نامعتبر به بازه امن clamp می‌شوند
   const rawMonths = Number(searchParams.get('months'))
@@ -63,28 +72,50 @@ export function InstallmentCheckoutClient() {
   const installment = (amount * monthlyRate * factor) / (factor - 1)
   const total = installment * months
 
-  const rows: Array<{ label: string; value: string; hint?: string }> = [
+  // سررسید هر قسط = امروز + ۳۰ روز × شماره قسط — قانون پرداخت هر ۳۰ روز
+  const schedule = Array.from({ length: months }, (_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() + 30 * (i + 1))
+    return d.toLocaleDateString('fa-IR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+  })
+
+  const rows: Array<{ label: string; value: string; hint?: string; schedule?: boolean }> = [
     { label: 'اعتبار دریافتی', value: `${fmt(amount)} تومان` },
     { label: 'مبلغ هر قسط', value: `${fmt(installment)} تومان` },
-    { label: 'زمان‌بندی اقساط', value: `${faDigits(String(months))} قسط ماهانه` },
+    {
+      label: 'زمان‌بندی اقساط',
+      value: `${faDigits(String(months))} قسط ماهانه`,
+      schedule: true,
+    },
     { label: 'مجموع قسط‌ها', value: `${fmt(total)} تومان`, hint: 'سود ۲۳٪ سالانه' },
   ]
 
   return (
     <div className="animate-stagger mx-auto max-w-xl space-y-5">
+      {/* برگشت به محاسبه‌گر */}
+      <Link
+        href="/dashboard/installments"
+        className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-1.5 rounded-lg px-1 py-0.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+      >
+        <IconArrowRight className="size-4" stroke={1.75} />
+        بازگشت به خرید قسطی
+      </Link>
+
       {/* طلای دریافتی */}
       <Card className="border-gold-500/30 from-gold-500/15 via-gold-500/5 bg-gradient-to-bl to-transparent">
-        <CardContent className="py-6 text-center">
-          <span className="from-gold-500/25 to-gold-600/10 ring-gold-500/40 mx-auto flex size-14 items-center justify-center rounded-2xl bg-gradient-to-bl ring-1">
-            <IconScale className="text-gold-600 size-7" stroke={1.5} />
-          </span>
-          <p className="text-muted-foreground mt-3 text-xs">طلای دریافتی در خرید قسطی</p>
+        <CardContent className="flex items-center justify-between py-3.5">
+          <p className="text-muted-foreground text-xs">طلای دریافتی</p>
           {goldGrams === null ? (
-            <p className="text-muted-foreground mt-1.5 text-3xl font-bold">—</p>
+            <p className="text-muted-foreground text-lg font-bold">—</p>
           ) : (
-            <p className="text-foreground mt-1.5 text-3xl font-bold tabular-nums">
+            <p className="text-foreground text-xl font-bold tabular-nums">
               {faDigits(goldGrams.toFixed(2))}
-              <span className="text-gold-600 ms-1.5 text-base font-bold">گرم</span>
+              <span className="text-gold-600 ms-1 text-xs font-bold">گرم</span>
             </p>
           )}
         </CardContent>
@@ -100,7 +131,19 @@ export function InstallmentCheckoutClient() {
           <dl className="divide-border/60 divide-y">
             {rows.map((r) => (
               <div key={r.label} className="flex items-center justify-between py-3">
-                <dt className="text-muted-foreground text-sm">{r.label}</dt>
+                <dt className="text-muted-foreground flex items-center gap-1 text-sm">
+                  {r.label}
+                  {r.schedule && (
+                    <button
+                      type="button"
+                      onClick={() => setScheduleOpen(true)}
+                      aria-label="مشاهده تاریخ دقیق اقساط"
+                      className="text-gold-600 hover:text-gold-500 focus-visible:ring-ring flex size-5 items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                    >
+                      <IconHelpCircle className="size-4" stroke={1.75} />
+                    </button>
+                  )}
+                </dt>
                 <dd className="text-foreground text-sm font-bold tabular-nums">
                   {r.value}
                   {r.hint && (
@@ -155,6 +198,24 @@ export function InstallmentCheckoutClient() {
           {notice}
         </p>
       )}
+
+      {/* مودال زمان‌بندی اقساط — سررسید هر ۳۰ روز از امروز */}
+      <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-base">زمان‌بندی اقساط</DialogTitle>
+            <DialogDescription>هر قسط هر ۳۰ روز سررسید می‌شود.</DialogDescription>
+          </DialogHeader>
+          <ul className="divide-border/60 max-h-72 divide-y overflow-y-auto">
+            {schedule.map((date, i) => (
+              <li key={i} className="flex items-center justify-between py-2.5">
+                <span className="text-muted-foreground text-xs">قسط {faDigits(String(i + 1))}</span>
+                <span className="text-foreground text-xs font-medium tabular-nums">{date}</span>
+              </li>
+            ))}
+          </ul>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
