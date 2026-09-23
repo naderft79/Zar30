@@ -19,9 +19,14 @@ interface PriceData {
 }
 
 // ---- تنظیمات طرح اقساطی (پیش‌نمایش — مقادیر نهایی از پنل ادمین می‌آیند) ----
-const TERM_OPTIONS = [3, 6, 12] as const
+// سقف اعتبار هر طرح متفاوت است
+const TERM_OPTIONS = [
+  { months: 3, max: 100_000_000 },
+  { months: 6, max: 200_000_000 },
+  { months: 12, max: 400_000_000 },
+  { months: 18, max: 500_000_000 },
+] as const
 const MIN_AMOUNT = 10_000_000
-const MAX_AMOUNT = 400_000_000
 const STEP = 1_000_000
 // نرخ سود سالانه اقساط — مقدار نهایی از پنل ادمین می‌آید
 const ANNUAL_RATE = 0.23
@@ -32,6 +37,7 @@ const fmt = (n: number) => formatExactAmount(String(Math.round(n)))
 export function InstallmentsClient() {
   const [months, setMonths] = useState<number>(6)
   const [amount, setAmount] = useState(100_000_000)
+  const maxAmount = TERM_OPTIONS.find((t) => t.months === months)?.max ?? 500_000_000
   const [price, setPrice] = useState<PriceData | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
 
@@ -55,7 +61,7 @@ export function InstallmentsClient() {
   const installment = (amount * monthlyRate * factor) / (factor - 1)
   const total = installment * months
 
-  const fillPct = ((amount - MIN_AMOUNT) / (MAX_AMOUNT - MIN_AMOUNT)) * 100
+  const fillPct = ((amount - MIN_AMOUNT) / (maxAmount - MIN_AMOUNT)) * 100
 
   return (
     <div className="animate-stagger space-y-5">
@@ -72,22 +78,31 @@ export function InstallmentsClient() {
           <div
             role="tablist"
             aria-label="مدت بازپرداخت"
-            className="bg-muted/70 grid grid-cols-3 gap-1 rounded-xl p-1"
+            className="bg-muted/70 grid grid-cols-4 gap-1 rounded-xl p-1"
           >
-            {TERM_OPTIONS.map((m) => (
+            {TERM_OPTIONS.map((t) => (
               <button
-                key={m}
+                key={t.months}
                 role="tab"
-                aria-selected={months === m}
-                onClick={() => setMonths(m)}
+                aria-selected={months === t.months}
+                onClick={() => {
+                  setMonths(t.months)
+                  setAmount((a) => Math.min(a, t.max))
+                }}
                 className={cn(
                   'focus-visible:ring-ring rounded-lg py-2 text-sm font-medium transition-all duration-(--duration-fast) focus-visible:ring-2 focus-visible:outline-none',
-                  months === m
+                  months === t.months
                     ? 'bg-navy-700 text-cream-50 shadow-sm'
                     : 'text-muted-foreground hover:text-foreground',
                 )}
               >
-                {m === 3 ? '۳ ماهه' : m === 6 ? '۶ ماهه' : '۱۲ ماهه'}
+                {t.months === 3
+                  ? '۳ ماهه'
+                  : t.months === 6
+                    ? '۶ ماهه'
+                    : t.months === 12
+                      ? '۱۲ ماهه'
+                      : '۱۸ ماهه'}
               </button>
             ))}
           </div>
@@ -106,7 +121,7 @@ export function InstallmentsClient() {
             <input
               type="range"
               min={MIN_AMOUNT}
-              max={MAX_AMOUNT}
+              max={maxAmount}
               step={STEP}
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
@@ -118,8 +133,8 @@ export function InstallmentsClient() {
               }}
             />
             <div className="text-muted-foreground mt-2 flex items-center justify-between text-[10px] tabular-nums">
-              <span>{faDigits('10')} میلیون</span>
-              <span>{faDigits('400')} میلیون</span>
+              <span>{faDigits('10')} میلیون تومان</span>
+              <span>{faDigits(String(maxAmount / 1_000_000))} میلیون تومان</span>
             </div>
           </div>
 
