@@ -23,7 +23,7 @@ const TERM_OPTIONS = [3, 6, 12] as const
 const MIN_AMOUNT = 10_000_000
 const MAX_AMOUNT = 400_000_000
 const STEP = 1_000_000
-// ASSUMPTION: سود ۲۳٪ سالانه به‌صورت ساده (flat) محاسبه می‌شود — برای preview
+// نرخ سود سالانه اقساط — مقدار نهایی از پنل ادمین می‌آید
 const ANNUAL_RATE = 0.23
 
 const faDigits = (s: string) => s.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.charAt(+d))
@@ -46,13 +46,14 @@ export function InstallmentsClient() {
     }
   }, [])
 
-  // طلای دریافتی = اعتبار ÷ قیمت فروش لحظه‌ای — دو رقم اعشار
-  const goldGrams = price && price.sellPrice > 0 ? amount / price.sellPrice : null
+  // طلای دریافتی = اعتبار ÷ قیمت خرید لحظه‌ای — دو رقم اعشار
+  const goldGrams = price && price.buyPrice > 0 ? amount / price.buyPrice : null
 
-  // سود ساده ۲۳٪ سالانه: P * rate * (months/12)
-  const interest = amount * ANNUAL_RATE * (months / 12)
-  const total = amount + interest
-  const installment = total / months
+  // فرمول استاندارد قسط (annuity): PMT = P·r·(1+r)^n / ((1+r)^n − 1) — r = نرخ ماهانه
+  const monthlyRate = ANNUAL_RATE / 12
+  const factor = Math.pow(1 + monthlyRate, months)
+  const installment = (amount * monthlyRate * factor) / (factor - 1)
+  const total = installment * months
 
   const fillPct = ((amount - MIN_AMOUNT) / (MAX_AMOUNT - MIN_AMOUNT)) * 100
 
@@ -134,7 +135,7 @@ export function InstallmentsClient() {
               </p>
             )}
             <p className="text-muted-foreground/80 mt-0.5 text-[10px]">
-              با نرخ فروش لحظه‌ای طلای ۱۸ عیار
+              با نرخ خرید لحظه‌ای طلای ۱۸ عیار
             </p>
           </div>
 
