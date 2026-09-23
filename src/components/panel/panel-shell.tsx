@@ -311,7 +311,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           {/* مرکز — مارک برند (فقط موبایل) */}
           <Link href="/dashboard" aria-label="زرسی" className="justify-self-center md:hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand-mark.png" alt="زرسی" className="h-8 w-auto" />
+            <img src="/brand-mark.png" alt="زرسی" className="h-10 w-auto" />
           </Link>
           <div className="hidden md:block" />
           <div className="flex items-center gap-1.5 justify-self-end">
