@@ -124,11 +124,6 @@ export function WealthHero({
               <Eye className="size-4" strokeWidth={1.75} />
             )}
           </button>
-          {!loading && !hidden && Number(totalValue) > 0 && (
-            <p className="text-cream-300/55 min-w-0 truncate text-[10px] sm:text-[11px]">
-              {toPersianWords(totalValue)}
-            </p>
-          )}
         </div>
         {loading ? (
           <div className="skeleton-shimmer h-12 w-64 rounded-lg" />
@@ -151,6 +146,12 @@ export function WealthHero({
               <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" className="mb-2" />
             )}
           </div>
+        )}
+        {/* موجودی به حروف — زیر عدد */}
+        {!loading && !hidden && Number(totalValue) > 0 && (
+          <p className="text-cream-300/55 mt-1.5 text-[11px] sm:text-xs">
+            {toPersianWords(totalValue)} تومان
+          </p>
         )}
       </div>
 
