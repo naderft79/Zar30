@@ -134,9 +134,6 @@ export function InstallmentsClient() {
                 <span className="text-gold-600 ms-1 text-xs font-medium">گرم</span>
               </p>
             )}
-            <p className="text-muted-foreground/80 mt-0.5 text-[10px]">
-              با نرخ خرید لحظه‌ای طلای ۱۸ عیار
-            </p>
           </div>
 
           {/* جزئیات بازپرداخت */}
