@@ -10,7 +10,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { CalendarClock, Eye, EyeOff, Package, TrendingUp } from 'lucide-react'
-import { HandDeposit, HandWithdraw, Vault } from '@phosphor-icons/react'
+import { IconTransfer, IconTransferIn, IconVault } from '@tabler/icons-react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { toPersianWords } from '@/lib/utils/format'
@@ -31,9 +31,9 @@ interface WealthHeroProps {
 
 // اکشن‌های مالی داخل کارت — ورود سریع به مقصدهای اصلی
 const HERO_ACTIONS = [
-  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: HandDeposit },
-  { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: HandWithdraw },
-  { href: '/dashboard/assets', label: 'مدیریت دارایی', icon: Vault },
+  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: IconTransferIn },
+  { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: IconTransfer },
+  { href: '/dashboard/assets', label: 'مدیریت دارایی', icon: IconVault },
 ] as const
 
 // بنرهای چرخان داخل کارت — هر ۵ ثانیه بنر بعدی
@@ -238,7 +238,7 @@ export function WealthHero({
             href={href}
             className="group bg-navy-300/20 ring-cream-50/15 hover:bg-navy-300/30 focus-visible:ring-cream-50/40 flex min-h-[52px] items-center justify-center gap-2 rounded-2xl ring-1 backdrop-blur-xl transition-colors duration-(--duration-normal) ease-(--ease-out) ring-inset focus-visible:ring-2 focus-visible:outline-none"
           >
-            <Icon className="text-cream-50 size-6 shrink-0" weight="duotone" aria-hidden="true" />
+            <Icon className="text-cream-50 size-6 shrink-0" stroke={1.75} aria-hidden="true" />
             <span className="text-cream-50 text-[11px] font-bold sm:text-xs">{label}</span>
           </Link>
         ))}
