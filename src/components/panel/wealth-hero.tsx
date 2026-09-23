@@ -63,6 +63,56 @@ const HERO_BANNERS = [
 
 const BANNER_INTERVAL_MS = 5_000
 
+// متن تک‌خط — اگر از عرض بنر بیشتر شد، به‌صورت نوشته متحرک (marquee) نمایش داده می‌شود
+function MarqueeLine({ text, className }: { text: string; className?: string }) {
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLParagraphElement>(null)
+  const [overflow, setOverflow] = useState(false)
+  const [distance, setDistance] = useState(0)
+
+  useEffect(() => {
+    const wrap = wrapRef.current
+    const el = textRef.current
+    if (!wrap || !el) return
+    const check = () => {
+      const over = el.scrollWidth > wrap.clientWidth + 2
+      setOverflow(over)
+      if (over) setDistance(el.scrollWidth - wrap.clientWidth)
+    }
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(wrap)
+    return () => ro.disconnect()
+  }, [text])
+
+  if (!overflow) {
+    return (
+      <div ref={wrapRef} className="overflow-hidden">
+        <p ref={textRef} className={cn('truncate', className)}>
+          {text}
+        </p>
+      </div>
+    )
+  }
+
+  // دو کپی پیاپی + حرکت +50% → لوپ یک‌پارچه (RTL: overflow سمت چپ است)
+  const duration = Math.max(6, Math.round(distance / 40))
+  return (
+    <div ref={wrapRef} className="overflow-hidden">
+      <p
+        ref={textRef}
+        className={cn('marquee-track inline-flex whitespace-nowrap', className)}
+        style={{ '--marquee-duration': `${duration}s` } as React.CSSProperties}
+      >
+        <span className="pe-10">{text}</span>
+        <span className="pe-10" aria-hidden="true">
+          {text}
+        </span>
+      </p>
+    </div>
+  )
+}
+
 export function WealthHero({
   dateLabel,
   totalValue,
@@ -205,14 +255,17 @@ export function WealthHero({
           href={banner.href}
           className="animate-fade-up bg-cream-50 focus-visible:ring-gold-500/70 flex items-center justify-between gap-3 rounded-2xl px-4 py-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:outline-none sm:px-5"
         >
+          {/* حداکثر ۳ خط — متن بلند به‌صورت متحرک نمایش داده می‌شود */}
           <div className="min-w-0 space-y-1">
-            <p className="text-gold-600 text-[10px] font-bold">{banner.kicker}</p>
-            <p className="text-navy-800 text-sm leading-5 font-extrabold sm:text-base">
-              {banner.title}
-            </p>
-            <p className="text-navy-800/55 text-[11px] leading-4.5 sm:text-xs">
-              {banner.description}
-            </p>
+            <MarqueeLine text={banner.kicker} className="text-gold-600 text-[10px] font-bold" />
+            <MarqueeLine
+              text={banner.title}
+              className="text-navy-800 text-sm leading-5 font-extrabold sm:text-base"
+            />
+            <MarqueeLine
+              text={banner.description}
+              className="text-navy-800/55 text-[11px] leading-4.5 sm:text-xs"
+            />
           </div>
           <span className="from-gold-400/20 to-gold-600/20 text-gold-600 ring-gold-500/25 flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-bl ring-1 sm:size-12">
             <BannerIcon className="size-5" strokeWidth={1.75} />
