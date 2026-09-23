@@ -133,7 +133,7 @@ function NotificationBell() {
   )
 }
 
-// ---- آواتار کاربر — آیکون آدمک ثابت روی halo طلایی ----
+// ---- آواتار کاربر — آیکون آدمک سورمه‌ای؛ دقیقاً همان‌سبک زنگوله اعلان ----
 function UserAvatar({
   user,
   size = 'md',
@@ -151,12 +151,12 @@ function UserAvatar({
       aria-label="پروفایل کاربر"
       title={displayName}
       className={cn(
-        'from-gold-500/30 to-gold-600/15 ring-gold-500/40 hover:ring-gold-400/60 hover:shadow-gold flex shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1 transition-all duration-(--duration-normal) focus-visible:ring-2',
+        'text-cream-50 hover:bg-navy-600 focus-visible:ring-ring border-border/50 bg-navy-700 relative flex shrink-0 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2',
         cls,
         className,
       )}
     >
-      <IconUser className="text-gold-700 size-5" aria-hidden="true" />
+      <IconUser className="size-4.5" stroke={1.75} aria-hidden="true" />
     </Link>
   )
 }
@@ -200,8 +200,6 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   if (!user) return <PanelLoadingSkeleton />
 
   const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.mobile
-  // نام واقعی کاربر برای سلام هدر — بدون fallback به موبایل
-  const userName = [user.firstName, user.lastName].filter(Boolean).join(' ') || null
   const today = new Date().toLocaleDateString('fa-IR', {
     weekday: 'long',
     day: 'numeric',
@@ -273,8 +271,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
               href="/dashboard/profile"
               className="group bg-muted/60 hover:bg-muted border-border hover:border-gold-500/30 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all duration-(--duration-normal)"
             >
-              <span className="from-gold-500/30 to-gold-600/15 ring-gold-500/40 flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1">
-                <IconUser className="text-gold-700 size-5" aria-hidden="true" />
+              <span className="border-border/50 bg-navy-700 text-cream-50 flex size-9 shrink-0 items-center justify-center rounded-xl border">
+                <IconUser className="size-4.5" stroke={1.75} aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="text-foreground block truncate text-xs font-medium">
@@ -300,27 +298,23 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* ============ Header — شیشه‌ای فشرده ============ */}
-        <header className="border-border/40 bg-background/70 sticky top-0 z-(--z-sticky) flex h-13 items-center justify-between gap-3 border-b px-4 backdrop-blur-xl sm:px-6 md:pr-68 md:pl-8">
-          {/* موبایل — سلام + نام کاربر */}
-          <Link
-            href="/dashboard/profile"
-            className="flex min-w-0 items-center gap-2.5 md:hidden"
-            aria-label="پروفایل کاربر"
-          >
-            <span className="from-gold-500/25 to-gold-600/10 ring-gold-500/35 flex size-8.5 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1">
-              <IconUser className="text-gold-700 size-4.5" aria-hidden="true" />
-            </span>
-            <span className="min-w-0 truncate text-sm">
-              <span className="text-muted-foreground">سلام، </span>
-              <span className="text-foreground font-bold">{userName ?? 'کاربر زرسی'}</span>
-            </span>
-          </Link>
+        <header className="border-border/40 bg-background/70 sticky top-0 z-(--z-sticky) grid h-13 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b px-4 backdrop-blur-xl sm:px-6 md:pr-68 md:pl-8">
+          {/* موبایل — آواتار پروفایل (سمت راست در RTL) */}
+          <div className="flex items-center md:hidden">
+            <UserAvatar user={user} size="sm" />
+          </div>
           {/* دسکتاپ — عنوان صفحه + تاریخ امروز */}
           <div className="hidden min-w-0 items-baseline gap-2.5 md:flex">
             <p className="text-foreground truncate text-sm font-bold">{pageTitle(pathname)}</p>
             <p className="text-muted-foreground/70 shrink-0 text-[10px] tabular-nums">{today}</p>
           </div>
-          <div className="flex items-center gap-1.5">
+          {/* مرکز — مارک برند (فقط موبایل) */}
+          <Link href="/dashboard" aria-label="زرسی" className="justify-self-center md:hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand-mark.png" alt="زرسی" className="h-8 w-auto" />
+          </Link>
+          <div className="hidden md:block" />
+          <div className="flex items-center gap-1.5 justify-self-end">
             <NotificationBell />
             <UserAvatar user={user} size="sm" className="hidden md:flex" />
           </div>
