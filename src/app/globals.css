@@ -671,3 +671,44 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+/* اسلایدر مبلغ خرید قسطی — thumb طلایی روی track کم‌رنگ */
+.installment-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+}
+.installment-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: var(--gold-500);
+  border: 3px solid #ffffff;
+  box-shadow: 0 1px 8px rgb(212 175 55 / 60%);
+  cursor: grab;
+  transition: transform 0.15s ease;
+}
+.installment-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+.installment-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.18);
+}
+.installment-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: var(--gold-500);
+  border: 3px solid #ffffff;
+  box-shadow: 0 1px 8px rgb(212 175 55 / 60%);
+  cursor: grab;
+}
+.installment-slider::-moz-range-track {
+  background: transparent;
+}
