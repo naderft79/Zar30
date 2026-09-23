@@ -133,8 +133,8 @@ export function InstallmentsClient() {
               }}
             />
             <div className="text-muted-foreground mt-2 flex items-center justify-between text-[10px] tabular-nums">
-              <span>{faDigits('10')} میلیون تومان</span>
-              <span>{faDigits(String(maxAmount / 1_000_000))} میلیون تومان</span>
+              <span dir="rtl">{faDigits('10')} میلیون</span>
+              <span dir="rtl">{faDigits(String(maxAmount / 1_000_000))} میلیون</span>
             </div>
           </div>
 
