@@ -10,7 +10,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { CalendarClock, Eye, EyeOff, Package, TrendingUp } from 'lucide-react'
-import { IconTransfer, IconTransferIn, IconVault } from '@tabler/icons-react'
+import { IconCashBanknotePlus, IconTransfer, IconWallet } from '@tabler/icons-react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { toPersianWords } from '@/lib/utils/format'
@@ -31,9 +31,9 @@ interface WealthHeroProps {
 
 // اکشن‌های مالی داخل کارت — ورود سریع به مقصدهای اصلی
 const HERO_ACTIONS = [
-  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: IconTransferIn },
+  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: IconCashBanknotePlus },
   { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: IconTransfer },
-  { href: '/dashboard/assets', label: 'مدیریت دارایی', icon: IconVault },
+  { href: '/dashboard/assets', label: 'مدیریت دارایی', icon: IconWallet },
 ] as const
 
 // بنرهای چرخان داخل کارت — هر ۵ ثانیه بنر بعدی
