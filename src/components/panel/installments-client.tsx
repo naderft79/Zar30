@@ -27,7 +27,7 @@ const TERM_OPTIONS = [
   { months: 18, max: 500_000_000 },
 ] as const
 const MIN_AMOUNT = 10_000_000
-const STEP = 1_000_000
+const STEP = 5_000_000
 // نرخ سود سالانه اقساط — مقدار نهایی از پنل ادمین می‌آید
 const ANNUAL_RATE = 0.23
 
