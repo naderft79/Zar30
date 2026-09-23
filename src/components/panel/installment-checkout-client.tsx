@@ -109,17 +109,17 @@ export function InstallmentCheckoutClient() {
         بازگشت به خرید قسطی
       </Link>
 
-      {/* طلای دریافتی — دو خط ساده بدون کارت */}
+      {/* طلای دریافتی — مقدار بالا، لیبل کوچک‌تر پایین */}
       <div className="py-2 text-center">
-        <p className="text-muted-foreground text-xs">طلای دریافتی</p>
         {goldGrams === null ? (
-          <p className="text-muted-foreground mt-1 text-2xl font-bold">—</p>
+          <p className="text-muted-foreground text-2xl font-bold">—</p>
         ) : (
-          <p className="text-foreground mt-1 text-2xl font-bold tabular-nums">
+          <p className="text-foreground text-2xl font-bold tabular-nums">
             {faDigits(goldGrams.toFixed(2))}
             <span className="text-gold-600 ms-1 text-sm font-bold">گرم</span>
           </p>
         )}
+        <p className="text-muted-foreground mt-2.5 text-[11px]">طلای دریافتی در خرید قسطی</p>
       </div>
 
       {/* صورتحساب */}
