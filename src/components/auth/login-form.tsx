@@ -9,7 +9,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Eye, EyeOff } from 'lucide-react'
+import { IconEye, IconEyeOff } from '@tabler/icons-react'
 import { apiPost } from '@/lib/api/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -95,9 +95,9 @@ export function LoginForm() {
             className="text-muted-foreground hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-1.5 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             {showPassword ? (
-              <EyeOff className="size-4.5" strokeWidth={1.75} />
+              <IconEyeOff className="size-4.5" stroke={1.75} />
             ) : (
-              <Eye className="size-4.5" strokeWidth={1.75} />
+              <IconEye className="size-4.5" stroke={1.75} />
             )}
           </button>
         </div>

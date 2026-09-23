@@ -4,7 +4,7 @@
 
 'use client'
 
-import { CalendarClock, FileText, Sparkles } from 'lucide-react'
+import { IconCalendarClock, IconFileText, IconSparkles } from '@tabler/icons-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -16,7 +16,7 @@ export function InstallmentsClient() {
       <Card className="border-gold-500/25 from-gold-500/10 via-card to-card bg-gradient-to-bl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Sparkles className="text-gold-600 size-5" strokeWidth={1.75} />
+            <IconSparkles className="text-gold-600 size-5" stroke={1.75} />
             طرح‌های اقساطی
             <StatusBadge tone="gold" dot={false}>
               به‌زودی
@@ -25,7 +25,7 @@ export function InstallmentsClient() {
         </CardHeader>
         <CardContent>
           <EmptyState
-            icon={Sparkles}
+            icon={IconSparkles}
             title="طرح‌های اقساطی به‌زودی معرفی می‌شوند"
             description="به‌زودی می‌توانید طلای آب‌شده را با پرداخت اقساطی و قرارداد شفاف خریداری کنید."
             badge="به‌زودی — پیش‌نمایش"
@@ -38,13 +38,13 @@ export function InstallmentsClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <FileText className="text-gold-600 size-5" strokeWidth={1.75} />
+              <IconFileText className="text-gold-600 size-5" stroke={1.75} />
               قراردادهای من
             </CardTitle>
           </CardHeader>
           <CardContent>
             <EmptyState
-              icon={FileText}
+              icon={IconFileText}
               title="قراردادی ندارید"
               description="قراردادهای خرید اقساطی شما با وضعیت و جزئیات کامل اینجا نمایش داده می‌شوند."
             />
@@ -53,13 +53,13 @@ export function InstallmentsClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <CalendarClock className="text-gold-600 size-5" strokeWidth={1.75} />
+              <IconCalendarClock className="text-gold-600 size-5" stroke={1.75} />
               اقساط پیش رو
             </CardTitle>
           </CardHeader>
           <CardContent>
             <EmptyState
-              icon={CalendarClock}
+              icon={IconCalendarClock}
               title="قسطی ندارید"
               description="سررسید اقساط، یادآوری‌ها و تاریخچه پرداخت اینجا مدیریت می‌شود."
             />

@@ -9,7 +9,15 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowDownLeft, ArrowLeft, ArrowUpLeft, Gift, History, Repeat, Wallet } from 'lucide-react'
+import {
+  IconArrowDownLeft,
+  IconArrowLeft,
+  IconArrowUpLeft,
+  IconGift,
+  IconHistory,
+  IconRepeat,
+  IconWallet,
+} from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
@@ -64,17 +72,17 @@ function SectionLink({ href, children }: { href: string; children: React.ReactNo
       className="text-gold-600 hover:text-gold-600 inline-flex items-center gap-1 text-xs font-medium transition-colors"
     >
       {children}
-      <ArrowLeft className="size-3.5" />
+      <IconArrowLeft className="size-3.5" />
     </Link>
   )
 }
 
 // آیکون جهت تراکنش — واریزی طلایی/سبز، برداشتی خنثی
 function txIcon(type: string) {
-  if (type === 'DEPOSIT' || type === 'BUY') return ArrowDownLeft
-  if (type === 'WITHDRAW' || type === 'SELL') return ArrowUpLeft
-  if (type === 'TRANSFER') return Repeat
-  return Wallet
+  if (type === 'DEPOSIT' || type === 'BUY') return IconArrowDownLeft
+  if (type === 'WITHDRAW' || type === 'SELL') return IconArrowUpLeft
+  if (type === 'TRANSFER') return IconRepeat
+  return IconWallet
 }
 
 function isIncoming(type: string) {
@@ -192,7 +200,7 @@ export function DashboardOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <History className="text-gold-600 size-5" strokeWidth={1.75} />
+            <IconHistory className="text-gold-600 size-5" stroke={1.75} />
             تراکنش‌های اخیر
           </CardTitle>
           <div className="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
@@ -208,7 +216,7 @@ export function DashboardOverview() {
             </ul>
           ) : txs.length === 0 ? (
             <EmptyState
-              icon={History}
+              icon={IconHistory}
               title="هنوز تراکنشی ثبت نشده است"
               description="خرید، فروش، واریز و برداشت شما به‌صورت زمان‌بندی‌شده اینجا نمایش داده می‌شود."
               action={{ label: 'مشاهده دارایی', href: '/dashboard/assets' }}
@@ -273,7 +281,7 @@ export function DashboardOverview() {
         <Card className="border-gold-500/25 from-gold-500/10 via-card to-card bg-gradient-to-bl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <Gift className="text-gold-600 size-5" strokeWidth={1.75} />
+              <IconGift className="text-gold-600 size-5" stroke={1.75} />
               معرفی دوستان
             </CardTitle>
           </CardHeader>

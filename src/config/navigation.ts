@@ -13,14 +13,21 @@
 //   Navigation Config → Desktop Navigation → Mobile Navigation
 // ============================================
 
-import { CalendarClock, Home, Repeat, User, Wallet, type LucideIcon } from 'lucide-react'
+import {
+  IconCalendarClock,
+  IconHome,
+  IconRepeat,
+  IconUser,
+  IconWallet,
+  type TablerIcon,
+} from '@tabler/icons-react'
 
 export interface NavItem {
   /** شناسه پایدار — هرگز تغییر نمی‌کند */
   key: 'home' | 'trade' | 'assets' | 'installments' | 'profile'
   label: string
   href: string
-  icon: LucideIcon
+  icon: TablerIcon
   /** توضیح کوتاه برای aria/tooltip */
   description: string
 }
@@ -31,35 +38,35 @@ export const PANEL_NAV_ITEMS: readonly NavItem[] = [
     key: 'home',
     label: 'خانه',
     href: '/dashboard',
-    icon: Home,
+    icon: IconHome,
     description: 'داشبورد و خلاصه حساب',
   },
   {
     key: 'installments',
     label: 'قسطی',
     href: '/dashboard/installments',
-    icon: CalendarClock,
+    icon: IconCalendarClock,
     description: 'طرح‌های اقساطی و قراردادها',
   },
   {
     key: 'trade',
     label: 'معاملات',
     href: '/dashboard/trade',
-    icon: Repeat,
+    icon: IconRepeat,
     description: 'خرید و فروش طلا و سفارش‌ها',
   },
   {
     key: 'assets',
     label: 'دارایی',
     href: '/dashboard/assets',
-    icon: Wallet,
+    icon: IconWallet,
     description: 'کیف پول، موجودی و تراکنش‌ها',
   },
   {
     key: 'profile',
     label: 'پروفایل',
     href: '/dashboard/profile',
-    icon: User,
+    icon: IconUser,
     description: 'اطلاعات شخصی، امنیت و تنظیمات',
   },
 ] as const

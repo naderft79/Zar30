@@ -7,7 +7,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { LogOut, Monitor, MonitorSmartphone, Smartphone, Tablet } from 'lucide-react'
+import {
+  IconLogout,
+  IconDeviceDesktop,
+  IconDevices,
+  IconDeviceMobile,
+  IconDeviceTablet,
+} from '@tabler/icons-react'
 import { apiDelete, apiGetWithRefresh } from '@/lib/api/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -29,11 +35,11 @@ export interface SessionView {
   expiresAt: string
 }
 
-const DEVICE_ICONS: Record<string, typeof Monitor> = {
-  desktop: Monitor,
-  mobile: Smartphone,
-  tablet: Tablet,
-  unknown: MonitorSmartphone,
+const DEVICE_ICONS: Record<string, typeof IconDeviceDesktop> = {
+  desktop: IconDeviceDesktop,
+  mobile: IconDeviceMobile,
+  tablet: IconDeviceTablet,
+  unknown: IconDevices,
 }
 
 export function SessionsClient() {
@@ -87,7 +93,7 @@ export function SessionsClient() {
         description="دستگاه‌های متصل به حساب شما را مدیریت کنید"
         actions={
           <Button variant="outline" size="sm" onClick={logoutOthers} disabled={busy}>
-            <LogOut className="size-4" />
+            <IconLogout className="size-4" />
             خروج از سایر نشست‌ها
           </Button>
         }
@@ -102,7 +108,7 @@ export function SessionsClient() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <MonitorSmartphone className="text-gold-600 size-5" strokeWidth={1.75} />
+            <IconDevices className="text-gold-600 size-5" stroke={1.75} />
             دستگاه‌های متصل
             {sessions !== null && (
               <StatusBadge tone="neutral" dot={false}>
@@ -128,9 +134,7 @@ export function SessionsClient() {
               ))}
             </div>
           )}
-          {sessions?.length === 0 && (
-            <EmptyState icon={MonitorSmartphone} title="نشست فعالی یافت نشد" />
-          )}
+          {sessions?.length === 0 && <EmptyState icon={IconDevices} title="نشست فعالی یافت نشد" />}
 
           {/* ===== Desktop — جدول داده premium ===== */}
           <div className="hidden overflow-x-auto md:block">
@@ -159,7 +163,7 @@ export function SessionsClient() {
               </thead>
               <tbody className="divide-border/40 divide-y">
                 {sessions?.map((s) => {
-                  const Icon = DEVICE_ICONS[s.device] ?? MonitorSmartphone
+                  const Icon = DEVICE_ICONS[s.device] ?? IconDevices
                   return (
                     <tr
                       key={s.id}
@@ -217,7 +221,7 @@ export function SessionsClient() {
           {/* ===== Mobile — کارت‌های تعاملی ===== */}
           <div className="space-y-3 md:hidden">
             {sessions?.map((s) => {
-              const Icon = DEVICE_ICONS[s.device] ?? MonitorSmartphone
+              const Icon = DEVICE_ICONS[s.device] ?? IconDevices
               return (
                 <div
                   key={s.id}

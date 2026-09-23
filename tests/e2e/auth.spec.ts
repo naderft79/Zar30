@@ -59,7 +59,7 @@ test.describe('Authentication', () => {
     await expect(page).toHaveURL(/\/login/, { timeout: 30_000 })
     await page.getByLabel('شماره موبایل').fill(mobile)
     await page.getByLabel('رمز عبور').fill(PASSWORD)
-    await page.getByRole('button', { name: 'ورود', exact: true }).click()
+    await page.getByRole('button', { name: 'ورود به حساب' }).click()
 
     // ۵. داشبورد — greeting در Wealth Hero (موبایل در کارت کاربر sidebar است که در موبایل hidden است)
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 })
@@ -80,7 +80,7 @@ test.describe('Authentication', () => {
     await page.goto('/login')
     await page.getByLabel('شماره موبایل').fill('09123456789')
     await page.getByLabel('رمز عبور').fill(PASSWORD)
-    await page.getByRole('button', { name: 'ورود', exact: true }).click()
+    await page.getByRole('button', { name: 'ورود به حساب' }).click()
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 })
 
     // لیست نشست‌ها از API — با همان cookieهای مرورگر
@@ -109,7 +109,7 @@ test.describe('Authentication', () => {
     await page.goto('/login')
     await page.getByLabel('شماره موبایل').fill('09123456789')
     await page.getByLabel('رمز عبور').fill('WrongPass999')
-    await page.getByRole('button', { name: 'ورود', exact: true }).click()
+    await page.getByRole('button', { name: 'ورود به حساب' }).click()
     await expect(page.getByRole('alert')).toBeVisible()
   })
 
@@ -144,7 +144,7 @@ test.describe('Authentication', () => {
     await page.getByRole('link', { name: 'ورود با رمز جدید' }).click()
     await page.getByLabel('شماره موبایل').fill(mobile)
     await page.getByLabel('رمز عبور').fill('NewPass@99')
-    await page.getByRole('button', { name: 'ورود', exact: true }).click()
+    await page.getByRole('button', { name: 'ورود به حساب' }).click()
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 })
   })
 })

@@ -10,7 +10,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { AlertTriangle, Ban, CheckCircle2 } from 'lucide-react'
+import { IconAlertTriangle, IconBan, IconCircleCheck } from '@tabler/icons-react'
 import { apiGetWithRefresh, apiPatch } from '@/lib/api/client'
 import type { AdminUserDetail } from '@/lib/services/admin-user.service'
 import { hasPermission, PERMISSIONS } from '@/lib/auth/rbac'
@@ -115,7 +115,7 @@ export function AdminUserDetailClient() {
         role="alert"
         className="border-error/30 bg-error/5 text-error flex items-center gap-2 rounded-xl border p-4 text-xs"
       >
-        <AlertTriangle className="size-4 shrink-0" aria-hidden="true" />
+        <IconAlertTriangle className="size-4 shrink-0" aria-hidden="true" />
         {error}
       </div>
     )
@@ -431,9 +431,9 @@ function StatusActionDialog({
         className="border-border/60 bg-card text-foreground hover:bg-muted focus-visible:ring-ring inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
         {currentStatus === 'BLOCKED' ? (
-          <CheckCircle2 className="size-4" strokeWidth={1.75} />
+          <IconCircleCheck className="size-4" stroke={1.75} />
         ) : (
-          <Ban className="size-4" strokeWidth={1.75} />
+          <IconBan className="size-4" stroke={1.75} />
         )}
         تغییر وضعیت حساب
       </button>
@@ -449,7 +449,7 @@ function StatusActionDialog({
 
           {done ? (
             <p className="text-success flex items-center gap-2 text-sm">
-              <CheckCircle2 className="size-4" aria-hidden="true" />
+              <IconCircleCheck className="size-4" aria-hidden="true" />
               وضعیت با موفقیت تغییر کرد.
             </p>
           ) : (

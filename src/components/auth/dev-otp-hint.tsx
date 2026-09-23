@@ -9,7 +9,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { FlaskConical } from 'lucide-react'
+import { IconFlask } from '@tabler/icons-react'
 import { apiGet } from '@/lib/api/client'
 
 interface DevOtpHintProps {
@@ -45,7 +45,7 @@ export function DevOtpHint({ mobile, refreshKey = 0 }: DevOtpHintProps) {
 
   return (
     <div className="border-gold/40 bg-gold/10 flex items-center justify-center gap-2 rounded-lg border border-dashed px-3 py-2">
-      <FlaskConical className="text-gold size-4 shrink-0" />
+      <IconFlask className="text-gold size-4 shrink-0" />
       <p className="text-foreground text-sm">
         محیط تست — کد تایید:{' '}
         <span className="text-gold font-mono text-base font-bold tabular-nums" dir="ltr">

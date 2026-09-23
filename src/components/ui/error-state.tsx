@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertTriangle, RefreshCw } from 'lucide-react'
+import { IconAlertTriangle, IconRefresh } from '@tabler/icons-react'
 import { cn } from 'cn'
 import { Button } from './button'
 
@@ -33,7 +33,7 @@ export function ErrorState({
       )}
     >
       <div className="bg-error/10 text-error flex size-14 items-center justify-center rounded-2xl">
-        <AlertTriangle className="size-7" strokeWidth={1.5} />
+        <IconAlertTriangle className="size-7" stroke={1.5} />
       </div>
       <div className="space-y-1">
         <p className="text-foreground text-sm font-semibold">{title}</p>
@@ -41,7 +41,7 @@ export function ErrorState({
       </div>
       {onRetry && (
         <Button variant="outline" size="sm" className="mt-1" onClick={onRetry} disabled={retrying}>
-          <RefreshCw className={cn('size-3.5', retrying && 'animate-spin')} />
+          <IconRefresh className={cn('size-3.5', retrying && 'animate-spin')} />
           {retrying ? 'در حال تلاش…' : 'تلاش مجدد'}
         </Button>
       )}

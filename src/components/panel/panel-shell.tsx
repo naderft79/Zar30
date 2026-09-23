@@ -11,8 +11,8 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Bell, ChevronLeft, LogOut } from 'lucide-react'
-import { User } from '@phosphor-icons/react'
+import { IconBell, IconChevronLeft, IconLogout, IconUser } from '@tabler/icons-react'
+
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { Logo } from '@/components/shared/logo'
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
@@ -128,7 +128,7 @@ function NotificationBell() {
       aria-label="مرکز اعلان‌ها"
       className="text-muted-foreground hover:bg-muted hover:text-gold-600 focus-visible:ring-ring border-border/50 bg-card/60 relative flex size-9 items-center justify-center rounded-xl border transition-colors focus-visible:ring-2"
     >
-      <Bell className="size-4.5" strokeWidth={1.75} />
+      <IconBell className="size-4.5" stroke={1.75} />
     </Link>
   )
 }
@@ -156,7 +156,7 @@ function UserAvatar({
         className,
       )}
     >
-      <User className="text-gold-700 size-5" weight="duotone" aria-hidden="true" />
+      <IconUser className="text-gold-700 size-5" aria-hidden="true" />
     </Link>
   )
 }
@@ -274,7 +274,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
               className="group bg-muted/60 hover:bg-muted border-border hover:border-gold-500/30 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all duration-(--duration-normal)"
             >
               <span className="from-gold-500/30 to-gold-600/15 ring-gold-500/40 flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1">
-                <User className="text-gold-700 size-5" weight="duotone" aria-hidden="true" />
+                <IconUser className="text-gold-700 size-5" aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="text-foreground block truncate text-xs font-medium">
@@ -287,13 +287,13 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                   {user.mobile}
                 </span>
               </span>
-              <ChevronLeft className="text-muted-foreground/60 group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
+              <IconChevronLeft className="text-muted-foreground/60 group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
             </Link>
             <button
               onClick={logout}
               className="text-text-secondary/70 hover:bg-error/10 hover:text-error focus-visible:ring-error/40 flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
-              <LogOut className="size-4" strokeWidth={1.75} />
+              <IconLogout className="size-4" stroke={1.75} />
               خروج از حساب
             </button>
           </div>
@@ -308,7 +308,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
             aria-label="پروفایل کاربر"
           >
             <span className="from-gold-500/25 to-gold-600/10 ring-gold-500/35 flex size-8.5 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl ring-1">
-              <User className="text-gold-700 size-4.5" weight="duotone" aria-hidden="true" />
+              <IconUser className="text-gold-700 size-4.5" aria-hidden="true" />
             </span>
             <span className="min-w-0 truncate text-sm">
               <span className="text-muted-foreground">سلام، </span>

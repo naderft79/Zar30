@@ -7,7 +7,7 @@
 
 import { describe, expect, it, afterEach } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
-import { Coins } from 'lucide-react'
+import { IconCoins } from '@tabler/icons-react'
 import { AdminMetric } from '@/components/admin/admin-metric'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 
@@ -35,7 +35,7 @@ describe('AdminMetric', () => {
         unit="مورد"
         hint="در انتظار تایید"
         tone="warning"
-        icon={Coins}
+        icon={IconCoins}
       />,
     )
     expect(screen.getByText('مورد')).toBeTruthy()

@@ -7,7 +7,7 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
 import { toPersianDigits } from '@/lib/utils/format'
 import { cn } from 'cn'
 
@@ -51,7 +51,7 @@ export function AdminPagination({ page, totalPages, total }: AdminPaginationProp
           onClick={() => goTo(page - 1)}
           aria-label="صفحه قبلی"
         >
-          <ChevronRight className="size-4" aria-hidden="true" />
+          <IconChevronRight className="size-4" aria-hidden="true" />
           قبلی
         </button>
         <button
@@ -62,7 +62,7 @@ export function AdminPagination({ page, totalPages, total }: AdminPaginationProp
           aria-label="صفحه بعدی"
         >
           بعدی
-          <ChevronLeft className="size-4" aria-hidden="true" />
+          <IconChevronLeft className="size-4" aria-hidden="true" />
         </button>
       </div>
     </div>

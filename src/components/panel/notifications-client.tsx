@@ -9,14 +9,14 @@
 
 import { useEffect, useState } from 'react'
 import {
-  Bell,
-  BellOff,
-  CalendarClock,
-  Repeat,
-  ShieldCheck,
-  Wallet,
-  type LucideIcon,
-} from 'lucide-react'
+  IconBell,
+  IconBellOff,
+  IconCalendarClock,
+  IconRepeat,
+  IconShieldCheck,
+  IconWallet,
+  type TablerIcon,
+} from '@tabler/icons-react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -36,16 +36,16 @@ interface NotificationView {
 }
 
 // دسته‌بندی بصری اعلان بر اساس نوع — یک خانواده آیکون (Lucide)
-const TYPE_ICONS: Record<string, { icon: LucideIcon; className: string }> = {
-  SECURITY: { icon: ShieldCheck, className: 'bg-error/10 text-error' },
-  ORDER: { icon: Repeat, className: 'bg-gold-500/15 text-gold-600 dark:text-gold-400' },
-  TRANSACTION: { icon: Wallet, className: 'bg-info/10 text-info' },
-  INSTALLMENT: { icon: CalendarClock, className: 'bg-muted text-muted-foreground' },
+const TYPE_ICONS: Record<string, { icon: TablerIcon; className: string }> = {
+  SECURITY: { icon: IconShieldCheck, className: 'bg-error/10 text-error' },
+  ORDER: { icon: IconRepeat, className: 'bg-gold-500/15 text-gold-600 dark:text-gold-400' },
+  TRANSACTION: { icon: IconWallet, className: 'bg-info/10 text-info' },
+  INSTALLMENT: { icon: IconCalendarClock, className: 'bg-muted text-muted-foreground' },
 }
 
 function typeVisual(type: string) {
   const key = Object.keys(TYPE_ICONS).find((k) => type.toUpperCase().includes(k))
-  return key ? TYPE_ICONS[key]! : { icon: Bell, className: 'bg-muted text-muted-foreground' }
+  return key ? TYPE_ICONS[key]! : { icon: IconBell, className: 'bg-muted text-muted-foreground' }
 }
 
 type Filter = 'all' | 'unread'
@@ -134,7 +134,7 @@ export function NotificationsClient() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Bell className="text-gold-600 size-5" strokeWidth={1.75} />
+            <IconBell className="text-gold-600 size-5" stroke={1.75} />
             اعلان‌های اخیر
           </CardTitle>
         </CardHeader>
@@ -148,13 +148,13 @@ export function NotificationsClient() {
           )}
           {items?.length === 0 && (
             <EmptyState
-              icon={BellOff}
+              icon={IconBellOff}
               title="اعلان جدیدی ندارید"
               description="اطلاعیه‌های مهم حساب، معاملات و امنیت اینجا نمایش داده می‌شوند."
             />
           )}
           {items !== null && items.length > 0 && visible.length === 0 && (
-            <EmptyState icon={BellOff} title="اعلان خوانده‌نشده‌ای ندارید" />
+            <EmptyState icon={IconBellOff} title="اعلان خوانده‌نشده‌ای ندارید" />
           )}
           <div className="divide-border/40 divide-y">
             {visible.map((n) => {

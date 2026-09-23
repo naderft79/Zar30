@@ -43,7 +43,7 @@ async function login(page: Page, mobile: string) {
   await page.goto('/login')
   await page.getByLabel('شماره موبایل').fill(mobile)
   await page.getByLabel('رمز عبور').fill(PASSWORD)
-  await page.getByRole('button', { name: 'ورود', exact: true }).click()
+  await page.getByRole('button', { name: 'ورود به حساب' }).click()
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 })
   // صبر تا پنل کاربر لود شود — کارت موجودی اصلی
   await expect(page.getByText('موجودی کل')).toBeVisible({ timeout: 30_000 })
@@ -70,7 +70,7 @@ test.describe('User Panel', () => {
 
     // --- Dashboard: کارت موجودی واقعی + قیمت لحظه‌ای ---
     await expect(page.getByText('موجودی کل')).toBeVisible()
-    await expect(page.getByRole('link', { name: /مدیریت دارایی/ }).first()).toBeVisible()
+    await expect(page.getByRole('link', { name: 'دارایی', exact: true }).first()).toBeVisible()
     await expect(page.getByText('طلای ۱۸ عیار · هر گرم')).toBeVisible()
     await expect(page.getByText(/هنوز تراکنشی ثبت نشده/)).toBeVisible()
 
@@ -164,7 +164,7 @@ test.describe('User Panel', () => {
     // ورود → بازگشت به همان مسیر محافظت‌شده
     await page.getByLabel('شماره موبایل').fill(mobile)
     await page.getByLabel('رمز عبور').fill(PASSWORD)
-    await page.getByRole('button', { name: 'ورود', exact: true }).click()
+    await page.getByRole('button', { name: 'ورود به حساب' }).click()
     await expect(page).toHaveURL(/\/dashboard\/profile/, { timeout: 15_000 })
   })
 

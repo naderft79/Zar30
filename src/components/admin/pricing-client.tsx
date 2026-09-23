@@ -18,7 +18,7 @@ import { AdminFilterBar } from '@/components/admin/admin-filter-bar'
 import { AdminMetric } from '@/components/admin/admin-metric'
 import { FinancialValue } from '@/components/admin/financial-value'
 import { formatExactAmount } from '@/lib/utils/format'
-import { TrendingUp, Plus } from 'lucide-react'
+import { IconTrendingUp, IconPlus } from '@tabler/icons-react'
 
 const DEMO_SOURCE = /mock|demo/i
 
@@ -187,7 +187,7 @@ export function AdminPricingClient() {
             onClick={() => setShowForm((v) => !v)}
             className="bg-gold-500 hover:bg-gold-600 text-navy-950 flex h-9 items-center gap-1.5 rounded-lg px-4 text-xs font-semibold transition-colors"
           >
-            <Plus className="size-4" strokeWidth={2} />
+            <IconPlus className="size-4" stroke={2} />
             ثبت قیمت جدید
           </button>
         }
@@ -257,14 +257,14 @@ export function AdminPricingClient() {
               label="خرید"
               value={formatExactAmount(latest.buyPrice)}
               unit="تومان"
-              icon={TrendingUp}
+              icon={IconTrendingUp}
               tone="gold"
             />
             <AdminMetric
               label="فروش"
               value={formatExactAmount(latest.sellPrice)}
               unit="تومان"
-              icon={TrendingUp}
+              icon={IconTrendingUp}
             />
             <div className="bg-card border-border/60 rounded-xl border p-4">
               <p className="text-muted-foreground text-[11px] font-medium">منبع و زمان</p>

@@ -12,7 +12,15 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronLeft, ChevronsLeft, ChevronsRight, LogOut, Menu, ShieldX, X } from 'lucide-react'
+import {
+  IconChevronLeft,
+  IconChevronsLeft,
+  IconChevronsRight,
+  IconLogout,
+  IconMenu2,
+  IconShieldX,
+  IconX,
+} from '@tabler/icons-react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import type { Permission } from '@/lib/auth/rbac'
 import { Logo } from '@/components/shared/logo'
@@ -223,7 +231,7 @@ function AdminHeaderIdentity({ admin, onLogout }: { admin: AdminIdentity; onLogo
         title="خروج از حساب"
         className="text-muted-foreground hover:bg-error/10 hover:text-error focus-visible:ring-error/40 ml-1 flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
-        <LogOut className="size-4" strokeWidth={1.75} />
+        <IconLogout className="size-4" stroke={1.75} />
       </button>
     </div>
   )
@@ -271,7 +279,7 @@ function AdminPermissionDenied() {
     <div className="bg-background flex min-h-dvh items-center justify-center p-6">
       <div className="bg-card border-border/60 w-full max-w-sm rounded-2xl border p-8 text-center shadow-sm">
         <span className="bg-error/10 text-error mx-auto mb-4 flex size-12 items-center justify-center rounded-full">
-          <ShieldX className="size-6" strokeWidth={1.75} aria-hidden="true" />
+          <IconShieldX className="size-6" stroke={1.75} aria-hidden="true" />
         </span>
         <h1 className="text-foreground text-lg font-bold">دسترسی مجاز نیست</h1>
         <p className="text-muted-foreground mt-2 text-xs leading-6">
@@ -282,7 +290,7 @@ function AdminPermissionDenied() {
           className="bg-primary text-primary-foreground hover:bg-gold-400 focus-visible:ring-ring mt-6 inline-flex h-10 items-center gap-2 rounded-xl px-5 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           بازگشت به پنل کاربری
-          <ChevronLeft className="size-4" aria-hidden="true" />
+          <IconChevronLeft className="size-4" aria-hidden="true" />
         </Link>
       </div>
     </div>
@@ -378,9 +386,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-gold-500/60 flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               {collapsed ? (
-                <ChevronsLeft className="size-4" strokeWidth={1.75} />
+                <IconChevronsLeft className="size-4" stroke={1.75} />
               ) : (
-                <ChevronsRight className="size-4" strokeWidth={1.75} />
+                <IconChevronsRight className="size-4" stroke={1.75} />
               )}
             </button>
           </div>
@@ -438,7 +446,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             aria-expanded={navOpen}
             className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex size-10 shrink-0 items-center justify-center rounded-xl transition-colors focus-visible:ring-2 focus-visible:outline-none xl:hidden"
           >
-            <Menu className="size-5" strokeWidth={1.75} />
+            <IconMenu2 className="size-5" stroke={1.75} />
           </button>
 
           {/* Breadcrumbs — semantic */}
@@ -447,7 +455,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               {breadcrumbs.map((crumb, i) => (
                 <li key={i} className="flex min-w-0 items-center gap-1.5">
                   {i > 0 && (
-                    <ChevronLeft
+                    <IconChevronLeft
                       className="text-muted-foreground/60 size-3.5 shrink-0"
                       aria-hidden="true"
                     />
@@ -520,7 +528,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 aria-label="بستن ناوبری"
                 className="text-muted-foreground hover:bg-muted hover:text-foreground flex size-9 items-center justify-center rounded-lg transition-colors"
               >
-                <X className="size-5" strokeWidth={1.75} />
+                <IconX className="size-5" stroke={1.75} />
               </button>
             </div>
             <AdminNav

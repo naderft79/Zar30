@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Coins, Info } from 'lucide-react'
+import { IconCoins, IconInfoCircle } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import type { AdminAccountListRow } from '@/lib/services/admin-finance.service'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
@@ -124,20 +124,20 @@ export function AdminGoldClient() {
               label="کل طلای کاربران"
               value={data ? formatExactAmount(data.summary.balance) : '—'}
               unit="گرم"
-              icon={Coins}
+              icon={IconCoins}
               tone="gold"
             />
             <AdminMetric
               label="طلا مسدود"
               value={data ? formatExactAmount(data.summary.lockedBalance) : '—'}
               unit="گرم"
-              icon={Coins}
+              icon={IconCoins}
               tone="warning"
             />
             <AdminMetric
               label="تعداد حساب‌های طلا"
               value={data ? toPersianDigits(data.summary.accountsCount) : '—'}
-              icon={Coins}
+              icon={IconCoins}
             />
           </div>
 
@@ -146,7 +146,7 @@ export function AdminGoldClient() {
             role="note"
             className="border-border/60 bg-muted/40 text-muted-foreground mb-4 flex items-start gap-2.5 rounded-xl border border-dashed p-3.5 text-xs leading-5"
           >
-            <Info className="mt-0.5 size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+            <IconInfoCircle className="mt-0.5 size-4 shrink-0" stroke={1.75} aria-hidden="true" />
             <p>
               ارزش‌گذاری تومانی و سود/زیان دارایی طلا در دسترس نیست — ارتباط قیمت خرید کاربر و قیمت
               لحظه‌ای معتبر هنوز در دامنه داده ثبت نشده است.

@@ -1,8 +1,7 @@
 import Link from 'next/link'
-import { ArrowLeft, ShieldCheck } from 'lucide-react'
+import { IconArrowLeft, IconShieldCheck, type TablerIcon } from '@tabler/icons-react'
 import { cn } from 'cn'
 import { StatusBadge } from '@/components/ui/status-badge'
-import type { LucideIcon } from 'lucide-react'
 
 // ============================================
 // Status Card — وضعیت KYC / امنیت حساب
@@ -11,7 +10,7 @@ import type { LucideIcon } from 'lucide-react'
 type StatusTone = 'success' | 'warning' | 'error' | 'info' | 'gold' | 'neutral'
 
 interface StatusCardProps {
-  icon?: LucideIcon
+  icon?: TablerIcon
   title: string
   statusLabel: string
   statusTone?: StatusTone
@@ -32,7 +31,7 @@ const toneRing: Record<StatusTone, string> = {
 }
 
 export function StatusCard({
-  icon: Icon = ShieldCheck,
+  icon: Icon = IconShieldCheck,
   title,
   statusLabel,
   statusTone = 'neutral',
@@ -88,7 +87,7 @@ export function StatusCard({
           className="text-gold-600 dark:text-gold-400 mt-3 inline-flex items-center gap-1 text-xs font-medium transition-colors hover:underline"
         >
           {action.label}
-          <ArrowLeft className="size-3.5" />
+          <IconArrowLeft className="size-3.5" />
         </Link>
       )}
     </div>

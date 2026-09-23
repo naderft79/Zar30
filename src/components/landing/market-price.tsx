@@ -9,7 +9,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { AlertCircle, TrendingDown, TrendingUp } from 'lucide-react'
+import { IconAlertCircle, IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { GoldPrice } from '@/lib/price/types'
 import { toPersianDigits, formatToman } from '@/lib/utils/utils'
@@ -95,9 +95,9 @@ export function GoldMarketSection({ initialPrice }: { initialPrice: GoldPrice })
                     dir="ltr"
                   >
                     {up ? (
-                      <TrendingUp className="size-3.5" aria-hidden="true" />
+                      <IconTrendingUp className="size-3.5" aria-hidden="true" />
                     ) : (
-                      <TrendingDown className="size-3.5" aria-hidden="true" />
+                      <IconTrendingDown className="size-3.5" aria-hidden="true" />
                     )}
                     {up ? '+' : '−'}
                     {toPersianDigits(Math.abs(changePercent).toFixed(2))}٪
@@ -105,7 +105,7 @@ export function GoldMarketSection({ initialPrice }: { initialPrice: GoldPrice })
                   <span className="text-navy-400">در بازه {config.label.toLowerCase()}</span>
                   {!initialPrice.isLive && (
                     <span className="border-warning/40 bg-warning/5 text-warning inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-medium">
-                      <AlertCircle className="size-3" aria-hidden="true" />
+                      <IconAlertCircle className="size-3" aria-hidden="true" />
                       داده نمایشی
                     </span>
                   )}

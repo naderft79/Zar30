@@ -9,8 +9,17 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { CalendarClock, Eye, EyeOff, Package, TrendingUp } from 'lucide-react'
-import { IconCashBanknotePlus, IconTransfer, IconWallet } from '@tabler/icons-react'
+
+import {
+  IconCashBanknotePlus,
+  IconTransfer,
+  IconWallet,
+  IconCalendarClock,
+  IconEye,
+  IconEyeOff,
+  IconPackage,
+  IconTrendingUp,
+} from '@tabler/icons-react'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { toPersianWords } from '@/lib/utils/format'
@@ -43,21 +52,21 @@ const HERO_BANNERS = [
     kicker: 'سرمایه‌گذاری طلای آب‌شده',
     title: 'همراه شما در مسیر سرمایه‌گذاری امن',
     description: 'خرید آنی، شفاف و بدون واسطه — حتی با مبالغ بسیار کم',
-    icon: TrendingUp,
+    icon: IconTrendingUp,
   },
   {
     href: '/dashboard/installments',
     kicker: 'طلای قسطی',
     title: 'طلای ۱۸ عیار را قسطی بخرید',
     description: 'پرداخت مرحله‌ای و آسان، مالکیت کامل طلا',
-    icon: CalendarClock,
+    icon: IconCalendarClock,
   },
   {
     href: '/dashboard/assets',
     kicker: 'تحویل فیزیکی طلا',
     title: 'طلای دیجیتال شما، قابل تحویل فیزیکی',
     description: 'درخواست تحویل طلای فیزیکی از کیف پول طلایی',
-    icon: Package,
+    icon: IconPackage,
   },
 ] as const
 
@@ -194,9 +203,9 @@ export function WealthHero({
             className="text-cream-300/60 hover:text-gold-300 focus-visible:ring-ring ms-1 flex size-7 items-center justify-center rounded-lg transition-colors focus-visible:ring-2"
           >
             {hidden ? (
-              <EyeOff className="size-4" strokeWidth={1.75} />
+              <IconEyeOff className="size-4" stroke={1.75} />
             ) : (
-              <Eye className="size-4" strokeWidth={1.75} />
+              <IconEye className="size-4" stroke={1.75} />
             )}
           </button>
         </div>

@@ -6,7 +6,7 @@
 // ============================================
 
 import type { Metadata } from 'next'
-import { Newspaper, ArrowLeft } from 'lucide-react'
+import { IconNews, IconArrowLeft } from '@tabler/icons-react'
 import { Section } from '@/components/shared/section'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -50,7 +50,7 @@ export default function BlogPage() {
           <Card key={post.title} className="border-border/60 flex flex-col">
             <CardContent className="flex flex-1 flex-col p-6">
               <div className="bg-gold/15 mb-4 flex h-40 items-center justify-center rounded-xl">
-                <Newspaper className="text-gold/50 size-10" />
+                <IconNews className="text-gold/50 size-10" />
               </div>
               <Badge variant="secondary" className="mb-3 w-fit text-xs">
                 {post.tag}
@@ -59,7 +59,7 @@ export default function BlogPage() {
               <p className="text-muted-foreground flex-1 text-sm leading-relaxed">{post.excerpt}</p>
               <span className="text-muted-foreground mt-4 inline-flex items-center gap-1 text-xs">
                 به‌زودی
-                <ArrowLeft className="size-3" />
+                <IconArrowLeft className="size-3" />
               </span>
             </CardContent>
           </Card>

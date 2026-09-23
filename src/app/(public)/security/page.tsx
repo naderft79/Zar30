@@ -5,14 +5,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
-  ShieldCheck,
-  Fingerprint,
-  KeyRound,
-  FileSearch,
-  Server,
-  Lock,
-  ArrowLeft,
-} from 'lucide-react'
+  IconShieldCheck,
+  IconFingerprint,
+  IconKey,
+  IconFileSearch,
+  IconServer,
+  IconLock,
+  IconArrowLeft,
+} from '@tabler/icons-react'
 import { Section } from '@/components/shared/section'
 import { Button } from '@/components/ui/button'
 
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 const LAYERS = [
   {
-    icon: Fingerprint,
+    icon: IconFingerprint,
     title: 'احراز هویت چندلایه',
     items: [
       'ورود با کد یکبارمصرف (OTP) پیامکی',
@@ -35,7 +35,7 @@ const LAYERS = [
     ],
   },
   {
-    icon: KeyRound,
+    icon: IconKey,
     title: 'رمزنگاری داده‌ها',
     items: [
       'رمزنگاری داده‌های حساس در حالت سکون و انتقال',
@@ -45,7 +45,7 @@ const LAYERS = [
     ],
   },
   {
-    icon: FileSearch,
+    icon: IconFileSearch,
     title: 'یکپارچگی مالی',
     items: [
       'دفتر کل دوطرفه (Double-Entry) برای همه تراکنش‌ها',
@@ -55,7 +55,7 @@ const LAYERS = [
     ],
   },
   {
-    icon: Server,
+    icon: IconServer,
     title: 'زیرساخت',
     items: [
       'PostgreSQL به‌عنوان مرجع نهایی صحت مالی',
@@ -85,7 +85,7 @@ export default function SecurityPage() {
       >
         <div className="mx-auto max-w-3xl text-center">
           <div className="bg-gold/15 mx-auto mb-6 flex size-16 items-center justify-center rounded-2xl">
-            <ShieldCheck className="text-gold size-8" />
+            <IconShieldCheck className="text-gold size-8" />
           </div>
           <p className="text-muted-foreground leading-relaxed">
             زرسی از ابتدا با استانداردهای FinTech طراحی شده است. در ادامه لایه‌های امنیتی پلتفرم را
@@ -105,7 +105,7 @@ export default function SecurityPage() {
               <ul className="text-muted-foreground space-y-2 text-sm">
                 {layer.items.map((item) => (
                   <li key={item} className="flex items-start gap-2">
-                    <Lock className="text-gold mt-0.5 size-3.5 shrink-0" />
+                    <IconLock className="text-gold mt-0.5 size-3.5 shrink-0" />
                     {item}
                   </li>
                 ))}
@@ -123,7 +123,7 @@ export default function SecurityPage() {
           <ul className="space-y-3">
             {TIPS.map((tip) => (
               <li key={tip} className="text-foreground flex items-start gap-3 text-sm">
-                <ShieldCheck className="text-success mt-0.5 size-4 shrink-0" />
+                <IconShieldCheck className="text-success mt-0.5 size-4 shrink-0" />
                 {tip}
               </li>
             ))}
@@ -133,7 +133,7 @@ export default function SecurityPage() {
           <Button size="lg" asChild>
             <Link href="/register">
               حساب امن خود را بسازید
-              <ArrowLeft className="size-4" />
+              <IconArrowLeft className="size-4" />
             </Link>
           </Button>
         </div>

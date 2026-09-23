@@ -11,14 +11,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import {
-  AlertTriangle,
-  CheckCircle2,
-  FileImage,
-  FileX2,
-  Landmark,
-  UserCheck,
-  XCircle,
-} from 'lucide-react'
+  IconAlertTriangle,
+  IconCircleCheck,
+  IconPhoto,
+  IconFileX,
+  IconBuildingBank,
+  IconUserCheck,
+  IconCircleX,
+} from '@tabler/icons-react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import type { AdminKycDetail } from '@/lib/services/admin-kyc.service'
 import { hasPermission, PERMISSIONS } from '@/lib/auth/rbac'
@@ -161,7 +161,7 @@ export function AdminKycDetailClient() {
         role="alert"
         className="border-error/30 bg-error/5 text-error flex items-center gap-2 rounded-xl border p-4 text-xs"
       >
-        <AlertTriangle className="size-4 shrink-0" aria-hidden="true" />
+        <IconAlertTriangle className="size-4 shrink-0" aria-hidden="true" />
         {error}
       </div>
     )
@@ -192,7 +192,7 @@ export function AdminKycDetailClient() {
               <ActionButton
                 onClick={claim}
                 busy={actionBusy}
-                icon={<UserCheck className="size-4" />}
+                icon={<IconUserCheck className="size-4" />}
               >
                 گرفتن برای بررسی
               </ActionButton>
@@ -202,7 +202,7 @@ export function AdminKycDetailClient() {
                 onClick={() => setDialog('approve')}
                 busy={actionBusy}
                 tone="success"
-                icon={<CheckCircle2 className="size-4" />}
+                icon={<IconCircleCheck className="size-4" />}
               >
                 تایید
               </ActionButton>
@@ -212,7 +212,7 @@ export function AdminKycDetailClient() {
                 onClick={() => setDialog('reject')}
                 busy={actionBusy}
                 tone="error"
-                icon={<XCircle className="size-4" />}
+                icon={<IconCircleX className="size-4" />}
               >
                 رد
               </ActionButton>
@@ -222,7 +222,7 @@ export function AdminKycDetailClient() {
                 onClick={() => setDialog('request_changes')}
                 busy={actionBusy}
                 tone="warning"
-                icon={<FileX2 className="size-4" />}
+                icon={<IconFileX className="size-4" />}
               >
                 نیازمند اصلاح
               </ActionButton>
@@ -238,7 +238,7 @@ export function AdminKycDetailClient() {
       )}
       {actionDone && (
         <p role="status" className="text-success mb-4 flex items-center gap-1.5 text-xs">
-          <CheckCircle2 className="size-4" aria-hidden="true" />
+          <IconCircleCheck className="size-4" aria-hidden="true" />
           {actionDone}
         </p>
       )}
@@ -306,7 +306,7 @@ export function AdminKycDetailClient() {
 
           <section className="bg-card border-border/60 rounded-xl border p-5">
             <h2 className="text-foreground mb-3 flex items-center gap-2 text-sm font-bold">
-              <Landmark
+              <IconBuildingBank
                 className="text-muted-foreground size-4"
                 strokeWidth={1.75}
                 aria-hidden="true"
@@ -381,7 +381,7 @@ export function AdminKycDetailClient() {
                     className="border-border/40 flex items-center justify-between gap-3 rounded-lg border p-3"
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      <FileImage
+                      <IconPhoto
                         className="text-muted-foreground size-8 shrink-0"
                         strokeWidth={1.5}
                         aria-hidden="true"

@@ -24,7 +24,7 @@ async function login(page: Page, mobileNumber: string, callback = '/admin/dashbo
   await page.goto(`/login?callbackUrl=${encodeURIComponent(callback)}`)
   await page.getByLabel('شماره موبایل').fill(mobileNumber)
   await page.getByLabel('رمز عبور').fill(PASSWORD)
-  await page.getByRole('button', { name: 'ورود', exact: true }).click()
+  await page.getByRole('button', { name: 'ورود به حساب' }).click()
   await expect(page).toHaveURL(new RegExp(callback.replaceAll('/', '\/')), { timeout: 30_000 })
 }
 async function openAdminNav(page: Page) {

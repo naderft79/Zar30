@@ -8,7 +8,7 @@
 'use client'
 
 import Link from 'next/link'
-import { AlertTriangle, ChevronLeft } from 'lucide-react'
+import { IconAlertTriangle, IconChevronLeft } from '@tabler/icons-react'
 import { cn } from 'cn'
 
 export interface AdminColumn<T> {
@@ -46,7 +46,7 @@ export function AdminDataTable<T>({
         role="alert"
         className="border-error/30 bg-error/5 text-error flex items-center gap-2 rounded-xl border p-4 text-xs"
       >
-        <AlertTriangle className="size-4 shrink-0" aria-hidden="true" />
+        <IconAlertTriangle className="size-4 shrink-0" aria-hidden="true" />
         {error}
       </div>
     )
@@ -116,7 +116,7 @@ export function AdminDataTable<T>({
                       className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
                     >
                       مشاهده جزئیات
-                      <ChevronLeft className="size-3.5" aria-hidden="true" />
+                      <IconChevronLeft className="size-3.5" aria-hidden="true" />
                     </Link>
                   </td>
                 )}
@@ -144,7 +144,7 @@ export function AdminDataTable<T>({
                 className="border-border/60 text-foreground hover:bg-muted focus-visible:ring-ring mt-3 flex h-9 items-center justify-center gap-1 rounded-lg border text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
                 مشاهده جزئیات
-                <ChevronLeft className="size-3.5" aria-hidden="true" />
+                <IconChevronLeft className="size-3.5" aria-hidden="true" />
               </Link>
             )}
           </li>

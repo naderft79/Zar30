@@ -4,7 +4,7 @@
 // بنر اطلاع‌رسانی semantic برای بخش‌های فقط‌خواندنی عملیات مالی
 // ============================================
 
-import { Info } from 'lucide-react'
+import { IconInfoCircle } from '@tabler/icons-react'
 import { cn } from 'cn'
 
 export function ReadOnlyNotice({ className }: { className?: string }) {
@@ -16,7 +16,11 @@ export function ReadOnlyNotice({ className }: { className?: string }) {
         className,
       )}
     >
-      <Info className="text-info mt-0.5 size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+      <IconInfoCircle
+        className="text-info mt-0.5 size-4 shrink-0"
+        stroke={1.75}
+        aria-hidden="true"
+      />
       <p>
         این بخش فعلاً فقط خواندنی است. عملیات مالی تنها پس از اتصال سرویس authoritative، کنترل
         ledger، idempotency و audit فعال می‌شود.

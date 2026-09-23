@@ -7,7 +7,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Coins, History, ShieldCheck } from 'lucide-react'
+import { IconCoins, IconHistory, IconShieldCheck } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -212,7 +212,7 @@ export function DesignSystemPreview() {
           />
           <div className="space-y-4">
             <StatusCard
-              icon={ShieldCheck}
+              icon={IconShieldCheck}
               title="احراز هویت"
               statusLabel="سطح ۱ — موبایل تایید شده"
               statusTone="warning"
@@ -221,7 +221,7 @@ export function DesignSystemPreview() {
               action={{ label: 'ادامه احراز هویت', href: '/design-system' }}
             />
             <StatusCard
-              icon={ShieldCheck}
+              icon={IconShieldCheck}
               title="امنیت حساب"
               statusLabel="موبایل تایید شده"
               statusTone="success"
@@ -243,7 +243,7 @@ export function DesignSystemPreview() {
               columns={TABLE_COLUMNS}
               rows={[]}
               rowKey={(r) => r.id}
-              emptyIcon={History}
+              emptyIcon={IconHistory}
               emptyTitle="هنوز تراکنشی ثبت نشده است"
             />
           </CardContent>
@@ -253,7 +253,7 @@ export function DesignSystemPreview() {
       <Section title="States — خالی / خطا / بارگذاری">
         <div className="grid gap-4 lg:grid-cols-3">
           <EmptyState
-            icon={Coins}
+            icon={IconCoins}
             title="هنوز دارایی ندارید"
             description="با اولین واریز، کیف پول طلا و تومانی شما ساخته می‌شود."
             badge="پیش‌نمایش"

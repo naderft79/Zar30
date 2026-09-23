@@ -56,7 +56,7 @@ test.describe('Accessibility Smoke', () => {
     await password.focus()
     await expect(password).toBeFocused()
     // دکمه اصلی نام در دسترس دارد
-    await expect(page.getByRole('button', { name: 'ورود', exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'ورود به حساب' })).toBeVisible()
   })
 
   test('User Panel — nav با aria-label و landmark درست', async ({ page }) => {
@@ -64,7 +64,7 @@ test.describe('Accessibility Smoke', () => {
     await page.goto('/login')
     await page.getByLabel('شماره موبایل').fill(mobile)
     await page.getByLabel('رمز عبور').fill(PASSWORD)
-    await page.getByRole('button', { name: 'ورود', exact: true }).click()
+    await page.getByRole('button', { name: 'ورود به حساب' }).click()
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 })
     await expect(page.getByRole('heading', { name: /خوش آمدید/ })).toBeVisible({
       timeout: 30_000,

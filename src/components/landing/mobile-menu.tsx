@@ -9,7 +9,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { LogIn, Menu } from 'lucide-react'
+import { IconLogin, IconMenu2 } from '@tabler/icons-react'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import {
   Accordion,
@@ -32,7 +32,7 @@ export function MobileMenu() {
         aria-expanded={open}
         className="text-navy-800 hover:bg-cream-100 focus-visible:ring-gold-500/40 inline-flex size-11 items-center justify-center rounded-lg transition-colors outline-none focus-visible:ring-2 lg:hidden"
       >
-        <Menu className="size-5" aria-hidden="true" />
+        <IconMenu2 className="size-5" aria-hidden="true" />
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -116,7 +116,7 @@ export function MobileMenu() {
               onClick={() => setOpen(false)}
               className="border-navy-200 text-navy-800 hover:bg-cream-100 flex h-11 items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-colors"
             >
-              <LogIn className="size-4" aria-hidden="true" />
+              <IconLogin className="size-4" aria-hidden="true" />
               ورود
             </Link>
             <Link

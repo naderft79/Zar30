@@ -1,8 +1,14 @@
-import { ArrowDownLeft, ArrowUpLeft, CalendarClock, Repeat, Wallet } from 'lucide-react'
+import {
+  IconArrowDownLeft,
+  IconArrowUpLeft,
+  IconCalendarClock,
+  IconRepeat,
+  IconWallet,
+  type TablerIcon,
+} from '@tabler/icons-react'
 import { cn } from 'cn'
 import { FinancialNumber } from './financial-number'
 import { StatusBadge } from '@/components/ui/status-badge'
-import type { LucideIcon } from 'lucide-react'
 
 // ============================================
 // Transaction Item — ردیف تراکنش مالی
@@ -12,22 +18,26 @@ import type { LucideIcon } from 'lucide-react'
 export type TransactionKind = 'deposit' | 'withdraw' | 'buy' | 'sell' | 'installment' | 'transfer'
 export type TransactionStatus = 'success' | 'pending' | 'failed'
 
-const kindConfig: Record<TransactionKind, { icon: LucideIcon; label: string; iconClass: string }> =
+const kindConfig: Record<TransactionKind, { icon: TablerIcon; label: string; iconClass: string }> =
   {
-    deposit: { icon: ArrowDownLeft, label: 'واریز', iconClass: 'bg-success/10 text-success' },
-    withdraw: { icon: ArrowUpLeft, label: 'برداشت', iconClass: 'bg-error/10 text-error' },
+    deposit: { icon: IconArrowDownLeft, label: 'واریز', iconClass: 'bg-success/10 text-success' },
+    withdraw: { icon: IconArrowUpLeft, label: 'برداشت', iconClass: 'bg-error/10 text-error' },
     buy: {
-      icon: Repeat,
+      icon: IconRepeat,
       label: 'خرید طلا',
       iconClass: 'bg-gold-500/15 text-gold-600 dark:text-gold-400',
     },
     sell: {
-      icon: Repeat,
+      icon: IconRepeat,
       label: 'فروش طلا',
       iconClass: 'bg-muted text-muted-foreground',
     },
-    installment: { icon: CalendarClock, label: 'پرداخت قسط', iconClass: 'bg-info/10 text-info' },
-    transfer: { icon: Wallet, label: 'انتقال', iconClass: 'bg-muted text-muted-foreground' },
+    installment: {
+      icon: IconCalendarClock,
+      label: 'پرداخت قسط',
+      iconClass: 'bg-info/10 text-info',
+    },
+    transfer: { icon: IconWallet, label: 'انتقال', iconClass: 'bg-muted text-muted-foreground' },
   }
 
 const statusTone: Record<

@@ -6,7 +6,7 @@
 // ============================================
 
 import Link from 'next/link'
-import { ShieldCheck } from 'lucide-react'
+import { IconShieldCheck } from '@tabler/icons-react'
 import type { GoldPrice } from '@/lib/price/types'
 import { Container } from '@/components/shared/container'
 import { LiveGoldPriceCard } from './live-price-card'
@@ -32,7 +32,7 @@ export function Hero({ price }: { price: GoldPrice }) {
               className="border-gold-500/30 bg-gold-100/60 text-gold-700 hero-enter mx-auto inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold lg:mx-0"
               style={{ '--hero-delay': '0ms' } as React.CSSProperties}
             >
-              <ShieldCheck className="size-3.5" aria-hidden="true" />
+              <IconShieldCheck className="size-3.5" aria-hidden="true" />
               پشتوانه طلای فیزیکی — قابل حسابرسی
             </p>
 

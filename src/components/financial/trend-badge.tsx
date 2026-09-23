@@ -1,4 +1,4 @@
-import { TrendingDown, TrendingUp } from 'lucide-react'
+import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
 import { cn } from 'cn'
 import { formatPercentChange } from '@/lib/utils/format'
 
@@ -17,7 +17,7 @@ interface TrendBadgeProps {
 export function TrendBadge({ value, caption, className }: TrendBadgeProps) {
   const positive = value > 0
   const neutral = value === 0
-  const Icon = neutral ? TrendingUp : positive ? TrendingUp : TrendingDown
+  const Icon = neutral ? IconTrendingUp : positive ? IconTrendingUp : IconTrendingDown
 
   return (
     <span

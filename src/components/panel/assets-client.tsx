@@ -8,13 +8,13 @@
 
 import { useEffect, useState } from 'react'
 import {
-  ArrowDownLeft,
-  ArrowUpLeft,
-  History,
-  PieChart,
-  AlertTriangle,
-  CheckCircle2,
-} from 'lucide-react'
+  IconArrowDownLeft,
+  IconArrowUpLeft,
+  IconHistory,
+  IconChartPie,
+  IconAlertTriangle,
+  IconCircleCheck,
+} from '@tabler/icons-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BalanceCard } from '@/components/financial/balance-card'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -199,7 +199,7 @@ export function AssetsClient() {
             setSuccess(null)
           }}
         >
-          <ArrowDownLeft className="size-4" />
+          <IconArrowDownLeft className="size-4" />
           واریز
         </Button>
         <Button
@@ -210,7 +210,7 @@ export function AssetsClient() {
             setSuccess(null)
           }}
         >
-          <ArrowUpLeft className="size-4" />
+          <IconArrowUpLeft className="size-4" />
           برداشت
         </Button>
       </div>
@@ -252,7 +252,7 @@ export function AssetsClient() {
             )}
             {error && (
               <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
-                <AlertTriangle className="size-3.5" aria-hidden="true" />
+                <IconAlertTriangle className="size-3.5" aria-hidden="true" />
                 {error}
               </p>
             )}
@@ -276,7 +276,7 @@ export function AssetsClient() {
 
       {success && (
         <p role="status" className="text-success flex items-center gap-1.5 text-xs">
-          <CheckCircle2 className="size-3.5" aria-hidden="true" />
+          <IconCircleCheck className="size-3.5" aria-hidden="true" />
           {success}
         </p>
       )}
@@ -286,14 +286,14 @@ export function AssetsClient() {
         <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <History className="text-gold-600 size-5" strokeWidth={1.75} />
+              <IconHistory className="text-gold-600 size-5" stroke={1.75} />
               تراکنش‌های اخیر
             </CardTitle>
           </CardHeader>
           <CardContent>
             {txs.length === 0 ? (
               <EmptyState
-                icon={History}
+                icon={IconHistory}
                 title="هنوز تراکنشی ثبت نشده است"
                 description="واریز، برداشت، خرید و فروش شما با جزئیات کامل اینجا ثبت و نمایش داده می‌شود."
               />
@@ -330,14 +330,14 @@ export function AssetsClient() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <PieChart className="text-gold-600 size-5" strokeWidth={1.75} />
+              <IconChartPie className="text-gold-600 size-5" stroke={1.75} />
               ترکیب دارایی
             </CardTitle>
           </CardHeader>
           <CardContent>
             {Number(gold?.balance ?? 0) === 0 && Number(toman?.balance ?? 0) === 0 ? (
               <EmptyState
-                icon={PieChart}
+                icon={IconChartPie}
                 title="دارایی فعالی ندارید"
                 description="نمودار ترکیب طلا و تومان پس از اولین تراکنش نمایش داده می‌شود."
               />

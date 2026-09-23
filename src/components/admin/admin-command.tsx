@@ -1,5 +1,5 @@
 // ============================================
-// Zar30 - Admin Command Search
+// Zar30 - Admin Command Palette
 // ============================================
 // Ctrl/Cmd + K — جستجوی سراسری موجودیت‌ها از /api/v1/admin/search
 // Radix Dialog: focus management و Escape توسط primitive
@@ -9,7 +9,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Search, Loader2 } from 'lucide-react'
+import { IconSearch, IconLoader2 } from '@tabler/icons-react'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { apiGet } from '@/lib/api/client'
 import type { AdminSearchResult } from '@/lib/services/admin-search.service'
@@ -113,7 +113,7 @@ export function AdminCommand() {
         aria-label="جستجوی سراسری — Ctrl+K"
         className="border-border/60 bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex h-9 items-center gap-2 rounded-lg border px-3 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
-        <Search className="size-4" strokeWidth={1.75} />
+        <IconSearch className="size-4" stroke={1.75} />
         <span className="hidden sm:inline">جستجو…</span>
         <kbd className="border-border/60 bg-background hidden rounded border px-1.5 py-0.5 text-[10px] sm:inline">
           Ctrl + K
@@ -131,7 +131,7 @@ export function AdminCommand() {
           </DialogDescription>
 
           <div className="border-border/60 flex items-center gap-2 border-b px-4">
-            <Search
+            <IconSearch
               className="text-muted-foreground size-4 shrink-0"
               strokeWidth={1.75}
               aria-hidden="true"
@@ -147,7 +147,7 @@ export function AdminCommand() {
             />
             {loading && (
               <>
-                <Loader2
+                <IconLoader2
                   className="text-muted-foreground size-4 shrink-0 animate-spin"
                   aria-hidden="true"
                 />

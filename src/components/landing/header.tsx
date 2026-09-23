@@ -9,7 +9,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { LogIn } from 'lucide-react'
+import { IconLogin } from '@tabler/icons-react'
 import { NAV_ITEMS } from '@/lib/data/landing'
 import { Logo } from '@/components/shared/logo'
 import { NavDropdown } from './nav-dropdown'
@@ -71,7 +71,7 @@ export function Header() {
             href="/login"
             className="text-navy-700 hover:text-navy-950 inline-flex h-11 items-center gap-1.5 rounded-lg px-3 text-sm font-medium transition-colors"
           >
-            <LogIn className="size-4" aria-hidden="true" />
+            <IconLogin className="size-4" aria-hidden="true" />
             ورود
           </Link>
           <Link

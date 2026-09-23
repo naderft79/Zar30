@@ -6,7 +6,7 @@
 // ============================================
 
 import Link from 'next/link'
-import { Headset, Mail, Phone } from 'lucide-react'
+import { IconHeadset, IconMail, IconPhone } from '@tabler/icons-react'
 import { CONTACT_INFO } from '@/lib/data/landing'
 import { Container } from '@/components/shared/container'
 import { Reveal } from './reveal'
@@ -26,7 +26,7 @@ export function SupportSection() {
             <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_auto]">
               <div>
                 <p className="text-gold-300 mb-3 inline-flex items-center gap-1.5 text-sm font-semibold">
-                  <Headset className="size-4" aria-hidden="true" />
+                  <IconHeadset className="size-4" aria-hidden="true" />
                   پشتیبانی زرسی
                 </p>
                 <h2
@@ -45,7 +45,7 @@ export function SupportSection() {
                     href={CONTACT_INFO.phoneHref}
                     className="text-cream-100 hover:text-gold-300 inline-flex items-center gap-2 font-semibold transition-colors"
                   >
-                    <Phone className="size-4" aria-hidden="true" />
+                    <IconPhone className="size-4" aria-hidden="true" />
                     <span className="tabular-nums">{CONTACT_INFO.phone}</span>
                   </a>
                   <a
@@ -53,7 +53,7 @@ export function SupportSection() {
                     className="text-cream-100 hover:text-gold-300 inline-flex items-center gap-2 transition-colors"
                     dir="ltr"
                   >
-                    <Mail className="size-4" aria-hidden="true" />
+                    <IconMail className="size-4" aria-hidden="true" />
                     {CONTACT_INFO.email}
                   </a>
                 </div>

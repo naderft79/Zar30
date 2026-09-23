@@ -1,4 +1,4 @@
-import { Coins, Wallet } from 'lucide-react'
+import { IconCoins, IconWallet } from '@tabler/icons-react'
 import { cn } from 'cn'
 import { FinancialNumber } from './financial-number'
 import { TrendBadge } from './trend-badge'
@@ -23,7 +23,7 @@ interface BalanceCardProps {
 
 const variantConfig = {
   gold: {
-    icon: Coins,
+    icon: IconCoins,
     title: 'موجودی طلا',
     unit: 'گرم',
     // گرادیان طلایی ظریف — نه پر زرق و برق
@@ -32,14 +32,14 @@ const variantConfig = {
     iconClass: 'bg-gold-500/15 text-gold-600 dark:text-gold-400',
   },
   fiat: {
-    icon: Wallet,
+    icon: IconWallet,
     title: 'موجودی تومانی',
     unit: 'تومان',
     cardClass: 'border-cream-400/15 bg-gradient-to-bl from-cream-50/6 via-card to-card',
     iconClass: 'bg-cream-50/10 text-cream-300',
   },
   total: {
-    icon: Wallet,
+    icon: IconWallet,
     title: 'ارزش کل دارایی',
     unit: 'تومان',
     cardClass: 'border-border/60 bg-gradient-to-bl from-elevated via-card to-card',

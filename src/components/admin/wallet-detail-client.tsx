@@ -8,7 +8,7 @@
 
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { AlertTriangle } from 'lucide-react'
+import { IconAlertTriangle } from '@tabler/icons-react'
 import type { AdminWalletDetail } from '@/lib/services/admin-finance.service'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminStatus } from '@/components/admin/admin-status'
@@ -82,7 +82,7 @@ export function AdminWalletDetailClient() {
         role="alert"
         className="border-error/30 bg-error/5 text-error flex items-center gap-2 rounded-xl border p-4 text-xs"
       >
-        <AlertTriangle className="size-4 shrink-0" aria-hidden="true" />
+        <IconAlertTriangle className="size-4 shrink-0" aria-hidden="true" />
         {error}
       </div>
     )

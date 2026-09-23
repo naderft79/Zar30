@@ -4,7 +4,7 @@
 
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ShieldCheck, Eye, Coins, ArrowLeft } from 'lucide-react'
+import { IconShieldCheck, IconEye, IconCoins, IconArrowLeft } from '@tabler/icons-react'
 import { Section } from '@/components/shared/section'
 import { Button } from '@/components/ui/button'
 import { STATS } from '@/lib/data/landing'
@@ -43,17 +43,17 @@ export default function AboutPage() {
         <div className="grid gap-6 sm:grid-cols-3">
           {[
             {
-              icon: Eye,
+              icon: IconEye,
               title: 'شفافیت',
               text: 'هر تراکنش سند دارد و قابل راستی‌آزمایی است. هیچ هزینه پنهانی وجود ندارد.',
             },
             {
-              icon: ShieldCheck,
+              icon: IconShieldCheck,
               title: 'امنیت',
               text: 'امنیت بخشی از معماری ماست — از احراز هویت چندسطحی تا رمزنگاری داده‌ها.',
             },
             {
-              icon: Coins,
+              icon: IconCoins,
               title: 'دسترس‌پذیری',
               text: 'با هر مبلغی می‌توانید صاحب طلا شوید — حتی با کمترین بودجه.',
             },
@@ -91,7 +91,7 @@ export default function AboutPage() {
           <Button size="lg" asChild>
             <Link href="/register">
               به زرسی بپیوندید
-              <ArrowLeft className="size-4" />
+              <IconArrowLeft className="size-4" />
             </Link>
           </Button>
         </div>

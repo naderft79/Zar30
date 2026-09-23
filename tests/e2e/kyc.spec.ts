@@ -42,7 +42,7 @@ async function login(page: Page, mobile: string) {
   await page.goto('/login')
   await page.getByLabel('شماره موبایل').fill(mobile)
   await page.getByLabel('رمز عبور').fill(PASSWORD)
-  await page.getByRole('button', { name: 'ورود', exact: true }).click()
+  await page.getByRole('button', { name: 'ورود به حساب' }).click()
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 })
   await expect(page.getByRole('heading', { name: /خوش آمدید/ })).toBeVisible({ timeout: 30_000 })
 }

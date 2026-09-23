@@ -9,7 +9,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ChevronDown } from 'lucide-react'
+import { IconChevronDown } from '@tabler/icons-react'
 import type { NavLink } from '@/lib/data/landing'
 import { cn } from 'cn'
 
@@ -65,7 +65,7 @@ export function NavDropdown({ label, items }: NavDropdownProps) {
         className="text-navy-700 hover:text-navy-950 focus-visible:ring-gold-500/40 inline-flex h-11 items-center gap-1 rounded-md text-sm font-medium transition-colors outline-none focus-visible:ring-2"
       >
         {label}
-        <ChevronDown
+        <IconChevronDown
           aria-hidden="true"
           className={cn(
             'text-navy-400 size-3.5 transition-transform duration-200',

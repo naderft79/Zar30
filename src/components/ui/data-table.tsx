@@ -1,7 +1,7 @@
 import { cn } from 'cn'
 import { SkeletonListItem } from './skeleton'
 import { EmptyState } from './empty-state'
-import type { LucideIcon } from 'lucide-react'
+import { type TablerIcon } from '@tabler/icons-react'
 
 // ============================================
 // Data Table — جدول مالی قابل توسعه
@@ -26,7 +26,7 @@ interface DataTableProps<T> {
   /** کلید یکتا هر ردیف */
   rowKey: (row: T) => string
   loading?: boolean
-  emptyIcon?: LucideIcon
+  emptyIcon?: TablerIcon
   emptyTitle?: string
   emptyDescription?: string
   className?: string

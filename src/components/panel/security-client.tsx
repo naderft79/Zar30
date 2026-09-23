@@ -9,13 +9,13 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
-  ArrowLeft,
-  History,
-  KeyRound,
-  MonitorSmartphone,
-  ShieldCheck,
-  Smartphone,
-} from 'lucide-react'
+  IconArrowLeft,
+  IconHistory,
+  IconKey,
+  IconDevices,
+  IconShieldCheck,
+  IconDeviceMobile,
+} from '@tabler/icons-react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { usePanelUser } from './panel-shell'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -99,7 +99,7 @@ export function SecurityClient() {
       >
         <div className="relative flex flex-wrap items-center gap-4">
           <span className="bg-gold-500/15 text-gold-400 ring-gold-500/30 flex size-14 shrink-0 items-center justify-center rounded-2xl ring-1">
-            <ShieldCheck className="size-7" strokeWidth={1.5} />
+            <IconShieldCheck className="size-7" stroke={1.5} />
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-cream-50 text-base font-bold">امنیت حساب شما</p>
@@ -123,14 +123,14 @@ export function SecurityClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <ShieldCheck className="text-gold-600 size-5" strokeWidth={1.75} />
+              <IconShieldCheck className="text-gold-600 size-5" stroke={1.75} />
               وضعیت امنیت حساب
             </CardTitle>
           </CardHeader>
           <CardContent className="divide-border/40 divide-y text-sm">
             <div className="flex items-center justify-between py-2.5">
               <span className="text-muted-foreground flex items-center gap-2">
-                <Smartphone className="size-4" />
+                <IconDeviceMobile className="size-4" />
                 تایید موبایل (OTP)
               </span>
               <StatusBadge tone={user.mobileVerifiedAt ? 'success' : 'warning'}>
@@ -139,7 +139,7 @@ export function SecurityClient() {
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-muted-foreground flex items-center gap-2">
-                <ShieldCheck className="size-4" />
+                <IconShieldCheck className="size-4" />
                 احراز دو مرحله‌ای (2FA)
               </span>
               <StatusBadge tone="gold" dot={false}>
@@ -148,7 +148,7 @@ export function SecurityClient() {
             </div>
             <div className="flex items-center justify-between py-2.5">
               <span className="text-muted-foreground flex items-center gap-2">
-                <MonitorSmartphone className="size-4" />
+                <IconDevices className="size-4" />
                 مدیریت نشست‌ها
               </span>
               <Link
@@ -156,7 +156,7 @@ export function SecurityClient() {
                 className="text-gold-600 dark:text-gold-400 inline-flex items-center gap-1 text-xs font-medium hover:underline"
               >
                 مشاهده
-                <ArrowLeft className="size-3.5" />
+                <IconArrowLeft className="size-3.5" />
               </Link>
             </div>
           </CardContent>
@@ -166,7 +166,7 @@ export function SecurityClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <KeyRound className="text-gold-600 size-5" strokeWidth={1.75} />
+              <IconKey className="text-gold-600 size-5" stroke={1.75} />
               تغییر رمز عبور
             </CardTitle>
           </CardHeader>
@@ -221,7 +221,7 @@ export function SecurityClient() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <History className="text-gold-600 size-5" strokeWidth={1.75} />
+            <IconHistory className="text-gold-600 size-5" stroke={1.75} />
             رویدادهای امنیتی اخیر
           </CardTitle>
         </CardHeader>
@@ -233,7 +233,7 @@ export function SecurityClient() {
               ))}
             </div>
           )}
-          {events?.length === 0 && <EmptyState icon={History} title="رویدادی ثبت نشده است" />}
+          {events?.length === 0 && <EmptyState icon={IconHistory} title="رویدادی ثبت نشده است" />}
           <div className="divide-border/40 divide-y">
             {events?.map((ev) => (
               <div key={ev.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">

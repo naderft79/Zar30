@@ -9,7 +9,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { AlertCircle, TrendingDown, TrendingUp } from 'lucide-react'
+import { IconAlertCircle, IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
 import { toPersianDigits, formatToman } from '@/lib/utils/utils'
 import type { GoldPrice } from '@/lib/price/types'
 import { cn } from 'cn'
@@ -86,7 +86,7 @@ export function LiveGoldPriceCard({ initialPrice }: LivePriceCardProps) {
           </span>
         ) : (
           <span className="border-warning/40 bg-warning/5 text-warning inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium">
-            <AlertCircle className="size-3.5" aria-hidden="true" />
+            <IconAlertCircle className="size-3.5" aria-hidden="true" />
             داده نمایشی
           </span>
         )}
@@ -126,9 +126,9 @@ export function LiveGoldPriceCard({ initialPrice }: LivePriceCardProps) {
             dir="ltr"
           >
             {change > 0 ? (
-              <TrendingUp className="size-3.5" aria-hidden="true" />
+              <IconTrendingUp className="size-3.5" aria-hidden="true" />
             ) : (
-              <TrendingDown className="size-3.5" aria-hidden="true" />
+              <IconTrendingDown className="size-3.5" aria-hidden="true" />
             )}
             {toPersianDigits(Math.abs(changePercent).toFixed(2))}٪
           </span>

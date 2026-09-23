@@ -7,7 +7,14 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Copy, Gift, Link2, TrendingUp, Users } from 'lucide-react'
+import {
+  IconCheck,
+  IconCopy,
+  IconGift,
+  IconLink,
+  IconTrendingUp,
+  IconUsers,
+} from '@tabler/icons-react'
 import { usePanelUser } from './panel-shell'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -38,7 +45,7 @@ export function ReferralClient() {
       <Card className="surface-wealth relative overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Gift className="text-gold-600 size-5" strokeWidth={1.75} />
+            <IconGift className="text-gold-600 size-5" stroke={1.75} />
             کد دعوت شما
           </CardTitle>
         </CardHeader>
@@ -52,9 +59,9 @@ export function ReferralClient() {
               className="text-muted-foreground hover:text-gold-600 dark:hover:text-gold-400 focus-visible:ring-ring inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               {copied === 'code' ? (
-                <Check className="text-success size-4" />
+                <IconCheck className="text-success size-4" />
               ) : (
-                <Copy className="size-4" />
+                <IconCopy className="size-4" />
               )}
               {copied === 'code' ? 'کپی شد' : 'کپی'}
             </button>
@@ -62,7 +69,7 @@ export function ReferralClient() {
           {/* لینک دعوت */}
           <div className="border-border/60 bg-muted/30 flex items-center justify-between gap-3 rounded-xl border px-4 py-3">
             <span className="text-muted-foreground flex min-w-0 items-center gap-2 text-xs">
-              <Link2 className="size-4 shrink-0" />
+              <IconLink className="size-4 shrink-0" />
               <span className="truncate font-mono tabular-nums" dir="ltr">
                 {referralLink}
               </span>
@@ -73,9 +80,9 @@ export function ReferralClient() {
               className="text-muted-foreground hover:text-gold-600 dark:hover:text-gold-400 focus-visible:ring-ring inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               {copied === 'link' ? (
-                <Check className="text-success size-4" />
+                <IconCheck className="text-success size-4" />
               ) : (
-                <Copy className="size-4" />
+                <IconCopy className="size-4" />
               )}
               {copied === 'link' ? 'کپی شد' : 'کپی لینک'}
             </button>
@@ -91,7 +98,7 @@ export function ReferralClient() {
         <Card>
           <CardContent className="flex items-center gap-4 py-5">
             <span className="bg-gold-500/15 text-gold-600 dark:text-gold-400 flex size-12 shrink-0 items-center justify-center rounded-2xl">
-              <Users className="size-6" strokeWidth={1.5} />
+              <IconUsers className="size-6" stroke={1.5} />
             </span>
             <div className="min-w-0">
               <p className="text-muted-foreground text-label">دعوت‌های موفق</p>
@@ -105,7 +112,7 @@ export function ReferralClient() {
         <Card>
           <CardContent className="flex items-center gap-4 py-5">
             <span className="bg-gold-500/15 text-gold-600 dark:text-gold-400 flex size-12 shrink-0 items-center justify-center rounded-2xl">
-              <TrendingUp className="size-6" strokeWidth={1.5} />
+              <IconTrendingUp className="size-6" stroke={1.5} />
             </span>
             <div className="min-w-0">
               <p className="text-muted-foreground text-label">پاداش معرفی</p>
@@ -121,7 +128,7 @@ export function ReferralClient() {
       <Card>
         <CardContent>
           <EmptyState
-            icon={Users}
+            icon={IconUsers}
             title="آمار معرفی به‌زودی فعال می‌شود"
             description="تعداد دعوت‌های موفق و پاداش معرفی پس از راه‌اندازی موتور کمیسیون اینجا نمایش داده می‌شود."
             badge="به‌زودی — پیش‌نمایش"

@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 import { Dialog as DialogPrimitive } from 'radix-ui'
-import { X } from 'lucide-react'
+import { IconX } from '@tabler/icons-react'
 import { cn } from 'cn'
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
@@ -62,7 +62,7 @@ function DialogContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close className="ring-offset-background focus:ring-ring text-muted-foreground hover:text-foreground absolute top-4 left-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
-            <X className="size-4" />
+            <IconX className="size-4" />
             <span className="sr-only">بستن</span>
           </DialogPrimitive.Close>
         )}

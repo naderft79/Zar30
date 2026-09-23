@@ -6,14 +6,22 @@
 // ============================================
 
 import Link from 'next/link'
-import { Clock, Instagram, Linkedin, Mail, MapPin, Phone, Send } from 'lucide-react'
+import {
+  IconClock,
+  IconBrandInstagram,
+  IconBrandLinkedin,
+  IconMail,
+  IconMapPin,
+  IconPhone,
+  IconSend,
+} from '@tabler/icons-react'
 import { CONTACT_INFO, FOOTER_BADGES, FOOTER_LINKS } from '@/lib/data/landing'
 import { Logo } from '@/components/shared/logo'
 
 const SOCIAL_LINKS = [
-  { href: 'https://instagram.com/zar30', label: 'اینستاگرام', icon: Instagram },
-  { href: 'https://t.me/zar30', label: 'تلگرام', icon: Send },
-  { href: 'https://linkedin.com/company/zar30', label: 'لینکدین', icon: Linkedin },
+  { href: 'https://instagram.com/zar30', label: 'اینستاگرام', icon: IconBrandInstagram },
+  { href: 'https://t.me/zar30', label: 'تلگرام', icon: IconSend },
+  { href: 'https://linkedin.com/company/zar30', label: 'لینکدین', icon: IconBrandLinkedin },
 ]
 
 export function Footer() {
@@ -36,7 +44,7 @@ export function Footer() {
                 href={CONTACT_INFO.phoneHref}
                 className="text-navy-200/80 hover:text-gold-300 inline-flex items-center gap-2.5 transition-colors"
               >
-                <Phone className="size-4 shrink-0" aria-hidden="true" />
+                <IconPhone className="size-4 shrink-0" aria-hidden="true" />
                 <span className="tabular-nums">{CONTACT_INFO.phone}</span>
               </a>
               <a
@@ -44,15 +52,15 @@ export function Footer() {
                 className="text-navy-200/80 hover:text-gold-300 inline-flex items-center gap-2.5 transition-colors"
                 dir="ltr"
               >
-                <Mail className="size-4 shrink-0" aria-hidden="true" />
+                <IconMail className="size-4 shrink-0" aria-hidden="true" />
                 {CONTACT_INFO.email}
               </a>
               <p className="text-navy-200/80 inline-flex w-full items-center gap-2.5">
-                <Clock className="size-4 shrink-0" aria-hidden="true" />
+                <IconClock className="size-4 shrink-0" aria-hidden="true" />
                 {CONTACT_INFO.hours}
               </p>
               <p className="text-navy-200/80 inline-flex w-full items-center gap-2.5">
-                <MapPin className="size-4 shrink-0" aria-hidden="true" />
+                <IconMapPin className="size-4 shrink-0" aria-hidden="true" />
                 تهران، ایران
               </p>
             </address>

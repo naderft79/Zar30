@@ -10,20 +10,20 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import {
-  ArrowLeft,
-  BadgeCheck,
-  Bell,
-  FileText,
-  Gift,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MonitorSmartphone,
-  Save,
-  ShieldCheck,
-  Smartphone,
-  UserRound,
-} from 'lucide-react'
+  IconArrowLeft,
+  IconRosetteDiscountCheck,
+  IconBell,
+  IconFileText,
+  IconGift,
+  IconLifebuoy,
+  IconLogout,
+  IconMail,
+  IconDevices,
+  IconDeviceFloppy,
+  IconShieldCheck,
+  IconDeviceMobile,
+  IconUser,
+} from '@tabler/icons-react'
 import { apiPut } from '@/lib/api/client'
 import { usePanelUser, type PanelUser } from './panel-shell'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -43,37 +43,37 @@ const KYC_LABELS: Record<string, string> = {
 const PROFILE_SECTIONS = [
   {
     href: '/dashboard/profile/kyc',
-    icon: BadgeCheck,
+    icon: IconRosetteDiscountCheck,
     title: 'احراز هویت',
     description: 'تایید هویت و ارتقای سطح حساب',
   },
   {
     href: '/dashboard/profile/security',
-    icon: ShieldCheck,
+    icon: IconShieldCheck,
     title: 'امنیت و رمز عبور',
     description: 'رمز عبور، ۲FA و رویدادهای امنیتی',
   },
   {
     href: '/dashboard/profile/sessions',
-    icon: MonitorSmartphone,
+    icon: IconDevices,
     title: 'دستگاه‌ها و نشست‌ها',
     description: 'دستگاه‌های متصل و مدیریت نشست‌ها',
   },
   {
     href: '/dashboard/notifications',
-    icon: Bell,
+    icon: IconBell,
     title: 'اعلان‌ها',
     description: 'مرکز اعلان و تنظیمات اطلاع‌رسانی',
   },
   {
     href: '/dashboard/profile/referral',
-    icon: Gift,
+    icon: IconGift,
     title: 'معرفی دوستان',
     description: 'کد دعوت و پاداش معرفی',
   },
   {
     href: '/dashboard/profile/support',
-    icon: LifeBuoy,
+    icon: IconLifebuoy,
     title: 'پشتیبانی',
     description: 'تیکت و راه‌های ارتباطی',
   },
@@ -170,7 +170,7 @@ export function ProfileClient() {
         <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <UserRound className="text-gold-600 size-5" strokeWidth={1.75} />
+              <IconUser className="text-gold-600 size-5" stroke={1.75} />
               اطلاعات حساب
             </CardTitle>
           </CardHeader>
@@ -230,7 +230,7 @@ export function ProfileClient() {
                 )}
                 <div className="flex gap-2">
                   <Button type="submit" variant="default" disabled={saving}>
-                    <Save className="size-4" />
+                    <IconDeviceFloppy className="size-4" />
                     {saving ? 'در حال ذخیره…' : 'ذخیره'}
                   </Button>
                   <Button type="button" variant="outline" onClick={() => setEditing(false)}>
@@ -249,8 +249,8 @@ export function ProfileClient() {
                 ].map(([label, value]) => (
                   <div key={label} className="flex items-center justify-between py-2.5">
                     <dt className="text-muted-foreground flex items-center gap-2">
-                      {label === 'شماره موبایل' && <Smartphone className="size-4" />}
-                      {label === 'ایمیل' && <Mail className="size-4" />}
+                      {label === 'شماره موبایل' && <IconDeviceMobile className="size-4" />}
+                      {label === 'ایمیل' && <IconMail className="size-4" />}
                       {label}
                     </dt>
                     <dd
@@ -311,13 +311,13 @@ export function ProfileClient() {
                 {description}
               </span>
             </span>
-            <ArrowLeft className="text-muted-foreground group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
+            <IconArrowLeft className="text-muted-foreground group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
           </Link>
         ))}
         {/* Legal */}
         <div className="border-border/60 bg-muted/30 flex items-center gap-3.5 rounded-xl border border-dashed p-4 sm:col-span-2 lg:col-span-1">
           <span className="bg-muted text-muted-foreground flex size-11 shrink-0 items-center justify-center rounded-xl">
-            <FileText className="size-5" strokeWidth={1.75} />
+            <IconFileText className="size-5" stroke={1.75} />
           </span>
           <span className="min-w-0 flex-1">
             <span className="text-foreground block text-sm font-semibold">قوانین و مقررات</span>
@@ -347,7 +347,7 @@ export function ProfileClient() {
           onClick={() => void logout()}
           className="text-error border-error/30 hover:bg-error/10 hover:text-error shrink-0"
         >
-          <LogOut className="size-4" />
+          <IconLogout className="size-4" />
           خروج از حساب
         </Button>
       </div>

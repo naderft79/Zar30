@@ -10,7 +10,7 @@
 
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { AlertTriangle, BellOff } from 'lucide-react'
+import { IconAlertTriangle, IconBellOff } from '@tabler/icons-react'
 import type { AdminTransactionDetail } from '@/lib/services/admin-finance.service'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminStatus } from '@/components/admin/admin-status'
@@ -54,7 +54,7 @@ export function AdminTransactionDetailClient() {
         role="alert"
         className="border-error/30 bg-error/5 text-error flex items-center gap-2 rounded-xl border p-4 text-xs"
       >
-        <AlertTriangle className="size-4 shrink-0" aria-hidden="true" />
+        <IconAlertTriangle className="size-4 shrink-0" aria-hidden="true" />
         {error}
       </div>
     )
@@ -192,7 +192,7 @@ export function AdminTransactionDetailClient() {
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <Section title="اعلان">
           <div className="border-border/60 text-muted-foreground flex items-start gap-2.5 rounded-lg border border-dashed p-3 text-xs leading-5">
-            <BellOff className="mt-0.5 size-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+            <IconBellOff className="mt-0.5 size-4 shrink-0" stroke={1.75} aria-hidden="true" />
             <p>
               رابط مستقیم اعلان↔تراکنش در schema ثبت نشده است — نمایش اعلان مرتبط در دسترس نیست.
             </p>

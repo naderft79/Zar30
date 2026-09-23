@@ -1,4 +1,4 @@
-import { ArrowDownLeft, ArrowUpLeft, Clock } from 'lucide-react'
+import { IconArrowDownLeft, IconArrowUpLeft, IconClock } from '@tabler/icons-react'
 import { cn } from 'cn'
 import { FinancialNumber } from './financial-number'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -46,7 +46,7 @@ export function OrderCard({
 }: OrderCardProps) {
   const isBuy = side === 'buy'
   const st = statusConfig[status]
-  const Icon = isBuy ? ArrowDownLeft : ArrowUpLeft
+  const Icon = isBuy ? IconArrowDownLeft : IconArrowUpLeft
 
   return (
     <div
@@ -73,7 +73,7 @@ export function OrderCard({
             </p>
             {createdAt && (
               <p className="text-muted-foreground mt-0.5 flex items-center gap-1 text-[11px]">
-                <Clock className="size-3" />
+                <IconClock className="size-3" />
                 {createdAt}
               </p>
             )}

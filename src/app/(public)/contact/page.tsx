@@ -3,7 +3,7 @@
 // ============================================
 
 import type { Metadata } from 'next'
-import { Mail, Phone, MapPin, MessageSquare, Clock } from 'lucide-react'
+import { IconMail, IconPhone, IconMapPin, IconMessage, IconClock } from '@tabler/icons-react'
 import { Section } from '@/components/shared/section'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,20 +17,20 @@ export const metadata: Metadata = {
 
 const CHANNELS = [
   {
-    icon: MessageSquare,
+    icon: IconMessage,
     title: 'تیکت پشتیبانی',
     description: 'سریع‌ترین راه — از داخل پنل کاربری تیکت ثبت کنید.',
     value: 'پاسخ در کمتر از ۲۴ ساعت',
   },
   {
-    icon: Mail,
+    icon: IconMail,
     title: 'ایمیل',
     description: 'برای سوالات عمومی و همکاری',
     value: 'support@zar30.com',
     href: 'mailto:support@zar30.com',
   },
   {
-    icon: Phone,
+    icon: IconPhone,
     title: 'تلفن',
     description: 'ساعات کاری: شنبه تا پنجشنبه، ۹ تا ۱۸',
     value: '۰۲۱-۰۰۰۰۰۰۰۰',
@@ -137,14 +137,14 @@ export default function ContactPage() {
               </Button>
             </form>
             <p className="text-muted-foreground mt-4 flex items-center gap-2 text-xs">
-              <Clock className="size-3.5" />
+              <IconClock className="size-3.5" />
               سیستم تیکتینگ داخل پنل در Phaseهای بعدی فعال می‌شود.
             </p>
           </CardContent>
         </Card>
 
         <div className="text-muted-foreground mt-8 flex items-center justify-center gap-2 text-sm">
-          <MapPin className="size-4" />
+          <IconMapPin className="size-4" />
           تهران، ایران
         </div>
       </Section>

@@ -7,7 +7,7 @@
 
 'use client'
 
-import { Search, X } from 'lucide-react'
+import { IconSearch, IconX } from '@tabler/icons-react'
 import { useId } from 'react'
 
 interface AdminFilterBarProps {
@@ -36,7 +36,7 @@ export function AdminFilterBar({
         <label htmlFor={searchId} className="sr-only">
           جستجو
         </label>
-        <Search
+        <IconSearch
           className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2"
           strokeWidth={1.75}
           aria-hidden="true"
@@ -57,7 +57,7 @@ export function AdminFilterBar({
           onClick={onClear}
           className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
-          <X className="size-3.5" aria-hidden="true" />
+          <IconX className="size-3.5" aria-hidden="true" />
           پاک‌سازی فیلترها
         </button>
       )}

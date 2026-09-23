@@ -5,7 +5,7 @@
 // pause روی hover، در موبایل کندتر. فقط حقایق واقعی محصول.
 // ============================================
 
-import { BadgeCheck } from 'lucide-react'
+import { IconRosetteDiscountCheck } from '@tabler/icons-react'
 import { TRUST_STRIP_ITEMS } from '@/lib/data/landing'
 
 export function TrustStrip() {
@@ -23,7 +23,7 @@ export function TrustStrip() {
             aria-hidden={i >= TRUST_STRIP_ITEMS.length}
             className="border-navy-100/80 text-navy-700 inline-flex shrink-0 items-center gap-2 rounded-full border bg-white px-4 py-2 text-[13px] font-medium whitespace-nowrap"
           >
-            <BadgeCheck className="text-gold-500 size-4" aria-hidden="true" />
+            <IconRosetteDiscountCheck className="text-gold-500 size-4" aria-hidden="true" />
             {item}
           </span>
         ))}

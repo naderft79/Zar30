@@ -6,23 +6,23 @@
 // هیچ آمار/مجوز/شرکتِ ساختگی در این فایل مجاز نیست
 // ============================================
 
-import type { LucideIcon } from 'lucide-react'
 import {
-  ArrowLeftRight,
-  BadgeCheck,
-  CalendarClock,
-  Coins,
-  FileSearch,
-  Landmark,
-  Lock,
-  Package,
-  ReceiptText,
-  ShieldCheck,
-  TrendingUp,
-  Truck,
-  UserCheck,
-  Wallet,
-} from 'lucide-react'
+  type TablerIcon,
+  IconArrowsLeftRight,
+  IconRosetteDiscountCheck,
+  IconCalendarClock,
+  IconCoins,
+  IconFileSearch,
+  IconBuildingBank,
+  IconLock,
+  IconPackage,
+  IconReceipt,
+  IconShieldCheck,
+  IconTrendingUp,
+  IconTruck,
+  IconUserCheck,
+  IconWallet,
+} from '@tabler/icons-react'
 
 // ---------- ناوبری Header ----------
 export interface NavLink {
@@ -61,29 +61,29 @@ export const NAV_ITEMS: NavItem[] = [
 
 // ---------- کارت‌های اعتماد ----------
 export interface TrustCard {
-  icon: LucideIcon
+  icon: TablerIcon
   title: string
   description: string
 }
 
 export const TRUST_CARDS: TrustCard[] = [
   {
-    icon: Landmark,
+    icon: IconBuildingBank,
     title: 'پشتوانه طلای فیزیکی',
     description: 'هر گرم طلای دیجیتال زرسی متناظر با طلای ۱۸ عیار نگهداری‌شده در خزانه است.',
   },
   {
-    icon: ReceiptText,
+    icon: IconReceipt,
     title: 'کارمزد شفاف',
     description: 'ساختار کارمزد و اسپرد قبل از هر تراکنش به‌صورت کامل نمایش داده می‌شود.',
   },
   {
-    icon: ShieldCheck,
+    icon: IconShieldCheck,
     title: 'امنیت چندلایه',
     description: 'احراز هویت چندمرحله‌ای، رمزنگاری داده‌ها و نشست‌های قابل مدیریت.',
   },
   {
-    icon: Package,
+    icon: IconPackage,
     title: 'تحویل فیزیکی',
     description: 'طلای دیجیتال خود را با بسته‌بندی امن و بیمه‌شده تحویل بگیرید.',
   },
@@ -104,29 +104,29 @@ export const TRUST_STRIP_ITEMS = [
 
 // ---------- مراحل کار (۴ مرحله) ----------
 export interface Step {
-  icon: LucideIcon
+  icon: TablerIcon
   title: string
   description: string
 }
 
 export const HOW_IT_WORKS_STEPS: Step[] = [
   {
-    icon: UserCheck,
+    icon: IconUserCheck,
     title: 'ثبت‌نام و احراز هویت',
     description: 'با شماره موبایل ثبت‌نام کنید و هویت خود را با کارت ملی تایید کنید.',
   },
   {
-    icon: Wallet,
+    icon: IconWallet,
     title: 'شارژ حساب',
     description: 'کیف پول تومانی خود را از طریق درگاه بانکی شارژ کنید.',
   },
   {
-    icon: Coins,
+    icon: IconCoins,
     title: 'خرید طلا',
     description: 'با هر مبلغی طلای آب‌شده ۱۸ عیار بخرید — بدون اجرت ساخت.',
   },
   {
-    icon: TrendingUp,
+    icon: IconTrendingUp,
     title: 'مدیریت، فروش و تحویل',
     description: 'دارایی خود را پیگیری کنید، بفروشید یا به‌صورت فیزیکی تحویل بگیرید.',
   },
@@ -134,7 +134,7 @@ export const HOW_IT_WORKS_STEPS: Step[] = [
 
 // ---------- بخش‌های ویژگی محصول ----------
 export interface FeatureBulletItem {
-  icon: LucideIcon
+  icon: TablerIcon
   text: string
 }
 
@@ -158,10 +158,10 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
     description:
       'در زرسی طلا یک دارایی قابل مدیریت است، نه یک کالای مصرفی. با هر مبلغی بخرید، هر زمان بفروشید و وجه را برداشت کنید.',
     bullets: [
-      { icon: Coins, text: 'خرید طلای ۱۸ عیار با هر مبلغی — حتی میلی‌گرمی' },
-      { icon: ArrowLeftRight, text: 'فروش آنی و تبدیل به تومان در هر لحظه' },
-      { icon: BadgeCheck, text: 'بدون اجرت ساخت و بدون واسطه' },
-      { icon: ReceiptText, text: 'کارمزد شفاف قبل از هر تراکنش' },
+      { icon: IconCoins, text: 'خرید طلای ۱۸ عیار با هر مبلغی — حتی میلی‌گرمی' },
+      { icon: IconArrowsLeftRight, text: 'فروش آنی و تبدیل به تومان در هر لحظه' },
+      { icon: IconRosetteDiscountCheck, text: 'بدون اجرت ساخت و بدون واسطه' },
+      { icon: IconReceipt, text: 'کارمزد شفاف قبل از هر تراکنش' },
     ],
     cta: { href: '/register', label: 'شروع خرید طلا' },
     visual: 'buy',
@@ -173,10 +173,10 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
     description:
       'طلای خود را نگه دارید یا در طرح‌های سوددهی طلایی شرکت کنید. سود شما به‌صورت طلا محاسبه می‌شود، نه تومان.',
     bullets: [
-      { icon: TrendingUp, text: 'طرح‌های سرمایه‌گذاری با سود طلایی' },
-      { icon: Lock, text: 'طلای شما جدا و متناظر با خزانه نگهداری می‌شود' },
-      { icon: FileSearch, text: 'تاریخچه کامل دارایی قابل پیگیری است' },
-      { icon: Package, text: 'امکان تحویل فیزیکی در پایان طرح' },
+      { icon: IconTrendingUp, text: 'طرح‌های سرمایه‌گذاری با سود طلایی' },
+      { icon: IconLock, text: 'طلای شما جدا و متناظر با خزانه نگهداری می‌شود' },
+      { icon: IconFileSearch, text: 'تاریخچه کامل دارایی قابل پیگیری است' },
+      { icon: IconPackage, text: 'امکان تحویل فیزیکی در پایان طرح' },
     ],
     cta: { href: '/register', label: 'شروع سرمایه‌گذاری' },
     visual: 'investment',
@@ -189,10 +189,10 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
     description:
       'مبلغ طلا را به اقساط تقسیم کنید و پس از تسویه کامل، مالکیت طلا به شما منتقل می‌شود. شرایط و نرخ‌ها شفاف نمایش داده می‌شود.',
     bullets: [
-      { icon: CalendarClock, text: 'طرح‌های ۱۲، ۱۸ و ۲۴ ماهه' },
-      { icon: ShieldCheck, text: 'بدون نیاز به چک در اعتبارسنجی داخلی' },
-      { icon: Coins, text: 'طلا پس از تسویه به کیف پول شما اضافه می‌شود' },
-      { icon: ReceiptText, text: 'مبلغ هر قسط از ابتدا مشخص است' },
+      { icon: IconCalendarClock, text: 'طرح‌های ۱۲، ۱۸ و ۲۴ ماهه' },
+      { icon: IconShieldCheck, text: 'بدون نیاز به چک در اعتبارسنجی داخلی' },
+      { icon: IconCoins, text: 'طلا پس از تسویه به کیف پول شما اضافه می‌شود' },
+      { icon: IconReceipt, text: 'مبلغ هر قسط از ابتدا مشخص است' },
     ],
     cta: { href: '/register', label: 'خرید قسطی طلا' },
     visual: 'installment',
@@ -201,11 +201,11 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
 
 // ---------- تحویل فیزیکی ----------
 export const DELIVERY_BULLETS: FeatureBulletItem[] = [
-  { icon: Package, text: 'ثبت درخواست تحویل از پنل کاربری' },
-  { icon: ShieldCheck, text: 'بسته‌بندی امن و بیمه‌شده' },
-  { icon: ReceiptText, text: 'فاکتور رسمی همراه مرسوله' },
-  { icon: BadgeCheck, text: 'تضمین اصالت طلای تحویلی' },
-  { icon: Truck, text: 'ارسال به آدرس شما پس از تکمیل احراز هویت' },
+  { icon: IconPackage, text: 'ثبت درخواست تحویل از پنل کاربری' },
+  { icon: IconShieldCheck, text: 'بسته‌بندی امن و بیمه‌شده' },
+  { icon: IconReceipt, text: 'فاکتور رسمی همراه مرسوله' },
+  { icon: IconRosetteDiscountCheck, text: 'تضمین اصالت طلای تحویلی' },
+  { icon: IconTruck, text: 'ارسال به آدرس شما پس از تکمیل احراز هویت' },
 ]
 
 // ---------- FAQ ----------
@@ -298,10 +298,10 @@ export const FOOTER_LINKS: { title: string; links: NavLink[] }[] = [
 
 // ---------- نشان‌های فوتر (فقط حقایق واقعی) ----------
 export const FOOTER_BADGES = [
-  { icon: Landmark, label: 'پشتوانه طلای فیزیکی' },
-  { icon: FileSearch, label: 'دفتر کل قابل حسابرسی' },
-  { icon: ShieldCheck, label: 'احراز هویت چندمرحله‌ای' },
-  { icon: Lock, label: 'رمزنگاری داده‌ها' },
+  { icon: IconBuildingBank, label: 'پشتوانه طلای فیزیکی' },
+  { icon: IconFileSearch, label: 'دفتر کل قابل حسابرسی' },
+  { icon: IconShieldCheck, label: 'احراز هویت چندمرحله‌ای' },
+  { icon: IconLock, label: 'رمزنگاری داده‌ها' },
 ]
 
 // ---------- آمار (صفحه درباره) ----------
@@ -309,12 +309,12 @@ export const FOOTER_BADGES = [
 export interface Stat {
   value: string
   label: string
-  icon: LucideIcon
+  icon: TablerIcon
 }
 
 export const STATS: Stat[] = [
-  { icon: Coins, value: 'با هر مبلغی', label: 'خرید طلا — حتی میلی‌گرمی' },
-  { icon: ArrowLeftRight, value: '۲۴/۷', label: 'معامله آنلاین' },
-  { icon: FileSearch, value: '۱۰۰٪', label: 'شفافیت دفتر کل' },
-  { icon: ShieldCheck, value: '۴ سطح', label: 'احراز هویت چندمرحله‌ای' },
+  { icon: IconCoins, value: 'با هر مبلغی', label: 'خرید طلا — حتی میلی‌گرمی' },
+  { icon: IconArrowsLeftRight, value: '۲۴/۷', label: 'معامله آنلاین' },
+  { icon: IconFileSearch, value: '۱۰۰٪', label: 'شفافیت دفتر کل' },
+  { icon: IconShieldCheck, value: '۴ سطح', label: 'احراز هویت چندمرحله‌ای' },
 ]

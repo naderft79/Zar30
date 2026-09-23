@@ -10,17 +10,17 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
-  AlertTriangle,
-  ArrowUpFromLine,
-  ClipboardList,
-  Coins,
-  LifeBuoy,
-  RefreshCw,
-  Tag,
-  UserCheck,
-  Users,
-  Wallet,
-} from 'lucide-react'
+  IconAlertTriangle,
+  IconUpload,
+  IconClipboardList,
+  IconCoins,
+  IconLifebuoy,
+  IconRefresh,
+  IconTag,
+  IconUserCheck,
+  IconUsers,
+  IconWallet,
+} from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import type { AdminDashboardData } from '@/lib/services/admin-dashboard.service'
 import { AdminMetric } from '@/components/admin/admin-metric'
@@ -108,7 +108,7 @@ export function AdminDashboard() {
   if (error && !data) {
     return (
       <div className="bg-card border-border/60 flex flex-col items-center rounded-2xl border p-10 text-center">
-        <AlertTriangle className="text-error mb-3 size-8" strokeWidth={1.75} aria-hidden="true" />
+        <IconAlertTriangle className="text-error mb-3 size-8" stroke={1.75} aria-hidden="true" />
         <p className="text-foreground text-sm font-semibold">خطا در بارگذاری داشبورد</p>
         <p className="text-muted-foreground mt-1 text-xs">{error}</p>
         <button
@@ -120,7 +120,7 @@ export function AdminDashboard() {
           }}
           className="border-border/60 text-foreground hover:bg-muted focus-visible:ring-ring mt-4 inline-flex h-9 items-center gap-2 rounded-lg border px-4 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
-          <RefreshCw className="size-3.5" strokeWidth={1.75} />
+          <IconRefresh className="size-3.5" stroke={1.75} />
           تلاش مجدد
         </button>
       </div>
@@ -180,25 +180,25 @@ export function AdminDashboard() {
           label="مانده حساب‌های تومانی کاربران"
           value={formatExactAmount(data.financial.tomanBalance)}
           unit="تومان"
-          icon={Wallet}
+          icon={IconWallet}
         />
         <AdminMetric
           label="موجودی طلای کاربران"
           value={formatExactAmount(data.financial.goldBalance)}
           unit="گرم"
-          icon={Coins}
+          icon={IconCoins}
           tone="gold"
         />
         <AdminMetric
           label="حجم تراکنش — ۲۴ ساعت اخیر"
           value={formatExactAmount(data.financial.completedVolumeLast24Hours)}
           unit="تومان"
-          icon={Tag}
+          icon={IconTag}
         />
         <AdminMetric
           label="برداشت‌های در انتظار"
           value={data.financial.pendingWithdrawals}
-          icon={ArrowUpFromLine}
+          icon={IconUpload}
           tone={data.financial.pendingWithdrawals > 0 ? 'warning' : 'default'}
         />
       </div>
@@ -207,7 +207,7 @@ export function AdminDashboard() {
         {/* ===== Customers + KYC pipeline ===== */}
         <section className="bg-card border-border/60 rounded-xl border p-5">
           <h2 className="text-foreground mb-4 flex items-center gap-2 text-sm font-bold">
-            <Users className="text-muted-foreground size-4" strokeWidth={1.75} aria-hidden="true" />
+            <IconUsers className="text-muted-foreground size-4" stroke={1.75} aria-hidden="true" />
             مشتریان و احراز هویت
           </h2>
           <div className="mb-4 grid grid-cols-3 gap-3">
@@ -239,7 +239,7 @@ export function AdminDashboard() {
             ].map(([label, count]) => (
               <li key={label as string} className="flex items-center justify-between">
                 <span className="text-muted-foreground flex items-center gap-2">
-                  <UserCheck className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
+                  <IconUserCheck className="size-3.5" stroke={1.75} aria-hidden="true" />
                   {label}
                 </span>
                 <span className="text-foreground font-semibold tabular-nums">
@@ -253,7 +253,7 @@ export function AdminDashboard() {
         {/* ===== Operational queues — لینک به صفحات ===== */}
         <section className="bg-card border-border/60 rounded-xl border p-5">
           <h2 className="text-foreground mb-4 flex items-center gap-2 text-sm font-bold">
-            <ClipboardList
+            <IconClipboardList
               className="text-muted-foreground size-4"
               strokeWidth={1.75}
               aria-hidden="true"
@@ -263,28 +263,28 @@ export function AdminDashboard() {
           <div className="space-y-2.5">
             <QueueLink
               href="/admin/kyc"
-              icon={UserCheck}
+              icon={IconUserCheck}
               label="احراز هویت در انتظار بررسی"
               count={data.kyc.submitted + data.kyc.underReview}
               tone={data.kyc.submitted + data.kyc.underReview > 0 ? 'warning' : 'default'}
             />
             <QueueLink
               href="/admin/orders"
-              icon={ClipboardList}
+              icon={IconClipboardList}
               label="سفارش‌های در انتظار"
               count={data.operations.pendingOrders}
               tone={data.operations.pendingOrders > 0 ? 'warning' : 'default'}
             />
             <QueueLink
               href="/admin/support"
-              icon={LifeBuoy}
+              icon={IconLifebuoy}
               label="تیکت‌های باز"
               count={data.operations.openTickets}
               tone="default"
             />
             <QueueLink
               href="/admin/transactions"
-              icon={AlertTriangle}
+              icon={IconAlertTriangle}
               label="تراکنش‌های ناموفق"
               count={data.operations.failedTransactions}
               tone={data.operations.failedTransactions > 0 ? 'error' : 'default'}

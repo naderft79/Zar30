@@ -10,23 +10,23 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  ArrowLeft,
-  ArrowRight,
-  BadgeCheck,
-  Banknote,
-  Camera,
-  Check,
-  CreditCard,
-  FileImage,
-  Fingerprint,
-  Landmark,
-  Loader2,
-  RefreshCcw,
-  ShieldCheck,
-  Trash2,
-  Upload,
-  UserRound,
-} from 'lucide-react'
+  IconArrowLeft,
+  IconArrowRight,
+  IconRosetteDiscountCheck,
+  IconCashBanknote,
+  IconCamera,
+  IconCheck,
+  IconCreditCard,
+  IconPhoto,
+  IconFingerprint,
+  IconBuildingBank,
+  IconLoader2,
+  IconRefresh,
+  IconShieldCheck,
+  IconTrash,
+  IconUpload,
+  IconUser,
+} from '@tabler/icons-react'
 import { apiGet, apiPost, apiPut, apiDelete, apiUpload } from '@/lib/api/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -123,11 +123,11 @@ const STATUS_META: Record<
 }
 
 const WIZARD_STEPS = [
-  { key: 'personal', title: 'اطلاعات شخصی', icon: UserRound },
-  { key: 'identity', title: 'اطلاعات هویتی', icon: Fingerprint },
-  { key: 'bank', title: 'اطلاعات بانکی', icon: Landmark },
-  { key: 'docs', title: 'بارگذاری مدارک', icon: FileImage },
-  { key: 'review', title: 'بازبینی و ارسال', icon: BadgeCheck },
+  { key: 'personal', title: 'اطلاعات شخصی', icon: IconUser },
+  { key: 'identity', title: 'اطلاعات هویتی', icon: IconFingerprint },
+  { key: 'bank', title: 'اطلاعات بانکی', icon: IconBuildingBank },
+  { key: 'docs', title: 'بارگذاری مدارک', icon: IconPhoto },
+  { key: 'review', title: 'بازبینی و ارسال', icon: IconRosetteDiscountCheck },
 ] as const
 
 const DOC_SLOTS: {
@@ -135,28 +135,28 @@ const DOC_SLOTS: {
   title: string
   hint: string
   required: boolean
-  icon: typeof FileImage
+  icon: typeof IconPhoto
 }[] = [
   {
     kind: 'ID_CARD_FRONT',
     title: 'تصویر کارت ملی',
     hint: 'تصویر واضح روی کارت ملی — JPEG، PNG یا WebP تا ۵MB',
     required: true,
-    icon: CreditCard,
+    icon: IconCreditCard,
   },
   {
     kind: 'ID_CARD_BACK',
     title: 'پشت کارت ملی (اختیاری)',
     hint: 'در صورت وجود کارت ملی جدید',
     required: false,
-    icon: CreditCard,
+    icon: IconCreditCard,
   },
   {
     kind: 'SELFIE',
     title: 'سلفی با کارت ملی',
     hint: 'چهره شما در کنار کارت ملی واضح باشد',
     required: false,
-    icon: Camera,
+    icon: IconCamera,
   },
 ]
 
@@ -233,7 +233,7 @@ export function KycClient() {
                 void load()
               }}
             >
-              <RefreshCcw className="size-4" />
+              <IconRefresh className="size-4" />
               تلاش مجدد
             </Button>
           </CardContent>
@@ -327,7 +327,7 @@ function KycIntro({
     >
       <div className="relative flex flex-col items-start gap-5 sm:flex-row sm:items-center">
         <span className="from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/40 shadow-gold flex size-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-bl ring-1">
-          <ShieldCheck className="size-8" strokeWidth={1.5} />
+          <IconShieldCheck className="size-8" stroke={1.5} />
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="text-cream-50 text-lg font-bold text-balance sm:text-xl">
@@ -342,7 +342,7 @@ function KycIntro({
             {['اطلاعات شخصی', 'کد ملی و شناسنامه', 'شبا و کارت بانکی', 'تصویر کارت ملی'].map(
               (s) => (
                 <li key={s} className="flex items-center gap-1.5">
-                  <Check className="text-gold-500 size-3.5" aria-hidden="true" />
+                  <IconCheck className="text-gold-500 size-3.5" aria-hidden="true" />
                   {s}
                 </li>
               ),
@@ -358,9 +358,9 @@ function KycIntro({
             className="shrink-0"
           >
             {starting ? (
-              <Loader2 className="size-4 animate-spin" />
+              <IconLoader2 className="size-4 animate-spin" />
             ) : (
-              <Fingerprint className="size-4" />
+              <IconFingerprint className="size-4" />
             )}
             {starting ? 'در حال شروع…' : 'شروع احراز هویت'}
           </Button>
@@ -385,7 +385,7 @@ function StatusView({ submission }: { submission: KycSubmission }) {
     <Card className="overflow-hidden">
       <div className="surface-wealth relative px-6 py-8 text-center">
         <span className="bg-gold-500/15 text-gold-400 ring-gold-500/30 mx-auto flex size-16 items-center justify-center rounded-full ring-1">
-          <Loader2 className="size-7 animate-spin" style={{ animationDuration: '3s' }} />
+          <IconLoader2 className="size-7 animate-spin" style={{ animationDuration: '3s' }} />
         </span>
         <h2 className="text-cream-50 mt-4 text-lg font-bold">{meta.label}</h2>
         <p className="text-cream-200/70 mx-auto mt-2 max-w-md text-sm leading-6">{meta.desc}</p>
@@ -430,7 +430,7 @@ function ResubmitView({
     <Card className="border-warning/30">
       <CardHeader>
         <CardTitle className="text-warning flex items-center gap-2 text-base">
-          <RefreshCcw className="size-5" />
+          <IconRefresh className="size-5" />
           {STATUS_META[submission.status].label}
         </CardTitle>
       </CardHeader>
@@ -451,9 +451,9 @@ function ResubmitView({
         )}
         <Button variant="default" onClick={() => void restart()} disabled={starting}>
           {starting ? (
-            <Loader2 className="size-4 animate-spin" />
+            <IconLoader2 className="size-4 animate-spin" />
           ) : (
-            <RefreshCcw className="size-4" />
+            <IconRefresh className="size-4" />
           )}
           اصلاح و ارسال مجدد
         </Button>
@@ -633,7 +633,7 @@ function Wizard({
                           : 'bg-muted text-muted-foreground'
                     }`}
                   >
-                    {done ? <Check className="size-3" /> : faDigits(i + 1)}
+                    {done ? <IconCheck className="size-3" /> : faDigits(i + 1)}
                   </span>
                   <span className="hidden sm:inline">{s.title}</span>
                   <Icon className="size-4 sm:hidden" aria-hidden="true" />
@@ -758,7 +758,7 @@ function Wizard({
           {step === 2 && (
             <>
               <p className="text-muted-foreground bg-muted/40 flex items-start gap-2 rounded-lg px-3 py-2.5 text-xs leading-5">
-                <Banknote className="text-gold-600 mt-0.5 size-4 shrink-0" />
+                <IconCashBanknote className="text-gold-600 mt-0.5 size-4 shrink-0" />
                 حساب باید به نام خودتان و منطبق بر کد ملی باشد. اطلاعات بانکی رمزنگاری‌شده ذخیره
                 می‌شود.
               </p>
@@ -811,7 +811,7 @@ function Wizard({
                 />
               ))}
               <p className="text-muted-foreground flex items-start gap-2 text-xs leading-5">
-                <ShieldCheck className="text-gold-600 mt-0.5 size-4 shrink-0" />
+                <IconShieldCheck className="text-gold-600 mt-0.5 size-4 shrink-0" />
                 مدارک رمزنگاری‌شده و فقط برای کارشناسان احراز هویت قابل مشاهده است.
               </p>
             </div>
@@ -868,25 +868,25 @@ function Wizard({
             {step < 4 ? (
               <Button variant="default" onClick={() => void next()} disabled={busy}>
                 {busy ? (
-                  <Loader2 className="size-4 animate-spin" />
+                  <IconLoader2 className="size-4 animate-spin" />
                 ) : (
-                  <ArrowLeft className="size-4" />
+                  <IconArrowLeft className="size-4" />
                 )}
                 {busy ? 'در حال ذخیره…' : 'مرحله بعد'}
               </Button>
             ) : (
               <Button variant="default" onClick={() => void submit()} disabled={busy}>
                 {busy ? (
-                  <Loader2 className="size-4 animate-spin" />
+                  <IconLoader2 className="size-4 animate-spin" />
                 ) : (
-                  <BadgeCheck className="size-4" />
+                  <IconRosetteDiscountCheck className="size-4" />
                 )}
                 {busy ? 'در حال ارسال…' : 'ارسال برای بررسی'}
               </Button>
             )}
             {step > 0 && (
               <Button variant="outline" onClick={() => void back()} disabled={busy}>
-                <ArrowRight className="size-4" />
+                <IconArrowRight className="size-4" />
                 مرحله قبل
               </Button>
             )}
@@ -992,7 +992,7 @@ function DocUpload({
             doc ? 'bg-success/15 text-success' : 'bg-gold-500/12 text-gold-600'
           }`}
         >
-          {doc ? <Check className="size-5" /> : <Icon className="size-5" strokeWidth={1.75} />}
+          {doc ? <IconCheck className="size-5" /> : <Icon className="size-5" strokeWidth={1.75} />}
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-foreground text-sm font-semibold">
@@ -1044,7 +1044,7 @@ function DocUpload({
                 aria-label={`حذف ${slot.title}`}
                 className="text-error hover:text-error size-8"
               >
-                <Trash2 className="size-4" />
+                <IconTrash className="size-4" />
               </Button>
             </>
           ) : (
@@ -1055,9 +1055,9 @@ function DocUpload({
               disabled={uploading}
             >
               {uploading ? (
-                <Loader2 className="size-4 animate-spin" />
+                <IconLoader2 className="size-4 animate-spin" />
               ) : (
-                <Upload className="size-4" />
+                <IconUpload className="size-4" />
               )}
               بارگذاری
             </Button>

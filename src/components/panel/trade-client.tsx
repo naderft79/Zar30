@@ -10,14 +10,14 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import {
-  ArrowDownLeft,
-  ArrowUpLeft,
-  History,
-  LineChart,
-  Repeat,
-  AlertTriangle,
-  CheckCircle2,
-} from 'lucide-react'
+  IconArrowDownLeft,
+  IconArrowUpLeft,
+  IconHistory,
+  IconChartLine,
+  IconRepeat,
+  IconAlertTriangle,
+  IconCircleCheck,
+} from '@tabler/icons-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -155,7 +155,7 @@ export function TradeClient() {
         <Card className="surface-wealth gold-rings relative overflow-hidden">
           <CardContent className="relative pt-5 pb-4">
             <p className="text-cream-300/60 flex items-center gap-1.5 text-[11px]">
-              <LineChart className="text-gold-400 size-3.5" strokeWidth={1.75} />
+              <IconChartLine className="text-gold-400 size-3.5" stroke={1.75} />
               نرخ لحظه‌ای (هر گرم)
             </p>
             {price ? (
@@ -203,7 +203,7 @@ export function TradeClient() {
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <ArrowDownLeft className="size-4" strokeWidth={2} />
+              <IconArrowDownLeft className="size-4" stroke={2} />
               خرید طلا
             </button>
             <button
@@ -220,7 +220,7 @@ export function TradeClient() {
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <ArrowUpLeft className="size-4" strokeWidth={2} />
+              <IconArrowUpLeft className="size-4" stroke={2} />
               فروش طلا
             </button>
           </div>
@@ -242,13 +242,13 @@ export function TradeClient() {
 
           {error && (
             <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
-              <AlertTriangle className="size-3.5" aria-hidden="true" />
+              <IconAlertTriangle className="size-3.5" aria-hidden="true" />
               {error}
             </p>
           )}
           {success && (
             <p role="status" className="text-success flex items-center gap-1.5 text-xs">
-              <CheckCircle2 className="size-3.5" aria-hidden="true" />
+              <IconCircleCheck className="size-3.5" aria-hidden="true" />
               {success}
             </p>
           )}
@@ -266,14 +266,14 @@ export function TradeClient() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <History className="text-gold-600 size-5" strokeWidth={1.75} />
+            <IconHistory className="text-gold-600 size-5" stroke={1.75} />
             تاریخچه معاملات
           </CardTitle>
         </CardHeader>
         <CardContent>
           {orders.length === 0 ? (
             <EmptyState
-              icon={Repeat}
+              icon={IconRepeat}
               title="هنوز معامله‌ای انجام نداده‌اید"
               description="پس از اولین خرید یا فروش، تاریخچه کامل معاملات شما اینجا ثبت می‌شود."
             />
@@ -290,9 +290,9 @@ export function TradeClient() {
                       }`}
                     >
                       {o.type === 'BUY' ? (
-                        <ArrowDownLeft className="size-4" strokeWidth={2} />
+                        <IconArrowDownLeft className="size-4" stroke={2} />
                       ) : (
-                        <ArrowUpLeft className="size-4" strokeWidth={2} />
+                        <IconArrowUpLeft className="size-4" stroke={2} />
                       )}
                     </span>
                     <div>
