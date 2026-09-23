@@ -8,6 +8,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import {
   ArrowDownLeft,
   ArrowUpLeft,
@@ -59,7 +60,11 @@ export function TradeClient() {
   const [price, setPrice] = useState<PriceData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const [mode, setMode] = useState<'BUY' | 'SELL'>('BUY')
+  // side=buy|sell از query (مثلاً لینک قیمت داشبورد) حالت اولیه را تعیین می‌کند
+  const searchParams = useSearchParams()
+  const [mode, setMode] = useState<'BUY' | 'SELL'>(
+    searchParams.get('side') === 'sell' ? 'SELL' : 'BUY',
+  )
   const [amount, setAmount] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)

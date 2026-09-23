@@ -144,7 +144,11 @@ export function DashboardOverview() {
             <div className="skeleton-shimmer h-5 w-32 rounded-md" />
           ) : price && price.buyPrice > 0 ? (
             <>
-              <div className="flex items-baseline gap-1.5">
+              <Link
+                href="/dashboard/trade?side=buy"
+                className="hover:bg-muted/60 focus-visible:ring-ring -mx-1.5 flex items-baseline gap-1.5 rounded-lg px-1.5 py-0.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                aria-label="خرید طلا — رفتن به معاملات"
+              >
                 <span className="text-muted-foreground text-[10px]">خرید</span>
                 <span
                   className="text-success text-sm font-bold tabular-nums sm:text-base"
@@ -152,9 +156,13 @@ export function DashboardOverview() {
                 >
                   {formatExactAmount(String(Math.round(price.buyPrice)))}
                 </span>
-              </div>
+              </Link>
               <span className="bg-border h-4 w-px" aria-hidden="true" />
-              <div className="flex items-baseline gap-1.5">
+              <Link
+                href="/dashboard/trade?side=sell"
+                className="hover:bg-muted/60 focus-visible:ring-ring -mx-1.5 flex items-baseline gap-1.5 rounded-lg px-1.5 py-0.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                aria-label="فروش طلا — رفتن به معاملات"
+              >
                 <span className="text-muted-foreground text-[10px]">فروش</span>
                 <span
                   className="text-gold-600 text-sm font-bold tabular-nums sm:text-base"
@@ -162,7 +170,7 @@ export function DashboardOverview() {
                 >
                   {formatExactAmount(String(Math.round(price.sellPrice)))}
                 </span>
-              </div>
+              </Link>
             </>
           ) : (
             <p className="text-muted-foreground text-[11px]">قیمت در دسترس نیست</p>

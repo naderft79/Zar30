@@ -7,7 +7,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { CalendarClock, Eye, EyeOff, Package, TrendingUp } from 'lucide-react'
 import { HandDeposit, HandWithdraw, Vault } from '@phosphor-icons/react'
@@ -74,13 +74,38 @@ export function WealthHero({
   const [hidden, setHidden] = useState(false)
   // چرخش خودکار بنرها
   const [bannerIdx, setBannerIdx] = useState(0)
+  // بعد از تعامل دستی کاربر، چرخش خودکار متوقف می‌شود
+  const [autoRotate, setAutoRotate] = useState(true)
   useEffect(() => {
+    if (!autoRotate) return
     const t = setInterval(
       () => setBannerIdx((i) => (i + 1) % HERO_BANNERS.length),
       BANNER_INTERVAL_MS,
     )
     return () => clearInterval(t)
-  }, [])
+  }, [autoRotate])
+
+  // جابه‌جایی بنر با سوایپ لمسی/درag موس — RTL: چپ→بعدی، راست→قبلی
+  const touchStartX = useRef<number | null>(null)
+
+  function goBanner(dir: 1 | -1) {
+    setAutoRotate(false)
+    setBannerIdx((i) => (i + dir + HERO_BANNERS.length) % HERO_BANNERS.length)
+  }
+
+  function onSwipeStart(clientX: number) {
+    touchStartX.current = clientX
+  }
+
+  function onSwipeEnd(clientX: number) {
+    if (touchStartX.current === null) return
+    const dx = clientX - touchStartX.current
+    touchStartX.current = null
+    // RTL: سوایپ به چپ → بنر بعدی، سوایپ به راست → قبلی
+    if (dx <= -40) goBanner(1)
+    else if (dx >= 40) goBanner(-1)
+  }
+
   const banner = HERO_BANNERS[bannerIdx]!
   const BannerIcon = banner.icon
 
@@ -169,8 +194,12 @@ export function WealthHero({
         ))}
       </div>
 
-      {/* بنر چرخان — سفید، داخل کارت؛ هر ۵ ثانیه بنر بعدی */}
-      <div className="relative mt-4">
+      {/* بنر چرخان — سفید، داخل کارت؛ هر ۵ ثانیه + سوایپ لمسی */}
+      <div
+        className="relative mt-4"
+        onTouchStart={(e) => onSwipeStart(e.touches[0]!.clientX)}
+        onTouchEnd={(e) => onSwipeEnd(e.changedTouches[0]!.clientX)}
+      >
         <Link
           key={bannerIdx}
           href={banner.href}
@@ -189,14 +218,26 @@ export function WealthHero({
             <BannerIcon className="size-5" strokeWidth={1.75} />
           </span>
         </Link>
-        {/* نشانگر بنرها */}
-        <div className="mt-2 flex items-center justify-center gap-1.5" aria-hidden="true">
-          {HERO_BANNERS.map((_, i) => (
-            <span
+        {/* نشانگر بنرها — قابل کلیک */}
+        <div
+          className="mt-2 flex items-center justify-center gap-1.5"
+          role="tablist"
+          aria-label="بنرها"
+        >
+          {HERO_BANNERS.map((b, i) => (
+            <button
               key={i}
+              type="button"
+              role="tab"
+              aria-selected={i === bannerIdx}
+              aria-label={b.kicker}
+              onClick={() => {
+                setAutoRotate(false)
+                setBannerIdx(i)
+              }}
               className={cn(
                 'h-1 rounded-full transition-all duration-(--duration-normal)',
-                i === bannerIdx ? 'bg-gold-400 w-4' : 'bg-cream-50/25 w-1',
+                i === bannerIdx ? 'bg-gold-400 w-4' : 'bg-cream-50/25 hover:bg-cream-50/40 w-1',
               )}
             />
           ))}

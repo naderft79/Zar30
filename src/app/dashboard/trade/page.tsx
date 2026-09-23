@@ -6,6 +6,7 @@
 // ============================================
 
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { PageHeader } from '@/components/panel/page-header'
 import { TradeClient } from '@/components/panel/trade-client'
 
@@ -15,7 +16,9 @@ export default function TradePage() {
   return (
     <>
       <PageHeader title="معاملات" description="خرید و فروش طلای آب‌شده ۱۸ عیار" />
-      <TradeClient />
+      <Suspense>
+        <TradeClient />
+      </Suspense>
     </>
   )
 }
