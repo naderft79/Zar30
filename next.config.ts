@@ -14,6 +14,10 @@ const isMobileBuild = process.env.BUILD_TARGET === 'mobile'
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
+  // دسترسی به dev server از دستگاه‌های دیگر روی LAN (موبایل روی همان Wi-Fi)
+  // اگر IP لپ‌تاپ عوض شد (DHCP)، آدرس جدید را اینجا اضافه کن
+  allowedDevOrigins: ['192.168.1.13'],
+
   // برای Mobile target → static export
   ...(isMobileBuild && {
     output: 'export' as const,
