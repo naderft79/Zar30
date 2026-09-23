@@ -81,7 +81,7 @@ export function LoginForm() {
             required
             placeholder="••••••••"
             dir="ltr"
-            className={`${inputCls} pl-11 text-left`}
+            className={`${inputCls} pr-11 text-left`}
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -92,7 +92,7 @@ export function LoginForm() {
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? 'مخفی کردن رمز' : 'نمایش رمز'}
             aria-pressed={showPassword}
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring absolute top-1/2 left-1.5 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-1.5 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             {showPassword ? (
               <EyeOff className="size-4.5" strokeWidth={1.75} />
