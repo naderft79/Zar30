@@ -112,9 +112,9 @@ export function InstallmentCheckoutClient() {
       {/* طلای دریافتی — مقدار بالا، لیبل کوچک‌تر پایین */}
       <div className="py-2 text-center">
         {goldGrams === null ? (
-          <p className="text-muted-foreground text-2xl font-bold">—</p>
+          <p className="text-muted-foreground text-3xl font-extrabold">—</p>
         ) : (
-          <p className="text-foreground text-2xl font-bold tabular-nums">
+          <p className="text-foreground text-3xl font-extrabold tabular-nums">
             {faDigits(goldGrams.toFixed(2))}
             <span className="text-gold-600 ms-1 text-sm font-bold">گرم</span>
           </p>
