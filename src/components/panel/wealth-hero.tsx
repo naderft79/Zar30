@@ -236,7 +236,7 @@ export function WealthHero({
           <Link
             key={label}
             href={href}
-            className="group bg-navy-300/20 ring-cream-50/15 hover:bg-navy-300/30 focus-visible:ring-cream-50/40 flex min-h-[52px] items-center justify-center gap-2 rounded-2xl ring-1 backdrop-blur-xl transition-colors duration-(--duration-normal) ease-(--ease-out) ring-inset focus-visible:ring-2 focus-visible:outline-none"
+            className="group bg-navy-300/20 ring-cream-50/15 hover:bg-navy-300/30 focus-visible:ring-cream-50/40 flex min-h-[44px] items-center justify-center gap-2 rounded-2xl py-1.5 ring-1 backdrop-blur-xl transition-colors duration-(--duration-normal) ease-(--ease-out) ring-inset focus-visible:ring-2 focus-visible:outline-none"
           >
             <Icon className="text-cream-50 size-6 shrink-0" stroke={1.75} aria-hidden="true" />
             <span className="text-cream-50 text-[11px] font-bold sm:text-xs">{label}</span>
