@@ -47,7 +47,6 @@ interface HistoryPoint {
 interface ChartPoint {
   t: string
   v: number
-  label: string
 }
 
 // لیبل محور زمان — بازه ۲۴ ساعتی: ساعت، بازه‌های بلند: روز/ماه شمسی
@@ -126,9 +125,11 @@ export function PriceChart() {
   }, [range])
 
   const data: ChartPoint[] = useMemo(
-    () => points.map((p) => ({ t: p.t, v: p[side], label: axisLabel(p.t, range) })),
-    [points, side, range],
+    () => points.map((p) => ({ t: p.t, v: p[side] })),
+    [points, side],
   )
+  // داده رندر: جدیدترین نقطه اول آرایه → چپ‌ترین نقطه چارت (خوانش راست‌به‌چپ)
+  const chartData = useMemo(() => [...data].reverse(), [data])
 
   const first = data[0]?.v ?? 0
   const last = data[data.length - 1]?.v ?? 0
@@ -138,8 +139,8 @@ export function PriceChart() {
   const min = data.length ? Math.min(...data.map((d) => d.v)) : 0
   const max = data.length ? Math.max(...data.map((d) => d.v)) : 0
 
-  // رنگ نمودار بر اساس روند بازه — صعودی سبز/نزولی قرمز با گرادیان نرم
-  const stroke = up ? 'var(--color-success)' : 'var(--color-error)'
+  // خط چارت سورمه‌ای (رنگ امضای سایت) + نقطه آخر طلایی
+  const stroke = 'var(--color-navy-700)'
 
   return (
     <Card className="overflow-hidden">
@@ -255,7 +256,7 @@ export function PriceChart() {
             dir="ltr"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data} margin={{ top: 8, right: 6, bottom: 0, left: 6 }}>
+              <AreaChart data={chartData} margin={{ top: 8, right: 6, bottom: 0, left: 6 }}>
                 <defs>
                   <linearGradient id="panel-price-fill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={stroke} stopOpacity={0.2} />
@@ -269,12 +270,12 @@ export function PriceChart() {
                   vertical={false}
                 />
                 <XAxis
-                  dataKey="label"
+                  dataKey="t"
                   tick={{ fill: 'var(--color-muted-foreground)', fontSize: 10 }}
+                  tickFormatter={(iso: string) => axisLabel(iso, range)}
                   tickLine={false}
                   axisLine={false}
                   minTickGap={40}
-                  reversed
                 />
                 <YAxis
                   domain={['dataMin - 20000', 'dataMax + 20000']}
@@ -289,9 +290,9 @@ export function PriceChart() {
                   content={<PriceTooltip />}
                   cursor={{ stroke: 'var(--color-border)', strokeWidth: 1 }}
                 />
-                {/* نقطه طلایی آخرین قیمت — لنگر بصری سمت چپ (جدیدترین) */}
+                {/* نقطه طلایی آخرین قیمت — جدیدترین نقطه، سمت چپ چارت RTL */}
                 <ReferenceDot
-                  x={data[data.length - 1]!.label}
+                  x={chartData[0]!.t}
                   y={last}
                   r={4}
                   fill="#c9a227"
