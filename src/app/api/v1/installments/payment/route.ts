@@ -17,20 +17,44 @@ import { computeInstallmentQuote } from '@/lib/installments/plans'
 import { logger } from '@/lib/logger/logger'
 import os from 'node:os'
 
-// origin قابل‌برگشت برای درگاه — از Host header، نه req.url
 // 0.0.0.0/:: آدرس bind سرور است و در مرورگر کار نمی‌کند → با IPv4 شبکه جایگزین می‌شود
-function requestOrigin(req: Request): string {
+function lanIpv4(): string | undefined {
+  return Object.values(os.networkInterfaces())
+    .flat()
+    .find((i) => i && i.family === 'IPv4' && !i.internal)?.address
+}
+
+function isWildcardHost(hostname: string): boolean {
+  return hostname === '0.0.0.0' || hostname === '::' || hostname === '::0'
+}
+
+// origin قابل‌برگشت: اولویت با origin ارسالی مرورگر (دقیقاً همان جایی که کاربر بوده)
+// در غیر اینصورت Host header — hostهای wildcard با IP شبکه جایگزین می‌شوند
+function resolveOrigin(req: Request, clientOrigin?: string): string {
+  if (clientOrigin) {
+    try {
+      const u = new URL(clientOrigin)
+      if ((u.protocol === 'http:' || u.protocol === 'https:') && !u.username && !u.password) {
+        if (isWildcardHost(u.hostname)) {
+          const lan = lanIpv4()
+          if (lan) return `${u.protocol}//${lan}${u.port ? `:${u.port}` : ''}`
+        }
+        return u.origin
+      }
+    } catch {
+      // fallthrough → host header
+    }
+  }
+
   const reqUrl = new URL(req.url)
   const proto = req.headers.get('x-forwarded-proto') ?? reqUrl.protocol.replace(':', '')
   let host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? reqUrl.host
 
-  const hostname = host.replace(/^\[|\]$/g, '').split(':')[0]
-  if (hostname === '0.0.0.0' || hostname === '::') {
-    const lanIp = Object.values(os.networkInterfaces())
-      .flat()
-      .find((i) => i && i.family === 'IPv4' && !i.internal)?.address
+  const hostname = host.replace(/^\[|\]$/g, '').split(':')[0] ?? ''
+  if (isWildcardHost(hostname)) {
+    const lan = lanIpv4()
     const port = reqUrl.port || '3000'
-    host = lanIp ? `${lanIp}:${port}` : `localhost:${port}`
+    host = lan ? `${lan}:${port}` : `localhost:${port}`
   }
   return `${proto}://${host}`
 }
@@ -51,7 +75,7 @@ export const POST = withErrorHandler(async (req: Request) => {
     throw ApiError.badRequest('مبلغ یا مدت طرح خارج از بازه مجاز است')
   }
 
-  const callbackUrl = `${requestOrigin(req)}/api/v1/installments/callback`
+  const callbackUrl = `${resolveOrigin(req, parsed.data.origin)}/api/v1/installments/callback`
 
   const gateway = getPaymentGateway('zarinpal-sandbox')
   const gatewayReq = await gateway

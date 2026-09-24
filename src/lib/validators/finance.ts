@@ -59,6 +59,8 @@ export const adminRecordPriceSchema = z.object({
 export const installmentPaymentSchema = z.object({
   amount: bigIntAmount,
   months: z.number().int().min(1).max(36),
+  // origin مرورگر برای ساخت callback — سمت سرور sanitize می‌شود
+  origin: z.string().max(200).optional(),
 })
 
 export const financeListQuerySchema = paginationSchema.extend({

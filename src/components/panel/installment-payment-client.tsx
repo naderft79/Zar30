@@ -54,6 +54,8 @@ export function InstallmentPaymentClient() {
     const res = await apiPost<{ redirectUrl: string }>('/api/v1/installments/payment', {
       amount: String(quote.amount),
       months: quote.months,
+      // origin واقعی مرورگر — درگاه به همین آدرس برمی‌گردد
+      origin: window.location.origin,
     })
     if (res.ok && res.data?.redirectUrl) {
       window.location.assign(res.data.redirectUrl)
