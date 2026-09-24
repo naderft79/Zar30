@@ -13,7 +13,6 @@ import {
   IconArrowDownLeft,
   IconArrowLeft,
   IconArrowUpLeft,
-  IconBolt,
   IconGift,
   IconHistory,
   IconPackage,
@@ -21,7 +20,11 @@ import {
   IconWallet,
 } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
-import { IconInstallment, IconZarkar } from '@/components/shared/icon-installment'
+import {
+  IconInstallment,
+  IconInstantCredit,
+  IconZarkar,
+} from '@/components/shared/icon-installment'
 import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
 import { WealthHero } from './wealth-hero'
@@ -96,7 +99,7 @@ function isIncoming(type: string) {
 const QUICK_SERVICES = [
   { label: 'زرکار', href: '/dashboard/trade', icon: IconZarkar },
   { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconInstallment },
-  { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconBolt },
+  { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconInstantCredit },
   { label: 'تحویل فیزیکی', href: '/dashboard/assets', icon: IconPackage },
 ] as const
 

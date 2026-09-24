@@ -32,6 +32,21 @@ export function IconInstallment({ className, style }: AppIconProps) {
   )
 }
 
+// آیکون اعتبار فوری — تصویر ۳بعدی پول
+export function IconInstantCredit({ className, style }: AppIconProps) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/icons/money-stack.png"
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className={className}
+      style={style}
+    />
+  )
+}
+
 // آیکون زرکار — تصویر ۳بعدی شمش طلا
 export function IconZarkar({ className, style }: AppIconProps) {
   return (
