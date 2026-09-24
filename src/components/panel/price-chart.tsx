@@ -63,14 +63,13 @@ function fullLabel(iso: string) {
   })
 }
 
-// تیک محور قیمت — «م» سمت چارت (راست عدد): «۲۷٫۸ م»
+// تیک محور قیمت — میلیون تومان با جداکننده «/»: مثل «۲۳/۷۶۶»
 function PriceAxisTick(props: { x?: number; y?: number; payload?: { value: number } }) {
   const { x = 0, y = 0, payload } = props
   const v = payload?.value ?? 0
-  const fa = toPersianDigits((v / 1_000_000).toFixed(1).replace('.', '٫'))
   return (
     <text x={x} y={y + 3} textAnchor="end" fill="var(--color-muted-foreground)" fontSize={10}>
-      {fa} م
+      {toPersianDigits((v / 1_000_000).toFixed(3).replace('.', '/'))}
     </text>
   )
 }
@@ -235,7 +234,7 @@ export function PriceChart() {
             dir="ltr"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 20, right: 0, bottom: 8, left: 8 }}>
+              <AreaChart data={chartData} margin={{ top: 20, right: 10, bottom: 14, left: 8 }}>
                 <defs>
                   <linearGradient id="panel-price-fill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={stroke} stopOpacity={0.2} />
@@ -254,6 +253,7 @@ export function PriceChart() {
                   tickFormatter={(iso: string) => axisLabel(iso, range)}
                   tickLine={false}
                   axisLine={false}
+                  tickMargin={10}
                   minTickGap={40}
                 />
                 <YAxis
