@@ -15,9 +15,8 @@ import {
   IconMessage,
   IconPhone,
   IconShieldCheck,
-  IconUser,
 } from '@tabler/icons-react'
-import { IconWallet3d } from '@/components/shared/icon-installment'
+import { IconProfile, IconWallet3d } from '@/components/shared/icon-installment'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PageHeader } from './page-header'
@@ -25,7 +24,7 @@ import { PageHeader } from './page-header'
 // دسته‌بندی‌های Help Center — به سوالات متداول لینک می‌شوند
 const HELP_CATEGORIES = [
   {
-    icon: IconUser,
+    icon: IconProfile,
     title: 'حساب و احراز هویت',
     description: 'ثبت‌نام، ورود و تایید هویت',
   },

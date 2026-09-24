@@ -13,10 +13,11 @@
 //   Navigation Config → Desktop Navigation → Mobile Navigation
 // ============================================
 
-import { IconRepeat, IconUser } from '@tabler/icons-react'
+import { IconRepeat } from '@tabler/icons-react'
 import {
   IconHome3d,
   IconInstallment,
+  IconProfile,
   IconWallet3d,
   type AppIcon,
 } from '@/components/shared/icon-installment'
@@ -65,7 +66,7 @@ export const PANEL_NAV_ITEMS: readonly NavItem[] = [
     key: 'profile',
     label: 'پروفایل',
     href: '/dashboard/profile',
-    icon: IconUser,
+    icon: IconProfile,
     description: 'اطلاعات شخصی، امنیت و تنظیمات',
   },
 ] as const

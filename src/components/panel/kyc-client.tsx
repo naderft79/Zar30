@@ -25,8 +25,8 @@ import {
   IconShieldCheck,
   IconTrash,
   IconUpload,
-  IconUser,
 } from '@tabler/icons-react'
+import { IconProfile } from '@/components/shared/icon-installment'
 import { apiGet, apiPost, apiPut, apiDelete, apiUpload } from '@/lib/api/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -123,7 +123,7 @@ const STATUS_META: Record<
 }
 
 const WIZARD_STEPS = [
-  { key: 'personal', title: 'اطلاعات شخصی', icon: IconUser },
+  { key: 'personal', title: 'اطلاعات شخصی', icon: IconProfile },
   { key: 'identity', title: 'اطلاعات هویتی', icon: IconFingerprint },
   { key: 'bank', title: 'اطلاعات بانکی', icon: IconBuildingBank },
   { key: 'docs', title: 'بارگذاری مدارک', icon: IconPhoto },

@@ -62,6 +62,21 @@ export function IconDelivery({ className, style }: AppIconProps) {
   )
 }
 
+// آیکون پروفایل — تصویر کاربر
+export function IconProfile({ className, style }: AppIconProps) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/icons/icons8-profile-94.png"
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className={className}
+      style={style}
+    />
+  )
+}
+
 // آیکون خانه — تصویر ۳بعدی خانه
 export function IconHome3d({ className, style }: AppIconProps) {
   return (
