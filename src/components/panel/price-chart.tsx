@@ -284,7 +284,7 @@ export function PriceChart() {
                   width={40}
                   axisLine={false}
                   tickLine={false}
-                  orientation="right"
+                  orientation="left"
                 />
                 <Tooltip
                   content={<PriceTooltip />}
