@@ -7,10 +7,8 @@
 // ============================================
 
 import {
-  type TablerIcon,
   IconArrowsLeftRight,
   IconRosetteDiscountCheck,
-  IconCalendarClock,
   IconCoins,
   IconFileSearch,
   IconBuildingBank,
@@ -23,6 +21,7 @@ import {
   IconUserCheck,
   IconWallet,
 } from '@tabler/icons-react'
+import { IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
 
 // ---------- ناوبری Header ----------
 export interface NavLink {
@@ -61,7 +60,7 @@ export const NAV_ITEMS: NavItem[] = [
 
 // ---------- کارت‌های اعتماد ----------
 export interface TrustCard {
-  icon: TablerIcon
+  icon: AppIcon
   title: string
   description: string
 }
@@ -104,7 +103,7 @@ export const TRUST_STRIP_ITEMS = [
 
 // ---------- مراحل کار (۴ مرحله) ----------
 export interface Step {
-  icon: TablerIcon
+  icon: AppIcon
   title: string
   description: string
 }
@@ -134,7 +133,7 @@ export const HOW_IT_WORKS_STEPS: Step[] = [
 
 // ---------- بخش‌های ویژگی محصول ----------
 export interface FeatureBulletItem {
-  icon: TablerIcon
+  icon: AppIcon
   text: string
 }
 
@@ -189,7 +188,7 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
     description:
       'مبلغ طلا را به اقساط تقسیم کنید و پس از تسویه کامل، مالکیت طلا به شما منتقل می‌شود. شرایط و نرخ‌ها شفاف نمایش داده می‌شود.',
     bullets: [
-      { icon: IconCalendarClock, text: 'طرح‌های ۱۲، ۱۸ و ۲۴ ماهه' },
+      { icon: IconInstallment, text: 'طرح‌های ۳ تا ۱۸ ماهه' },
       { icon: IconShieldCheck, text: 'بدون نیاز به چک در اعتبارسنجی داخلی' },
       { icon: IconCoins, text: 'طلا پس از تسویه به کیف پول شما اضافه می‌شود' },
       { icon: IconReceipt, text: 'مبلغ هر قسط از ابتدا مشخص است' },
@@ -309,7 +308,7 @@ export const FOOTER_BADGES = [
 export interface Stat {
   value: string
   label: string
-  icon: TablerIcon
+  icon: AppIcon
 }
 
 export const STATS: Stat[] = [

@@ -6,7 +6,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { IconCalendarClock, IconCreditCard, IconFileText } from '@tabler/icons-react'
+import { IconCreditCard, IconFileText } from '@tabler/icons-react'
+import { IconInstallment } from '@/components/shared/icon-installment'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import {
@@ -196,13 +197,13 @@ export function InstallmentsClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <IconCalendarClock className="text-gold-600 size-5" stroke={1.75} />
+              <IconInstallment className="size-5" />
               اقساط پیش رو
             </CardTitle>
           </CardHeader>
           <CardContent>
             <EmptyState
-              icon={IconCalendarClock}
+              icon={IconInstallment}
               title="قسطی ندارید"
               description="سررسید اقساط، یادآوری‌ها و تاریخچه پرداخت اینجا مدیریت می‌شود."
             />

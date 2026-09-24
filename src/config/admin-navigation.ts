@@ -17,7 +17,6 @@ import {
   IconChartBar,
   IconBell,
   IconCalculator,
-  IconCalendarClock,
   IconChartCandle,
   IconClipboardList,
   IconCode,
@@ -55,15 +54,15 @@ import {
   IconUsersGroup,
   IconWallet,
   IconBolt,
-  type TablerIcon,
 } from '@tabler/icons-react'
+import { IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
 import { PERMISSIONS, type Permission } from '@/lib/auth/rbac'
 
 export interface AdminNavItem {
   key: string
   label: string
   href: string
-  icon: TablerIcon
+  icon: AppIcon
   description: string
   /** حداقل یکی از این permissionها برای دیدن item لازم است */
   permissions: readonly Permission[]
@@ -72,7 +71,7 @@ export interface AdminNavItem {
 export interface AdminNavSection {
   key: string
   label: string
-  icon: TablerIcon
+  icon: AppIcon
   items: readonly AdminNavItem[]
 }
 
@@ -301,7 +300,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'installments',
         label: 'خرید قسطی',
         href: '/admin/installments',
-        icon: IconCalendarClock,
+        icon: IconInstallment,
         description: 'قراردادهای قسطی',
         permissions: [PERMISSIONS.INSTALLMENTS_READ],
       },

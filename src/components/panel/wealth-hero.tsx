@@ -14,12 +14,12 @@ import {
   IconCashBanknotePlus,
   IconTransfer,
   IconWallet,
-  IconCalendarClock,
   IconEye,
   IconEyeOff,
   IconPackage,
   IconTrendingUp,
 } from '@tabler/icons-react'
+import { IconInstallment } from '@/components/shared/icon-installment'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { toPersianWords } from '@/lib/utils/format'
@@ -59,7 +59,7 @@ const HERO_BANNERS = [
     kicker: 'طلای قسطی',
     title: 'طلای ۱۸ عیار را قسطی بخرید',
     description: 'پرداخت مرحله‌ای و آسان، مالکیت کامل طلا',
-    icon: IconCalendarClock,
+    icon: IconInstallment,
   },
   {
     href: '/dashboard/assets',

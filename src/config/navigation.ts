@@ -13,21 +13,15 @@
 //   Navigation Config → Desktop Navigation → Mobile Navigation
 // ============================================
 
-import {
-  IconCalendarClock,
-  IconHome,
-  IconRepeat,
-  IconUser,
-  IconWallet,
-  type TablerIcon,
-} from '@tabler/icons-react'
+import { IconHome, IconRepeat, IconUser, IconWallet } from '@tabler/icons-react'
+import { IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
 
 export interface NavItem {
   /** شناسه پایدار — هرگز تغییر نمی‌کند */
   key: 'home' | 'trade' | 'assets' | 'installments' | 'profile'
   label: string
   href: string
-  icon: TablerIcon
+  icon: AppIcon
   /** توضیح کوتاه برای aria/tooltip */
   description: string
 }
@@ -45,7 +39,7 @@ export const PANEL_NAV_ITEMS: readonly NavItem[] = [
     key: 'installments',
     label: 'قسطی',
     href: '/dashboard/installments',
-    icon: IconCalendarClock,
+    icon: IconInstallment,
     description: 'طرح‌های اقساطی و قراردادها',
   },
   {

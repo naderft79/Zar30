@@ -14,7 +14,6 @@ import {
   IconArrowLeft,
   IconArrowUpLeft,
   IconBolt,
-  IconCalendarClock,
   IconCreditCard,
   IconGift,
   IconHistory,
@@ -23,6 +22,7 @@ import {
   IconWallet,
 } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
+import { IconInstallment } from '@/components/shared/icon-installment'
 import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
 import { WealthHero } from './wealth-hero'
@@ -96,7 +96,7 @@ function isIncoming(type: string) {
 // میان‌برهای خدمات — ۴ کارت مربعی زیر hero
 const QUICK_SERVICES = [
   { label: 'زرکار', href: '/dashboard/trade', icon: IconCreditCard },
-  { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconCalendarClock },
+  { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconInstallment },
   { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconBolt },
   { label: 'تحویل فیزیکی', href: '/dashboard/assets', icon: IconPackage },
 ] as const
