@@ -8,7 +8,7 @@
 
 'use client'
 
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -17,12 +17,15 @@ import {
   IconHelpCircle,
   IconHeadset,
   IconLogout,
+  IconRefresh,
   IconUser,
 } from '@tabler/icons-react'
 
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { Logo } from '@/components/shared/logo'
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
+import { OfflineIndicator, DATA_REFRESH_EVENT } from './offline-indicator'
+import { InstallPrompt } from './install-prompt'
 import { cn } from 'cn'
 
 export interface PanelUser {
@@ -224,6 +227,32 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
     router.refresh()
   }
 
+  // ---- Pull-to-refresh موبایل — کشیدن صفحه از بالا به پایین → رفرش داده ----
+  const [pullY, setPullY] = useState(0)
+  const [refreshing, setRefreshing] = useState(false)
+  const pullStart = useRef<number | null>(null)
+
+  function onPullStart(e: React.TouchEvent) {
+    if (window.scrollY <= 0) pullStart.current = e.touches[0]!.clientY
+  }
+  function onPullMove(e: React.TouchEvent) {
+    if (pullStart.current === null || refreshing) return
+    const dy = e.touches[0]!.clientY - pullStart.current
+    if (dy > 0 && window.scrollY <= 0) setPullY(Math.min(dy * 0.45, 96))
+  }
+  function onPullEnd() {
+    if (pullStart.current === null) return
+    pullStart.current = null
+    if (pullY >= 64 && !refreshing) {
+      setRefreshing(true)
+      // صفحات به این event گوش می‌دهند و داده‌شان را رفرش می‌کنند
+      window.dispatchEvent(new Event(DATA_REFRESH_EVENT))
+      void load()
+      setTimeout(() => setRefreshing(false), 700)
+    }
+    setPullY(0)
+  }
+
   if (!user) return <PanelLoadingSkeleton />
 
   const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.mobile
@@ -324,8 +353,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           </div>
         </aside>
 
-        {/* ============ Header — شیشه‌ای فشرده ============ */}
-        <header className="border-border/40 bg-background/70 sticky top-0 z-(--z-sticky) grid h-13 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b px-4 backdrop-blur-xl sm:px-6 md:pr-68 md:pl-8">
+        {/* ============ Header — شیشه‌ای فشرده + safe-area notch ============ */}
+        <header className="border-border/40 bg-background/70 sticky top-0 z-(--z-sticky) grid h-[calc(3.25rem+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center gap-3 border-b px-4 pt-[env(safe-area-inset-top)] backdrop-blur-xl sm:px-6 md:pr-68 md:pl-8">
           {/* موبایل — آواتار پروفایل (سمت راست در RTL) */}
           <div className="flex items-center md:hidden">
             <UserAvatar user={user} size="sm" />
@@ -353,8 +382,32 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        {/* ============ Content ============ */}
-        <main className="pb-28 md:pr-64 md:pb-8">
+        {/* ============ Content + Pull-to-refresh ============ */}
+        <OfflineIndicator />
+        <main
+          className="pb-28 md:pr-64 md:pb-8"
+          onTouchStart={onPullStart}
+          onTouchMove={onPullMove}
+          onTouchEnd={onPullEnd}
+        >
+          {/* نشانگر pull — فلش طلایی که با کشیدن می‌چرخد */}
+          {(pullY > 8 || refreshing) && (
+            <div
+              className="pointer-events-none flex justify-center transition-opacity"
+              style={{ opacity: Math.min(1, pullY / 48) }}
+              aria-hidden="true"
+            >
+              <span
+                className={cn(
+                  'bg-card border-border/60 text-gold-600 mt-1 flex size-8 items-center justify-center rounded-full border shadow-md',
+                  refreshing && 'animate-spin',
+                )}
+                style={{ transform: `rotate(${pullY * 3}deg)` }}
+              >
+                <IconRefresh className="size-4" stroke={2} />
+              </span>
+            </div>
+          )}
           <div
             key={pathname}
             className="animate-page-in mx-auto max-w-6xl p-4 py-5 sm:px-6 sm:py-6"
@@ -362,13 +415,14 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
             {children}
           </div>
         </main>
+        <InstallPrompt />
 
         {/* ============ Mobile — Liquid Glass Bottom Nav (۵ آیتم قرارداد) ============ */}
         <nav
           aria-label="ناوبری اصلی موبایل"
           className="fixed inset-x-4 bottom-3 z-(--z-sticky) pb-[env(safe-area-inset-bottom)] md:hidden"
         >
-          <div className="grid h-[68px] grid-cols-5 rounded-[1.75rem] bg-white/55 shadow-[0_18px_48px_-12px_rgb(16_29_56/0.35),inset_0_1px_0_rgb(255_255_255/0.6)] backdrop-blur-2xl">
+          <div className="bg-navy-900/92 grid h-[68px] grid-cols-5 rounded-[1.75rem] shadow-[0_18px_48px_-12px_rgb(7_13_29/0.6),inset_0_1px_0_rgb(255_255_255/0.08)] backdrop-blur-2xl">
             {PANEL_NAV_ITEMS.map((item) => {
               const active = isNavItemActive(item, pathname)
               const Icon = item.icon
@@ -403,7 +457,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                     <span
                       className={cn(
                         'text-[10px] font-bold transition-colors',
-                        active ? 'text-gold-700' : 'text-navy-800/70',
+                        active ? 'text-gold-400' : 'text-cream-200/60',
                       )}
                     >
                       {item.label}
@@ -420,14 +474,15 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                   aria-label={item.label}
                   className={cn(
                     'flex min-h-[44px] flex-col items-center justify-center gap-1 rounded-xl text-[10px] transition-colors duration-(--duration-fast)',
-                    'focus-visible:bg-navy-500/10 focus-visible:outline-none',
-                    active ? 'text-navy-800 font-semibold' : 'text-navy-800/55',
+                    'focus-visible:bg-gold-500/10 focus-visible:outline-none',
+                    active ? 'text-gold-400 font-semibold' : 'text-cream-200/55',
                   )}
                 >
                   <span
                     className={cn(
                       'relative flex items-center justify-center rounded-xl px-3.5 py-1 transition-all duration-(--duration-normal) ease-(--ease-spring)',
-                      active && 'bg-navy-500/12 animate-nav-pop',
+                      active &&
+                        'bg-gold-500/15 animate-nav-pop shadow-[0_0_16px_rgb(212_175_55/0.25)]',
                     )}
                   >
                     <Icon className="size-5" strokeWidth={active ? 2 : 1.75} />

@@ -25,6 +25,8 @@ import {
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
+import { DATA_REFRESH_EVENT } from './offline-indicator'
+import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { WealthHero } from './wealth-hero'
 import { PriceChart } from './price-chart'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -115,9 +117,12 @@ export function DashboardOverview() {
   const [price, setPrice] = useState<PriceData | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // تراکنش انتخاب‌شده — جزئیات در bottom sheet موبایل
+  const [selectedTx, setSelectedTx] = useState<TxRow | null>(null)
+
   useEffect(() => {
     let cancelled = false
-    ;(async () => {
+    const fetchAll = async () => {
       const [walletRes, txRes, priceRes] = await Promise.all([
         apiGetWithRefresh<{ accounts: WalletAccount[] }>('/api/v1/wallet'),
         apiGetWithRefresh<{ transactions: TxRow[] }>('/api/v1/wallet/transactions?limit=5'),
@@ -128,9 +133,13 @@ export function DashboardOverview() {
       if (txRes.ok) setTxs(txRes.data?.transactions ?? [])
       if (priceRes.ok && priceRes.data) setPrice(priceRes.data)
       setLoading(false)
-    })()
+    }
+    void fetchAll()
+    // pull-to-refresh و reconnect → رفرش داده
+    window.addEventListener(DATA_REFRESH_EVENT, fetchAll)
     return () => {
       cancelled = true
+      window.removeEventListener(DATA_REFRESH_EVENT, fetchAll)
     }
   }, [])
 
@@ -257,47 +266,55 @@ export function DashboardOverview() {
                 const Icon = txIcon(t.type)
                 const incoming = isIncoming(t.type)
                 return (
-                  <li key={t.id} className="flex items-center justify-between gap-3 py-3.5">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <span
-                        className={cn(
-                          'flex size-10 shrink-0 items-center justify-center rounded-xl',
-                          incoming ? 'bg-success/12 text-success' : 'bg-gold-500/12 text-gold-600',
-                        )}
-                      >
-                        <Icon className="size-4.5" strokeWidth={1.75} />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-foreground truncate text-sm font-semibold">
-                          {TX_LABELS[t.type] ?? t.type}
-                        </p>
-                        <p className="text-muted-foreground mt-0.5 text-[10px] tabular-nums">
-                          {new Date(t.createdAt).toLocaleString('fa-IR', {
-                            dateStyle: 'short',
-                            timeStyle: 'short',
-                          })}
-                        </p>
+                  <li key={t.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedTx(t)}
+                      className="hover:bg-muted/50 focus-visible:ring-ring -mx-2 flex w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-xl px-2 py-3.5 text-right transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span
+                          className={cn(
+                            'flex size-10 shrink-0 items-center justify-center rounded-xl',
+                            incoming
+                              ? 'bg-success/12 text-success'
+                              : 'bg-gold-500/12 text-gold-600',
+                          )}
+                        >
+                          <Icon className="size-4.5" strokeWidth={1.75} />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-foreground truncate text-sm font-semibold">
+                            {TX_LABELS[t.type] ?? t.type}
+                          </p>
+                          <p className="text-muted-foreground mt-0.5 text-[10px] tabular-nums">
+                            {new Date(t.createdAt).toLocaleString('fa-IR', {
+                              dateStyle: 'short',
+                              timeStyle: 'short',
+                            })}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-left">
-                      <p
-                        className={cn(
-                          'text-sm font-bold tabular-nums',
-                          incoming ? 'text-success' : 'text-foreground',
-                        )}
-                        dir="ltr"
-                      >
-                        {incoming ? '+' : '-'}
-                        {formatExactAmount(t.amount)}
-                      </p>
-                      <StatusBadge
-                        tone={t.status === 'COMPLETED' ? 'success' : 'neutral'}
-                        dot={false}
-                        className="mt-1"
-                      >
-                        {TX_STATUS[t.status] ?? t.status}
-                      </StatusBadge>
-                    </div>
+                      <div className="text-left">
+                        <p
+                          className={cn(
+                            'text-sm font-bold tabular-nums',
+                            incoming ? 'text-success' : 'text-foreground',
+                          )}
+                          dir="ltr"
+                        >
+                          {incoming ? '+' : '-'}
+                          {formatExactAmount(t.amount)}
+                        </p>
+                        <StatusBadge
+                          tone={t.status === 'COMPLETED' ? 'success' : 'neutral'}
+                          dot={false}
+                          className="mt-1"
+                        >
+                          {TX_STATUS[t.status] ?? t.status}
+                        </StatusBadge>
+                      </div>
+                    </button>
                   </li>
                 )
               })}
@@ -326,6 +343,60 @@ export function DashboardOverview() {
           </CardContent>
         </Card>
       </div>
+
+      {/* ============ جزئیات تراکنش — bottom sheet موبایل ============ */}
+      <BottomSheet
+        open={selectedTx !== null}
+        onClose={() => setSelectedTx(null)}
+        title="جزئیات تراکنش"
+      >
+        {selectedTx && (
+          <div className="space-y-4">
+            {/* مبلغ بزرگ بالای شیت */}
+            <div className="flex flex-col items-center gap-1 pt-1 pb-2">
+              <p
+                className={cn(
+                  'text-2xl font-extrabold tabular-nums',
+                  isIncoming(selectedTx.type) ? 'text-success' : 'text-foreground',
+                )}
+                dir="ltr"
+              >
+                {isIncoming(selectedTx.type) ? '+' : '-'}
+                {formatExactAmount(selectedTx.amount)}
+              </p>
+              <p className="text-muted-foreground text-xs">
+                {TX_LABELS[selectedTx.type] ?? selectedTx.type}
+              </p>
+            </div>
+            <ul className="divide-border/40 divide-y text-sm">
+              <li className="flex items-center justify-between py-3">
+                <span className="text-muted-foreground">وضعیت</span>
+                <StatusBadge
+                  tone={selectedTx.status === 'COMPLETED' ? 'success' : 'neutral'}
+                  dot={false}
+                >
+                  {TX_STATUS[selectedTx.status] ?? selectedTx.status}
+                </StatusBadge>
+              </li>
+              <li className="flex items-center justify-between py-3">
+                <span className="text-muted-foreground">تاریخ</span>
+                <span className="text-foreground font-medium tabular-nums">
+                  {new Date(selectedTx.createdAt).toLocaleString('fa-IR', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  })}
+                </span>
+              </li>
+              <li className="flex items-center justify-between gap-3 py-3">
+                <span className="text-muted-foreground">شناسه</span>
+                <span className="text-muted-foreground truncate font-mono text-[10px]" dir="ltr">
+                  {selectedTx.id}
+                </span>
+              </li>
+            </ul>
+          </div>
+        )}
+      </BottomSheet>
     </div>
   )
 }

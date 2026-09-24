@@ -24,6 +24,7 @@ import { StatusBadge } from '@/components/ui/status-badge'
 import { Button } from '@/components/ui/button'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
+import { useOnlineStatus } from './offline-indicator'
 
 interface WalletAccount {
   assetType: string
@@ -67,6 +68,8 @@ export function TradeClient() {
   )
   const [amount, setAmount] = useState('')
   const [busy, setBusy] = useState(false)
+  // آفلاین → اکشن مالی غیرفعال (هیچ معامله‌ای بدون اتصال واقعی)
+  const online = useOnlineStatus()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
@@ -253,8 +256,20 @@ export function TradeClient() {
             </p>
           )}
 
-          <Button variant="default" className="w-full" onClick={submit} disabled={busy}>
-            {busy ? 'در حال انجام معامله…' : mode === 'BUY' ? 'خرید طلا' : 'فروش طلا'}
+          <Button
+            variant="default"
+            className="w-full"
+            onClick={submit}
+            disabled={busy || !online}
+            title={!online ? 'اتصال اینترنت برقرار نیست' : undefined}
+          >
+            {!online
+              ? 'آفلاین — معامله در دسترس نیست'
+              : busy
+                ? 'در حال انجام معامله…'
+                : mode === 'BUY'
+                  ? 'خرید طلا'
+                  : 'فروش طلا'}
           </Button>
           <p className="text-muted-foreground text-[10px] leading-4">
             معامله با آخرین قیمت معتبر سرور انجام می‌شود — قیمت دقیق در سند سفارش ثبت می‌گردد.

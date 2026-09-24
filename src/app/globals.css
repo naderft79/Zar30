@@ -712,3 +712,45 @@ html {
 .installment-slider::-moz-range-track {
   background: transparent;
 }
+
+/* ============================================
+   Phase 18 — Mobile/PWA primitives
+   ============================================ */
+
+/* حذف هاله لمسی پیش‌فرض موبایل — feedback اختصاصی active:scale داریم */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* جلوگیری از pull-to-refresh/overscroll بومی — نسخه اختصاصی پیاده می‌شود */
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Safe-area helpers — با viewport-fit=cover فعال می‌شوند */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-bottom-mb {
+  margin-bottom: env(safe-area-inset-bottom);
+}
+
+/* Press feedback یکدست برای المان‌های لمسی */
+.pressable {
+  transition:
+    transform var(--duration-fast, 150ms) ease,
+    opacity var(--duration-fast, 150ms) ease;
+}
+.pressable:active {
+  transform: scale(0.97);
+  opacity: 0.88;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable:active {
+    transform: none;
+  }
+}

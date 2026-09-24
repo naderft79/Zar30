@@ -22,6 +22,7 @@ import { StatusBadge } from '@/components/ui/status-badge'
 import { Button } from '@/components/ui/button'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
+import { useOnlineStatus } from './offline-indicator'
 
 interface WalletAccount {
   assetType: string
@@ -69,6 +70,8 @@ export function AssetsClient() {
   const [amount, setAmount] = useState('')
   const [iban, setIban] = useState('')
   const [busy, setBusy] = useState(false)
+  // آفلاین → اکشن مالی غیرفعال (واریز/برداشت بدون اتصال واقعی ممکن نیست)
+  const online = useOnlineStatus()
   // وضعیت برگشت از درگاه پرداخت — ?payment=success|cancelled|expired|failed|replayed
   const [error, setError] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null
@@ -230,9 +233,10 @@ export function AssetsClient() {
                 type="text"
                 inputMode="numeric"
                 dir="ltr"
-                value={amount}
+                // نمایش با جداکننده هزارگان — مقدار خام همیشه digits-only است
+                value={amount ? formatExactAmount(amount) : ''}
                 onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ''))}
-                placeholder="1000000"
+                placeholder="1,000,000"
                 className={inputClass}
               />
             </label>
@@ -263,8 +267,19 @@ export function AssetsClient() {
               </p>
             )}
             <div className="flex items-center gap-2">
-              <Button variant="default" onClick={submit} disabled={busy}>
-                {busy ? 'در حال ثبت…' : form === 'deposit' ? 'پرداخت' : 'ثبت درخواست'}
+              <Button
+                variant="default"
+                onClick={submit}
+                disabled={busy || !online}
+                title={!online ? 'اتصال اینترنت برقرار نیست' : undefined}
+              >
+                {!online
+                  ? 'آفلاین'
+                  : busy
+                    ? 'در حال ثبت…'
+                    : form === 'deposit'
+                      ? 'پرداخت'
+                      : 'ثبت درخواست'}
               </Button>
               <Button variant="ghost" onClick={() => setForm(null)} disabled={busy}>
                 انصراف

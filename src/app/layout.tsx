@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { Providers } from '@/components/providers/providers'
 import './globals.css'
@@ -38,6 +38,19 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
+}
+
+// PWA/Mobile viewport — viewportFit=cover برای env(safe-area-inset-*) الزامی است
+// interactiveWidget=resizes-content → کیبورد موبایل layout را می‌چیند نه اینکه CTA را بپوشاند
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  interactiveWidget: 'resizes-content',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f7f0dd' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b1526' },
+  ],
 }
 
 export default function RootLayout({

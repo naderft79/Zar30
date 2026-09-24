@@ -3,11 +3,12 @@
   "short_name": "زرسی",
   "description": "خرید، فروش و سرمایه‌گذاری روی طلای آب‌شده با شفافیت کامل",
   "id": "com.zar30.app",
-  "start_url": "/",
+  "start_url": "/dashboard",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#1a2a4f",
-  "background_color": "#f5ecd7",
+  "theme_color": "#101d38",
+  "background_color": "#fbf7ec",
   "dir": "rtl",
   "lang": "fa",
   "categories": ["finance", "business"],
@@ -34,12 +35,22 @@
   "shortcuts": [
     {
       "name": "خرید طلا",
-      "url": "/dashboard/trading",
+      "url": "/dashboard/trade?side=buy",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
-      "name": "کیف پول",
-      "url": "/dashboard/wallet",
+      "name": "فروش طلا",
+      "url": "/dashboard/trade?side=sell",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "دارایی و کیف پول",
+      "url": "/dashboard/assets",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "خرید قسطی",
+      "url": "/dashboard/installments",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ]
