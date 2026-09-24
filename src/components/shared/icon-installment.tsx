@@ -47,6 +47,21 @@ export function IconInstantCredit({ className, style }: AppIconProps) {
   )
 }
 
+// آیکون تحویل فیزیکی — تصویر ۳بعدی جعبه طلا
+export function IconDelivery({ className, style }: AppIconProps) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/icons/gold-box.png"
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className={className}
+      style={style}
+    />
+  )
+}
+
 // آیکون زرکار — تصویر ۳بعدی شمش طلا
 export function IconZarkar({ className, style }: AppIconProps) {
   return (

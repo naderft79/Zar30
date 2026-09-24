@@ -36,7 +36,6 @@ import {
   IconMapPin,
   IconDevices,
   IconPackage,
-  IconPackages,
   IconScript,
   IconSettings,
   IconShare2,
@@ -55,7 +54,7 @@ import {
   IconWallet,
   IconBolt,
 } from '@tabler/icons-react'
-import { IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
+import { IconDelivery, IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
 import { PERMISSIONS, type Permission } from '@/lib/auth/rbac'
 
 export interface AdminNavItem {
@@ -324,7 +323,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'product-transactions',
         label: 'تحویل فیزیکی',
         href: '/admin/product-transactions',
-        icon: IconPackages,
+        icon: IconDelivery,
         description: 'درخواست‌ها و سفارش‌های تحویل فیزیکی',
         permissions: [PERMISSIONS.GOLD_READ],
       },

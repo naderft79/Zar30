@@ -16,10 +16,9 @@ import {
   IconWallet,
   IconEye,
   IconEyeOff,
-  IconPackage,
   IconTrendingUp,
 } from '@tabler/icons-react'
-import { IconInstallment } from '@/components/shared/icon-installment'
+import { IconDelivery, IconInstallment } from '@/components/shared/icon-installment'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { toPersianWords } from '@/lib/utils/format'
@@ -66,7 +65,7 @@ const HERO_BANNERS = [
     kicker: 'تحویل فیزیکی طلا',
     title: 'طلای دیجیتال شما، قابل تحویل فیزیکی',
     description: 'درخواست تحویل طلای فیزیکی از کیف پول طلایی',
-    icon: IconPackage,
+    icon: IconDelivery,
   },
 ] as const
 

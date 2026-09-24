@@ -6,7 +6,7 @@
 // ============================================
 
 import Link from 'next/link'
-import { IconPackage } from '@tabler/icons-react'
+import { IconDelivery } from '@/components/shared/icon-installment'
 import { DELIVERY_BULLETS } from '@/lib/data/landing'
 import { Container } from '@/components/shared/container'
 import { Reveal } from './reveal'
@@ -22,7 +22,7 @@ export function PhysicalDelivery() {
           <Reveal>
             <div>
               <p className="text-gold-600 mb-2 inline-flex items-center gap-1.5 text-sm font-semibold">
-                <IconPackage className="size-4" aria-hidden="true" />
+                <IconDelivery className="size-4" aria-hidden="true" />
                 تحویل فیزیکی
               </p>
               <h2

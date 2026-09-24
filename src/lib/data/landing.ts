@@ -13,7 +13,6 @@ import {
   IconFileSearch,
   IconBuildingBank,
   IconLock,
-  IconPackage,
   IconReceipt,
   IconShieldCheck,
   IconTrendingUp,
@@ -21,7 +20,7 @@ import {
   IconUserCheck,
   IconWallet,
 } from '@tabler/icons-react'
-import { IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
+import { IconDelivery, IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
 
 // ---------- ناوبری Header ----------
 export interface NavLink {
@@ -82,7 +81,7 @@ export const TRUST_CARDS: TrustCard[] = [
     description: 'احراز هویت چندمرحله‌ای، رمزنگاری داده‌ها و نشست‌های قابل مدیریت.',
   },
   {
-    icon: IconPackage,
+    icon: IconDelivery,
     title: 'تحویل فیزیکی',
     description: 'طلای دیجیتال خود را با بسته‌بندی امن و بیمه‌شده تحویل بگیرید.',
   },
@@ -175,7 +174,7 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
       { icon: IconTrendingUp, text: 'طرح‌های سرمایه‌گذاری با سود طلایی' },
       { icon: IconLock, text: 'طلای شما جدا و متناظر با خزانه نگهداری می‌شود' },
       { icon: IconFileSearch, text: 'تاریخچه کامل دارایی قابل پیگیری است' },
-      { icon: IconPackage, text: 'امکان تحویل فیزیکی در پایان طرح' },
+      { icon: IconDelivery, text: 'امکان تحویل فیزیکی در پایان طرح' },
     ],
     cta: { href: '/register', label: 'شروع سرمایه‌گذاری' },
     visual: 'investment',
@@ -200,7 +199,7 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
 
 // ---------- تحویل فیزیکی ----------
 export const DELIVERY_BULLETS: FeatureBulletItem[] = [
-  { icon: IconPackage, text: 'ثبت درخواست تحویل از پنل کاربری' },
+  { icon: IconDelivery, text: 'ثبت درخواست تحویل از پنل کاربری' },
   { icon: IconShieldCheck, text: 'بسته‌بندی امن و بیمه‌شده' },
   { icon: IconReceipt, text: 'فاکتور رسمی همراه مرسوله' },
   { icon: IconRosetteDiscountCheck, text: 'تضمین اصالت طلای تحویلی' },

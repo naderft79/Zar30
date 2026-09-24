@@ -15,12 +15,12 @@ import {
   IconArrowUpLeft,
   IconGift,
   IconHistory,
-  IconPackage,
   IconRepeat,
   IconWallet,
 } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import {
+  IconDelivery,
   IconInstallment,
   IconInstantCredit,
   IconZarkar,
@@ -100,7 +100,7 @@ const QUICK_SERVICES = [
   { label: 'زرکار', href: '/dashboard/trade', icon: IconZarkar },
   { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconInstallment },
   { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconInstantCredit },
-  { label: 'تحویل فیزیکی', href: '/dashboard/assets', icon: IconPackage },
+  { label: 'تحویل فیزیکی', href: '/dashboard/assets', icon: IconDelivery },
 ] as const
 
 export function DashboardOverview() {
