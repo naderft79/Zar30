@@ -212,7 +212,7 @@ export function InstallmentCheckoutClient() {
 
       {/* مودال زمان‌بندی اقساط — سررسید هر ۳۰ روز از امروز */}
       <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="w-[calc(100%-2.5rem)] max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-base">زمان‌بندی اقساط</DialogTitle>
             <DialogDescription>هر قسط هر ۳۰ روز سررسید می‌شود.</DialogDescription>
@@ -230,7 +230,7 @@ export function InstallmentCheckoutClient() {
 
       {/* مودال قوانین و مقررات — تمام‌قد با دکمه قبول ثابت در پایین */}
       <Dialog open={termsOpen} onOpenChange={setTermsOpen}>
-        <DialogContent className="flex h-[85dvh] max-w-lg flex-col gap-0 overflow-hidden p-0">
+        <DialogContent className="flex h-[85dvh] w-[calc(100%-2.5rem)] max-w-md flex-col gap-0 overflow-hidden p-0">
           <DialogHeader className="border-border/60 shrink-0 border-b px-5 py-4">
             <DialogTitle className="text-base">قوانین و مقررات خرید اقساطی از زرسی</DialogTitle>
           </DialogHeader>
