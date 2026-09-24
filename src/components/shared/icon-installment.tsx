@@ -62,6 +62,21 @@ export function IconDelivery({ className, style }: AppIconProps) {
   )
 }
 
+// آیکون خانه — تصویر ۳بعدی خانه
+export function IconHome3d({ className, style }: AppIconProps) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/icons/3d-house.png"
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className={className}
+      style={style}
+    />
+  )
+}
+
 // آیکون کیف پول — تصویر ۳بعدی کیف پول
 export function IconWallet3d({ className, style }: AppIconProps) {
   return (

@@ -13,8 +13,13 @@
 //   Navigation Config → Desktop Navigation → Mobile Navigation
 // ============================================
 
-import { IconHome, IconRepeat, IconUser } from '@tabler/icons-react'
-import { IconInstallment, IconWallet3d, type AppIcon } from '@/components/shared/icon-installment'
+import { IconRepeat, IconUser } from '@tabler/icons-react'
+import {
+  IconHome3d,
+  IconInstallment,
+  IconWallet3d,
+  type AppIcon,
+} from '@/components/shared/icon-installment'
 
 export interface NavItem {
   /** شناسه پایدار — هرگز تغییر نمی‌کند */
@@ -32,7 +37,7 @@ export const PANEL_NAV_ITEMS: readonly NavItem[] = [
     key: 'home',
     label: 'خانه',
     href: '/dashboard',
-    icon: IconHome,
+    icon: IconHome3d,
     description: 'داشبورد و خلاصه حساب',
   },
   {
