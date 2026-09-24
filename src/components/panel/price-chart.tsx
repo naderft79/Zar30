@@ -128,8 +128,8 @@ export function PriceChart() {
     () => points.map((p) => ({ t: p.t, v: p[side] })),
     [points, side],
   )
-  // داده رندر: جدیدترین نقطه اول آرایه → چپ‌ترین نقطه چارت (خوانش راست‌به‌چپ)
-  const chartData = useMemo(() => [...data].reverse(), [data])
+  // داده رندر: قدیمی‌ترین نقطه سمت چپ → جدیدترین سمت راست (خوانش چپ‌به‌راست)
+  const chartData = data
 
   const first = data[0]?.v ?? 0
   const last = data[data.length - 1]?.v ?? 0
@@ -290,9 +290,9 @@ export function PriceChart() {
                   content={<PriceTooltip />}
                   cursor={{ stroke: 'var(--color-border)', strokeWidth: 1 }}
                 />
-                {/* نقطه طلایی آخرین قیمت — جدیدترین نقطه، سمت چپ چارت RTL */}
+                {/* نقطه طلایی آخرین قیمت — جدیدترین نقطه، سمت راست چارت */}
                 <ReferenceDot
-                  x={chartData[0]!.t}
+                  x={chartData[chartData.length - 1]!.t}
                   y={last}
                   r={4}
                   fill="#c9a227"
