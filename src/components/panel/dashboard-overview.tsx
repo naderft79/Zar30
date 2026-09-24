@@ -13,8 +13,12 @@ import {
   IconArrowDownLeft,
   IconArrowLeft,
   IconArrowUpLeft,
+  IconBolt,
+  IconCalendarClock,
+  IconCreditCard,
   IconGift,
   IconHistory,
+  IconPackage,
   IconRepeat,
   IconWallet,
 } from '@tabler/icons-react'
@@ -88,6 +92,14 @@ function txIcon(type: string) {
 function isIncoming(type: string) {
   return type === 'DEPOSIT' || type === 'SELL'
 }
+
+// میان‌برهای خدمات — ۴ کارت مربعی زیر hero
+const QUICK_SERVICES = [
+  { label: 'زرکار', href: '/dashboard/trade', icon: IconCreditCard },
+  { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconCalendarClock },
+  { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconBolt },
+  { label: 'تحویل فیزیکی', href: '/dashboard/assets', icon: IconPackage },
+] as const
 
 export function DashboardOverview() {
   const { user } = usePanelUser()
@@ -195,6 +207,22 @@ export function DashboardOverview() {
         lockedToman={toman?.lockedBalance ?? '0'}
         loading={loading}
       />
+
+      {/* ============ ۲. میان‌برهای خدمات — ۴ کارت مربعی ============ */}
+      <div className="grid grid-cols-4 gap-3">
+        {QUICK_SERVICES.map((s) => (
+          <Link
+            key={s.label}
+            href={s.href}
+            className="border-border/60 bg-card hover:border-gold-500/40 focus-visible:ring-ring flex aspect-square flex-col items-center justify-center gap-2.5 rounded-2xl border transition-all duration-(--duration-normal) hover:shadow-md focus-visible:ring-2 focus-visible:outline-none"
+          >
+            <span className="bg-gold-500/12 flex size-10 items-center justify-center rounded-xl sm:size-11">
+              <s.icon className="text-gold-600 size-5 sm:size-5.5" stroke={1.75} />
+            </span>
+            <span className="text-foreground text-[10px] font-medium sm:text-xs">{s.label}</span>
+          </Link>
+        ))}
+      </div>
 
       {/* ============ ۳. تراکنش‌های اخیر — real stream ============ */}
       <Card>
