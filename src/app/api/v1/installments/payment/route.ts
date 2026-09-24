@@ -32,8 +32,12 @@ export const POST = withErrorHandler(async (req: Request) => {
     throw ApiError.badRequest('مبلغ یا مدت طرح خارج از بازه مجاز است')
   }
 
-  const origin = new URL(req.url).origin
-  const callbackUrl = `${origin}/api/v1/installments/callback`
+  // origin از Host header ساخته می‌شود — req.url در dev ممکن است localhost باشد
+  // در حالی که کاربر با IP شبکه (LAN) سایت را باز کرده است
+  const reqUrl = new URL(req.url)
+  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? reqUrl.host
+  const proto = req.headers.get('x-forwarded-proto') ?? reqUrl.protocol.replace(':', '') ?? 'http'
+  const callbackUrl = `${proto}://${host}/api/v1/installments/callback`
 
   const gateway = getPaymentGateway('zarinpal-sandbox')
   const gatewayReq = await gateway
