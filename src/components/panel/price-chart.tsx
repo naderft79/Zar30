@@ -236,13 +236,13 @@ export function PriceChart() {
             داده کافی برای رسم نمودار در این بازه ثبت نشده است
           </div>
         ) : (
-          // حذف هاله/حاشیه لمسی موبایل روی سطح چارت
+          // چارت تمام‌عرض — خروج از padding کارت + حذف هاله/حاشیه لمسی موبایل
           <div
-            className="h-48 w-full [-webkit-tap-highlight-color:transparent] sm:h-56 [&_.recharts-surface]:outline-none [&_.recharts-wrapper]:outline-none [&_svg]:outline-none"
+            className="-mx-6 h-48 w-[calc(100%+3rem)] [-webkit-tap-highlight-color:transparent] sm:h-56 [&_.recharts-surface]:outline-none [&_.recharts-wrapper]:outline-none [&_svg]:outline-none"
             dir="ltr"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 20, right: 6, bottom: 8, left: 6 }}>
+              <AreaChart data={chartData} margin={{ top: 20, right: 0, bottom: 8, left: 0 }}>
                 <defs>
                   <linearGradient id="panel-price-fill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={stroke} stopOpacity={0.2} />
@@ -266,7 +266,7 @@ export function PriceChart() {
                 <YAxis
                   domain={['dataMin - 60000', 'dataMax + 60000']}
                   tick={<PriceAxisTick />}
-                  width={46}
+                  width={44}
                   axisLine={false}
                   tickLine={false}
                   orientation="left"
