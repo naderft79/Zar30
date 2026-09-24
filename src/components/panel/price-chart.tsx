@@ -280,8 +280,9 @@ export function PriceChart() {
                 <YAxis
                   domain={['dataMin - 20000', 'dataMax + 20000']}
                   tick={{ fill: 'var(--color-muted-foreground)', fontSize: 10 }}
+                  // RLI ایزوله راست‌به‌چپ — «م» همیشه بصری بعد از عدد می‌نشیند
                   tickFormatter={(v: number) =>
-                    `${toPersianDigits((v / 1_000_000).toFixed(1).replace('.', '٫'))} م`
+                    `⁧م ${toPersianDigits((v / 1_000_000).toFixed(1).replace('.', '٫'))}⁩`
                   }
                   width={40}
                   axisLine={false}
