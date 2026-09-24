@@ -26,6 +26,7 @@ import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
 import { WealthHero } from './wealth-hero'
+import { PriceChart } from './price-chart'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -221,6 +222,9 @@ export function DashboardOverview() {
           </Link>
         ))}
       </div>
+
+      {/* ============ ۲.۵ نمودار لحظه‌ای قیمت طلا ============ */}
+      <PriceChart />
 
       {/* ============ ۳. تراکنش‌های اخیر — real stream ============ */}
       <Card>
