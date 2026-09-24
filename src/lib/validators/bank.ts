@@ -116,3 +116,8 @@ export const subscribeZarkarSchema = z.object({
   planId: z.string().uuid('شناسه طرح نامعتبر است'),
   goldGrams: z.string().regex(/^\d+(\.\d{1,6})?$/, 'مقدار طلا نامعتبر است'),
 })
+
+export const convertCoinSchema = z.object({
+  productId: z.string().uuid('شناسه محصول نامعتبر است'),
+  quantity: z.number().int('تعداد باید عدد صحیح باشد').min(1).max(20),
+})

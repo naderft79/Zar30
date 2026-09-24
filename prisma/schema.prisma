@@ -255,6 +255,7 @@ model User {
   receivedTransfers InternalTransfer[]  @relation("TransferRecipient")
   priceAlerts       PriceAlert[]
   sipPlans          RecurringBuyPlan[]
+  coinHoldings      CoinHolding[]
 
   @@index([referredById])
   @@index([status])
@@ -751,6 +752,45 @@ model RecurringBuyPlan {
   @@index([userId])
   @@index([active, nextRunAt])
   @@map("recurring_buy_plans")
+}
+
+// ============================================
+// Coins & Bars (سکه و شمش)
+// ============================================
+// تبدیل طلای آب‌شده به سکه/شمش — کاربر به اندازه وزن محصول طلا
+// و به اندازه اجرت تومان می‌پردازد؛ دارایی در CoinHolding ثبت می‌شود
+
+model CoinProduct {
+  id           String   @id @default(uuid())
+  code         String   @unique
+  name         String
+  kind         String   // COIN | BAR
+  weightGrams  Decimal  @db.Decimal(18, 8) @map("weight_grams")
+  premiumToman BigInt   @map("premium_toman") // اجرت ساخت/ضرب به ازای هر واحد
+  active       Boolean  @default(true)
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  holdings CoinHolding[]
+
+  @@map("coin_products")
+}
+
+model CoinHolding {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  productId     String   @map("product_id")
+  quantity      Int      @default(0)
+  journalEntryId String? @map("journal_entry_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product CoinProduct  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@map("coin_holdings")
 }
 
 // ============================================
