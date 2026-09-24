@@ -43,11 +43,11 @@ interface ChartPoint {
   v: number
 }
 
-// لیبل محور زمان — روزانه (۲۴ساعت): ساعت، هفتگی/ماهانه: روز+ماه شمسی
+// لیبل محور زمان — روزانه/هفتگی: روز+ماه شمسی، ماهانه: ماه+سال شمسی
 function axisLabel(iso: string, range: RangeKey) {
   const d = new Date(iso)
-  if (range === 'daily') {
-    return d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })
+  if (range === 'monthly') {
+    return d.toLocaleDateString('fa-IR', { month: 'short', year: 'numeric' })
   }
   return d.toLocaleDateString('fa-IR', { day: 'numeric', month: 'short' })
 }
@@ -188,15 +188,7 @@ export function PriceChart() {
               <div className="skeleton-shimmer h-7 w-36 rounded-md" />
             ) : last > 0 ? (
               <>
-                <p
-                  className="text-foreground text-xl font-extrabold tabular-nums sm:text-2xl"
-                  dir="ltr"
-                >
-                  {formatExactAmount(String(last))}
-                  <span className="text-muted-foreground mr-1.5 text-xs font-normal">
-                    تومان / گرم
-                  </span>
-                </p>
+                {/* لیبل تغییر قیمت — سمت راست (اول در چیدمان RTL) */}
                 <span
                   className={cn(
                     'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums',
@@ -212,6 +204,16 @@ export function PriceChart() {
                   {up ? '+' : '−'}
                   {toPersianDigits(Math.abs(changePct).toFixed(2))}٪
                 </span>
+                {/* قیمت — «تومان / گرم» قبل از عدد */}
+                <p
+                  className="text-foreground text-xl font-extrabold tabular-nums sm:text-2xl"
+                  dir="ltr"
+                >
+                  <span className="text-muted-foreground ml-1.5 text-xs font-normal">
+                    تومان / گرم
+                  </span>
+                  {formatExactAmount(String(last))}
+                </p>
               </>
             ) : (
               <p className="text-muted-foreground text-xs">داده کافی برای نمایش نیست</p>
