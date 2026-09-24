@@ -19,8 +19,8 @@ import {
   IconTag,
   IconUserCheck,
   IconUsers,
+  IconWallet,
 } from '@tabler/icons-react'
-import { IconWallet3d } from '@/components/shared/icon-installment'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import type { AdminDashboardData } from '@/lib/services/admin-dashboard.service'
 import { AdminMetric } from '@/components/admin/admin-metric'
@@ -180,7 +180,7 @@ export function AdminDashboard() {
           label="مانده حساب‌های تومانی کاربران"
           value={formatExactAmount(data.financial.tomanBalance)}
           unit="تومان"
-          icon={IconWallet3d}
+          icon={IconWallet}
         />
         <AdminMetric
           label="موجودی طلای کاربران"

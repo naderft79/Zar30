@@ -22,8 +22,8 @@ import {
   IconDeviceFloppy,
   IconShieldCheck,
   IconDeviceMobile,
+  IconUser,
 } from '@tabler/icons-react'
-import { IconProfile } from '@/components/shared/icon-installment'
 import { apiPut } from '@/lib/api/client'
 import { usePanelUser, type PanelUser } from './panel-shell'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -170,7 +170,7 @@ export function ProfileClient() {
         <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <IconProfile className="size-5" />
+              <IconUser className="text-gold-600 size-5" stroke={1.75} />
               اطلاعات حساب
             </CardTitle>
           </CardHeader>

@@ -17,10 +17,10 @@ import {
   IconHelpCircle,
   IconHeadset,
   IconLogout,
+  IconUser,
 } from '@tabler/icons-react'
 
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
-import { IconProfile } from '@/components/shared/icon-installment'
 import { Logo } from '@/components/shared/logo'
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
 import { cn } from 'cn'
@@ -183,7 +183,7 @@ function UserAvatar({
         className,
       )}
     >
-      <IconProfile className="size-4.5" aria-hidden="true" />
+      <IconUser className="size-4.5" stroke={1.75} aria-hidden="true" />
     </Link>
   )
 }
@@ -299,7 +299,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
               className="group bg-muted/60 hover:bg-muted border-border hover:border-gold-500/30 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all duration-(--duration-normal)"
             >
               <span className="border-border/50 bg-navy-700 text-cream-50 flex size-9 shrink-0 items-center justify-center rounded-xl border">
-                <IconProfile className="size-4.5" aria-hidden="true" />
+                <IconUser className="size-4.5" stroke={1.75} aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="text-foreground block truncate text-xs font-medium">

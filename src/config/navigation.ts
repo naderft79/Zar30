@@ -13,21 +13,21 @@
 //   Navigation Config → Desktop Navigation → Mobile Navigation
 // ============================================
 
-import { IconRepeat } from '@tabler/icons-react'
 import {
-  IconHome3d,
-  IconInstallment,
-  IconProfile,
-  IconWallet3d,
-  type AppIcon,
-} from '@/components/shared/icon-installment'
+  IconCalendarClock,
+  IconHome,
+  IconRepeat,
+  IconUser,
+  IconWallet,
+  type TablerIcon,
+} from '@tabler/icons-react'
 
 export interface NavItem {
   /** شناسه پایدار — هرگز تغییر نمی‌کند */
   key: 'home' | 'trade' | 'assets' | 'installments' | 'profile'
   label: string
   href: string
-  icon: AppIcon
+  icon: TablerIcon
   /** توضیح کوتاه برای aria/tooltip */
   description: string
 }
@@ -38,14 +38,14 @@ export const PANEL_NAV_ITEMS: readonly NavItem[] = [
     key: 'home',
     label: 'خانه',
     href: '/dashboard',
-    icon: IconHome3d,
+    icon: IconHome,
     description: 'داشبورد و خلاصه حساب',
   },
   {
     key: 'installments',
     label: 'قسطی',
     href: '/dashboard/installments',
-    icon: IconInstallment,
+    icon: IconCalendarClock,
     description: 'طرح‌های اقساطی و قراردادها',
   },
   {
@@ -59,14 +59,14 @@ export const PANEL_NAV_ITEMS: readonly NavItem[] = [
     key: 'assets',
     label: 'دارایی',
     href: '/dashboard/assets',
-    icon: IconWallet3d,
+    icon: IconWallet,
     description: 'کیف پول، موجودی و تراکنش‌ها',
   },
   {
     key: 'profile',
     label: 'پروفایل',
     href: '/dashboard/profile',
-    icon: IconProfile,
+    icon: IconUser,
     description: 'اطلاعات شخصی، امنیت و تنظیمات',
   },
 ] as const

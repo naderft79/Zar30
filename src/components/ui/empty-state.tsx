@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { type AppIcon } from '@/components/shared/icon-installment'
+import { type TablerIcon } from '@tabler/icons-react'
 import { cn } from 'cn'
 import { Button } from './button'
 
@@ -7,7 +7,7 @@ import { Button } from './button'
 // Empty State — طراحی اختصاصی با tone برند
 // ============================================
 interface EmptyStateProps {
-  icon?: AppIcon
+  icon?: TablerIcon
   title: string
   description?: string
   action?: { label: string; onClick?: () => void; href?: string }

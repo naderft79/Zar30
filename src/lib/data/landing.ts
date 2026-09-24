@@ -7,24 +7,22 @@
 // ============================================
 
 import {
+  type TablerIcon,
   IconArrowsLeftRight,
   IconRosetteDiscountCheck,
+  IconCalendarClock,
   IconCoins,
   IconFileSearch,
   IconBuildingBank,
   IconLock,
+  IconPackage,
   IconReceipt,
   IconShieldCheck,
   IconTrendingUp,
   IconTruck,
   IconUserCheck,
+  IconWallet,
 } from '@tabler/icons-react'
-import {
-  IconDelivery,
-  IconInstallment,
-  IconWallet3d,
-  type AppIcon,
-} from '@/components/shared/icon-installment'
 
 // ---------- ناوبری Header ----------
 export interface NavLink {
@@ -63,7 +61,7 @@ export const NAV_ITEMS: NavItem[] = [
 
 // ---------- کارت‌های اعتماد ----------
 export interface TrustCard {
-  icon: AppIcon
+  icon: TablerIcon
   title: string
   description: string
 }
@@ -85,7 +83,7 @@ export const TRUST_CARDS: TrustCard[] = [
     description: 'احراز هویت چندمرحله‌ای، رمزنگاری داده‌ها و نشست‌های قابل مدیریت.',
   },
   {
-    icon: IconDelivery,
+    icon: IconPackage,
     title: 'تحویل فیزیکی',
     description: 'طلای دیجیتال خود را با بسته‌بندی امن و بیمه‌شده تحویل بگیرید.',
   },
@@ -106,7 +104,7 @@ export const TRUST_STRIP_ITEMS = [
 
 // ---------- مراحل کار (۴ مرحله) ----------
 export interface Step {
-  icon: AppIcon
+  icon: TablerIcon
   title: string
   description: string
 }
@@ -118,7 +116,7 @@ export const HOW_IT_WORKS_STEPS: Step[] = [
     description: 'با شماره موبایل ثبت‌نام کنید و هویت خود را با کارت ملی تایید کنید.',
   },
   {
-    icon: IconWallet3d,
+    icon: IconWallet,
     title: 'شارژ حساب',
     description: 'کیف پول تومانی خود را از طریق درگاه بانکی شارژ کنید.',
   },
@@ -136,7 +134,7 @@ export const HOW_IT_WORKS_STEPS: Step[] = [
 
 // ---------- بخش‌های ویژگی محصول ----------
 export interface FeatureBulletItem {
-  icon: AppIcon
+  icon: TablerIcon
   text: string
 }
 
@@ -178,7 +176,7 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
       { icon: IconTrendingUp, text: 'طرح‌های سرمایه‌گذاری با سود طلایی' },
       { icon: IconLock, text: 'طلای شما جدا و متناظر با خزانه نگهداری می‌شود' },
       { icon: IconFileSearch, text: 'تاریخچه کامل دارایی قابل پیگیری است' },
-      { icon: IconDelivery, text: 'امکان تحویل فیزیکی در پایان طرح' },
+      { icon: IconPackage, text: 'امکان تحویل فیزیکی در پایان طرح' },
     ],
     cta: { href: '/register', label: 'شروع سرمایه‌گذاری' },
     visual: 'investment',
@@ -191,7 +189,7 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
     description:
       'مبلغ طلا را به اقساط تقسیم کنید و پس از تسویه کامل، مالکیت طلا به شما منتقل می‌شود. شرایط و نرخ‌ها شفاف نمایش داده می‌شود.',
     bullets: [
-      { icon: IconInstallment, text: 'طرح‌های ۳ تا ۱۸ ماهه' },
+      { icon: IconCalendarClock, text: 'طرح‌های ۱۲، ۱۸ و ۲۴ ماهه' },
       { icon: IconShieldCheck, text: 'بدون نیاز به چک در اعتبارسنجی داخلی' },
       { icon: IconCoins, text: 'طلا پس از تسویه به کیف پول شما اضافه می‌شود' },
       { icon: IconReceipt, text: 'مبلغ هر قسط از ابتدا مشخص است' },
@@ -203,7 +201,7 @@ export const FEATURE_SECTIONS: FeatureSectionData[] = [
 
 // ---------- تحویل فیزیکی ----------
 export const DELIVERY_BULLETS: FeatureBulletItem[] = [
-  { icon: IconDelivery, text: 'ثبت درخواست تحویل از پنل کاربری' },
+  { icon: IconPackage, text: 'ثبت درخواست تحویل از پنل کاربری' },
   { icon: IconShieldCheck, text: 'بسته‌بندی امن و بیمه‌شده' },
   { icon: IconReceipt, text: 'فاکتور رسمی همراه مرسوله' },
   { icon: IconRosetteDiscountCheck, text: 'تضمین اصالت طلای تحویلی' },
@@ -311,7 +309,7 @@ export const FOOTER_BADGES = [
 export interface Stat {
   value: string
   label: string
-  icon: AppIcon
+  icon: TablerIcon
 }
 
 export const STATS: Stat[] = [

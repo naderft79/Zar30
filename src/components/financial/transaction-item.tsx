@@ -1,5 +1,11 @@
-import { IconArrowDownLeft, IconArrowUpLeft, IconRepeat } from '@tabler/icons-react'
-import { IconInstallment, IconWallet3d, type AppIcon } from '@/components/shared/icon-installment'
+import {
+  IconArrowDownLeft,
+  IconArrowUpLeft,
+  IconCalendarClock,
+  IconRepeat,
+  IconWallet,
+  type TablerIcon,
+} from '@tabler/icons-react'
 import { cn } from 'cn'
 import { FinancialNumber } from './financial-number'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -12,26 +18,27 @@ import { StatusBadge } from '@/components/ui/status-badge'
 export type TransactionKind = 'deposit' | 'withdraw' | 'buy' | 'sell' | 'installment' | 'transfer'
 export type TransactionStatus = 'success' | 'pending' | 'failed'
 
-const kindConfig: Record<TransactionKind, { icon: AppIcon; label: string; iconClass: string }> = {
-  deposit: { icon: IconArrowDownLeft, label: 'واریز', iconClass: 'bg-success/10 text-success' },
-  withdraw: { icon: IconArrowUpLeft, label: 'برداشت', iconClass: 'bg-error/10 text-error' },
-  buy: {
-    icon: IconRepeat,
-    label: 'خرید طلا',
-    iconClass: 'bg-gold-500/15 text-gold-600 dark:text-gold-400',
-  },
-  sell: {
-    icon: IconRepeat,
-    label: 'فروش طلا',
-    iconClass: 'bg-muted text-muted-foreground',
-  },
-  installment: {
-    icon: IconInstallment,
-    label: 'پرداخت قسط',
-    iconClass: 'bg-info/10 text-info',
-  },
-  transfer: { icon: IconWallet3d, label: 'انتقال', iconClass: 'bg-muted text-muted-foreground' },
-}
+const kindConfig: Record<TransactionKind, { icon: TablerIcon; label: string; iconClass: string }> =
+  {
+    deposit: { icon: IconArrowDownLeft, label: 'واریز', iconClass: 'bg-success/10 text-success' },
+    withdraw: { icon: IconArrowUpLeft, label: 'برداشت', iconClass: 'bg-error/10 text-error' },
+    buy: {
+      icon: IconRepeat,
+      label: 'خرید طلا',
+      iconClass: 'bg-gold-500/15 text-gold-600 dark:text-gold-400',
+    },
+    sell: {
+      icon: IconRepeat,
+      label: 'فروش طلا',
+      iconClass: 'bg-muted text-muted-foreground',
+    },
+    installment: {
+      icon: IconCalendarClock,
+      label: 'پرداخت قسط',
+      iconClass: 'bg-info/10 text-info',
+    },
+    transfer: { icon: IconWallet, label: 'انتقال', iconClass: 'bg-muted text-muted-foreground' },
+  }
 
 const statusTone: Record<
   TransactionStatus,

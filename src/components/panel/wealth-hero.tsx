@@ -13,11 +13,13 @@ import Link from 'next/link'
 import {
   IconCashBanknotePlus,
   IconTransfer,
+  IconWallet,
+  IconCalendarClock,
   IconEye,
   IconEyeOff,
+  IconPackage,
   IconTrendingUp,
 } from '@tabler/icons-react'
-import { IconDelivery, IconInstallment, IconWallet3d } from '@/components/shared/icon-installment'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { toPersianWords } from '@/lib/utils/format'
@@ -40,7 +42,7 @@ interface WealthHeroProps {
 const HERO_ACTIONS = [
   { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: IconCashBanknotePlus },
   { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: IconTransfer },
-  { href: '/dashboard/assets', label: 'دارایی', icon: IconWallet3d },
+  { href: '/dashboard/assets', label: 'دارایی', icon: IconWallet },
 ] as const
 
 // بنرهای چرخان داخل کارت — هر ۵ ثانیه بنر بعدی
@@ -57,14 +59,14 @@ const HERO_BANNERS = [
     kicker: 'طلای قسطی',
     title: 'طلای ۱۸ عیار را قسطی بخرید',
     description: 'پرداخت مرحله‌ای و آسان، مالکیت کامل طلا',
-    icon: IconInstallment,
+    icon: IconCalendarClock,
   },
   {
     href: '/dashboard/assets',
     kicker: 'تحویل فیزیکی طلا',
     title: 'طلای دیجیتال شما، قابل تحویل فیزیکی',
     description: 'درخواست تحویل طلای فیزیکی از کیف پول طلایی',
-    icon: IconDelivery,
+    icon: IconPackage,
   },
 ] as const
 
@@ -274,7 +276,11 @@ export function WealthHero({
               className="text-navy-800/55 text-[11px] leading-4.5 sm:text-xs"
             />
           </div>
-          <BannerIcon className="text-gold-600 size-13 shrink-0 sm:size-16" strokeWidth={1.75} />
+          <BannerIcon
+            className="text-gold-600 size-7 shrink-0 sm:size-8"
+            stroke={1.5}
+            aria-hidden="true"
+          />
         </Link>
         {/* نشانگر بنرها — قابل کلیک */}
         <div

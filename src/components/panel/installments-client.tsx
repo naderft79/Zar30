@@ -6,8 +6,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { IconFileText } from '@tabler/icons-react'
-import { IconInstallment } from '@/components/shared/icon-installment'
+import { IconCalendarClock, IconCreditCard, IconFileText } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import {
@@ -66,7 +65,7 @@ export function InstallmentsClient() {
       <Card className="border-gold-500/25 from-gold-500/10 via-card to-card bg-gradient-to-bl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <IconInstallment className="size-5" />
+            <IconCreditCard className="text-gold-600 size-5" stroke={1.75} />
             طرح‌های اقساطی
           </CardTitle>
         </CardHeader>
@@ -171,7 +170,7 @@ export function InstallmentsClient() {
             href={`/dashboard/installments/checkout?amount=${amount}&months=${months}`}
             className="bg-navy-700 text-cream-50 hover:bg-navy-600 focus-visible:ring-ring flex h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
-            <IconInstallment className="size-5" />
+            <IconCreditCard className="size-5" stroke={1.75} />
             خرید قسطی
           </Link>
         </CardContent>
@@ -197,13 +196,13 @@ export function InstallmentsClient() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <IconInstallment className="size-5" />
+              <IconCalendarClock className="text-gold-600 size-5" stroke={1.75} />
               اقساط پیش رو
             </CardTitle>
           </CardHeader>
           <CardContent>
             <EmptyState
-              icon={IconInstallment}
+              icon={IconCalendarClock}
               title="قسطی ندارید"
               description="سررسید اقساط، یادآوری‌ها و تاریخچه پرداخت اینجا مدیریت می‌شود."
             />

@@ -17,6 +17,7 @@ import {
   IconChartBar,
   IconBell,
   IconCalculator,
+  IconCalendarClock,
   IconChartCandle,
   IconClipboardList,
   IconCode,
@@ -36,6 +37,7 @@ import {
   IconMapPin,
   IconDevices,
   IconPackage,
+  IconPackages,
   IconScript,
   IconSettings,
   IconShare2,
@@ -51,21 +53,17 @@ import {
   IconUserCog,
   IconUsers,
   IconUsersGroup,
+  IconWallet,
   IconBolt,
+  type TablerIcon,
 } from '@tabler/icons-react'
-import {
-  IconDelivery,
-  IconInstallment,
-  IconWallet3d,
-  type AppIcon,
-} from '@/components/shared/icon-installment'
 import { PERMISSIONS, type Permission } from '@/lib/auth/rbac'
 
 export interface AdminNavItem {
   key: string
   label: string
   href: string
-  icon: AppIcon
+  icon: TablerIcon
   description: string
   /** حداقل یکی از این permissionها برای دیدن item لازم است */
   permissions: readonly Permission[]
@@ -74,7 +72,7 @@ export interface AdminNavItem {
 export interface AdminNavSection {
   key: string
   label: string
-  icon: AppIcon
+  icon: TablerIcon
   items: readonly AdminNavItem[]
 }
 
@@ -208,7 +206,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'wallets',
         label: 'کیف پول‌ها',
         href: '/admin/wallets',
-        icon: IconWallet3d,
+        icon: IconWallet,
         description: 'موجودی و وضعیت کیف پول‌ها',
         permissions: [PERMISSIONS.WALLETS_READ],
       },
@@ -303,7 +301,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'installments',
         label: 'خرید قسطی',
         href: '/admin/installments',
-        icon: IconInstallment,
+        icon: IconCalendarClock,
         description: 'قراردادهای قسطی',
         permissions: [PERMISSIONS.INSTALLMENTS_READ],
       },
@@ -327,7 +325,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'product-transactions',
         label: 'تحویل فیزیکی',
         href: '/admin/product-transactions',
-        icon: IconDelivery,
+        icon: IconPackages,
         description: 'درخواست‌ها و سفارش‌های تحویل فیزیکی',
         permissions: [PERMISSIONS.GOLD_READ],
       },

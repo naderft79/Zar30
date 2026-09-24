@@ -13,18 +13,16 @@ import {
   IconArrowDownLeft,
   IconArrowLeft,
   IconArrowUpLeft,
+  IconBolt,
+  IconCalendarClock,
+  IconCreditCard,
   IconGift,
   IconHistory,
+  IconPackage,
   IconRepeat,
+  IconWallet,
 } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
-import {
-  IconDelivery,
-  IconInstallment,
-  IconInstantCredit,
-  IconWallet3d,
-  IconZarkar,
-} from '@/components/shared/icon-installment'
 import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
 import { WealthHero } from './wealth-hero'
@@ -88,7 +86,7 @@ function txIcon(type: string) {
   if (type === 'DEPOSIT' || type === 'BUY') return IconArrowDownLeft
   if (type === 'WITHDRAW' || type === 'SELL') return IconArrowUpLeft
   if (type === 'TRANSFER') return IconRepeat
-  return IconWallet3d
+  return IconWallet
 }
 
 function isIncoming(type: string) {
@@ -97,10 +95,10 @@ function isIncoming(type: string) {
 
 // میان‌برهای خدمات — ۴ کارت مربعی زیر hero
 const QUICK_SERVICES = [
-  { label: 'زرکار', href: '/dashboard/trade', icon: IconZarkar },
-  { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconInstallment },
-  { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconInstantCredit },
-  { label: 'تحویل فیزیکی', href: '/dashboard/assets', icon: IconDelivery },
+  { label: 'زرکار', href: '/dashboard/trade', icon: IconCreditCard },
+  { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconCalendarClock },
+  { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconBolt },
+  { label: 'تحویل فیزیکی', href: '/dashboard/assets', icon: IconPackage },
 ] as const
 
 export function DashboardOverview() {
@@ -218,7 +216,7 @@ export function DashboardOverview() {
             href={s.href}
             className="border-border/60 bg-card hover:border-gold-500/40 focus-visible:ring-ring flex aspect-square flex-col items-center justify-center gap-2.5 rounded-2xl border transition-all duration-(--duration-normal) hover:shadow-md focus-visible:ring-2 focus-visible:outline-none"
           >
-            <s.icon className="text-gold-600 size-11 sm:size-14" stroke={1.75} />
+            <s.icon className="text-gold-600 size-6 sm:size-7" stroke={1.5} />
             <span className="text-foreground text-[10px] font-medium sm:text-xs">{s.label}</span>
           </Link>
         ))}

@@ -4,7 +4,7 @@
 // شاخص عددی/متنی عملیاتی — اعداد با tabular-nums برای تراز ستونی
 // ============================================
 
-import { type AppIcon } from '@/components/shared/icon-installment'
+import { type TablerIcon } from '@tabler/icons-react'
 import { cn } from 'cn'
 import { toPersianDigits } from '@/lib/utils/format'
 
@@ -30,7 +30,7 @@ interface AdminMetricProps {
   label: string
   /** مقدار خام — ارقام به فارسی تبدیل می‌شوند؛ متن فارسی دست‌نخورده می‌ماند */
   value: string | number
-  icon?: AppIcon
+  icon?: TablerIcon
   tone?: MetricTone
   /** توضیح/زیرمتن اختیاری */
   hint?: string
