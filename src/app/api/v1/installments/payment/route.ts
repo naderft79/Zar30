@@ -15,6 +15,25 @@ import { installmentPaymentSchema } from '@/lib/validators/finance'
 import { getPaymentGateway } from '@/lib/payment/gateway'
 import { computeInstallmentQuote } from '@/lib/installments/plans'
 import { logger } from '@/lib/logger/logger'
+import os from 'node:os'
+
+// origin قابل‌برگشت برای درگاه — از Host header، نه req.url
+// 0.0.0.0/:: آدرس bind سرور است و در مرورگر کار نمی‌کند → با IPv4 شبکه جایگزین می‌شود
+function requestOrigin(req: Request): string {
+  const reqUrl = new URL(req.url)
+  const proto = req.headers.get('x-forwarded-proto') ?? reqUrl.protocol.replace(':', '')
+  let host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? reqUrl.host
+
+  const hostname = host.replace(/^\[|\]$/g, '').split(':')[0]
+  if (hostname === '0.0.0.0' || hostname === '::') {
+    const lanIp = Object.values(os.networkInterfaces())
+      .flat()
+      .find((i) => i && i.family === 'IPv4' && !i.internal)?.address
+    const port = reqUrl.port || '3000'
+    host = lanIp ? `${lanIp}:${port}` : `localhost:${port}`
+  }
+  return `${proto}://${host}`
+}
 
 export const POST = withErrorHandler(async (req: Request) => {
   const auth = await requireAuth(req)
@@ -32,12 +51,7 @@ export const POST = withErrorHandler(async (req: Request) => {
     throw ApiError.badRequest('مبلغ یا مدت طرح خارج از بازه مجاز است')
   }
 
-  // origin از Host header ساخته می‌شود — req.url در dev ممکن است localhost باشد
-  // در حالی که کاربر با IP شبکه (LAN) سایت را باز کرده است
-  const reqUrl = new URL(req.url)
-  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? reqUrl.host
-  const proto = req.headers.get('x-forwarded-proto') ?? reqUrl.protocol.replace(':', '') ?? 'http'
-  const callbackUrl = `${proto}://${host}/api/v1/installments/callback`
+  const callbackUrl = `${requestOrigin(req)}/api/v1/installments/callback`
 
   const gateway = getPaymentGateway('zarinpal-sandbox')
   const gatewayReq = await gateway
