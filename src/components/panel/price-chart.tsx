@@ -9,11 +9,12 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { IconChartLine, IconTrendingDown, IconTrendingUp, IconWallet } from '@tabler/icons-react'
+import { IconChartLine, IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
 import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceDot,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -248,9 +249,13 @@ export function PriceChart() {
             داده کافی برای رسم نمودار در این بازه ثبت نشده است
           </div>
         ) : (
-          <div className="h-48 w-full sm:h-56" dir="ltr">
+          // حذف هاله/حاشیه لمسی موبایل روی سطح چارت
+          <div
+            className="h-48 w-full [-webkit-tap-highlight-color:transparent] sm:h-56 [&_.recharts-surface]:outline-none [&_.recharts-wrapper]:outline-none [&_svg]:outline-none"
+            dir="ltr"
+          >
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data} margin={{ top: 6, right: 4, bottom: 0, left: 4 }}>
+              <AreaChart data={data} margin={{ top: 8, right: 6, bottom: 0, left: 6 }}>
                 <defs>
                   <linearGradient id="panel-price-fill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={stroke} stopOpacity={0.2} />
@@ -284,18 +289,30 @@ export function PriceChart() {
                   content={<PriceTooltip />}
                   cursor={{ stroke: 'var(--color-border)', strokeWidth: 1 }}
                 />
+                {/* نقطه طلایی آخرین قیمت — لنگر بصری سمت چپ (جدیدترین) */}
+                <ReferenceDot
+                  x={data[data.length - 1]!.label}
+                  y={last}
+                  r={4}
+                  fill="#c9a227"
+                  stroke="var(--color-card)"
+                  strokeWidth={2}
+                />
                 <Area
                   type="monotone"
                   dataKey="v"
                   stroke={stroke}
-                  strokeWidth={2}
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   fill="url(#panel-price-fill)"
                   animationDuration={500}
+                  dot={false}
                   activeDot={{
-                    r: 4,
+                    r: 5,
                     fill: stroke,
                     stroke: 'var(--color-card)',
-                    strokeWidth: 2,
+                    strokeWidth: 2.5,
                   }}
                 />
               </AreaChart>
@@ -303,23 +320,17 @@ export function PriceChart() {
           </div>
         )}
 
-        {/* آمار بازه — کمترین / بیشترین / آخرین */}
+        {/* آمار بازه — کمترین / بیشترین */}
         {data.length >= 2 && (
           <div className="border-border/50 flex items-center justify-between border-t pt-3 text-[10px] sm:text-xs">
             <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">کمترین</span>
+              <span className="text-muted-foreground">کمترین بازه</span>
               <span className="text-foreground font-semibold tabular-nums" dir="ltr">
                 {formatExactAmount(String(min))}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
-              <IconWallet className="text-muted-foreground size-3.5" stroke={1.75} />
-              <span className="text-muted-foreground">
-                {toPersianDigits(data.length)} نقطه قیمت
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">بیشترین</span>
+              <span className="text-muted-foreground">بیشترین بازه</span>
               <span className="text-foreground font-semibold tabular-nums" dir="ltr">
                 {formatExactAmount(String(max))}
               </span>
