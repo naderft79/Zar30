@@ -19,10 +19,6 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
   },
   plugins: {
-    // Push Notifications
-    PushNotifications: {
-      presentationOptions: ['badge', 'sound', 'alert'],
-    },
     // Splash Screen
     SplashScreen: {
       launchShowDuration: 2000,
