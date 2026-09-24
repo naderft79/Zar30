@@ -1,9 +1,9 @@
 // ============================================
 // Zar30 - Live Gold Price Chart (Panel Home)
 // ============================================
-// نمودار لحظه‌ای قیمت طلای ۱۸ عیار — داده واقعی از جدول GoldPrice
-// (رکوردهای sync شده providerها) — هیچ داده ساختگی تولید نمی‌شود.
-// بازه‌ها: ۲۴ ساعت / ۷ روز / ۳۰ روز + سوییچ نمایش نرخ خرید/فروش
+// نمودار قیمت طلای ۱۸ عیار — داده واقعی نرخ پایانی TGJU
+// تایم‌فریم‌ها: روزانه / هفتگی / ماهانه — هرکدام ۵۰ رکورد قیمتی
+// نقطه طلایی = آخرین قیمت · نقطه‌های min/max با لیبل قیمت ثابت
 // ============================================
 
 'use client'
@@ -24,18 +24,12 @@ import { formatExactAmount, toPersianDigits } from '@/lib/utils/format'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from 'cn'
 
-type RangeKey = '24h' | '7d' | '30d'
-type SideKey = 'buy' | 'sell'
+type RangeKey = 'daily' | 'weekly' | 'monthly'
 
 const RANGES: { key: RangeKey; label: string }[] = [
-  { key: '24h', label: '۲۴ ساعت' },
-  { key: '7d', label: '۷ روز' },
-  { key: '30d', label: '۳۰ روز' },
-]
-
-const SIDES: { key: SideKey; label: string }[] = [
-  { key: 'buy', label: 'نرخ خرید' },
-  { key: 'sell', label: 'نرخ فروش' },
+  { key: 'daily', label: 'روزانه' },
+  { key: 'weekly', label: 'هفتگی' },
+  { key: 'monthly', label: 'ماهانه' },
 ]
 
 interface HistoryPoint {
@@ -49,11 +43,11 @@ interface ChartPoint {
   v: number
 }
 
-// لیبل محور زمان — بازه ۲۴ ساعتی: ساعت، بازه‌های بلند: روز/ماه شمسی
+// لیبل محور زمان — روزانه/هفتگی: روز+ماه شمسی، ماهانه: ماه+سال شمسی
 function axisLabel(iso: string, range: RangeKey) {
   const d = new Date(iso)
-  if (range === '24h') {
-    return d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })
+  if (range === 'monthly') {
+    return d.toLocaleDateString('fa-IR', { month: 'short', year: 'numeric' })
   }
   return d.toLocaleDateString('fa-IR', { day: 'numeric', month: 'short' })
 }
@@ -67,6 +61,18 @@ function fullLabel(iso: string) {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+// تیک محور قیمت — tspan جدا برای «م» تا ترتیب بصری همیشه «عدد م» بماند
+function PriceAxisTick(props: { x?: number; y?: number; payload?: { value: number } }) {
+  const { x = 0, y = 0, payload } = props
+  const v = payload?.value ?? 0
+  return (
+    <text x={x} y={y + 3} textAnchor="end" fill="var(--color-muted-foreground)" fontSize={10}>
+      <tspan>{toPersianDigits((v / 1_000_000).toFixed(1).replace('.', '٫'))}</tspan>
+      <tspan dx={4}>م</tspan>
+    </text>
+  )
 }
 
 function PriceTooltip({
@@ -93,8 +99,7 @@ function PriceTooltip({
 }
 
 export function PriceChart() {
-  const [range, setRange] = useState<RangeKey>('24h')
-  const [side, setSide] = useState<SideKey>('buy')
+  const [range, setRange] = useState<RangeKey>('daily')
   const [points, setPoints] = useState<HistoryPoint[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -124,10 +129,7 @@ export function PriceChart() {
     }
   }, [range])
 
-  const data: ChartPoint[] = useMemo(
-    () => points.map((p) => ({ t: p.t, v: p[side] })),
-    [points, side],
-  )
+  const data: ChartPoint[] = useMemo(() => points.map((p) => ({ t: p.t, v: p.buy })), [points])
   // داده رندر: قدیمی‌ترین نقطه سمت چپ → جدیدترین سمت راست (خوانش چپ‌به‌راست)
   const chartData = data
 
@@ -136,8 +138,10 @@ export function PriceChart() {
   const change = last - first
   const changePct = first > 0 ? (change / first) * 100 : 0
   const up = change >= 0
-  const min = data.length ? Math.min(...data.map((d) => d.v)) : 0
-  const max = data.length ? Math.max(...data.map((d) => d.v)) : 0
+  const minPoint = data.length ? data.reduce((a, b) => (b.v < a.v ? b : a)) : undefined
+  const maxPoint = data.length ? data.reduce((a, b) => (b.v > a.v ? b : a)) : undefined
+  const min = minPoint?.v ?? 0
+  const max = maxPoint?.v ?? 0
 
   // خط چارت سورمه‌ای (رنگ امضای سایت) + نقطه آخر طلایی
   const stroke = 'var(--color-navy-700)'
@@ -178,7 +182,7 @@ export function PriceChart() {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* ردیف قیمت فعلی + تغییر + سوییچ خرید/فروش */}
+        {/* ردیف قیمت فعلی + تغییر */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             {loading && data.length === 0 ? (
@@ -214,31 +218,6 @@ export function PriceChart() {
               <p className="text-muted-foreground text-xs">داده کافی برای نمایش نیست</p>
             )}
           </div>
-
-          {/* سوییچ نرخ خرید/فروش */}
-          <div
-            className="bg-muted/60 inline-flex rounded-lg p-0.5"
-            role="tablist"
-            aria-label="نوع نرخ"
-          >
-            {SIDES.map((s) => (
-              <button
-                key={s.key}
-                type="button"
-                role="tab"
-                aria-selected={side === s.key}
-                onClick={() => setSide(s.key)}
-                className={cn(
-                  'rounded-md px-2.5 py-1 text-[10px] font-medium transition-colors sm:text-xs',
-                  side === s.key
-                    ? 'bg-card text-foreground shadow-xs'
-                    : 'text-muted-foreground hover:text-foreground',
-                )}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* نمودار */}
@@ -256,7 +235,7 @@ export function PriceChart() {
             dir="ltr"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 8, right: 6, bottom: 0, left: 6 }}>
+              <AreaChart data={chartData} margin={{ top: 20, right: 6, bottom: 8, left: 6 }}>
                 <defs>
                   <linearGradient id="panel-price-fill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={stroke} stopOpacity={0.2} />
@@ -278,13 +257,9 @@ export function PriceChart() {
                   minTickGap={40}
                 />
                 <YAxis
-                  domain={['dataMin - 20000', 'dataMax + 20000']}
-                  tick={{ fill: 'var(--color-muted-foreground)', fontSize: 10 }}
-                  // RLI ایزوله راست‌به‌چپ — «م» همیشه بصری بعد از عدد می‌نشیند
-                  tickFormatter={(v: number) =>
-                    `⁧م ${toPersianDigits((v / 1_000_000).toFixed(1).replace('.', '٫'))}⁩`
-                  }
-                  width={40}
+                  domain={['dataMin - 60000', 'dataMax + 60000']}
+                  tick={<PriceAxisTick />}
+                  width={46}
                   axisLine={false}
                   tickLine={false}
                   orientation="left"
@@ -302,6 +277,42 @@ export function PriceChart() {
                   stroke="var(--color-card)"
                   strokeWidth={2}
                 />
+                {/* بالاترین قیمت تایم‌فریم — نقطه طلایی + لیبل ثابت */}
+                {maxPoint && (
+                  <ReferenceDot
+                    x={maxPoint.t}
+                    y={max}
+                    r={4}
+                    fill="var(--color-success)"
+                    stroke="var(--color-card)"
+                    strokeWidth={2}
+                    label={{
+                      value: toPersianDigits(formatExactAmount(String(max))),
+                      position: 'top',
+                      fill: 'var(--color-success)',
+                      fontSize: 10,
+                      fontWeight: 700,
+                    }}
+                  />
+                )}
+                {/* پایین‌ترین قیمت تایم‌فریم — نقطه قرمز + لیبل ثابت */}
+                {minPoint && (
+                  <ReferenceDot
+                    x={minPoint.t}
+                    y={min}
+                    r={4}
+                    fill="var(--color-error)"
+                    stroke="var(--color-card)"
+                    strokeWidth={2}
+                    label={{
+                      value: toPersianDigits(formatExactAmount(String(min))),
+                      position: 'bottom',
+                      fill: 'var(--color-error)',
+                      fontSize: 10,
+                      fontWeight: 700,
+                    }}
+                  />
+                )}
                 <Area
                   type="monotone"
                   dataKey="v"
