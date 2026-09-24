@@ -31,3 +31,18 @@ export function IconInstallment({ className, style }: AppIconProps) {
     />
   )
 }
+
+// آیکون زرکار — تصویر ۳بعدی شمش طلا
+export function IconZarkar({ className, style }: AppIconProps) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/icons/gold.png"
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className={className}
+      style={style}
+    />
+  )
+}
