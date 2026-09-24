@@ -280,7 +280,9 @@ export function PriceChart() {
                 <YAxis
                   domain={['dataMin - 20000', 'dataMax + 20000']}
                   tick={{ fill: 'var(--color-muted-foreground)', fontSize: 10 }}
-                  tickFormatter={(v: number) => `${Math.round(v / 100_000) / 10}M`}
+                  tickFormatter={(v: number) =>
+                    `${toPersianDigits((v / 1_000_000).toFixed(1).replace('.', '٫'))} م`
+                  }
                   width={40}
                   axisLine={false}
                   tickLine={false}
