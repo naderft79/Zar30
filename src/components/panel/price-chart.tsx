@@ -234,7 +234,7 @@ export function PriceChart() {
             dir="ltr"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 20, right: 10, bottom: 14, left: 8 }}>
+              <AreaChart data={chartData} margin={{ top: 20, right: 15, bottom: 14, left: 13 }}>
                 <defs>
                   <linearGradient id="panel-price-fill" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={stroke} stopOpacity={0.2} />
