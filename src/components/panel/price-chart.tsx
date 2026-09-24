@@ -63,14 +63,21 @@ function fullLabel(iso: string) {
   })
 }
 
-// تیک محور قیمت — tspan جدا برای «م» تا ترتیب بصری همیشه «عدد م» بماند
+// تیک محور قیمت — direction=rtl صریح تا «م» همیشه سمت راست عدد بنشیند (۲۷٫۸ م)
 function PriceAxisTick(props: { x?: number; y?: number; payload?: { value: number } }) {
   const { x = 0, y = 0, payload } = props
   const v = payload?.value ?? 0
+  const fa = toPersianDigits((v / 1_000_000).toFixed(1).replace('.', '٫'))
   return (
-    <text x={x} y={y + 3} textAnchor="end" fill="var(--color-muted-foreground)" fontSize={10}>
-      <tspan>{toPersianDigits((v / 1_000_000).toFixed(1).replace('.', '٫'))}</tspan>
-      <tspan dx={4}>م</tspan>
+    <text
+      x={x}
+      y={y + 3}
+      textAnchor="end"
+      direction="rtl"
+      fill="var(--color-muted-foreground)"
+      fontSize={10}
+    >
+      م {fa}
     </text>
   )
 }
@@ -306,7 +313,7 @@ export function PriceChart() {
                     strokeWidth={2}
                     label={{
                       value: toPersianDigits(formatExactAmount(String(min))),
-                      position: 'bottom',
+                      position: 'insideTopLeft',
                       fill: 'var(--color-error)',
                       fontSize: 10,
                       fontWeight: 700,
@@ -339,15 +346,15 @@ export function PriceChart() {
         {data.length >= 2 && (
           <div className="border-border/50 flex items-center justify-between border-t pt-3 text-[10px] sm:text-xs">
             <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">کمترین بازه</span>
-              <span className="text-foreground font-semibold tabular-nums" dir="ltr">
-                {formatExactAmount(String(min))}
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
               <span className="text-muted-foreground">بیشترین بازه</span>
               <span className="text-foreground font-semibold tabular-nums" dir="ltr">
                 {formatExactAmount(String(max))}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-muted-foreground">کمترین بازه</span>
+              <span className="text-foreground font-semibold tabular-nums" dir="ltr">
+                {formatExactAmount(String(min))}
               </span>
             </div>
           </div>
