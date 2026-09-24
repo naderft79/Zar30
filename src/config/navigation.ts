@@ -13,8 +13,8 @@
 //   Navigation Config → Desktop Navigation → Mobile Navigation
 // ============================================
 
-import { IconHome, IconRepeat, IconUser, IconWallet } from '@tabler/icons-react'
-import { IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
+import { IconHome, IconRepeat, IconUser } from '@tabler/icons-react'
+import { IconInstallment, IconWallet3d, type AppIcon } from '@/components/shared/icon-installment'
 
 export interface NavItem {
   /** شناسه پایدار — هرگز تغییر نمی‌کند */
@@ -53,7 +53,7 @@ export const PANEL_NAV_ITEMS: readonly NavItem[] = [
     key: 'assets',
     label: 'دارایی',
     href: '/dashboard/assets',
-    icon: IconWallet,
+    icon: IconWallet3d,
     description: 'کیف پول، موجودی و تراکنش‌ها',
   },
   {

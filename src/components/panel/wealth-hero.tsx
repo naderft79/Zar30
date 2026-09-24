@@ -13,12 +13,11 @@ import Link from 'next/link'
 import {
   IconCashBanknotePlus,
   IconTransfer,
-  IconWallet,
   IconEye,
   IconEyeOff,
   IconTrendingUp,
 } from '@tabler/icons-react'
-import { IconDelivery, IconInstallment } from '@/components/shared/icon-installment'
+import { IconDelivery, IconInstallment, IconWallet3d } from '@/components/shared/icon-installment'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { toPersianWords } from '@/lib/utils/format'
@@ -41,7 +40,7 @@ interface WealthHeroProps {
 const HERO_ACTIONS = [
   { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: IconCashBanknotePlus },
   { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: IconTransfer },
-  { href: '/dashboard/assets', label: 'دارایی', icon: IconWallet },
+  { href: '/dashboard/assets', label: 'دارایی', icon: IconWallet3d },
 ] as const
 
 // بنرهای چرخان داخل کارت — هر ۵ ثانیه بنر بعدی

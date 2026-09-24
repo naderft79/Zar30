@@ -51,10 +51,14 @@ import {
   IconUserCog,
   IconUsers,
   IconUsersGroup,
-  IconWallet,
   IconBolt,
 } from '@tabler/icons-react'
-import { IconDelivery, IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
+import {
+  IconDelivery,
+  IconInstallment,
+  IconWallet3d,
+  type AppIcon,
+} from '@/components/shared/icon-installment'
 import { PERMISSIONS, type Permission } from '@/lib/auth/rbac'
 
 export interface AdminNavItem {
@@ -204,7 +208,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'wallets',
         label: 'کیف پول‌ها',
         href: '/admin/wallets',
-        icon: IconWallet,
+        icon: IconWallet3d,
         description: 'موجودی و وضعیت کیف پول‌ها',
         permissions: [PERMISSIONS.WALLETS_READ],
       },

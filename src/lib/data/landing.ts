@@ -18,9 +18,13 @@ import {
   IconTrendingUp,
   IconTruck,
   IconUserCheck,
-  IconWallet,
 } from '@tabler/icons-react'
-import { IconDelivery, IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
+import {
+  IconDelivery,
+  IconInstallment,
+  IconWallet3d,
+  type AppIcon,
+} from '@/components/shared/icon-installment'
 
 // ---------- ناوبری Header ----------
 export interface NavLink {
@@ -114,7 +118,7 @@ export const HOW_IT_WORKS_STEPS: Step[] = [
     description: 'با شماره موبایل ثبت‌نام کنید و هویت خود را با کارت ملی تایید کنید.',
   },
   {
-    icon: IconWallet,
+    icon: IconWallet3d,
     title: 'شارژ حساب',
     description: 'کیف پول تومانی خود را از طریق درگاه بانکی شارژ کنید.',
   },

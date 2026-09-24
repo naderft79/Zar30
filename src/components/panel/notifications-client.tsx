@@ -8,8 +8,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { IconBell, IconBellOff, IconRepeat, IconShieldCheck, IconWallet } from '@tabler/icons-react'
-import { IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
+import { IconBell, IconBellOff, IconRepeat, IconShieldCheck } from '@tabler/icons-react'
+import { IconInstallment, IconWallet3d, type AppIcon } from '@/components/shared/icon-installment'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -32,7 +32,7 @@ interface NotificationView {
 const TYPE_ICONS: Record<string, { icon: AppIcon; className: string }> = {
   SECURITY: { icon: IconShieldCheck, className: 'bg-error/10 text-error' },
   ORDER: { icon: IconRepeat, className: 'bg-gold-500/15 text-gold-600 dark:text-gold-400' },
-  TRANSACTION: { icon: IconWallet, className: 'bg-info/10 text-info' },
+  TRANSACTION: { icon: IconWallet3d, className: 'bg-info/10 text-info' },
   INSTALLMENT: { icon: IconInstallment, className: 'bg-muted text-muted-foreground' },
 }
 

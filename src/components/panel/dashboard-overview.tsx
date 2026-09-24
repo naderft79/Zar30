@@ -16,13 +16,13 @@ import {
   IconGift,
   IconHistory,
   IconRepeat,
-  IconWallet,
 } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import {
   IconDelivery,
   IconInstallment,
   IconInstantCredit,
+  IconWallet3d,
   IconZarkar,
 } from '@/components/shared/icon-installment'
 import { formatExactAmount } from '@/lib/utils/format'
@@ -88,7 +88,7 @@ function txIcon(type: string) {
   if (type === 'DEPOSIT' || type === 'BUY') return IconArrowDownLeft
   if (type === 'WITHDRAW' || type === 'SELL') return IconArrowUpLeft
   if (type === 'TRANSFER') return IconRepeat
-  return IconWallet
+  return IconWallet3d
 }
 
 function isIncoming(type: string) {

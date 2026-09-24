@@ -62,6 +62,21 @@ export function IconDelivery({ className, style }: AppIconProps) {
   )
 }
 
+// آیکون کیف پول — تصویر ۳بعدی کیف پول
+export function IconWallet3d({ className, style }: AppIconProps) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/icons/wallet.png"
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className={className}
+      style={style}
+    />
+  )
+}
+
 // آیکون زرکار — تصویر ۳بعدی شمش طلا
 export function IconZarkar({ className, style }: AppIconProps) {
   return (

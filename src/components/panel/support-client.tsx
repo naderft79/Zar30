@@ -16,8 +16,8 @@ import {
   IconPhone,
   IconShieldCheck,
   IconUser,
-  IconWallet,
 } from '@tabler/icons-react'
+import { IconWallet3d } from '@/components/shared/icon-installment'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PageHeader } from './page-header'
@@ -35,7 +35,7 @@ const HELP_CATEGORIES = [
     description: 'معاملات، نرخ‌ها و تسویه',
   },
   {
-    icon: IconWallet,
+    icon: IconWallet3d,
     title: 'کیف پول و تراکنش',
     description: 'واریز، برداشت و موجودی',
   },

@@ -1,5 +1,5 @@
-import { IconArrowDownLeft, IconArrowUpLeft, IconRepeat, IconWallet } from '@tabler/icons-react'
-import { IconInstallment, type AppIcon } from '@/components/shared/icon-installment'
+import { IconArrowDownLeft, IconArrowUpLeft, IconRepeat } from '@tabler/icons-react'
+import { IconInstallment, IconWallet3d, type AppIcon } from '@/components/shared/icon-installment'
 import { cn } from 'cn'
 import { FinancialNumber } from './financial-number'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -30,7 +30,7 @@ const kindConfig: Record<TransactionKind, { icon: AppIcon; label: string; iconCl
     label: 'پرداخت قسط',
     iconClass: 'bg-info/10 text-info',
   },
-  transfer: { icon: IconWallet, label: 'انتقال', iconClass: 'bg-muted text-muted-foreground' },
+  transfer: { icon: IconWallet3d, label: 'انتقال', iconClass: 'bg-muted text-muted-foreground' },
 }
 
 const statusTone: Record<
