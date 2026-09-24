@@ -6,8 +6,9 @@
 // همان درگاه انجام می‌شود و هیچ واحد خارجی وارد Core نمی‌شود.
 //
 // انتخاب درگاه با PAYMENT_PROVIDER:
-//   sandbox  → درگاه شبیه‌سازی برای توسعه/تست (بدون پول واقعی)
-//   zarinpal → درگاه واقعی ZarinPal v4
+//   sandbox          → درگاه شبیه‌سازی برای توسعه/تست (بدون پول واقعی)
+//   zarinpal         → درگاه واقعی ZarinPal v4
+//   zarinpal-sandbox → محیط تست ZarinPal (sandbox.zarinpal.com)
 // ============================================
 
 export interface GatewayPaymentRequest {
@@ -43,5 +44,6 @@ export function getPaymentGateway(name?: string): PaymentGateway {
   const provider = (name ?? process.env.PAYMENT_PROVIDER ?? 'sandbox').toLowerCase()
   if (provider === 'sandbox') return new SandboxGateway()
   if (provider === 'zarinpal') return new ZarinpalGateway()
+  if (provider === 'zarinpal-sandbox') return new ZarinpalGateway(true)
   throw new Error(`Payment gateway '${provider}' is not supported`)
 }

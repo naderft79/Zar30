@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { IconArrowRight, IconHelpCircle, IconReceipt, IconShieldCheck } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { INSTALLMENT_TERMS } from '@/lib/data/installment-terms'
+import { computeInstallmentQuote, getInstallmentPlan } from '@/lib/installments/plans'
 import { formatExactAmount } from '@/lib/utils/format'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -28,15 +29,7 @@ interface PriceData {
   isLive: boolean
 }
 
-// همان قرارداد محاسبه‌گر — سقف اعتبار هر طرح
-const TERM_CAPS: Record<number, number> = {
-  3: 100_000_000,
-  6: 200_000_000,
-  12: 400_000_000,
-  18: 500_000_000,
-}
 const MIN_AMOUNT = 10_000_000
-const ANNUAL_RATE = 0.23
 
 const faDigits = (s: string) => s.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.charAt(+d))
 const fmt = (n: number) => formatExactAmount(String(Math.round(n)))
@@ -45,16 +38,17 @@ export function InstallmentCheckoutClient() {
   const searchParams = useSearchParams()
   const [price, setPrice] = useState<PriceData | null>(null)
   const [agreed, setAgreed] = useState(false)
-  const [notice, setNotice] = useState<string | null>(null)
   const [scheduleOpen, setScheduleOpen] = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)
 
   // اعتبارسنجی پارامترهای ورودی — مقادیر نامعتبر به بازه امن clamp می‌شوند
   const rawMonths = Number(searchParams.get('months'))
-  const months = rawMonths in TERM_CAPS ? rawMonths : 6
+  const plan = getInstallmentPlan(rawMonths)
+  const months = plan ? plan.months : 6
   const rawAmount = Number(searchParams.get('amount'))
+  const maxAmount = getInstallmentPlan(months)?.maxAmount ?? 500_000_000
   const amount = Number.isFinite(rawAmount)
-    ? Math.min(Math.max(rawAmount, MIN_AMOUNT), TERM_CAPS[months]!)
+    ? Math.min(Math.max(rawAmount, MIN_AMOUNT), maxAmount)
     : MIN_AMOUNT
 
   useEffect(() => {
@@ -69,10 +63,10 @@ export function InstallmentCheckoutClient() {
   }, [])
 
   const goldGrams = price && price.buyPrice > 0 ? amount / price.buyPrice : null
-  const monthlyRate = ANNUAL_RATE / 12
-  const factor = Math.pow(1 + monthlyRate, months)
-  const installment = (amount * monthlyRate * factor) / (factor - 1)
-  const total = installment * months
+  // فرمول استاندارد قسط (annuity) — از plans.ts
+  const quote = computeInstallmentQuote(amount, months)
+  const installment = quote?.installment ?? 0
+  const total = quote?.total ?? 0
 
   // سررسید هر قسط = امروز + ۳۰ روز × شماره قسط — قانون پرداخت هر ۳۰ روز
   const schedule = Array.from({ length: months }, (_, i) => {
@@ -190,25 +184,22 @@ export function InstallmentCheckoutClient() {
         </p>
       </div>
 
-      {/* تایید و ادامه */}
-      <button
-        type="button"
-        disabled={!agreed}
-        onClick={() => setNotice('ثبت قرارداد اقساطی به‌زودی فعال می‌شود.')}
+      {/* تایید و ادامه → صورتحساب پرداخت */}
+      <Link
+        href={agreed ? `/dashboard/installments/payment?amount=${amount}&months=${months}` : '#'}
+        aria-disabled={!agreed}
+        onClick={(e) => {
+          if (!agreed) e.preventDefault()
+        }}
         className={cn(
           'focus-visible:ring-ring flex h-12 w-full items-center justify-center rounded-xl text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:outline-none',
           agreed
             ? 'bg-navy-700 text-cream-50 hover:bg-navy-600'
-            : 'bg-muted text-muted-foreground cursor-not-allowed',
+            : 'bg-muted text-muted-foreground pointer-events-none cursor-not-allowed',
         )}
       >
         تایید و ادامه
-      </button>
-      {notice && (
-        <p role="status" className="text-muted-foreground text-center text-xs">
-          {notice}
-        </p>
-      )}
+      </Link>
 
       {/* مودال زمان‌بندی اقساط — سررسید هر ۳۰ روز از امروز */}
       <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>

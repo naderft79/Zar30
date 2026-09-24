@@ -9,6 +9,12 @@ import Link from 'next/link'
 import { IconCalendarClock, IconCreditCard, IconFileText } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
+import {
+  INSTALLMENT_MIN_AMOUNT,
+  INSTALLMENT_PLANS,
+  computeInstallmentQuote,
+  getInstallmentPlan,
+} from '@/lib/installments/plans'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { cn } from 'cn'
@@ -19,18 +25,9 @@ interface PriceData {
   isLive: boolean
 }
 
-// ---- تنظیمات طرح اقساطی (پیش‌نمایش — مقادیر نهایی از پنل ادمین می‌آیند) ----
-// سقف اعتبار هر طرح متفاوت است
-const TERM_OPTIONS = [
-  { months: 3, max: 100_000_000 },
-  { months: 6, max: 200_000_000 },
-  { months: 12, max: 400_000_000 },
-  { months: 18, max: 500_000_000 },
-] as const
-const MIN_AMOUNT = 10_000_000
+// ---- طرح‌های اقساطی — قواعد از plans.ts (منبع واحد) ----
+const MIN_AMOUNT = INSTALLMENT_MIN_AMOUNT
 const STEP = 5_000_000
-// نرخ سود سالانه اقساط — مقدار نهایی از پنل ادمین می‌آید
-const ANNUAL_RATE = 0.23
 
 const faDigits = (s: string) => s.replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.charAt(+d))
 const fmt = (n: number) => formatExactAmount(String(Math.round(n)))
@@ -38,7 +35,7 @@ const fmt = (n: number) => formatExactAmount(String(Math.round(n)))
 export function InstallmentsClient() {
   const [months, setMonths] = useState<number>(6)
   const [amount, setAmount] = useState(100_000_000)
-  const maxAmount = TERM_OPTIONS.find((t) => t.months === months)?.max ?? 500_000_000
+  const maxAmount = getInstallmentPlan(months)?.maxAmount ?? 500_000_000
   const [price, setPrice] = useState<PriceData | null>(null)
 
   useEffect(() => {
@@ -55,11 +52,10 @@ export function InstallmentsClient() {
   // طلای دریافتی = اعتبار ÷ قیمت خرید لحظه‌ای — دو رقم اعشار
   const goldGrams = price && price.buyPrice > 0 ? amount / price.buyPrice : null
 
-  // فرمول استاندارد قسط (annuity): PMT = P·r·(1+r)^n / ((1+r)^n − 1) — r = نرخ ماهانه
-  const monthlyRate = ANNUAL_RATE / 12
-  const factor = Math.pow(1 + monthlyRate, months)
-  const installment = (amount * monthlyRate * factor) / (factor - 1)
-  const total = installment * months
+  // فرمول استاندارد قسط (annuity) — از plans.ts
+  const quote = computeInstallmentQuote(amount, months)
+  const installment = quote?.installment ?? 0
+  const total = quote?.total ?? 0
 
   const fillPct = ((amount - MIN_AMOUNT) / (maxAmount - MIN_AMOUNT)) * 100
 
@@ -80,14 +76,14 @@ export function InstallmentsClient() {
             aria-label="مدت بازپرداخت"
             className="bg-muted/70 grid grid-cols-4 gap-1 rounded-xl p-1"
           >
-            {TERM_OPTIONS.map((t) => (
+            {INSTALLMENT_PLANS.map((t) => (
               <button
                 key={t.months}
                 role="tab"
                 aria-selected={months === t.months}
                 onClick={() => {
                   setMonths(t.months)
-                  setAmount((a) => Math.min(a, t.max))
+                  setAmount((a) => Math.min(a, t.maxAmount))
                 }}
                 className={cn(
                   'focus-visible:ring-ring rounded-lg py-2 text-sm font-medium transition-all duration-(--duration-fast) focus-visible:ring-2 focus-visible:outline-none',

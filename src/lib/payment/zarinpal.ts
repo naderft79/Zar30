@@ -10,14 +10,33 @@ import type { GatewayPaymentRequest, GatewayVerifyResult, PaymentGateway } from 
 
 const API_BASE = 'https://payment.zarinpal.com/pg/v4/payment'
 const GATEWAY_BASE = 'https://payment.zarinpal.com/pg/StartPay'
+// محیط تست زرین‌پال — هیچ پول واقعی جابه‌جا نمی‌شود
+const SANDBOX_API_BASE = 'https://sandbox.zarinpal.com/pg/v4/payment'
+const SANDBOX_GATEWAY_BASE = 'https://sandbox.zarinpal.com/pg/StartPay'
+// مرچنت پیش‌فرض sandbox زرین‌پال
+const SANDBOX_DEFAULT_MERCHANT = '00000000-0000-0000-0000-000000000000'
 
 export class ZarinpalGateway implements PaymentGateway {
-  readonly name = 'zarinpal'
+  readonly name: string
+
+  constructor(private readonly sandbox = false) {
+    this.name = sandbox ? 'zarinpal-sandbox' : 'zarinpal'
+  }
 
   private get merchantId(): string {
-    const id = process.env.PAYMENT_MERCHANT_ID ?? ''
+    const id = this.sandbox
+      ? (process.env.ZARINPAL_SANDBOX_MERCHANT_ID ?? SANDBOX_DEFAULT_MERCHANT)
+      : (process.env.PAYMENT_MERCHANT_ID ?? '')
     if (!id) throw new Error('PAYMENT_MERCHANT_ID is not configured')
     return id
+  }
+
+  private get apiBase(): string {
+    return this.sandbox ? SANDBOX_API_BASE : API_BASE
+  }
+
+  private get gatewayBase(): string {
+    return this.sandbox ? SANDBOX_GATEWAY_BASE : GATEWAY_BASE
   }
 
   // مرز واحد: مبلغ درگاه IRT است — تومان × ۱۰
@@ -30,7 +49,7 @@ export class ZarinpalGateway implements PaymentGateway {
     description: string
     callbackUrl: string
   }): Promise<GatewayPaymentRequest> {
-    const res = await fetch(`${API_BASE}/request.json`, {
+    const res = await fetch(`${this.apiBase}/request.json`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -52,14 +71,14 @@ export class ZarinpalGateway implements PaymentGateway {
     if (code !== 100 || !authority) {
       throw new Error(`ZarinPal request failed: ${json?.errors?.code ?? code ?? 'unknown'}`)
     }
-    return { authority, redirectUrl: `${GATEWAY_BASE}/${authority}` }
+    return { authority, redirectUrl: `${this.gatewayBase}/${authority}` }
   }
 
   async verifyPayment(input: {
     authority: string
     amountToman: bigint
   }): Promise<GatewayVerifyResult> {
-    const res = await fetch(`${API_BASE}/verify.json`, {
+    const res = await fetch(`${this.apiBase}/verify.json`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
