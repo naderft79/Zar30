@@ -111,3 +111,8 @@ export const createSipSchema = z.object({
   tomanAmount: tomanAmount.refine((v) => v >= 100_000n, 'حداقل مبلغ پس‌انداز ۱۰۰ هزار تومان است'),
   frequency: z.enum(['DAILY', 'WEEKLY', 'MONTHLY']),
 })
+
+export const subscribeZarkarSchema = z.object({
+  planId: z.string().uuid('شناسه طرح نامعتبر است'),
+  goldGrams: z.string().regex(/^\d+(\.\d{1,6})?$/, 'مقدار طلا نامعتبر است'),
+})

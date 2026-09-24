@@ -239,33 +239,37 @@ async function main() {
   }
   console.log('✅ Installment plans seeded')
 
-  // Investment Plans (PENDING BUSINESS DECISION - dev defaults)
+  // ZarKar Plans (سپرده طلا) — PENDING BUSINESS DECISION - dev defaults
+  // rate = درصد کل سود در کل مدت طرح (پرداخت هر ۳۰ روز به صورت طلا)
   const investmentPlans = [
     {
-      name: 'طرح سوددهی ماهانه',
-      durationDays: 30,
+      name: 'زرکار ۳ ماهه',
+      durationDays: 90,
       minGoldGram: 0.1,
       interestRateType: 'FIXED' as const,
-      rate: 1.5,
+      rate: 3,
       active: true,
     },
     {
-      name: 'طرح سوددهی فصلی',
-      durationDays: 90,
-      minGoldGram: 1,
+      name: 'زرکار ۶ ماهه',
+      durationDays: 180,
+      minGoldGram: 0.1,
       interestRateType: 'FIXED' as const,
-      rate: 5,
+      rate: 8,
       active: true,
     },
     {
-      name: 'طرح سوددهی سالانه',
+      name: 'زرکار ۱۲ ماهه',
       durationDays: 365,
-      minGoldGram: 5,
+      minGoldGram: 0.1,
       interestRateType: 'FIXED' as const,
-      rate: 18,
+      rate: 20,
       active: true,
     },
   ]
+
+  // طرح‌های بدون موقعیت فعال جایگزین می‌شوند — موقعیت‌های موجود دست‌نخورده می‌مانند
+  await prisma.investmentPlan.deleteMany({ where: { positions: { none: {} } } })
 
   for (const plan of investmentPlans) {
     await prisma.investmentPlan.create({

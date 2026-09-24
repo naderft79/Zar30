@@ -23,6 +23,7 @@ import { DeliverySheet } from './delivery-sheet'
 import { HistoryTabs } from './history-tabs'
 import { SipCard } from './sip-card'
 import { PriceAlertsCard } from './price-alerts-card'
+import { ZarkarCard } from './zarkar-card'
 
 interface SummaryData extends WalletCardsData {
   priceChange24h: number | null
@@ -127,8 +128,9 @@ export function AssetsClient() {
       {/* کارت‌های بانکی — اسکرول افقی + افزودن/حذف/پیش‌فرض */}
       <BankCards accounts={bankAccounts} online={online} onChanged={() => void loadAll()} />
 
-      {/* ابزارهای سرمایه‌گذاری — خرید خودکار + هشدار قیمت */}
+      {/* ابزارهای سرمایه‌گذاری — زرکار + خرید خودکار + هشدار قیمت */}
       <div className="grid gap-5 lg:grid-cols-2">
+        <ZarkarCard online={online} onChanged={() => void loadAll()} />
         <SipCard online={online} onChanged={() => void loadAll()} />
         <PriceAlertsCard
           online={online}
