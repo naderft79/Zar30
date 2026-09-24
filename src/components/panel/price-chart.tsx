@@ -43,11 +43,11 @@ interface ChartPoint {
   v: number
 }
 
-// لیبل محور زمان — روزانه/هفتگی: روز+ماه شمسی، ماهانه: ماه+سال شمسی
+// لیبل محور زمان — روزانه (۲۴ساعت): ساعت، هفتگی/ماهانه: روز+ماه شمسی
 function axisLabel(iso: string, range: RangeKey) {
   const d = new Date(iso)
-  if (range === 'monthly') {
-    return d.toLocaleDateString('fa-IR', { month: 'short', year: 'numeric' })
+  if (range === 'daily') {
+    return d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })
   }
   return d.toLocaleDateString('fa-IR', { day: 'numeric', month: 'short' })
 }
