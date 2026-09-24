@@ -276,9 +276,7 @@ export function WealthHero({
               className="text-navy-800/55 text-[11px] leading-4.5 sm:text-xs"
             />
           </div>
-          <span className="from-gold-400/20 to-gold-600/20 text-gold-600 ring-gold-500/25 flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-bl ring-1 sm:size-12">
-            <BannerIcon className="size-5" strokeWidth={1.75} />
-          </span>
+          <BannerIcon className="text-gold-600 size-13 shrink-0 sm:size-16" strokeWidth={1.75} />
         </Link>
         {/* نشانگر بنرها — قابل کلیک */}
         <div

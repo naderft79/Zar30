@@ -218,9 +218,7 @@ export function DashboardOverview() {
             href={s.href}
             className="border-border/60 bg-card hover:border-gold-500/40 focus-visible:ring-ring flex aspect-square flex-col items-center justify-center gap-2.5 rounded-2xl border transition-all duration-(--duration-normal) hover:shadow-md focus-visible:ring-2 focus-visible:outline-none"
           >
-            <span className="bg-gold-500/12 flex size-10 items-center justify-center rounded-xl sm:size-11">
-              <s.icon className="text-gold-600 size-5 sm:size-5.5" stroke={1.75} />
-            </span>
+            <s.icon className="text-gold-600 size-12 sm:size-14" stroke={1.75} />
             <span className="text-foreground text-[10px] font-medium sm:text-xs">{s.label}</span>
           </Link>
         ))}
