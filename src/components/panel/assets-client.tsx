@@ -7,73 +7,44 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import {
-  IconArrowDownLeft,
-  IconArrowUpLeft,
-  IconHistory,
-  IconChartPie,
-  IconAlertTriangle,
-  IconCircleCheck,
-} from '@tabler/icons-react'
+import { IconChartPie, IconAlertTriangle, IconCircleCheck } from '@tabler/icons-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { BalanceCard } from '@/components/financial/balance-card'
 import { EmptyState } from '@/components/ui/empty-state'
-import { StatusBadge } from '@/components/ui/status-badge'
-import { Button } from '@/components/ui/button'
-import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
+import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { useOnlineStatus } from './offline-indicator'
+import { AssetsHero, type AssetsAction } from './assets-hero'
+import { WalletCards, type WalletCardsData } from './wallet-cards'
+import { BankCards, type BankAccountRow } from './bank-cards'
+import { DepositSheet } from './deposit-sheet'
+import { WithdrawSheet } from './withdraw-sheet'
+import { TransferSheet } from './transfer-sheet'
+import { DeliverySheet } from './delivery-sheet'
+import { HistoryTabs } from './history-tabs'
+import { SipCard } from './sip-card'
+import { PriceAlertsCard } from './price-alerts-card'
 
-interface WalletAccount {
-  assetType: string
-  balance: string
-  lockedBalance: string
-  available: string
+interface SummaryData extends WalletCardsData {
+  priceChange24h: number | null
 }
-
-interface TxRow {
-  id: string
-  type: string
-  amount: string
-  status: string
-  createdAt: string
-}
-
-const TX_LABELS: Record<string, string> = {
-  DEPOSIT: 'واریز',
-  WITHDRAW: 'برداشت',
-  FEE: 'کارمزد',
-  TRANSFER: 'انتقال',
-}
-
-const TX_STATUS: Record<string, string> = {
-  PENDING: 'در انتظار',
-  COMPLETED: 'موفق',
-  FAILED: 'ناموفق',
-  REVERSED: 'برگشت‌خورده',
-}
-
-const inputClass =
-  'border-border/60 bg-background text-foreground focus-visible:ring-ring h-10 w-full rounded-lg border px-3 text-sm tabular-nums focus-visible:ring-2 focus-visible:outline-none'
 
 export function AssetsClient() {
-  const [accounts, setAccounts] = useState<WalletAccount[]>([])
-  const [txs, setTxs] = useState<TxRow[]>([])
+  const [summary, setSummary] = useState<SummaryData | null>(null)
+  const [bankAccounts, setBankAccounts] = useState<BankAccountRow[]>([])
   const [loading, setLoading] = useState(true)
 
-  // ?action=deposit|withdraw — ورود سریع از کارت موجودی داشبورد
-  const [form, setForm] = useState<'deposit' | 'withdraw' | null>(() => {
-    if (typeof window === 'undefined') return null
-    const a = new URLSearchParams(window.location.search).get('action')
-    return a === 'deposit' || a === 'withdraw' ? a : null
-  })
-  const [amount, setAmount] = useState('')
-  const [iban, setIban] = useState('')
-  const [busy, setBusy] = useState(false)
+  // شیت‌های مالی — ?action=deposit|withdraw ورود سریع از داشبورد
+  const [sheet, setSheet] = useState<'deposit' | 'withdraw' | 'transfer' | 'delivery' | null>(
+    () => {
+      if (typeof window === 'undefined') return null
+      const a = new URLSearchParams(window.location.search).get('action')
+      return a === 'deposit' || a === 'withdraw' ? a : null
+    },
+  )
   // آفلاین → اکشن مالی غیرفعال (واریز/برداشت بدون اتصال واقعی ممکن نیست)
   const online = useOnlineStatus()
   // وضعیت برگشت از درگاه پرداخت — ?payment=success|cancelled|expired|failed|replayed
-  const [error, setError] = useState<string | null>(() => {
+  const [error] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null
     const p = new URLSearchParams(window.location.search).get('payment')
     if (p === 'cancelled') return 'پرداخت توسط شما لغو شد'
@@ -82,7 +53,7 @@ export function AssetsClient() {
       return 'پرداخت ناموفق بود — در صورت کسر مبلغ، طبق قوانین درگاه برگشت داده می‌شود'
     return null
   })
-  const [success, setSuccess] = useState<string | null>(() => {
+  const [success] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null
     const p = new URLSearchParams(window.location.search).get('payment')
     if (p === 'success') return 'پرداخت شما با موفقیت انجام شد — موجودی کیف پول شارژ شد'
@@ -91,25 +62,25 @@ export function AssetsClient() {
   })
 
   async function loadAll() {
-    const [walletRes, txRes] = await Promise.all([
-      apiGetWithRefresh<{ accounts: WalletAccount[] }>('/api/v1/wallet'),
-      apiGetWithRefresh<{ transactions: TxRow[] }>('/api/v1/wallet/transactions?limit=10'),
+    const [summaryRes, bankRes] = await Promise.all([
+      apiGetWithRefresh<{ summary: SummaryData }>('/api/v1/wallet/summary'),
+      apiGetWithRefresh<{ accounts: BankAccountRow[] }>('/api/v1/bank-accounts'),
     ])
-    if (walletRes.ok) setAccounts(walletRes.data?.accounts ?? [])
-    if (txRes.ok) setTxs(txRes.data?.transactions ?? [])
+    if (summaryRes.ok && summaryRes.data) setSummary(summaryRes.data.summary)
+    if (bankRes.ok) setBankAccounts(bankRes.data?.accounts ?? [])
     setLoading(false)
   }
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
-      const [walletRes, txRes] = await Promise.all([
-        apiGetWithRefresh<{ accounts: WalletAccount[] }>('/api/v1/wallet'),
-        apiGetWithRefresh<{ transactions: TxRow[] }>('/api/v1/wallet/transactions?limit=10'),
+      const [summaryRes, bankRes] = await Promise.all([
+        apiGetWithRefresh<{ summary: SummaryData }>('/api/v1/wallet/summary'),
+        apiGetWithRefresh<{ accounts: BankAccountRow[] }>('/api/v1/bank-accounts'),
       ])
       if (cancelled) return
-      if (walletRes.ok) setAccounts(walletRes.data?.accounts ?? [])
-      if (txRes.ok) setTxs(txRes.data?.transactions ?? [])
+      if (summaryRes.ok && summaryRes.data) setSummary(summaryRes.data.summary)
+      if (bankRes.ok) setBankAccounts(bankRes.data?.accounts ?? [])
       setLoading(false)
     })()
     return () => {
@@ -117,176 +88,87 @@ export function AssetsClient() {
     }
   }, [])
 
-  const toman = accounts.find((a) => a.assetType === 'TOMAN')
-  const gold = accounts.find((a) => a.assetType === 'GOLD')
-  const total = Number(toman?.available ?? 0)
+  // ارزش کل = تومان آزاد + ارزش طلا با نرخ فروش لحظه‌ای
+  const goldValue =
+    summary?.sellPrice != null ? Number(summary.goldBalance) * Number(summary.sellPrice) : 0
+  const totalValue = Number(summary?.tomanBalance ?? 0) + goldValue
 
-  async function submit() {
-    setError(null)
-    setSuccess(null)
-    if (!/^\d+$/.test(amount) || Number(amount) <= 0) {
-      setError('مبلغ معتبر وارد کنید')
-      return
-    }
-    if (form === 'withdraw' && !/^IR\d{24}$/.test(iban)) {
-      setError('شماره شبا باید با IR شروع و ۲۶ کاراکتر باشد (مثل IR062960000000100324200001)')
-      return
-    }
-    setBusy(true)
-    if (form === 'deposit') {
-      // واریز از مسیر درگاه پرداخت — پاسخ: redirectUrl به درگاه
-      const res = await apiPost<{ payment?: { redirectUrl?: string } }>(
-        '/api/v1/payments',
-        { amount },
-        { 'Idempotency-Key': crypto.randomUUID() },
-      )
-      setBusy(false)
-      if (!res.ok || !res.data?.payment?.redirectUrl) {
-        setError(res.ok ? 'درگاه پرداخت در دسترس نیست' : (res.error ?? 'عملیات ناموفق بود'))
-        return
-      }
-      window.location.href = res.data.payment.redirectUrl
-      return
-    }
-    const res = await apiPost(
-      '/api/v1/wallet/withdraw',
-      { amount, iban },
-      { 'Idempotency-Key': crypto.randomUUID() },
-    )
-    setBusy(false)
-    if (!res.ok) {
-      setError(res.error ?? 'عملیات ناموفق بود')
-      return
-    }
-    setSuccess('درخواست برداشت ثبت شد — مبلغ تا پرداخت مسدود می‌شود')
-    setForm(null)
-    setAmount('')
-    setIban('')
-    void loadAll()
+  function handleHeroAction(action: AssetsAction) {
+    setSheet(action)
   }
 
   return (
     <div className="animate-stagger space-y-5">
-      {/* کارت‌های موجودی — مقادیر واقعی */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <BalanceCard
-          variant="gold"
-          amount={gold?.available ?? '0'}
-          subtitle="طلای آب‌شده ۱۸ عیار"
-          loading={loading}
-        />
-        <BalanceCard
-          variant="fiat"
-          amount={toman?.available ?? '0'}
-          unit="تومان"
-          subtitle="کیف پول تومانی"
-          loading={loading}
-        />
-        <BalanceCard
-          variant="total"
-          amount={String(Math.round(total))}
-          unit="تومان"
-          subtitle="مجموع دارایی تومانی شما"
-          loading={loading}
-          className="sm:col-span-2 lg:col-span-1"
+      {/* هیروی سورمه‌ای — ارزش کل + ۴ اکشن مالی */}
+      <AssetsHero
+        totalValue={Math.round(totalValue)}
+        changePercent={summary?.priceChange24h ?? null}
+        loading={loading}
+        online={online}
+        onAction={handleHeroAction}
+      />
+
+      {/* کارت‌های کیف — طلا (سود/زیان)، تومان، اقساط */}
+      <WalletCards
+        data={
+          summary ?? {
+            goldBalance: '0',
+            goldLocked: '0',
+            tomanBalance: '0',
+            tomanLocked: '0',
+            sellPrice: null,
+            avgBuyPrice: null,
+            installments: { activeContracts: 0, totalPayable: '0', paid: '0', remaining: '0' },
+          }
+        }
+        loading={loading}
+      />
+
+      {/* کارت‌های بانکی — اسکرول افقی + افزودن/حذف/پیش‌فرض */}
+      <BankCards accounts={bankAccounts} online={online} onChanged={() => void loadAll()} />
+
+      {/* ابزارهای سرمایه‌گذاری — خرید خودکار + هشدار قیمت */}
+      <div className="grid gap-5 lg:grid-cols-2">
+        <SipCard online={online} onChanged={() => void loadAll()} />
+        <PriceAlertsCard
+          online={online}
+          currentPrice={summary?.sellPrice != null ? Number(summary.sellPrice) : null}
+          onChanged={() => void loadAll()}
         />
       </div>
 
-      {/* اکشن‌های کیف پول */}
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
-          variant="default"
-          onClick={() => {
-            setForm('deposit')
-            setError(null)
-            setSuccess(null)
-          }}
-        >
-          <IconArrowDownLeft className="size-4" />
-          واریز
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => {
-            setForm('withdraw')
-            setError(null)
-            setSuccess(null)
-          }}
-        >
-          <IconArrowUpLeft className="size-4" />
-          برداشت
-        </Button>
-      </div>
+      {/* شیت‌های واریز/برداشت */}
+      <DepositSheet
+        open={sheet === 'deposit'}
+        onClose={() => setSheet(null)}
+        online={online}
+        onCompleted={() => void loadAll()}
+      />
+      <WithdrawSheet
+        open={sheet === 'withdraw'}
+        onClose={() => setSheet(null)}
+        online={online}
+        accounts={bankAccounts}
+        onCompleted={() => void loadAll()}
+      />
+      <TransferSheet
+        open={sheet === 'transfer'}
+        onClose={() => setSheet(null)}
+        online={online}
+        onCompleted={() => void loadAll()}
+      />
+      <DeliverySheet
+        open={sheet === 'delivery'}
+        onClose={() => setSheet(null)}
+        online={online}
+        onCompleted={() => void loadAll()}
+      />
 
-      {/* فرم واریز/برداشت */}
-      {form && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              {form === 'deposit' ? 'واریز از درگاه پرداخت' : 'درخواست برداشت'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <label className="block space-y-1.5">
-              <span className="text-muted-foreground text-[11px]">مبلغ (تومان)</span>
-              <input
-                type="text"
-                inputMode="numeric"
-                dir="ltr"
-                // نمایش با جداکننده هزارگان — مقدار خام همیشه digits-only است
-                value={amount ? formatExactAmount(amount) : ''}
-                onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ''))}
-                placeholder="1,000,000"
-                className={inputClass}
-              />
-            </label>
-            {form === 'withdraw' && (
-              <label className="block space-y-1.5">
-                <span className="text-muted-foreground text-[11px]">شماره شبا</span>
-                <input
-                  type="text"
-                  dir="ltr"
-                  value={iban}
-                  onChange={(e) => setIban(e.target.value.toUpperCase())}
-                  placeholder="IR062960000000100324200001"
-                  maxLength={26}
-                  className={inputClass}
-                />
-              </label>
-            )}
-            {error && (
-              <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
-                <IconAlertTriangle className="size-3.5" aria-hidden="true" />
-                {error}
-              </p>
-            )}
-            {form === 'deposit' && (
-              <p className="text-muted-foreground text-[11px] leading-5">
-                پس از ثبت، به درگاه امن پرداخت هدایت می‌شوید؛ مبلغ بلافاصله پس از پرداخت موفق به کیف
-                پول شما اضافه می‌شود.
-              </p>
-            )}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="default"
-                onClick={submit}
-                disabled={busy || !online}
-                title={!online ? 'اتصال اینترنت برقرار نیست' : undefined}
-              >
-                {!online
-                  ? 'آفلاین'
-                  : busy
-                    ? 'در حال ثبت…'
-                    : form === 'deposit'
-                      ? 'پرداخت'
-                      : 'ثبت درخواست'}
-              </Button>
-              <Button variant="ghost" onClick={() => setForm(null)} disabled={busy}>
-                انصراف
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      {error && (
+        <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
+          <IconAlertTriangle className="size-3.5" aria-hidden="true" />
+          {error}
+        </p>
       )}
 
       {success && (
@@ -296,52 +178,11 @@ export function AssetsClient() {
         </p>
       )}
 
-      {/* تراکنش‌ها + ترکیب دارایی */}
+      {/* سوابق تب‌دار + ترکیب دارایی */}
       <div className="grid gap-5 lg:grid-cols-5">
-        <Card className="lg:col-span-3">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <IconHistory className="text-gold-600 size-5" stroke={1.75} />
-              تراکنش‌های اخیر
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {txs.length === 0 ? (
-              <EmptyState
-                icon={IconHistory}
-                title="هنوز تراکنشی ثبت نشده است"
-                description="واریز، برداشت، خرید و فروش شما با جزئیات کامل اینجا ثبت و نمایش داده می‌شود."
-              />
-            ) : (
-              <ul className="divide-border/40 divide-y">
-                {txs.map((t) => (
-                  <li key={t.id} className="flex items-center justify-between gap-3 py-3">
-                    <div>
-                      <p className="text-foreground text-xs font-semibold">
-                        {TX_LABELS[t.type] ?? t.type}
-                      </p>
-                      <p className="text-muted-foreground mt-0.5 text-[10px] tabular-nums">
-                        {new Date(t.createdAt).toLocaleString('fa-IR', {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
-                        })}
-                      </p>
-                    </div>
-                    <div className="text-left">
-                      <p className="text-foreground text-xs font-semibold tabular-nums" dir="ltr">
-                        {formatExactAmount(t.amount)}{' '}
-                        <span className="text-muted-foreground">تومان</span>
-                      </p>
-                      <StatusBadge tone="gold" dot={false} className="mt-1">
-                        {TX_STATUS[t.status] ?? t.status}
-                      </StatusBadge>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-3">
+          <HistoryTabs />
+        </div>
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -350,7 +191,7 @@ export function AssetsClient() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {Number(gold?.balance ?? 0) === 0 && Number(toman?.balance ?? 0) === 0 ? (
+            {Number(summary?.goldBalance ?? 0) === 0 && Number(summary?.tomanBalance ?? 0) === 0 ? (
               <EmptyState
                 icon={IconChartPie}
                 title="دارایی فعالی ندارید"
@@ -361,21 +202,21 @@ export function AssetsClient() {
                 <div className="flex items-center justify-between py-2">
                   <dt className="text-muted-foreground">طلای آب‌شده</dt>
                   <dd className="text-foreground font-semibold tabular-nums" dir="ltr">
-                    {formatExactAmount(gold?.balance ?? '0')} گرم
+                    {formatExactAmount(summary?.goldBalance ?? '0')} گرم
                   </dd>
                 </div>
                 <div className="flex items-center justify-between py-2">
                   <dt className="text-muted-foreground">تومان</dt>
                   <dd className="text-foreground font-semibold tabular-nums" dir="ltr">
-                    {formatExactAmount(toman?.balance ?? '0')} تومان
+                    {formatExactAmount(summary?.tomanBalance ?? '0')} تومان
                   </dd>
                 </div>
-                {Number(gold?.lockedBalance ?? 0) + Number(toman?.lockedBalance ?? 0) > 0 && (
+                {Number(summary?.goldLocked ?? 0) + Number(summary?.tomanLocked ?? 0) > 0 && (
                   <div className="flex items-center justify-between py-2">
                     <dt className="text-muted-foreground">مسدود شده</dt>
                     <dd className="text-foreground font-semibold tabular-nums" dir="ltr">
-                      {formatExactAmount(toman?.lockedBalance ?? '0')} تومان +{' '}
-                      {formatExactAmount(gold?.lockedBalance ?? '0')} گرم
+                      {formatExactAmount(summary?.tomanLocked ?? '0')} تومان +{' '}
+                      {formatExactAmount(summary?.goldLocked ?? '0')} گرم
                     </dd>
                   </div>
                 )}

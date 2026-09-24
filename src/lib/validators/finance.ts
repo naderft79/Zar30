@@ -32,10 +32,16 @@ export const createDepositSchema = z.object({
   amount: bigIntAmount,
 })
 
-export const createWithdrawalSchema = z.object({
-  amount: bigIntAmount,
-  iban: ibanSchema,
-})
+export const createWithdrawalSchema = z
+  .object({
+    amount: bigIntAmount,
+    iban: ibanSchema.optional(),
+    bankAccountId: z.string().uuid().optional(),
+    otpCode: z.string().regex(/^\d{4,8}$/, 'کد تایید نامعتبر است'),
+  })
+  .refine((d) => !!d.iban || !!d.bankAccountId, {
+    message: 'شماره شبا یا انتخاب حساب بانکی الزامی است',
+  })
 
 export const adminRejectSchema = z.object({
   reason: z.string().min(3).max(500),

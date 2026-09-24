@@ -60,6 +60,43 @@ export async function requestDeposit(
   return { id: tx.id, amount: tx.amount.toString(), status: tx.status, createdAt: tx.createdAt }
 }
 
+// واریز شناسه‌دار (کارت‌به‌کارت) — کاربر کد پیگیری می‌دهد؛ ادمین در صف می‌بیند و تایید می‌کند
+export async function requestManualDeposit(
+  ctx: { userId: string },
+  input: { amount: bigint; bankRef: string },
+) {
+  if (input.amount < MIN_DEPOSIT_TOMAN || input.amount > MAX_DEPOSIT_TOMAN) {
+    throw FinanceErrors.invalidAmount(
+      `مبلغ واریز باید بین ${MIN_DEPOSIT_TOMAN.toLocaleString('en')} و ${MAX_DEPOSIT_TOMAN.toLocaleString('en')} تومان باشد`,
+    )
+  }
+
+  // جلوگیری از ثبت دوباره یک کد پیگیری برای کاربر
+  const duplicate = await prisma.transaction.findFirst({
+    where: { userId: ctx.userId, type: 'DEPOSIT', bankRef: input.bankRef },
+  })
+  if (duplicate) {
+    throw FinanceErrors.invalidState('این کد پیگیری قبلاً برای یک واریز ثبت شده است')
+  }
+
+  const wallet = await ensureWallet(prisma, ctx.userId)
+  const tx = await prisma.transaction.create({
+    data: {
+      walletId: wallet.id,
+      userId: ctx.userId,
+      type: 'DEPOSIT',
+      amount: input.amount,
+      status: 'PENDING',
+      bankRef: input.bankRef,
+    },
+  })
+  notifyFinancial(ctx.userId, 'deposit_requested', 'درخواست واریز شناسه‌دار ثبت شد', '', {
+    transactionId: tx.id,
+    amount: input.amount.toString(),
+  })
+  return { id: tx.id, amount: tx.amount.toString(), status: tx.status, createdAt: tx.createdAt }
+}
+
 interface AdminActCtx {
   adminId: string
   adminRole: string

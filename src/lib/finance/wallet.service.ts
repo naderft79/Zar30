@@ -60,15 +60,33 @@ export async function getWalletSummary(userId: string) {
 }
 
 // تاریخچه تراکنش‌های کاربر — فقط مالک
-export async function listUserTransactions(userId: string, page: number, limit: number) {
+export async function listUserTransactions(
+  userId: string,
+  page: number,
+  limit: number,
+  filters?: { type?: string; status?: string; from?: Date; to?: Date },
+) {
+  const where = {
+    userId,
+    ...(filters?.type ? { type: filters.type as never } : {}),
+    ...(filters?.status ? { status: filters.status as never } : {}),
+    ...(filters?.from || filters?.to
+      ? {
+          createdAt: {
+            ...(filters.from ? { gte: filters.from } : {}),
+            ...(filters.to ? { lte: filters.to } : {}),
+          },
+        }
+      : {}),
+  }
   const [items, total] = await Promise.all([
     prisma.transaction.findMany({
-      where: { userId },
+      where,
       orderBy: { createdAt: 'desc' },
       skip: (page - 1) * limit,
       take: limit,
     }),
-    prisma.transaction.count({ where: { userId } }),
+    prisma.transaction.count({ where }),
   ])
   return {
     items: items.map((t) => ({
@@ -76,6 +94,8 @@ export async function listUserTransactions(userId: string, page: number, limit: 
       type: t.type,
       amount: t.amount.toString(),
       status: t.status,
+      bankRef: t.bankRef,
+      gatewayRef: t.gatewayRef,
       journalEntryId: t.journalEntryId,
       createdAt: t.createdAt,
     })),

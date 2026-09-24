@@ -13,7 +13,9 @@
 import prisma from '@/lib/db/prisma'
 import { Decimal } from './money'
 import { FinanceErrors } from './errors'
+import { logger } from '@/lib/logger/logger'
 import { getPriceProvider, type GoldPriceProvider } from '@/lib/price/providers'
+import { checkPriceAlerts } from './price-alert.service'
 
 // حداکثر سن قیمت قابل معامله — پیش‌فرض ۱۵ دقیقه (env: PRICE_MAX_AGE_MINUTES)
 const MAX_AGE_MS = Number(process.env.PRICE_MAX_AGE_MINUTES ?? 15) * 60_000
@@ -101,7 +103,7 @@ export async function recordPrice(input: RecordPriceInput) {
     .div(new Decimal(input.buyPrice.toString()))
     .toDecimalPlaces(4)
 
-  return prisma.goldPrice.create({
+  const price = await prisma.goldPrice.create({
     data: {
       buyPrice: input.buyPrice,
       sellPrice: input.sellPrice,
@@ -111,6 +113,11 @@ export async function recordPrice(input: RecordPriceInput) {
       recordedAt: new Date(),
     },
   })
+
+  // هشدارهای قیمت کاربران — fire-and-forget؛ شکست آن قیمت را خراب نمی‌کند
+  checkPriceAlerts(input.buyPrice).catch((err) => logger.error({ err }, 'Price alert check failed'))
+
+  return price
 }
 
 // همگام‌سازی قیمت زنده از provider — fetch → validate → record

@@ -23,6 +23,7 @@ import {
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { TrendBadge } from '@/components/financial/trend-badge'
 import { toPersianWords } from '@/lib/utils/format'
+import { useBalanceVisibility } from '@/lib/hooks/use-balance-visibility'
 import { cn } from 'cn'
 
 interface WealthHeroProps {
@@ -129,8 +130,8 @@ export function WealthHero({
   loading = false,
   className,
 }: WealthHeroProps) {
-  // مخفی‌سازی مقادیر مالی — الگوی رایج اپ‌های بانکی
-  const [hidden, setHidden] = useState(false)
+  // مخفی‌سازی مقادیر مالی — سراسری و مشترک با صفحه دارایی (persistent)
+  const [hidden, toggleHidden] = useBalanceVisibility()
   // چرخش خودکار بنرها
   const [bannerIdx, setBannerIdx] = useState(0)
   // بعد از تعامل دستی کاربر، چرخش خودکار متوقف می‌شود
@@ -197,7 +198,7 @@ export function WealthHero({
           <p className="text-cream-300/80 text-label">موجودی کل</p>
           <button
             type="button"
-            onClick={() => setHidden((v) => !v)}
+            onClick={toggleHidden}
             aria-label={hidden ? 'نمایش موجودی' : 'مخفی کردن موجودی'}
             aria-pressed={hidden}
             className="text-cream-300/60 hover:text-gold-300 focus-visible:ring-ring ms-1 flex size-7 items-center justify-center rounded-lg transition-colors focus-visible:ring-2"

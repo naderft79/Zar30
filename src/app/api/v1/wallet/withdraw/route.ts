@@ -2,6 +2,7 @@
 // Zar30 - /api/v1/wallet/withdraw
 // ============================================
 // POST → درخواست برداشت — مبلغ بلافاصله قفل می‌شود (double-spend ممکن نیست)
+//        OTP مالی الزامی — شبا یا از کارت ذخیره‌شده کاربر یا ورودی دستی
 //        هدر Idempotency-Key الزامی
 // GET  → لیست برداشت‌های کاربر
 // ============================================
@@ -12,8 +13,10 @@ import { ApiError } from '@/lib/errors/api-error'
 import { checkRateLimit } from '@/lib/rate-limit/rate-limit'
 import { paginationSchema } from '@/lib/validators/common'
 import { createWithdrawalSchema } from '@/lib/validators/finance'
+import { verifyOtp } from '@/lib/auth/otp'
 import { withIdempotency } from '@/lib/finance/idempotency'
 import { requestWithdrawal, listUserWithdrawals } from '@/lib/finance/withdrawal.service'
+import { getOwnedIban } from '@/lib/finance/bank-account.service'
 
 export const GET = withErrorHandler(async (req: Request) => {
   const auth = await requireAuth(req)
@@ -43,9 +46,17 @@ export const POST = withErrorHandler(async (req: Request) => {
     throw ApiError.badRequest(parsed.error.issues[0]?.message ?? 'ورودی نامعتبر است')
   }
 
+  // برداشت عملیات مالی حساس است — OTP مالی اجباری
+  await verifyOtp(auth.mobile, 'financial', parsed.data.otpCode)
+
+  // شبا یا از کارت ذخیره‌شده کاربر می‌آید یا ورودی دستی — هر دو به نام کاربر باید باشند
+  const iban = parsed.data.bankAccountId
+    ? await getOwnedIban(auth.userId, parsed.data.bankAccountId)
+    : parsed.data.iban!
+
   const { data: withdrawal, replayed } = await withIdempotency(
     { req, userId: auth.userId, endpoint: 'wallet.withdraw', body: rawBody },
-    () => requestWithdrawal(auth, parsed.data),
+    () => requestWithdrawal(auth, { amount: parsed.data.amount, iban }),
   )
 
   return created({ withdrawal, replayed })

@@ -11,7 +11,7 @@ import { env } from '@/lib/config/env'
 import { ApiError } from '@/lib/errors/api-error'
 import { smsService } from '@/lib/sms/sms-service'
 
-export type OtpPurpose = 'register' | 'login' | 'reset'
+export type OtpPurpose = 'register' | 'login' | 'reset' | 'financial'
 
 // کد هرگز plaintext ذخیره نمی‌شود — hash با pepper
 function hashOtp(code: string): string {

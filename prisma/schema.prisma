@@ -248,6 +248,13 @@ model User {
   referralReceived Referral?         @relation("Referred")
   installmentContracts InstallmentContract[]
   investmentPositions  InvestmentPosition[]
+  bankAccounts      BankAccount[]
+  addresses         Address[]
+  deliveryRequests  GoldDeliveryRequest[]
+  sentTransfers     InternalTransfer[]  @relation("TransferSender")
+  receivedTransfers InternalTransfer[]  @relation("TransferRecipient")
+  priceAlerts       PriceAlert[]
+  sipPlans          RecurringBuyPlan[]
 
   @@index([referredById])
   @@index([status])
@@ -268,6 +275,7 @@ model AdminUser {
   withdrawals         WithdrawalRequest[]
   tickets             Ticket[]
   installmentContracts InstallmentContract[]
+  deliveryRequests    GoldDeliveryRequest[]
 
   @@map("admin_users")
 }
@@ -432,6 +440,7 @@ model JournalEntry {
   orders        Order[]
   transactions  Transaction[]
   withdrawals   WithdrawalRequest[]
+  internalTransfers InternalTransfer[]
 
   @@index([referenceType, referenceId])
   @@index([status])
@@ -540,12 +549,18 @@ model Payment {
   @@map("payments")
 }
 
+enum WithdrawalSpeed {
+  NORMAL
+  FAST
+}
+
 model WithdrawalRequest {
   id          String           @id @default(uuid())
   userId      String           @map("user_id")
   amount      BigInt
   iban        String
   status      WithdrawalStatus @default(PENDING)
+  speed       WithdrawalSpeed  @default(NORMAL)
   processedBy String?          @map("processed_by")
   processedAt DateTime?        @map("processed_at")
   reviewNote  String?          @map("review_note")
@@ -559,6 +574,183 @@ model WithdrawalRequest {
   @@index([userId, createdAt])
   @@index([status])
   @@map("withdrawal_requests")
+}
+
+// ============================================
+// Bank Accounts (Assets v2)
+// ============================================
+// کارت‌های بانکی کاربر — شبا با checksum واقعی اعتبارسنجی می‌شود
+// نام بانک از کد ۳ رقمی شبا سمت سرور تشخیص داده می‌شود
+
+model BankAccount {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  bankCode  String   @map("bank_code")
+  bankName  String   @map("bank_name")
+  iban      String
+  cardPan   String?  @map("card_pan")
+  alias     String?
+  isDefault Boolean  @default(false) @map("is_default")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, iban])
+  @@index([userId])
+  @@map("bank_accounts")
+}
+
+// ============================================
+// Addresses (دفترچه آدرس — برای تحویل فیزیکی)
+// ============================================
+
+model Address {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  title         String?
+  recipientName String   @map("recipient_name")
+  mobile        String
+  province      String?
+  city          String?
+  address       String
+  postalCode    String   @map("postal_code")
+  isDefault     Boolean  @default(false) @map("is_default")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deliveryRequests GoldDeliveryRequest[]
+
+  @@index([userId])
+  @@map("addresses")
+}
+
+// ============================================
+// Physical Gold Delivery
+// ============================================
+// درخواست تحویل فیزیکی — طلا قفل نمی‌شود (فاز مینیمال)؛
+// فقط در زمان ثبت موجودی آزاد چک می‌شود
+
+enum DeliveryMethod {
+  POST
+  PICKUP
+}
+
+enum DeliveryStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model GoldDeliveryRequest {
+  id           String          @id @default(uuid())
+  userId       String          @map("user_id")
+  grams        Decimal         @db.Decimal(18, 6)
+  method       DeliveryMethod  @default(POST)
+  addressId    String?         @map("address_id")
+  status       DeliveryStatus  @default(PENDING)
+  reviewNote   String?         @map("review_note")
+  trackingCode String?         @map("tracking_code")
+  processedBy  String?         @map("processed_by")
+  processedAt  DateTime?       @map("processed_at")
+  createdAt    DateTime        @default(now()) @map("created_at")
+
+  user      User            @relation(fields: [userId], references: [id])
+  address   Address?        @relation(fields: [addressId], references: [id])
+  processor AdminUser?      @relation(fields: [processedBy], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("gold_delivery_requests")
+}
+
+// ============================================
+// Internal Transfers (انتقال طلا/تومان + هدیه)
+// ============================================
+// جابه‌جایی داخل پلتفرم بین دو کاربر — journal متقارن در ledger
+
+enum TransferKind {
+  TRANSFER
+  GIFT
+}
+
+model InternalTransfer {
+  id            String        @id @default(uuid())
+  senderId      String        @map("sender_id")
+  recipientId   String        @map("recipient_id")
+  assetType     AssetType     @map("asset_type")
+  tomanAmount   BigInt?       @map("toman_amount")
+  goldAmount    Decimal?      @db.Decimal(18, 6) @map("gold_amount")
+  kind          TransferKind  @default(TRANSFER)
+  giftMessage   String?       @map("gift_message")
+  journalEntryId String?      @map("journal_entry_id")
+  status        String        @default("COMPLETED")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  sender    User          @relation("TransferSender", fields: [senderId], references: [id])
+  recipient User          @relation("TransferRecipient", fields: [recipientId], references: [id])
+  journalEntry JournalEntry? @relation(fields: [journalEntryId], references: [id])
+
+  @@index([senderId, createdAt])
+  @@index([recipientId, createdAt])
+  @@map("internal_transfers")
+}
+
+// ============================================
+// Price Alerts (هشدار قیمت طلا)
+// ============================================
+
+enum AlertDirection {
+  ABOVE
+  BELOW
+}
+
+model PriceAlert {
+  id          String         @id @default(uuid())
+  userId      String         @map("user_id")
+  targetPrice BigInt         @map("target_price")
+  direction   AlertDirection
+  active      Boolean        @default(true)
+  triggeredAt DateTime?      @map("triggered_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([active])
+  @@map("price_alerts")
+}
+
+// ============================================
+// Recurring Buy Plans (پس‌انداز خودکار SIP)
+// ============================================
+
+enum SipFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+model RecurringBuyPlan {
+  id          String        @id @default(uuid())
+  userId      String        @map("user_id")
+  tomanAmount BigInt        @map("toman_amount")
+  frequency   SipFrequency
+  nextRunAt   DateTime      @map("next_run_at")
+  active      Boolean       @default(true)
+  lastRunAt   DateTime?     @map("last_run_at")
+  lastOrderId String?       @map("last_order_id")
+  lastError   String?       @map("last_error")
+  consecutiveFailures Int   @default(0) @map("consecutive_failures")
+  createdAt   DateTime      @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([active, nextRunAt])
+  @@map("recurring_buy_plans")
 }
 
 // ============================================
