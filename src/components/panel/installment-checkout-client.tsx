@@ -10,6 +10,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { IconArrowRight, IconHelpCircle, IconReceipt, IconShieldCheck } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
+import { INSTALLMENT_TERMS } from '@/lib/data/installment-terms'
 import { formatExactAmount } from '@/lib/utils/format'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -46,6 +47,7 @@ export function InstallmentCheckoutClient() {
   const [agreed, setAgreed] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
   const [scheduleOpen, setScheduleOpen] = useState(false)
+  const [termsOpen, setTermsOpen] = useState(false)
 
   // اعتبارسنجی پارامترهای ورودی — مقادیر نامعتبر به بازه امن clamp می‌شوند
   const rawMonths = Number(searchParams.get('months'))
@@ -167,18 +169,26 @@ export function InstallmentCheckoutClient() {
         </p>
       </div>
 
-      {/* موافقت با قوانین */}
-      <label className="flex cursor-pointer items-start gap-2.5 px-1 select-none">
+      {/* موافقت با قوانین — متن لینک‌دار بازکننده مودال */}
+      <div className="flex items-start gap-2.5 px-1">
         <input
           type="checkbox"
+          id="installment-terms"
           checked={agreed}
           onChange={(e) => setAgreed(e.target.checked)}
           className="accent-navy-700 mt-0.5 size-4.5 shrink-0 cursor-pointer"
         />
-        <span className="text-foreground/85 text-xs leading-relaxed">
-          قوانین و مقررات خرید اقساطی از زرسی را مطالعه کرده‌ام و می‌پذیرم.
-        </span>
-      </label>
+        <p className="text-foreground/85 text-xs leading-relaxed">
+          <button
+            type="button"
+            onClick={() => setTermsOpen(true)}
+            className="text-gold-600 hover:text-gold-500 focus-visible:ring-ring rounded-sm font-medium underline underline-offset-4 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          >
+            قوانین و مقررات خرید اقساطی از زرسی
+          </button>{' '}
+          را مطالعه کرده‌ام و می‌پذیرم.
+        </p>
+      </div>
 
       {/* تایید و ادامه */}
       <button
@@ -215,6 +225,34 @@ export function InstallmentCheckoutClient() {
               </li>
             ))}
           </ul>
+        </DialogContent>
+      </Dialog>
+
+      {/* مودال قوانین و مقررات — تمام‌قد با دکمه قبول ثابت در پایین */}
+      <Dialog open={termsOpen} onOpenChange={setTermsOpen}>
+        <DialogContent className="flex h-[85dvh] max-w-lg flex-col gap-0 overflow-hidden p-0">
+          <DialogHeader className="border-border/60 shrink-0 border-b px-5 py-4">
+            <DialogTitle className="text-base">قوانین و مقررات خرید اقساطی از زرسی</DialogTitle>
+          </DialogHeader>
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+            {INSTALLMENT_TERMS.map((paragraph, i) => (
+              <p key={i} className="text-foreground/80 text-justify text-xs leading-6">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+          <div className="border-border/60 shrink-0 border-t p-4">
+            <button
+              type="button"
+              onClick={() => {
+                setAgreed(true)
+                setTermsOpen(false)
+              }}
+              className="bg-navy-700 text-cream-50 hover:bg-navy-600 focus-visible:ring-ring flex h-11 w-full items-center justify-center rounded-xl text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              قبول قوانین و ادامه
+            </button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
