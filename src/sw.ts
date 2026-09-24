@@ -11,7 +11,6 @@ import { defaultCache } from '@serwist/turbopack/worker'
 import {
   Serwist,
   NetworkOnly,
-  NetworkFirst,
   CacheFirst,
   type PrecacheEntry,
   type SerwistGlobalConfig,
@@ -27,23 +26,12 @@ declare global {
 declare const self: ServiceWorkerGlobalScope
 
 // ============================================
-// Financial API Blocklist
+// API Cache Policy
 // ============================================
-// این APIها هرگز cache نمی شوند و نباید Offline اجرا شوند
-const FINANCIAL_API_PATTERNS = [
-  /\/api\/v1\/orders/,
-  /\/api\/v1\/wallet\/deposit/,
-  /\/api\/v1\/wallet\/withdraw/,
-  /\/api\/v1\/wallet\/transfer/,
-  /\/api\/v1\/installments/,
-  /\/api\/v1\/investments/,
-  /\/api\/v1\/auth\/otp/,
-  /\/api\/v1\/payments/,
-]
-
-const isFinancialApi = (url: URL): boolean => {
-  return FINANCIAL_API_PATTERNS.some((pattern) => pattern.test(url.pathname))
-}
+// تمام APIها (موجودی، قیمت، تراکنش، کیف پول، سفارش، کاربر، ادمین) هرگز cache
+// نمی شوند — داده stale هرگز حقیقت مالی نیست و عملیات مالی Offline Queue نمی‌شود.
+// NetworkFirst روی /api/ می توانست پاسخ قدیمی را به‌عنوان state فعلی برگرداند.
+const isApi = (url: URL): boolean => url.pathname.startsWith('/api/')
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
@@ -51,18 +39,10 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: [
-    // API های مالی — فقط Network، بدون Cache
+    // تمام APIها — فقط Network، بدون Cache
     {
-      matcher: ({ url }) => isFinancialApi(url),
+      matcher: ({ url }) => isApi(url),
       handler: new NetworkOnly(),
-    },
-    // سایر APIها — NetworkFirst با fallback
-    {
-      matcher: ({ url }) => url.pathname.startsWith('/api/'),
-      handler: new NetworkFirst({
-        cacheName: 'api-cache',
-        networkTimeoutSeconds: 5,
-      }),
     },
     // تصاویر
     {

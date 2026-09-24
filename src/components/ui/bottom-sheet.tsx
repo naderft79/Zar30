@@ -60,6 +60,15 @@ export function BottomSheet({ open, onClose, title, children }: BottomSheetProps
     }
     onClose()
   }, [onClose])
+  // Escape در دسکتاپ شیت را می‌بندد
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, close])
 
   useEffect(() => {
     if (!open) pushed.current = false

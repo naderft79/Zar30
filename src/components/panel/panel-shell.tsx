@@ -233,6 +233,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   const pullStart = useRef<number | null>(null)
 
   function onPullStart(e: React.TouchEvent) {
+    // لمسی که داخل dialog (BottomSheet) شروع شده pull را فعال نکند
+    if ((e.target as HTMLElement).closest('[role="dialog"]')) return
     if (window.scrollY <= 0) pullStart.current = e.touches[0]!.clientY
   }
   function onPullMove(e: React.TouchEvent) {
@@ -244,6 +246,11 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
     if (pullStart.current === null) return
     pullStart.current = null
     if (pullY >= 64 && !refreshing) {
+      if (!navigator.onLine) {
+        // آفلاین — pull انجام نشود (بنر آفلاین خودش وضعیت را نشان می‌دهد)
+        setPullY(0)
+        return
+      }
       setRefreshing(true)
       // صفحات به این event گوش می‌دهند و داده‌شان را رفرش می‌کنند
       window.dispatchEvent(new Event(DATA_REFRESH_EVENT))
