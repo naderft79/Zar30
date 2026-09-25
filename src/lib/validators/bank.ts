@@ -80,10 +80,11 @@ const tomanAmount = z
   .transform((v) => BigInt(v))
   .refine((v) => v > 0n, 'مبلغ باید مثبت باشد')
 
+// انتقال داخلی فقط طلاست — سیاست محصول: انتقال تومانی غیرفعال
 export const createTransferSchema = z
   .object({
     recipientMobile: mobileSchema,
-    assetType: z.enum(['TOMAN', 'GOLD']),
+    assetType: z.literal('GOLD'),
     tomanAmount: tomanAmount.optional(),
     goldAmount: z
       .string()
@@ -93,8 +94,8 @@ export const createTransferSchema = z
     giftMessage: z.string().max(200).optional(),
     otpCode: z.string().regex(/^\d{4,8}$/),
   })
-  .refine((d) => (d.assetType === 'TOMAN' ? !!d.tomanAmount : !!d.goldAmount), {
-    message: 'برای انتقال تومان مبلغ و برای انتقال طلا مقدار گرم الزامی است',
+  .refine((d) => !!d.goldAmount, {
+    message: 'مقدار طلا (گرم) الزامی است',
   })
 
 export const manualDepositSchema = z.object({

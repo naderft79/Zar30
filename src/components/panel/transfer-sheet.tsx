@@ -1,7 +1,7 @@
 // ============================================
 // Zar30 - Transfer / Gift Sheet (Assets v2)
 // ============================================
-// شیت انتقال داخلی — طلا یا تومان به کاربر دیگر زرسی با موبایل
+// شیت انتقال داخلی — فقط طلا به کاربر دیگر زرسی با موبایل
 //   سوییچ «هدیه» → kind=GIFT + پیام + notification متفاوت برای گیرنده
 //   OTP مالی + Idempotency-Key اجباری — journal متقارن سمت سرور
 // ============================================
@@ -13,7 +13,6 @@ import { IconAlertTriangle, IconGift, IconTransfer } from '@tabler/icons-react'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { Button } from '@/components/ui/button'
 import { apiPost } from '@/lib/api/client'
-import { formatExactAmount } from '@/lib/utils/format'
 import { FinancialOtp } from './financial-otp'
 import { cn } from 'cn'
 
@@ -30,7 +29,6 @@ interface TransferSheetProps {
 }
 
 export function TransferSheet({ open, onClose, online, onCompleted, inline }: TransferSheetProps) {
-  const [assetType, setAssetType] = useState<'TOMAN' | 'GOLD'>('GOLD')
   const [mobile, setMobile] = useState('')
   const [amount, setAmount] = useState('')
   const [isGift, setIsGift] = useState(false)
@@ -41,7 +39,6 @@ export function TransferSheet({ open, onClose, online, onCompleted, inline }: Tr
   const [done, setDone] = useState(false)
 
   function reset() {
-    setAssetType('GOLD')
     setMobile('')
     setAmount('')
     setIsGift(false)
@@ -58,12 +55,7 @@ export function TransferSheet({ open, onClose, online, onCompleted, inline }: Tr
       setError('شماره موبایل گیرنده باید ۱۱ رقم و با ۰۹ شروع شود')
       return
     }
-    if (assetType === 'TOMAN') {
-      if (!/^\d+$/.test(amount) || Number(amount) <= 0) {
-        setError('مبلغ تومانی معتبر وارد کنید')
-        return
-      }
-    } else if (!/^\d+(\.\d{1,6})?$/.test(amount) || Number(amount) <= 0) {
+    if (!/^\d+(\.\d{1,6})?$/.test(amount) || Number(amount) <= 0) {
       setError('مقدار طلا را به گرم وارد کنید (مثلاً 0.5)')
       return
     }
@@ -77,8 +69,8 @@ export function TransferSheet({ open, onClose, online, onCompleted, inline }: Tr
       '/api/v1/transfers',
       {
         recipientMobile: mobile,
-        assetType,
-        ...(assetType === 'TOMAN' ? { tomanAmount: amount } : { goldAmount: amount }),
+        assetType: 'GOLD',
+        goldAmount: amount,
         kind: isGift ? 'GIFT' : 'TRANSFER',
         ...(isGift && giftMessage.trim() ? { giftMessage: giftMessage.trim() } : {}),
         otpCode,
@@ -102,7 +94,7 @@ export function TransferSheet({ open, onClose, online, onCompleted, inline }: Tr
       <p className="text-muted-foreground text-xs leading-5">
         {isGift
           ? 'گیرنده از طریق اعلان درون‌برنامه‌ای مطلع می‌شود.'
-          : 'مبلغ بلافاصله به کیف پول گیرنده منتقل شد.'}
+          : 'طلا بلافاصله به کیف پول گیرنده منتقل شد.'}
       </p>
       <Button
         className="w-full"
@@ -116,34 +108,6 @@ export function TransferSheet({ open, onClose, online, onCompleted, inline }: Tr
     </div>
   ) : (
     <div className="space-y-4">
-      {/* نوع دارایی */}
-      <div className="bg-muted/60 grid grid-cols-2 gap-1 rounded-xl p-1">
-        {(
-          [
-            { key: 'GOLD', label: 'طلا (گرم)' },
-            { key: 'TOMAN', label: 'تومان' },
-          ] as const
-        ).map(({ key, label }) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => {
-              setAssetType(key)
-              setAmount('')
-              setError(null)
-            }}
-            className={cn(
-              'rounded-lg py-2 text-xs font-semibold transition-colors',
-              assetType === key
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground',
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
       <label className="block space-y-1.5">
         <span className="text-muted-foreground text-[11px]">شماره موبایل گیرنده</span>
         <input
@@ -158,22 +122,14 @@ export function TransferSheet({ open, onClose, online, onCompleted, inline }: Tr
       </label>
 
       <label className="block space-y-1.5">
-        <span className="text-muted-foreground text-[11px]">
-          {assetType === 'TOMAN' ? 'مبلغ (تومان)' : 'مقدار (گرم)'}
-        </span>
+        <span className="text-muted-foreground text-[11px]">مقدار طلا (گرم)</span>
         <input
           type="text"
           inputMode="decimal"
           dir="ltr"
-          value={assetType === 'TOMAN' && amount ? formatExactAmount(amount) : amount}
-          onChange={(e) =>
-            setAmount(
-              assetType === 'TOMAN'
-                ? e.target.value.replace(/[^\d]/g, '')
-                : e.target.value.replace(/[^\d.]/g, ''),
-            )
-          }
-          placeholder={assetType === 'TOMAN' ? '1,000,000' : '0.5'}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value.replace(/[^\d.]/g, ''))}
+          placeholder="0.5"
           className={inputClass}
         />
       </label>
@@ -265,7 +221,7 @@ export function TransferSheet({ open, onClose, online, onCompleted, inline }: Tr
         reset()
         onClose()
       }}
-      title={isGift ? 'هدیه طلا / تومان' : 'انتقال به کاربر زرسی'}
+      title={isGift ? 'هدیه طلا' : 'انتقال به کاربر زرسی'}
     >
       {content}
     </BottomSheet>

@@ -2,7 +2,7 @@
 // Zar30 - /api/v1/transfers
 // ============================================
 // GET  → لیست انتقال‌های ارسال/دریافت کاربر
-// POST → انتقال داخلی طلا/تومان یا هدیه — OTP مالی + Idempotency-Key الزامی
+// POST → انتقال داخلی طلا یا هدیه طلا — OTP مالی + Idempotency-Key الزامی
 // ============================================
 
 import { created, ok, withErrorHandler } from '@/lib/api/response'
