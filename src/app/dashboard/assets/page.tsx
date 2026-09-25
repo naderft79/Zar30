@@ -6,16 +6,10 @@
 // ============================================
 
 import type { Metadata } from 'next'
-import { PageHeader } from '@/components/panel/page-header'
 import { AssetsClient } from '@/components/panel/assets-client'
 
 export const metadata: Metadata = { title: 'دارایی' }
 
 export default function AssetsPage() {
-  return (
-    <>
-      <PageHeader title="دارایی" description="کیف پول، موجودی و تاریخچه مالی" />
-      <AssetsClient />
-    </>
-  )
+  return <AssetsClient />
 }

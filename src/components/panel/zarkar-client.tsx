@@ -21,7 +21,6 @@ import { Button } from '@/components/ui/button'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
-import { PageHeader } from './page-header'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { useOnlineStatus } from './offline-indicator'
@@ -145,11 +144,6 @@ export function ZarkarClient() {
 
   return (
     <div className="space-y-5">
-      <PageHeader
-        title="زرکار — سپرده طلا"
-        description="طلای خود را سپرده کنید و سود ثابت دوره‌ای به صورت طلا دریافت کنید"
-      />
-
       {/* هیروی سورمه‌ای — خلاصه سپرده‌ها */}
       <Card className="surface-wealth gold-rings relative overflow-hidden">
         <CardContent className="relative p-5 sm:p-6">

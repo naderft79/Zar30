@@ -31,7 +31,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { StatusBadge } from '@/components/ui/status-badge'
-import { PageHeader } from './page-header'
 
 const KYC_LABELS: Record<string, string> = {
   LEVEL_0: 'احراز نشده',
@@ -123,17 +122,13 @@ export function ProfileClient() {
 
   return (
     <div className="animate-stagger space-y-5">
-      <PageHeader
-        title="پروفایل"
-        description="اطلاعات شخصی و مدیریت حساب"
-        actions={
-          !editing && (
-            <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
-              ویرایش
-            </Button>
-          )
-        }
-      />
+      {!editing && (
+        <div className="flex justify-end">
+          <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+            ویرایش
+          </Button>
+        </div>
+      )}
 
       {/* ============ Identity Header — سطح ممتاز ============ */}
       <section
