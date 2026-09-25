@@ -17,7 +17,10 @@ import {
   IconBolt,
   IconBuildingStore,
   IconCalendarClock,
+  IconCertificate,
+  IconCreditCard,
   IconFileText,
+  IconMapPin,
   IconGift,
   IconLifebuoy,
   IconLogout,
@@ -74,6 +77,18 @@ const SETTINGS_ITEMS = [
     icon: IconBell,
     title: 'اعلان‌ها',
     description: 'مرکز اعلان و تنظیمات اطلاع‌رسانی',
+  },
+  {
+    href: '/dashboard/assets',
+    icon: IconCreditCard,
+    title: 'مدیریت کارت‌های بانکی',
+    description: 'افزودن، حذف و انتخاب کارت پیش‌فرض',
+  },
+  {
+    href: '/dashboard/delivery',
+    icon: IconMapPin,
+    title: 'مدیریت آدرس‌های تحویل',
+    description: 'آدرس‌های تحویل فیزیکی طلا',
   },
   {
     href: '/dashboard/profile/support',
@@ -270,6 +285,13 @@ export function ProfileClient() {
               <IconArrowLeft className="text-muted-foreground group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* ============ حقوقی و مجوزها — بخش جدا ============ */}
+      <section aria-label="حقوقی و مجوزها">
+        <p className="text-muted-foreground mb-2.5 px-1 text-xs font-semibold">حقوقی و مجوزها</p>
+        <div className="border-border/60 bg-card divide-border/50 divide-y overflow-hidden rounded-2xl border">
           {/* قوانین و مقررات */}
           <div className="flex items-center gap-3.5 p-4">
             <IconFileText className="text-muted-foreground size-6 shrink-0" stroke={1.75} />
@@ -288,6 +310,25 @@ export function ProfileClient() {
               </span>
             </span>
           </div>
+          {/* مجوزها و مدارک قانونی */}
+          <Link
+            href="/licenses"
+            className="hover:bg-muted/40 group flex items-center gap-3.5 p-4 transition-colors"
+          >
+            <IconCertificate
+              className="text-gold-600 dark:text-gold-400 size-6 shrink-0"
+              stroke={1.75}
+            />
+            <span className="min-w-0 flex-1">
+              <span className="text-foreground block text-sm font-semibold">
+                مجوزها و مدارک قانونی زرسی
+              </span>
+              <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                اسناد رسمی و مستندات حقوقی پلتفرم
+              </span>
+            </span>
+            <IconArrowLeft className="text-muted-foreground group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
+          </Link>
         </div>
       </section>
 
