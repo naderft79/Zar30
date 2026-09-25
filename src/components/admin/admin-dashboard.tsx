@@ -44,6 +44,7 @@ import {
   type WidgetDef,
 } from '@/components/admin/dashboard/preferences-popover'
 import { QuickActions } from '@/components/admin/dashboard/quick-actions'
+import { AdminSectionNav } from '@/components/admin/dashboard/section-nav'
 import { Segmented } from '@/components/admin/dashboard/segmented'
 import {
   AuditFeedWidget,
@@ -351,6 +352,9 @@ export function AdminDashboard() {
           </button>
         </div>
       </div>
+
+      {/* ===== Section quick nav — پویا از nav اصلی ===== */}
+      <AdminSectionNav permissions={admin.permissions} />
 
       {/* ===== Halt banner ===== */}
       {haltActive && (
