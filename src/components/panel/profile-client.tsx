@@ -36,14 +36,6 @@ import { usePanelUser, type PanelUser } from './panel-shell'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { StatusBadge } from '@/components/ui/status-badge'
-
-const KYC_LABELS: Record<string, string> = {
-  LEVEL_0: 'احراز نشده',
-  LEVEL_1: 'سطح ۱ — موبایل تایید شده',
-  LEVEL_2: 'سطح ۲ — هویتی',
-  LEVEL_3: 'سطح ۳ — کامل',
-}
 
 // خدمات بیشتر — گرید ۴تایی مربعی عین میان‌برهای صفحه خانه
 const MORE_SERVICES = [
@@ -124,7 +116,6 @@ export function ProfileClient() {
   }
 
   const joinDate = new Date(user.createdAt).toLocaleDateString('fa-IR')
-  const kycDone = user.kycLevel !== 'LEVEL_0'
 
   return (
     <div className="animate-stagger space-y-5">
@@ -156,19 +147,6 @@ export function ProfileClient() {
               <span aria-hidden="true">·</span>
               <span>عضویت از {joinDate}</span>
             </p>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <StatusBadge tone={user.status === 'ACTIVE' ? 'success' : 'error'}>
-                {user.status === 'ACTIVE' ? 'حساب فعال' : user.status}
-              </StatusBadge>
-              <StatusBadge tone={kycDone ? 'success' : 'warning'}>
-                {KYC_LABELS[user.kycLevel] ?? user.kycLevel}
-              </StatusBadge>
-              {user.mobileVerifiedAt && (
-                <StatusBadge tone="neutral" dot={false}>
-                  موبایل تایید شده
-                </StatusBadge>
-              )}
-            </div>
           </div>
         </div>
       </section>
