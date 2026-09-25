@@ -10,3 +10,8 @@ import { notFound } from 'next/navigation'
 export default function AdminCatchAll() {
   notFound()
 }
+
+// بیلد موبایل (static export) — catch-all واقعی با client routing حل می‌شود
+export function generateStaticParams() {
+  return [{ slug: ['_'] }]
+}

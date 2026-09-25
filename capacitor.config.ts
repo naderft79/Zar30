@@ -19,6 +19,10 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
   },
   plugins: {
+    // fetch/XHR از لایه native عبور می‌کند — CORS حذف + cookie jar سیستمی
+    CapacitorHttp: {
+      enabled: true,
+    },
     // Splash Screen
     SplashScreen: {
       launchShowDuration: 2000,

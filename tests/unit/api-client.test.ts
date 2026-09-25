@@ -28,6 +28,7 @@ describe('apiDelete', () => {
     expect(res.ok).toBe(true)
     expect(fetchMock).toHaveBeenCalledWith('/x', {
       method: 'DELETE',
+      headers: {},
       credentials: 'include',
     })
   })
