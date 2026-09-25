@@ -2,7 +2,7 @@
 // Zar30 - Admin Shell (مرکز عملیات)
 // ============================================
 // Auth/permission gate + chrome ناوبری برای همه صفحات /admin/*
-// Desktop (>=xl): سایدبار جمع‌شونده (۲۸۸px ↔ ۷۶px) با آیکون بخش‌ها
+// Desktop (>=xl): سایدبار جمع‌شونده (۲۴۰px ↔ ۶۸px) با آیکون بخش‌ها
 // هویت مدیر و خروج در هدر اصلی — Mobile/Tablet: header + drawer
 // Source of Truth ناوبری: src/config/admin-navigation.ts
 // ============================================
@@ -263,7 +263,7 @@ function AdminLoadingSkeleton() {
       aria-busy="true"
       aria-label="در حال بارگذاری مرکز عملیات"
     >
-      <div className="border-border bg-card fixed inset-y-0 right-0 left-auto z-30 hidden w-72 flex-col border-l xl:flex">
+      <div className="border-border bg-card fixed inset-y-0 right-0 left-auto z-30 hidden w-60 flex-col border-l xl:flex">
         <div className="border-border flex h-16 items-center border-b px-5">
           <div className="skeleton-shimmer h-8 w-28 rounded-lg" />
         </div>
@@ -273,11 +273,11 @@ function AdminLoadingSkeleton() {
           ))}
         </div>
       </div>
-      <div className="border-border/60 bg-background/80 sticky top-0 z-30 flex h-16 items-center justify-between border-b px-4 backdrop-blur-md xl:pr-80 xl:pl-8">
+      <div className="border-border/60 bg-background/80 sticky top-0 z-30 flex h-16 items-center justify-between border-b px-4 backdrop-blur-md xl:pr-[264px] xl:pl-8">
         <div className="skeleton-shimmer h-7 w-24 rounded-lg" />
         <div className="skeleton-shimmer h-9 w-40 rounded-lg" />
       </div>
-      <div className="p-4 py-6 sm:px-6 xl:pr-80">
+      <div className="p-4 py-6 sm:px-6 xl:pr-60">
         <div className="skeleton-shimmer mb-5 h-40 rounded-2xl" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -390,7 +390,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           className={cn(
             'border-border bg-card fixed inset-y-0 right-0 z-40 hidden flex-col border-l xl:flex',
             'transition-[width] duration-300 ease-(--ease-out)',
-            collapsed ? 'w-[76px]' : 'w-72',
+            collapsed ? 'w-[68px]' : 'w-60',
           )}
         >
           {/* سربرگ سایدبار — لوگو + کلید جمع‌کردن */}
@@ -435,33 +435,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             badges={navBadges}
             collapsed={collapsed}
           />
-
-          {/* نسخه/برند پایین سایدبار — فشرده */}
-          <div
-            className={cn(
-              'border-border shrink-0 border-t',
-              collapsed
-                ? 'flex justify-center py-3'
-                : 'flex items-center justify-between px-5 py-3',
-            )}
-          >
-            <span
-              className={cn(
-                'text-muted-foreground text-[10px] font-semibold',
-                collapsed && 'hidden',
-              )}
-            >
-              مرکز عملیات زرسی
-            </span>
-            <span
-              aria-hidden="true"
-              className={cn(
-                'bg-gold-500/10 text-gold-600/70 dark:bg-gold-500/20 dark:text-gold-300 inline-flex size-6 items-center justify-center rounded-md',
-              )}
-            >
-              <span className="text-[9px] font-bold">ز</span>
-            </span>
-          </div>
         </aside>
 
         {/* ============ Header — breadcrumbs + command + هویت ============ */}
@@ -469,7 +442,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           className={cn(
             'border-border/60 bg-background/80 sticky top-0 z-(--z-sticky) flex h-16 items-center gap-3 border-b px-4 backdrop-blur-md',
             'transition-[padding] duration-300 ease-(--ease-out)',
-            collapsed ? 'xl:pr-[100px]' : 'xl:pr-[312px]',
+            collapsed ? 'xl:pr-[92px]' : 'xl:pr-[264px]',
             'xl:pl-8',
           )}
         >
@@ -534,7 +507,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           className={cn(
             'pb-24 xl:pb-8',
             'transition-[padding] duration-300 ease-(--ease-out)',
-            collapsed ? 'xl:pr-[76px]' : 'xl:pr-72',
+            collapsed ? 'xl:pr-[68px]' : 'xl:pr-60',
           )}
         >
           {/* بنر توقف اضطراری — فقط وقتی halt فعال است */}
