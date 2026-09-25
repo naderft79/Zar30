@@ -311,7 +311,7 @@ export function AdminCommand({ permissions }: { permissions: readonly Permission
               aria-label="عبارت جستجو"
               aria-activedescendant={activeIndex >= 0 ? `admin-cmd-item-${activeIndex}` : undefined}
               autoFocus
-              className="text-foreground placeholder:text-muted-foreground/70 h-14 w-full bg-transparent text-sm outline-none"
+              className="text-foreground placeholder:text-muted-foreground/70 no-focus-ring h-14 w-full bg-transparent text-sm"
             />
             {loading ? (
               <>

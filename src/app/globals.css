@@ -344,6 +344,12 @@ html {
   outline-offset: 2px;
 }
 
+/* استثنا: ورودی‌هایی مثل اینپوت command palette که حلقه اضافه نمی‌خواهند */
+.no-focus-ring,
+.no-focus-ring:focus-visible {
+  outline: none;
+}
+
 /* ============================================
    Typography Utilities — سلسله‌مراتب مالی
    ============================================ */
