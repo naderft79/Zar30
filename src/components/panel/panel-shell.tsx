@@ -24,7 +24,6 @@ import {
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
 import { OfflineIndicator, DATA_REFRESH_EVENT } from './offline-indicator'
-import { InstallPrompt } from './install-prompt'
 import { cn } from 'cn'
 
 export interface PanelUser {
@@ -430,8 +429,6 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
             {children}
           </div>
         </main>
-        <InstallPrompt />
-
         {/* ============ Mobile — Liquid Glass Bottom Nav (۵ آیتم قرارداد) ============ */}
         <nav
           aria-label="ناوبری اصلی موبایل"

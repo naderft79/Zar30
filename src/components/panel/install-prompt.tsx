@@ -12,7 +12,7 @@
 import { useEffect, useState } from 'react'
 import { IconShare, IconX, IconDownload } from '@tabler/icons-react'
 
-const DISMISS_KEY = 'zar30:pwa-install-dismissed'
+const DISMISS_KEY = 'zar30:pwa-install-dismissed:v2'
 
 // Event غیر استاندارد beforeinstallprompt در تایپ‌های DOM نیست
 interface BeforeInstallPromptEvent extends Event {
