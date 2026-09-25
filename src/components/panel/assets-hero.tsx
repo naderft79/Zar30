@@ -66,7 +66,7 @@ export function AssetsHero({
 
       <div className="relative mt-1">
         <div className="mb-1.5 flex items-center gap-2">
-          <p className="text-cream-300/80 text-label">ارزش کل دارایی</p>
+          <p className="text-cream-300/80 text-label">موجودی کل</p>
           <button
             type="button"
             onClick={toggleHidden}
