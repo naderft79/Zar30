@@ -42,6 +42,12 @@ interface AdminFinanceListProps<T> {
   emptyMessage?: string
   /** نشان دادن بنر read-only */
   readOnlyNotice?: boolean
+  /** دکمه/اکشن کنار هدر — مثل «افزودن رکورد» */
+  headerAction?: React.ReactNode
+  /** کلید بازخوانی — با تغییر این مقدار fetch دوباره انجام می‌شود */
+  refreshKey?: number
+  /** اکشن‌های per-row (ویرایش/حذف) */
+  rowActions?: (row: T) => React.ReactNode
 }
 
 const selectClass =
@@ -64,6 +70,9 @@ export function AdminFinanceList<T>({
   searchPlaceholder = 'جستجو…',
   emptyMessage = 'رکوردی با این فیلترها یافت نشد',
   readOnlyNotice = true,
+  headerAction,
+  refreshKey = 0,
+  rowActions,
 }: AdminFinanceListProps<T>) {
   const router = useRouter()
   const pathname = usePathname()
@@ -138,13 +147,16 @@ export function AdminFinanceList<T>({
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoint, dataKey, page, q, direction, from, to, filterDeps])
+  }, [endpoint, dataKey, page, q, direction, from, to, filterDeps, refreshKey])
 
   const hasFilters = !!(q || from || to || filterValues.some(Boolean))
 
   return (
     <div>
-      <AdminPageHeader title={title} eyebrow={eyebrow} description={description} />
+      <div className="flex items-start justify-between gap-3">
+        <AdminPageHeader title={title} eyebrow={eyebrow} description={description} />
+        {headerAction}
+      </div>
 
       {readOnlyNotice && <ReadOnlyNotice className="mb-4" />}
 
@@ -226,6 +238,7 @@ export function AdminFinanceList<T>({
         error={error}
         emptyMessage={emptyMessage}
         rowHref={detailHref}
+        rowActions={rowActions}
       />
 
       <AdminPagination page={page} totalPages={totalPages} total={total} />

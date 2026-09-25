@@ -32,7 +32,8 @@ import { FinanceErrors } from './errors'
 import { postJournal, type JournalLeg } from './ledger.service'
 import { ensureAssetAccount } from './wallet.service'
 import { getExecutablePrice } from './pricing.service'
-import { calculateTradeFee, MIN_ORDER_TOMAN } from './fee.service'
+import { calculateUserTradeFee, MIN_ORDER_TOMAN } from './fee.service'
+import { enforceLimit } from './limit.service'
 import { KYC_LIMITS } from './limits'
 import { notifyFinancial } from './notify'
 
@@ -101,9 +102,11 @@ export async function buyGold(
     )
   }
   await checkDailyLimit(ctx.userId, ctx.kycLevel, input.tomanAmount)
+  // قوانین محدودیت admin (LimitRule) — علاوه بر سقف پایه KYC
+  await enforceLimit(ctx.userId, ctx.kycLevel, 'TRADE', { toman: input.tomanAmount })
 
   const price = await getExecutablePrice()
-  const fee = calculateTradeFee(input.tomanAmount)
+  const fee = await calculateUserTradeFee(ctx.userId, input.tomanAmount, 'BUY')
   const total = input.tomanAmount + fee
   const goldAmount = tomanToGold(input.tomanAmount, price.buyPrice)
   if (goldAmount.lte(0)) throw FinanceErrors.invalidAmount('مبلغ برای خرید طلا کافی نیست')
@@ -170,11 +173,12 @@ export async function sellGold(
 
   const price = await getExecutablePrice()
   const gross = goldToToman(goldAmount, price.sellPrice)
-  const fee = calculateTradeFee(gross)
+  const fee = await calculateUserTradeFee(ctx.userId, gross, 'SELL')
   const net = gross - fee
   if (net <= 0n) throw FinanceErrors.invalidAmount('مبلغ خالص فروش صفر است')
 
   await checkDailyLimit(ctx.userId, ctx.kycLevel, gross)
+  await enforceLimit(ctx.userId, ctx.kycLevel, 'TRADE', { toman: gross })
 
   const order = await prisma.$transaction(async (tx) => {
     const toman = await ensureAssetAccount(tx, ctx.userId, 'TOMAN')

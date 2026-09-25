@@ -15,6 +15,7 @@ import { Decimal } from './money'
 import { FinanceErrors } from './errors'
 import { postJournal, type JournalLeg } from './ledger.service'
 import { ensureAssetAccount } from './wallet.service'
+import { enforceLimit } from './limit.service'
 import { notifyFinancial } from './notify'
 
 const MAX_TOMAN_TRANSFER = BigInt(process.env.MAX_TRANSFER_TOMAN ?? '500000000')
@@ -55,6 +56,18 @@ export async function createTransfer(
     if (g.gt(MAX_GOLD_TRANSFER_G)) {
       throw ApiError.badRequest('مقدار طلای انتقال از سقف مجاز بیشتر است')
     }
+  }
+
+  // قوانین محدودیت admin (LimitRule) — سقف انتقال بر اساس سطح KYC فرستنده
+  const sender = await prisma.user.findUnique({
+    where: { id: senderId },
+    select: { kycLevel: true },
+  })
+  if (sender) {
+    await enforceLimit(senderId, sender.kycLevel, 'TRANSFER', {
+      toman: input.tomanAmount,
+      gold: input.goldAmount,
+    })
   }
 
   const transfer = await prisma.$transaction(async (tx) => {

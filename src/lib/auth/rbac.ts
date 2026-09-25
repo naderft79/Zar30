@@ -84,6 +84,14 @@ export const PERMISSIONS = {
   TRANSFERS_FLAG: 'transfers.flag',
   PAYMENTS_READ: 'payments.read',
   ADDRESSES_READ: 'addresses.read',
+  PRODUCTS_READ: 'products.read',
+  PRODUCTS_MANAGE: 'products.manage',
+  DISCOUNTS_READ: 'discounts.read',
+  DISCOUNTS_MANAGE: 'discounts.manage',
+  LIMITS_READ: 'limits.read',
+  LIMITS_MANAGE: 'limits.manage',
+  LEVELS_READ: 'levels.read',
+  LEVELS_MANAGE: 'levels.manage',
 } as const
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
@@ -131,6 +139,14 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     PERMISSIONS.TRANSFERS_READ,
     PERMISSIONS.PAYMENTS_READ,
     PERMISSIONS.ADDRESSES_READ,
+    PERMISSIONS.PRODUCTS_READ,
+    PERMISSIONS.PRODUCTS_MANAGE,
+    PERMISSIONS.DISCOUNTS_READ,
+    PERMISSIONS.DISCOUNTS_MANAGE,
+    PERMISSIONS.LIMITS_READ,
+    PERMISSIONS.LIMITS_MANAGE,
+    PERMISSIONS.PRICING_UPDATE,
+    PERMISSIONS.LEVELS_READ,
   ],
   SUPPORT: [
     PERMISSIONS.DELIVERY_READ,

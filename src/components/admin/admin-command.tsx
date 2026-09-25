@@ -24,6 +24,8 @@ const TYPE_LABELS: Record<AdminSearchResult['type'], string> = {
   ticket: 'پشتیبانی',
   audit: 'ممیزی',
   delivery: 'تحویل فیزیکی',
+  product: 'محصولات',
+  discount: 'کدهای تخفیف',
 }
 
 const DEBOUNCE_MS = 250

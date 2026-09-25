@@ -251,6 +251,14 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         permissions: [PERMISSIONS.PRICING_READ],
       },
       {
+        key: 'fee-rules',
+        label: 'قواعد کارمزد',
+        href: '/admin/fee-rules',
+        icon: IconTag,
+        description: 'کارمزد گروهی بر اساس سطح و حجم',
+        permissions: [PERMISSIONS.PRICING_READ],
+      },
+      {
         key: 'user-fees',
         label: 'کارمزد کاربران',
         href: '/admin/user-fees',
@@ -264,7 +272,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         href: '/admin/withdraw-limits',
         icon: IconLock,
         description: 'سقف‌ها و محدودیت‌های برداشت',
-        permissions: [PERMISSIONS.WITHDRAWALS_READ],
+        permissions: [PERMISSIONS.LIMITS_READ],
       },
       {
         key: 'trade-limits',
@@ -272,7 +280,15 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         href: '/admin/trade-limits',
         icon: IconAdjustmentsHorizontal,
         description: 'سقف‌ها و محدودیت‌های معاملات',
-        permissions: [PERMISSIONS.ORDERS_READ],
+        permissions: [PERMISSIONS.LIMITS_READ],
+      },
+      {
+        key: 'transfer-limits',
+        label: 'محدودیت انتقال',
+        href: '/admin/transfer-limits',
+        icon: IconArrowsLeftRight,
+        description: 'سقف‌های انتقال طلا بین کاربران',
+        permissions: [PERMISSIONS.LIMITS_READ],
       },
       {
         key: 'financial',
@@ -303,7 +319,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         href: '/admin/products',
         icon: IconShoppingBag,
         description: 'محصولات قابل عرضه',
-        permissions: [PERMISSIONS.GOLD_READ],
+        permissions: [PERMISSIONS.PRODUCTS_READ],
       },
       {
         key: 'product-groups',
@@ -311,7 +327,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         href: '/admin/product-groups',
         icon: IconFolders,
         description: 'گروه‌بندی و دسته‌بندی محصولات',
-        permissions: [PERMISSIONS.CONTENT_READ],
+        permissions: [PERMISSIONS.PRODUCTS_READ],
       },
       {
         key: 'discounts',
@@ -319,7 +335,15 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         href: '/admin/discounts',
         icon: IconDiscount,
         description: 'کدها و کمپین‌های تخفیف',
-        permissions: [PERMISSIONS.PRICING_READ],
+        permissions: [PERMISSIONS.DISCOUNTS_READ],
+      },
+      {
+        key: 'coin-holdings',
+        label: 'موجودی سکه و شمش',
+        href: '/admin/coin-holdings',
+        icon: IconCoins,
+        description: 'موجودی فیزیکی کاربران به تفکیک محصول',
+        permissions: [PERMISSIONS.PRODUCTS_READ],
       },
       {
         key: 'installments',
@@ -506,7 +530,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         href: '/admin/levels',
         icon: IconStack2,
         description: 'سطوح و محدودیت‌های کاربران',
-        permissions: [PERMISSIONS.KYC_READ],
+        permissions: [PERMISSIONS.LEVELS_READ],
       },
       {
         key: 'settings',

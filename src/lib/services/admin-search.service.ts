@@ -10,7 +10,16 @@ import prisma from '@/lib/db/prisma'
 import { hasPermission, PERMISSIONS, type Permission } from '@/lib/auth/rbac'
 
 export type AdminSearchResult = {
-  type: 'user' | 'kyc' | 'order' | 'transaction' | 'ticket' | 'audit' | 'delivery'
+  type:
+    | 'user'
+    | 'kyc'
+    | 'order'
+    | 'transaction'
+    | 'ticket'
+    | 'audit'
+    | 'delivery'
+    | 'product'
+    | 'discount'
   id: string
   label: string
   description: string
@@ -222,6 +231,50 @@ export async function searchAdminEntities(
             description: `کاربر ${d.user.mobile}`,
             href: `/admin/delivery/${d.id}`,
             status: d.status,
+          })),
+        ),
+    )
+  }
+
+  if (hasPermission(permissions, PERMISSIONS.PRODUCTS_READ)) {
+    tasks.push(
+      prisma.product
+        .findMany({
+          where: { OR: [{ name: contains }, { sku: contains }] },
+          select: { id: true, name: true, sku: true, active: true },
+          orderBy: { createdAt: 'desc' },
+          take: CATEGORY_LIMIT,
+        })
+        .then((rows) =>
+          rows.map((p) => ({
+            type: 'product' as const,
+            id: p.id,
+            label: p.name,
+            description: `SKU ${p.sku}`,
+            href: '/admin/products',
+            status: p.active ? 'ACTIVE' : 'SUSPENDED',
+          })),
+        ),
+    )
+  }
+
+  if (hasPermission(permissions, PERMISSIONS.DISCOUNTS_READ)) {
+    tasks.push(
+      prisma.discountCode
+        .findMany({
+          where: { code: contains },
+          select: { id: true, code: true, active: true },
+          orderBy: { createdAt: 'desc' },
+          take: CATEGORY_LIMIT,
+        })
+        .then((rows) =>
+          rows.map((d) => ({
+            type: 'discount' as const,
+            id: d.id,
+            label: `کد تخفیف ${d.code}`,
+            description: 'کد تخفیف',
+            href: '/admin/discounts',
+            status: d.active ? 'ACTIVE' : 'SUSPENDED',
           })),
         ),
     )

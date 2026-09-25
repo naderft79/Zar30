@@ -256,6 +256,7 @@ model User {
   priceAlerts       PriceAlert[]
   sipPlans          RecurringBuyPlan[]
   coinHoldings      CoinHolding[]
+  feeOverride       UserFeeOverride?
 
   @@index([referredById])
   @@index([status])
@@ -1155,4 +1156,178 @@ model PlatformSetting {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("platform_settings")
+}
+
+// ============================================
+// Commerce (فروشگاه طلا — Admin Phase 2)
+// ============================================
+// کاتالوگ محصولات فروشگاهی — مجزا از CoinProduct (تبدیل طلای آب‌شده به سکه)
+// Product = محصول قابل‌فروش فروشگاه با موجودی و دسته‌بندی
+
+enum ProductKind {
+  COIN
+  BAR
+  JEWELRY
+}
+
+model ProductCategory {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  sortOrder Int      @default(0) @map("sort_order")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  products Product[]
+
+  @@map("product_categories")
+}
+
+model Product {
+  id           String   @id @default(uuid())
+  sku          String   @unique
+  name         String
+  categoryId   String?  @map("category_id")
+  kind         ProductKind
+  weightGrams  Decimal  @db.Decimal(18, 6) @map("weight_grams")
+  premiumToman BigInt   @map("premium_toman") // اجرت/حاشیه فروش به تومان
+  stock        Int      @default(0)
+  active       Boolean  @default(true)
+  sortOrder    Int      @default(0) @map("sort_order")
+  imageUrl     String?  @map("image_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  category ProductCategory? @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId])
+  @@index([active])
+  @@map("products")
+}
+
+// ============================================
+// Discount Codes (کدهای تخفیف)
+// ============================================
+// درصدی یا مبلغی — با سقف استفاده، حداقل خرید و انقضا
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+enum DiscountAppliesTo {
+  TRADE_FEE
+  COIN_PREMIUM
+  SHOP
+}
+
+model DiscountCode {
+  id          String            @id @default(uuid())
+  code        String            @unique
+  type        DiscountType
+  value       BigInt // PERCENT → ۱ تا ۱۰۰ | FIXED → تومان
+  maxUses     Int?              @map("max_uses")
+  usedCount   Int               @default(0) @map("used_count")
+  minPurchase BigInt?           @map("min_purchase") // حداقل مبلغ خرید به تومان
+  expiresAt   DateTime?         @map("expires_at")
+  appliesTo   DiscountAppliesTo @map("applies_to")
+  active      Boolean           @default(true)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@map("discount_codes")
+}
+
+// ============================================
+// Fee Rules & User Fee Overrides (کارمزدها)
+// ============================================
+// FeeRule گروهی (سطح KYC یا حجم معامله) — UserFeeOverride فردی
+// اولویت محاسبه: override فردی → قانون گروهی → پیش‌فرض env
+
+enum FeeRuleKind {
+  KYC_LEVEL
+  VOLUME
+}
+
+model FeeRule {
+  id             String      @id @default(uuid())
+  name           String
+  kind           FeeRuleKind
+  kycLevel       KycLevel?   @map("kyc_level") // برای KYC_LEVEL
+  minVolumeToman BigInt?     @map("min_volume_toman") // برای VOLUME — حداقل حجم ۳۰ روز اخیر
+  buyFeeBps      Int         @map("buy_fee_bps")
+  sellFeeBps     Int         @map("sell_fee_bps")
+  priority       Int         @default(0) // بیشتر = اولویت بالاتر
+  active         Boolean     @default(true)
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  @@index([kind, active])
+  @@map("fee_rules")
+}
+
+model UserFeeOverride {
+  id         String   @id @default(uuid())
+  userId     String   @unique @map("user_id")
+  buyFeeBps  Int?     @map("buy_fee_bps")
+  sellFeeBps Int?     @map("sell_fee_bps")
+  note       String?
+  createdBy  String?  @map("created_by")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_fee_overrides")
+}
+
+// ============================================
+// Limit Rules (محدودیت‌های مالی)
+// ============================================
+// سقف سراسری یا به ازای سطح KYC — بازه لغزان DAILY/MONTHLY
+// null یعنی بدون سقف برای آن واحد
+
+enum LimitScope {
+  WITHDRAW
+  TRADE
+  TRANSFER
+}
+
+enum LimitPeriod {
+  DAILY
+  MONTHLY
+}
+
+model LimitRule {
+  id          String      @id @default(uuid())
+  scope       LimitScope
+  kycLevel    KycLevel?   @map("kyc_level") // null = همه سطوح
+  period      LimitPeriod
+  amountToman BigInt?     @map("amount_toman") // سقف به تومان (WITHDRAW/TRADE)
+  amountGold  Decimal?    @db.Decimal(18, 6) @map("amount_gold") // سقف به گرم (TRANSFER)
+  active      Boolean     @default(true)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@index([scope, active])
+  @@map("limit_rules")
+}
+
+// ============================================
+// KYC Level Config (سطوح کاربران)
+// ============================================
+// نام و توضیح هر سطح احراز هویت + امتیاز — توزیع کاربران در گزارش
+
+model KycLevelConfig {
+  id          String   @id @default(uuid())
+  level       KycLevel @unique
+  name        String
+  rank        Int      @default(0)
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("kyc_level_configs")
 }

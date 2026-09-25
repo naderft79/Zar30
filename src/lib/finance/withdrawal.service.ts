@@ -19,6 +19,7 @@ import { postJournal } from './ledger.service'
 import { ensureAssetAccount } from './wallet.service'
 import { MIN_WITHDRAWAL_TOMAN } from './fee.service'
 import { KYC_LIMITS } from './limits'
+import { enforceLimit } from './limit.service'
 import { notifyFinancial } from './notify'
 
 type Tx = Prisma.TransactionClient
@@ -47,6 +48,8 @@ export async function requestWithdrawal(
   if (limit !== null && input.amount > limit) {
     throw FinanceErrors.limitExceeded('مبلغ بیش از سقف برداشت روزانه شماست')
   }
+  // قوانین محدودیت admin (LimitRule) — بازه لغزان روزانه/ماهانه
+  await enforceLimit(ctx.userId, ctx.kycLevel, 'WITHDRAW', { toman: input.amount })
 
   const result = await prisma.$transaction(async (tx) => {
     const toman = await ensureAssetAccount(tx, ctx.userId, 'TOMAN')

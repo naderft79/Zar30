@@ -29,6 +29,8 @@ interface AdminDataTableProps<T> {
   emptyMessage?: string
   /** لینک «مشاهده جزئیات» native — به‌جای tr قابل‌کلیک */
   rowHref?: (row: T) => string
+  /** اکشن‌های per-row (ویرایش/حذف/…) — در ستون آخر دسکتاپ و زیر کارت موبایل */
+  rowActions?: (row: T) => React.ReactNode
 }
 
 export function AdminDataTable<T>({
@@ -39,6 +41,7 @@ export function AdminDataTable<T>({
   error,
   emptyMessage = 'رکوردی یافت نشد',
   rowHref,
+  rowActions,
 }: AdminDataTableProps<T>) {
   if (error) {
     return (
@@ -91,7 +94,7 @@ export function AdminDataTable<T>({
                   {col.header}
                 </th>
               ))}
-              {rowHref && (
+              {(rowHref || rowActions) && (
                 <th scope="col" className="px-4 py-3">
                   <span className="sr-only">اقدامات</span>
                 </th>
@@ -109,15 +112,20 @@ export function AdminDataTable<T>({
                     {col.render(row)}
                   </td>
                 ))}
-                {rowHref && (
+                {(rowHref || rowActions) && (
                   <td className="px-4 py-3 text-left">
-                    <Link
-                      href={rowHref(row)}
-                      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
-                    >
-                      مشاهده جزئیات
-                      <IconChevronLeft className="size-3.5" aria-hidden="true" />
-                    </Link>
+                    <div className="flex items-center justify-end gap-1">
+                      {rowActions?.(row)}
+                      {rowHref && (
+                        <Link
+                          href={rowHref(row)}
+                          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                        >
+                          مشاهده جزئیات
+                          <IconChevronLeft className="size-3.5" aria-hidden="true" />
+                        </Link>
+                      )}
+                    </div>
                   </td>
                 )}
               </tr>
@@ -138,14 +146,19 @@ export function AdminDataTable<T>({
                 </div>
               ))}
             </dl>
-            {rowHref && (
-              <Link
-                href={rowHref(row)}
-                className="border-border/60 text-foreground hover:bg-muted focus-visible:ring-ring mt-3 flex h-9 items-center justify-center gap-1 rounded-lg border text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
-              >
-                مشاهده جزئیات
-                <IconChevronLeft className="size-3.5" aria-hidden="true" />
-              </Link>
+            {(rowHref || rowActions) && (
+              <div className="mt-3 flex items-center gap-2">
+                {rowActions?.(row)}
+                {rowHref && (
+                  <Link
+                    href={rowHref(row)}
+                    className="border-border/60 text-foreground hover:bg-muted focus-visible:ring-ring flex h-9 flex-1 items-center justify-center gap-1 rounded-lg border text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                  >
+                    مشاهده جزئیات
+                    <IconChevronLeft className="size-3.5" aria-hidden="true" />
+                  </Link>
+                )}
+              </div>
             )}
           </li>
         ))}
