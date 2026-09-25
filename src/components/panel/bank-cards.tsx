@@ -18,7 +18,7 @@ import {
 } from '@tabler/icons-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { BottomSheet } from '@/components/ui/bottom-sheet'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { EmptyState } from '@/components/ui/empty-state'
 import { apiPost, apiDelete } from '@/lib/api/client'
 import { detectBank, maskIban, maskCardPan, type BankInfo } from '@/lib/banks'
@@ -237,69 +237,77 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
           <p className="text-muted-foreground text-[10px]">حداکثر {MAX_CARDS} کارت قابل ثبت است</p>
         )}
 
-        {/* شیت افزودن کارت */}
-        <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="افزودن کارت بانکی">
-          <div className="space-y-4">
-            {/* پیش‌نمایش زنده */}
-            <div className="flex justify-center">
-              <BankCardFace
-                bank={previewBank}
-                alias={alias || null}
-                cardPan={cardPan || null}
-                iban={normalizedIban || 'IR0000000000000000000000'}
-                isDefault={false}
-              />
-            </div>
-            <label className="block space-y-1.5">
-              <span className="text-muted-foreground text-[11px]">شماره شبا</span>
-              <input
-                type="text"
-                dir="ltr"
-                value={iban}
-                onChange={(e) => setIban(e.target.value.toUpperCase().replace(/[^\dA-Z]/g, ''))}
-                placeholder="IR062960000000100324200001"
-                maxLength={26}
-                className={inputClass}
-              />
-            </label>
-            <label className="block space-y-1.5">
-              <span className="text-muted-foreground text-[11px]">شماره کارت (اختیاری)</span>
-              <input
-                type="text"
-                inputMode="numeric"
-                dir="ltr"
-                value={cardPan}
-                onChange={(e) => setCardPan(e.target.value.replace(/[^\d]/g, '').slice(0, 16))}
-                placeholder="6219861034529007"
-                className={inputClass}
-              />
-            </label>
-            <label className="block space-y-1.5">
-              <span className="text-muted-foreground text-[11px]">نام مستعار (اختیاری)</span>
-              <input
-                type="text"
-                value={alias}
-                onChange={(e) => setAlias(e.target.value.slice(0, 50))}
-                placeholder="مثلاً حساب اصلی"
-                className={inputClass}
-              />
-            </label>
-            {/* هشدار قانونی — الزامی در پلتفرم‌های طلای ایران */}
-            <p className="text-warning bg-warning/10 flex items-start gap-2 rounded-xl p-3 text-[11px] leading-5">
-              <IconAlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-              شماره شبا و کارت باید به نام خودتان باشد؛ تسویه فقط به حساب هم‌نام انجام می‌شود.
-            </p>
-            {error && (
-              <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
-                <IconAlertTriangle className="size-3.5" aria-hidden="true" />
-                {error}
+        {/* مودال افزودن کارت — موبایل تقریباً تمام‌صفحه، دسکتاپ مرکزی */}
+        <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
+          <DialogContent className="flex max-h-[92dvh] w-[calc(100vw-1.5rem)] max-w-lg flex-col gap-0 overflow-hidden p-0 max-sm:h-[calc(100dvh-1.5rem)]">
+            <DialogHeader className="border-border/50 border-b px-5 pt-5 pb-4">
+              <DialogTitle>افزودن کارت بانکی</DialogTitle>
+            </DialogHeader>
+            <div className="flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-4">
+              {/* پیش‌نمایش زنده */}
+              <div className="flex justify-center">
+                <BankCardFace
+                  bank={previewBank}
+                  alias={alias || null}
+                  cardPan={cardPan || null}
+                  iban={normalizedIban || 'IR0000000000000000000000'}
+                  isDefault={false}
+                />
+              </div>
+              <label className="block space-y-1.5">
+                <span className="text-muted-foreground text-[11px]">شماره شبا</span>
+                <input
+                  type="text"
+                  dir="ltr"
+                  value={iban}
+                  onChange={(e) => setIban(e.target.value.toUpperCase().replace(/[^\dA-Z]/g, ''))}
+                  placeholder="IR062960000000100324200001"
+                  maxLength={26}
+                  className={inputClass}
+                />
+              </label>
+              <label className="block space-y-1.5">
+                <span className="text-muted-foreground text-[11px]">شماره کارت (اختیاری)</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  dir="ltr"
+                  value={cardPan}
+                  onChange={(e) => setCardPan(e.target.value.replace(/[^\d]/g, '').slice(0, 16))}
+                  placeholder="6219861034529007"
+                  className={inputClass}
+                />
+              </label>
+              <label className="block space-y-1.5">
+                <span className="text-muted-foreground text-[11px]">نام مستعار (اختیاری)</span>
+                <input
+                  type="text"
+                  value={alias}
+                  onChange={(e) => setAlias(e.target.value.slice(0, 50))}
+                  placeholder="مثلاً حساب اصلی"
+                  className={inputClass}
+                />
+              </label>
+              {/* هشدار قانونی — الزامی در پلتفرم‌های طلای ایران */}
+              <p className="text-warning bg-warning/10 flex items-start gap-2 rounded-xl p-3 text-[11px] leading-5">
+                <IconAlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                شماره شبا و کارت باید به نام خودتان باشد؛ تسویه فقط به حساب هم‌نام انجام می‌شود.
               </p>
-            )}
-            <Button className="w-full" onClick={submit} disabled={busy || !online}>
-              {busy ? 'در حال ثبت…' : 'ثبت کارت'}
-            </Button>
-          </div>
-        </BottomSheet>
+              {error && (
+                <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
+                  <IconAlertTriangle className="size-3.5" aria-hidden="true" />
+                  {error}
+                </p>
+              )}
+            </div>
+            {/* اکشن — چسبیده به پایین مودال */}
+            <div className="border-border/50 border-t px-5 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+              <Button className="w-full" onClick={submit} disabled={busy || !online}>
+                {busy ? 'در حال ثبت…' : 'ثبت کارت'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   )
