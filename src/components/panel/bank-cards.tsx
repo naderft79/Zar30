@@ -333,7 +333,7 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
 
         {/* مودال افزودن کارت — موبایل تقریباً تمام‌صفحه، دسکتاپ مرکزی */}
         <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
-          <DialogContent className="flex max-h-[92dvh] w-[calc(100vw-1.5rem)] max-w-lg flex-col gap-0 overflow-hidden p-0 max-sm:h-[calc(100dvh-1.5rem)]">
+          <DialogContent className="flex max-h-[92dvh] w-[calc(100vw-1.5rem)] max-w-lg flex-col gap-0 overflow-hidden p-0">
             <DialogHeader className="border-border/50 border-b px-5 pt-5 pb-4">
               <DialogTitle>افزودن کارت بانکی</DialogTitle>
             </DialogHeader>
