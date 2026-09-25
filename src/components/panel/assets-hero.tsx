@@ -64,6 +64,13 @@ export function AssetsHero({
         className="from-gold-500/15 pointer-events-none absolute -top-24 -left-24 size-72 rounded-full bg-gradient-to-br to-transparent blur-2xl"
       />
 
+      {/* بج تغییر ۲۴ ساعته — گوشه بالا سمت چپ کارت */}
+      {!loading && !hidden && changePercent != null && (
+        <div className="absolute top-4 left-4 sm:top-5 sm:left-5">
+          <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" />
+        </div>
+      )}
+
       <div className="relative mt-1">
         <div className="mb-1.5 flex items-center gap-2">
           <p className="text-cream-300/80 text-label">موجودی کل</p>
@@ -104,12 +111,6 @@ export function AssetsHero({
                 {toPersianWords(totalValue)} تومان
               </p>
             )}
-          </div>
-        )}
-
-        {!loading && !hidden && changePercent != null && (
-          <div className="mt-1.5">
-            <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" />
           </div>
         )}
       </div>
