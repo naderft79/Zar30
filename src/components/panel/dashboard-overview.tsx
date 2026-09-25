@@ -98,7 +98,7 @@ function isIncoming(type: string) {
 
 // میان‌برهای خدمات — ۴ کارت مربعی زیر hero
 const QUICK_SERVICES = [
-  { label: 'زرکار', href: '/dashboard/assets', icon: IconCreditCard },
+  { label: 'زرکار', href: '/dashboard/zarkar', icon: IconCreditCard },
   { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconCalendarClock },
   { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconBolt },
   { label: 'تحویل فیزیکی', href: '/dashboard/assets', icon: IconPackage },

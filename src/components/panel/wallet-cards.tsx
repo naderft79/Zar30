@@ -3,19 +3,12 @@
 // ============================================
 // طلا: گرم آزاد/مسدود + ارزش لحظه‌ای (نرخ فروش) + سود/زیان نسبت به میانگین خرید
 // تومان: موجودی آزاد/مسدود
-// اقساط: قراردادهای فعال + مانده قابل پرداخت
 // ============================================
 
 'use client'
 
 import Link from 'next/link'
-import {
-  IconCalendarClock,
-  IconCoins,
-  IconTrendingDown,
-  IconTrendingUp,
-  IconWallet,
-} from '@tabler/icons-react'
+import { IconCoins, IconTrendingDown, IconTrendingUp, IconWallet } from '@tabler/icons-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { FinancialNumber } from '@/components/financial/financial-number'
 import { formatExactAmount } from '@/lib/utils/format'
@@ -29,12 +22,6 @@ export interface WalletCardsData {
   tomanLocked: string
   sellPrice: string | null
   avgBuyPrice: number | null
-  installments: {
-    activeContracts: number
-    totalPayable: string
-    paid: string
-    remaining: string
-  }
 }
 
 interface WalletCardsProps {
@@ -65,7 +52,7 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
       : null
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2">
       {/* ===== کارت طلای آب‌شده ===== */}
       <Card className="border-gold-500/25">
         <CardContent className="space-y-3 p-4 sm:p-5">
@@ -182,50 +169,6 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
               className="text-gold-600 hover:text-gold-700 text-[11px] font-semibold transition-colors"
             >
               خرید طلا با موجودی تومانی ←
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ===== کارت اقساط ===== */}
-      <Card className="sm:col-span-2 lg:col-span-1">
-        <CardContent className="space-y-3 p-4 sm:p-5">
-          <div className="flex items-center gap-2">
-            <span className="bg-navy-800/8 flex size-9 items-center justify-center rounded-xl">
-              <IconCalendarClock className="text-navy-700 size-5" stroke={1.75} />
-            </span>
-            <p className="text-foreground text-xs font-bold">خرید اقساطی</p>
-          </div>
-
-          {loading ? (
-            <div className="skeleton-shimmer h-8 w-40 rounded-lg" />
-          ) : data.installments.activeContracts === 0 ? (
-            <p className="text-muted-foreground text-[11px] leading-5">
-              قرارداد اقساطی فعالی ندارید — طلای ۱۸ عیار را قسطی بخرید.
-            </p>
-          ) : (
-            <div>
-              <Masked hidden={hidden}>
-                <FinancialNumber
-                  value={data.installments.remaining}
-                  unit="تومان"
-                  decimals={0}
-                  className="text-foreground text-2xl"
-                  unitClassName="text-muted-foreground text-xs font-medium"
-                />
-              </Masked>
-              <p className="text-muted-foreground mt-0.5 text-[10px]">
-                مانده {data.installments.activeContracts} قرارداد فعال
-              </p>
-            </div>
-          )}
-
-          <div className="border-border/50 border-t pt-2.5">
-            <Link
-              href="/dashboard/installments"
-              className="text-gold-600 hover:text-gold-700 text-[11px] font-semibold transition-colors"
-            >
-              {data.installments.activeContracts > 0 ? 'مدیریت اقساط ←' : 'شروع خرید قسطی ←'}
             </Link>
           </div>
         </CardContent>

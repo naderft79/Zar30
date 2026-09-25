@@ -21,10 +21,6 @@ import { WithdrawSheet } from './withdraw-sheet'
 import { TransferSheet } from './transfer-sheet'
 import { DeliverySheet } from './delivery-sheet'
 import { HistoryTabs } from './history-tabs'
-import { SipCard } from './sip-card'
-import { PriceAlertsCard } from './price-alerts-card'
-import { ZarkarCard } from './zarkar-card'
-import { CoinsCard } from './coins-card'
 
 interface SummaryData extends WalletCardsData {
   priceChange24h: number | null
@@ -110,7 +106,7 @@ export function AssetsClient() {
         onAction={handleHeroAction}
       />
 
-      {/* کارت‌های کیف — طلا (سود/زیان)، تومان، اقساط */}
+      {/* کارت‌های کیف — طلا (سود/زیان) + تومان */}
       <WalletCards
         data={
           summary ?? {
@@ -120,7 +116,6 @@ export function AssetsClient() {
             tomanLocked: '0',
             sellPrice: null,
             avgBuyPrice: null,
-            installments: { activeContracts: 0, totalPayable: '0', paid: '0', remaining: '0' },
           }
         }
         loading={loading}
@@ -128,18 +123,6 @@ export function AssetsClient() {
 
       {/* کارت‌های بانکی — اسکرول افقی + افزودن/حذف/پیش‌فرض */}
       <BankCards accounts={bankAccounts} online={online} onChanged={() => void loadAll()} />
-
-      {/* ابزارهای سرمایه‌گذاری — زرکار + سکه/شمش + خرید خودکار + هشدار قیمت */}
-      <div className="grid gap-5 lg:grid-cols-2">
-        <ZarkarCard online={online} onChanged={() => void loadAll()} />
-        <CoinsCard online={online} onChanged={() => void loadAll()} />
-        <SipCard online={online} onChanged={() => void loadAll()} />
-        <PriceAlertsCard
-          online={online}
-          currentPrice={summary?.sellPrice != null ? Number(summary.sellPrice) : null}
-          onChanged={() => void loadAll()}
-        />
-      </div>
 
       {/* شیت‌های واریز/برداشت */}
       <DepositSheet

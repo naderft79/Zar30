@@ -22,6 +22,7 @@ import {
   IconDeviceFloppy,
   IconShieldCheck,
   IconDeviceMobile,
+  IconPigMoney,
   IconUser,
 } from '@tabler/icons-react'
 import { apiPut } from '@/lib/api/client'
@@ -64,6 +65,12 @@ const PROFILE_SECTIONS = [
     icon: IconBell,
     title: 'اعلان‌ها',
     description: 'مرکز اعلان و تنظیمات اطلاع‌رسانی',
+  },
+  {
+    href: '/dashboard/profile/savings',
+    icon: IconPigMoney,
+    title: 'خرید خودکار طلا',
+    description: 'پس‌انداز خودکار روزانه، هفتگی یا ماهانه',
   },
   {
     href: '/dashboard/profile/referral',

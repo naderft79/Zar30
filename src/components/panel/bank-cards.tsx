@@ -150,17 +150,41 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
           <IconCreditCard className="text-gold-600 size-5" stroke={1.75} />
           کارت‌های بانکی
         </CardTitle>
-        <span className="text-muted-foreground text-[10px] tabular-nums">
-          {accounts.length}/{MAX_CARDS}
-        </span>
+        {canAdd ? (
+          <button
+            type="button"
+            onClick={() => setSheetOpen(true)}
+            disabled={!online}
+            aria-label="افزودن کارت بانکی"
+            className="text-gold-600 hover:text-gold-700 flex items-center gap-1 text-[11px] font-semibold transition-colors"
+          >
+            <IconPlus className="size-4" aria-hidden="true" />
+            افزودن کارت
+          </button>
+        ) : (
+          <span className="text-muted-foreground text-[10px] tabular-nums">
+            {accounts.length}/{MAX_CARDS}
+          </span>
+        )}
       </CardHeader>
       <CardContent className="space-y-3">
         {accounts.length === 0 ? (
-          <EmptyState
-            icon={IconCreditCard}
-            title="کارتی ثبت نشده است"
-            description="برای برداشت سریع، شبای بانکی خود را ثبت کنید — باید به نام خودتان باشد."
-          />
+          <div className="space-y-3">
+            <EmptyState
+              icon={IconCreditCard}
+              title="کارتی ثبت نشده است"
+              description="برای برداشت سریع، شبای بانکی خود را ثبت کنید — باید به نام خودتان باشد."
+            />
+            <button
+              type="button"
+              onClick={() => setSheetOpen(true)}
+              disabled={!online}
+              className="border-border/70 hover:border-gold-500/50 hover:bg-gold-500/5 text-muted-foreground mx-auto flex h-24 w-40 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed transition-colors"
+            >
+              <IconPlus className="text-gold-600 size-6" stroke={1.75} />
+              <span className="text-[10px] font-semibold">ثبت کارت جدید</span>
+            </button>
+          </div>
         ) : (
           <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
             {accounts.map((a) => (

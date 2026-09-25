@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { useOnlineStatus } from './offline-indicator'
+import { PriceAlertsCard } from './price-alerts-card'
 
 interface WalletAccount {
   assetType: string
@@ -276,6 +277,13 @@ export function TradeClient() {
           </p>
         </CardContent>
       </Card>
+
+      {/* هشدار قیمت — رسیدن به سقف/کف دلخواه کاربر */}
+      <PriceAlertsCard
+        online={online}
+        currentPrice={price?.buyPrice ?? null}
+        onChanged={() => void loadAll()}
+      />
 
       {/* تاریخچه معاملات */}
       <Card>
