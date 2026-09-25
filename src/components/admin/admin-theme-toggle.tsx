@@ -29,13 +29,8 @@ export function AdminThemeToggle() {
     const next = resolvedTheme === 'dark' ? 'light' : 'dark'
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    const apply = () => {
-      root.classList.add('theme-animating')
-      setTheme(next)
-    }
-    const cleanup = () => root.classList.remove('theme-animating')
-
     // مسیر انیمیشنی — موج دایره‌ای از مرکز دکمه تا دورترین گوشه
+    // سوییچ DOM باید فوری باشد: انیمیشن را اسنپ‌شات انجام می‌دهد نه ترنزیشن CSS
     if (typeof document.startViewTransition === 'function' && !prefersReducedMotion) {
       const rect = e.currentTarget.getBoundingClientRect()
       const x = rect.left + rect.width / 2
@@ -44,7 +39,7 @@ export function AdminThemeToggle() {
         Math.max(x, window.innerWidth - x),
         Math.max(y, window.innerHeight - y),
       )
-      const transition = document.startViewTransition(apply)
+      const transition = document.startViewTransition(() => setTheme(next))
       transition.ready
         .then(() => {
           root.animate(
@@ -52,20 +47,20 @@ export function AdminThemeToggle() {
               clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`],
             },
             {
-              duration: 550,
+              duration: 450,
               easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
               pseudoElement: '::view-transition-new(root)',
             },
           )
         })
         .catch(() => {})
-      transition.finished.then(cleanup, cleanup)
       return
     }
 
     // fallback — ترنزیشن نرم رنگ‌ها
-    apply()
-    window.setTimeout(cleanup, 450)
+    root.classList.add('theme-animating')
+    setTheme(next)
+    window.setTimeout(() => root.classList.remove('theme-animating'), 300)
   }
 
   const isDark = mounted && resolvedTheme === 'dark'

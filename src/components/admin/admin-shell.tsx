@@ -117,7 +117,9 @@ function AdminNav({
               <span
                 className={cn(
                   'inline-flex size-6 shrink-0 items-center justify-center rounded-md transition-colors duration-(--duration-normal)',
-                  sectionActive ? 'bg-gold-500/15 text-gold-700' : 'bg-muted text-muted-foreground',
+                  sectionActive
+                    ? 'bg-gold-500/15 text-gold-700 dark:bg-gold-500/25 dark:text-gold-400'
+                    : 'bg-muted text-muted-foreground',
                 )}
               >
                 <SectionIcon className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
@@ -175,7 +177,7 @@ function AdminNavLink({
           'focus-visible:ring-gold-500/60 focus-visible:ring-2 focus-visible:outline-none',
           collapsed ? 'size-10 justify-center' : 'gap-3 px-3 py-2.5',
           active
-            ? 'bg-gold-500/12 text-gold-700 font-semibold'
+            ? 'bg-gold-500/12 text-gold-700 dark:bg-gold-500/20 dark:text-gold-300 font-semibold'
             : 'text-muted-foreground hover:bg-muted hover:text-foreground',
         )}
       >
@@ -420,7 +422,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <span
               aria-hidden="true"
               className={cn(
-                'bg-gold-500/10 text-gold-600/70 inline-flex size-6 items-center justify-center rounded-md',
+                'bg-gold-500/10 text-gold-600/70 dark:bg-gold-500/20 dark:text-gold-300 inline-flex size-6 items-center justify-center rounded-md',
               )}
             >
               <span className="text-[9px] font-bold">ز</span>

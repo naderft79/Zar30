@@ -750,15 +750,13 @@ html {
 
 /* fallback برای مرورگرهای بدون startViewTransition — ترنزیشن رنگ کوتاه و موقت */
 html.theme-animating,
-html.theme-animating *,
-html.theme-animating *::before,
-html.theme-animating *::after {
+html.theme-animating * {
   transition:
-    background-color 0.35s var(--ease-in-out),
-    border-color 0.35s var(--ease-in-out),
-    color 0.35s var(--ease-in-out),
-    fill 0.35s var(--ease-in-out),
-    stroke 0.35s var(--ease-in-out) !important;
+    background-color 0.25s var(--ease-in-out),
+    border-color 0.25s var(--ease-in-out),
+    color 0.25s var(--ease-in-out),
+    fill 0.25s var(--ease-in-out),
+    stroke 0.25s var(--ease-in-out) !important;
 }
 
 /* ============================================
