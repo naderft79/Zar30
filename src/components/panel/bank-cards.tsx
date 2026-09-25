@@ -21,7 +21,8 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { EmptyState } from '@/components/ui/empty-state'
 import { apiPost, apiDelete } from '@/lib/api/client'
-import { detectBank, maskIban, maskCardPan, type BankInfo } from '@/lib/banks'
+import { detectBank, type BankInfo } from '@/lib/banks'
+import { usePanelUser } from './panel-shell'
 
 export interface BankAccountRow {
   id: string
@@ -38,22 +39,52 @@ const MAX_CARDS = 5
 const inputClass =
   'border-border/60 bg-background text-foreground focus-visible:ring-ring h-10 w-full rounded-lg border px-3 text-sm tabular-nums focus-visible:ring-2 focus-visible:outline-none'
 
+// چیپ طلایی EMV — مشابه کارت‌های بانکی واقعی
+function CardChip() {
+  return (
+    <div
+      aria-hidden="true"
+      className="relative h-6 w-8 shrink-0 overflow-hidden rounded-md"
+      style={{
+        background: 'linear-gradient(135deg, #f0d78a 0%, #d4af37 45%, #a07c1c 100%)',
+        boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.25)',
+      }}
+    >
+      <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-black/30" />
+      <span className="absolute inset-y-0 left-1/3 w-px bg-black/25" />
+      <span className="absolute inset-y-0 right-1/3 w-px bg-black/25" />
+      <span className="absolute top-1/2 left-1/2 h-3 w-4 -translate-x-1/2 -translate-y-1/2 rounded-sm border border-black/30" />
+    </div>
+  )
+}
+
+// قالب‌بندی کامل شماره کارت و شبا — بدون ستاره
+function formatPan(pan: string) {
+  return pan.replace(/(\d{4})(?=\d)/g, '$1 ')
+}
+function formatIban(iban: string) {
+  return iban.replace(/(.{4})(?=.)/g, '$1 ')
+}
+
 function BankCardFace({
   bank,
   alias,
   cardPan,
   iban,
   isDefault,
+  holderName,
 }: {
   bank: BankInfo
   alias: string | null
   cardPan: string | null
   iban: string
   isDefault: boolean
+  holderName: string
 }) {
   return (
     <div
-      className="relative flex h-40 w-64 shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-4 shadow-md"
+      className="relative flex h-44 w-64 shrink-0 flex-col overflow-hidden rounded-2xl p-4 shadow-md"
+      dir="ltr"
       style={{ background: `linear-gradient(135deg, ${bank.from}, ${bank.to})`, color: bank.text }}
     >
       {/* الگوی تزئینی کارت */}
@@ -61,6 +92,7 @@ function BankCardFace({
         aria-hidden="true"
         className="absolute -top-10 -left-10 size-40 rounded-full bg-white/10 blur-xl"
       />
+      {/* ردیف بالا — نام بانک + بج پیش‌فرض */}
       <div className="relative flex items-start justify-between">
         <div>
           <p className="text-[11px] font-medium opacity-80">{bank.name}</p>
@@ -73,14 +105,21 @@ function BankCardFace({
           </span>
         )}
       </div>
-      <div className="relative space-y-1.5" dir="ltr">
-        {cardPan ? (
-          <p className="text-sm font-bold tracking-wider tabular-nums">{maskCardPan(cardPan)}</p>
-        ) : (
-          <p className="text-sm font-bold tracking-wider opacity-60">•••• •••• •••• ••••</p>
-        )}
-        <p className="text-[10px] tabular-nums opacity-75">{maskIban(iban)}</p>
+      {/* چیپ طلایی */}
+      <CardChip />
+      {/* شماره کارت — دقیقاً مرکز کارت — و شبا با فاصله زیر آن */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+        <p className="text-base font-bold tracking-wider tabular-nums">
+          {cardPan ? formatPan(cardPan) : '•••• •••• •••• ••••'}
+        </p>
+        <p className="text-[10px] tracking-wider tabular-nums opacity-80">
+          {formatIban(iban || 'IR0000000000000000000000')}
+        </p>
       </div>
+      {/* نام و نام خانوادگی دارنده — گوشه پایین سمت چپ */}
+      <p className="relative mt-auto truncate text-[11px] font-semibold tracking-wide">
+        {holderName}
+      </p>
     </div>
   )
 }
@@ -92,6 +131,8 @@ interface BankCardsProps {
 }
 
 export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
+  const { user } = usePanelUser()
+  const holderName = [user.firstName, user.lastName].filter(Boolean).join(' ')
   const [sheetOpen, setSheetOpen] = useState(false)
   const [iban, setIban] = useState('')
   const [cardPan, setCardPan] = useState('')
@@ -195,6 +236,7 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
                   cardPan={a.cardPan}
                   iban={a.iban}
                   isDefault={a.isDefault}
+                  holderName={holderName}
                 />
                 <div className="mt-2 flex items-center gap-1.5">
                   {!a.isDefault && (
@@ -252,6 +294,7 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
                   cardPan={cardPan || null}
                   iban={normalizedIban || 'IR0000000000000000000000'}
                   isDefault={false}
+                  holderName={holderName}
                 />
               </div>
               <label className="block space-y-1.5">
