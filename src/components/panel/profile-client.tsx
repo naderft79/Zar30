@@ -321,10 +321,9 @@ export function ProfileClient() {
 
       {/* خروج از حساب — در موبایل تنها راه خروج است (sidebar مخفی است) */}
       <div className="border-border/60 flex items-center justify-between rounded-xl border p-4">
-        <div className="min-w-0">
-          <p className="text-muted-foreground text-[11px] leading-5">زرسی — ۱۴۰۵</p>
-          <p className="text-muted-foreground/60 text-[10px] tabular-nums">نسخه ۰.۱.۰</p>
-        </div>
+        <p className="text-muted-foreground min-w-0 text-[11px] whitespace-nowrap tabular-nums">
+          زرسی — ۱۴۰۵ · نسخه ۰.۱.۰
+        </p>
         <Button
           variant="outline"
           size="sm"
