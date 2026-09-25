@@ -99,16 +99,18 @@ export function AssetsHero({
               className="text-cream-50 text-4xl sm:text-5xl"
               unitClassName="text-gold-400 text-base font-bold sm:text-lg"
             />
-            {changePercent != null && (
-              <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" className="mb-2" />
+            {Number(totalValue) > 0 && (
+              <p className="text-cream-300/55 mb-2 text-[11px] sm:text-xs">
+                {toPersianWords(totalValue)} تومان
+              </p>
             )}
           </div>
         )}
 
-        {!loading && !hidden && Number(totalValue) > 0 && (
-          <p className="text-cream-300/55 mt-1.5 text-[11px] sm:text-xs">
-            {toPersianWords(totalValue)} تومان
-          </p>
+        {!loading && !hidden && changePercent != null && (
+          <div className="mt-1.5">
+            <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" />
+          </div>
         )}
       </div>
 
