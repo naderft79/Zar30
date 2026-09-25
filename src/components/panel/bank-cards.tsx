@@ -12,6 +12,7 @@ import { useState } from 'react'
 import {
   IconAlertTriangle,
   IconCreditCard,
+  IconLoader2,
   IconPlus,
   IconStar,
   IconTrash,
@@ -20,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { EmptyState } from '@/components/ui/empty-state'
-import { apiPost, apiDelete } from '@/lib/api/client'
+import { apiPost, apiGet, apiDelete } from '@/lib/api/client'
 import { detectBank, detectBankByCard, type BankInfo } from '@/lib/banks'
 import { usePanelUser } from './panel-shell'
 
@@ -145,6 +146,8 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [iban, setIban] = useState('')
   const [cardPan, setCardPan] = useState('')
+  // وضعیت resolve خودکار شبا از شماره کارت — resolving | resolved | failed | null
+  const [ibanState, setIbanState] = useState<'resolving' | 'resolved' | 'failed' | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -164,20 +167,44 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
   }
   const canAdd = accounts.length < MAX_CARDS
 
-  async function submit() {
-    setError(null)
-    if (!/^IR\d{24}$/.test(normalizedIban)) {
-      setError('شماره شبا باید ۲۴ رقم باشد')
+  // با کامل شدن ۱۶ رقم کارت، شبا خودکار از سرور resolve می‌شود
+  async function resolveCard(pan: string) {
+    if (pan.length !== 16) return
+    setIbanState('resolving')
+    const res = await apiGet<{ iban: string | null }>(
+      `/api/v1/bank-accounts/resolve-card?pan=${pan}`,
+    )
+    if (!res.ok || !res.data?.iban) {
+      setIbanState('failed')
+      setIban('')
       return
     }
-    if (cardPan && !/^\d{16}$/.test(cardPan)) {
+    setIban(res.data.iban)
+    setIbanState('resolved')
+  }
+
+  function onCardPanChange(v: string) {
+    setCardPan(v)
+    setIbanState(null)
+    setIban('')
+    if (v.length === 16) void resolveCard(v)
+  }
+
+  async function submit() {
+    setError(null)
+    if (!/^\d{16}$/.test(cardPan)) {
       setError('شماره کارت باید ۱۶ رقم باشد')
+      return
+    }
+    // شبا یا resolve شده یا باید دستی وارد شود
+    if (ibanState !== 'resolved' && !/^IR\d{24}$/.test(normalizedIban)) {
+      setError('شماره شبا باید ۲۴ رقم باشد')
       return
     }
     setBusy(true)
     const res = await apiPost('/api/v1/bank-accounts', {
-      iban: normalizedIban,
-      cardPan: cardPan || undefined,
+      cardPan,
+      ...(normalizedIban ? { iban: normalizedIban } : {}),
     })
     setBusy(false)
     if (!res.ok) {
@@ -187,7 +214,17 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
     setSheetOpen(false)
     setIban('')
     setCardPan('')
+    setIbanState(null)
     onChanged()
+  }
+
+  // باز کردن مودال — فرم تمیز
+  function openSheet() {
+    setIban('')
+    setCardPan('')
+    setIbanState(null)
+    setError(null)
+    setSheetOpen(true)
   }
 
   async function remove(id: string) {
@@ -210,7 +247,7 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
         {canAdd ? (
           <button
             type="button"
-            onClick={() => setSheetOpen(true)}
+            onClick={openSheet}
             disabled={!online}
             aria-label="افزودن کارت بانکی"
             className="text-gold-600 hover:text-gold-700 flex items-center gap-1 text-[11px] font-semibold transition-colors"
@@ -234,7 +271,7 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
             />
             <button
               type="button"
-              onClick={() => setSheetOpen(true)}
+              onClick={openSheet}
               disabled={!online}
               className="border-border/70 hover:border-gold-500/50 hover:bg-gold-500/5 text-muted-foreground mx-auto flex h-24 w-40 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed transition-colors"
             >
@@ -280,7 +317,7 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
             {canAdd && (
               <button
                 type="button"
-                onClick={() => setSheetOpen(true)}
+                onClick={openSheet}
                 disabled={!online}
                 className="border-border/70 hover:border-gold-500/50 hover:bg-gold-500/5 flex h-40 w-28 shrink-0 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed transition-colors"
               >
@@ -312,32 +349,17 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
                 />
               </div>
               <label className="block space-y-1.5">
-                <span className="text-muted-foreground text-[11px]">شماره شبا (۲۴ رقم)</span>
-                <input
-                  type="text"
-                  dir="ltr"
-                  value={iban}
-                  onChange={(e) => {
-                    // IR خودکار — با یا بدون تایپ IR، فقط ۲۴ رقم پذیرفته می‌شود
-                    const raw = e.target.value.toUpperCase().replace(/[^\dA-Z]/g, '')
-                    if (!raw) return setIban('')
-                    const digits = raw.replace(/\D/g, '')
-                    setIban(`IR${digits}`.slice(0, 26))
-                  }}
-                  placeholder="IR062960000000100324200001"
-                  maxLength={26}
-                  className={inputClass}
-                />
-              </label>
-              <label className="block space-y-1.5">
-                <span className="text-muted-foreground text-[11px]">شماره کارت (اختیاری)</span>
+                <span className="text-muted-foreground text-[11px]">شماره کارت</span>
                 <input
                   type="text"
                   inputMode="numeric"
                   dir="ltr"
                   value={cardPan}
-                  onChange={(e) => setCardPan(e.target.value.replace(/[^\d]/g, '').slice(0, 16))}
+                  onChange={(e) =>
+                    onCardPanChange(e.target.value.replace(/[^\d]/g, '').slice(0, 16))
+                  }
                   placeholder="6219861034529007"
+                  maxLength={16}
                   className={inputClass}
                 />
                 {/* تشخیص بانک از ۶ رقم اول کارت */}
@@ -349,6 +371,51 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
                   </span>
                 )}
               </label>
+              {/* شبا — خودکار از شماره کارت؛ فقط در صورت شکست resolve قابل ویرایش */}
+              {ibanState === 'resolving' && (
+                <p className="text-muted-foreground flex items-center gap-1.5 text-[11px]">
+                  <IconLoader2 className="size-3.5 animate-spin" aria-hidden="true" />
+                  در حال تشخیص شبا از شماره کارت…
+                </p>
+              )}
+              {ibanState === 'resolved' && (
+                <label className="block space-y-1.5">
+                  <span className="text-muted-foreground text-[11px]">
+                    شماره شبا — خودکار از کارت
+                  </span>
+                  <input
+                    type="text"
+                    dir="ltr"
+                    value={iban}
+                    readOnly
+                    aria-readonly="true"
+                    className={`${inputClass} bg-muted/50 cursor-default`}
+                  />
+                </label>
+              )}
+              {ibanState === 'failed' && (
+                <label className="block space-y-1.5">
+                  <span className="text-muted-foreground text-[11px]">شماره شبا (۲۴ رقم)</span>
+                  <input
+                    type="text"
+                    dir="ltr"
+                    value={iban}
+                    onChange={(e) => {
+                      // IR خودکار — با یا بدون تایپ IR، فقط ۲۴ رقم پذیرفته می‌شود
+                      const raw = e.target.value.toUpperCase().replace(/[^\dA-Z]/g, '')
+                      if (!raw) return setIban('')
+                      const digits = raw.replace(/\D/g, '')
+                      setIban(`IR${digits}`.slice(0, 26))
+                    }}
+                    placeholder="IR062960000000100324200001"
+                    maxLength={26}
+                    className={inputClass}
+                  />
+                  <span className="text-muted-foreground text-[10px]">
+                    تشخیص خودکار ممکن نشد — شبا را دستی وارد کنید
+                  </span>
+                </label>
+              )}
               {/* هشدار قانونی — الزامی در پلتفرم‌های طلای ایران */}
               <p className="text-warning bg-warning/10 flex items-start gap-2 rounded-xl p-3 text-[11px] leading-5">
                 <IconAlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />

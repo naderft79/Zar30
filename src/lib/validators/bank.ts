@@ -46,11 +46,16 @@ const ibanChecked = z
 
 const mobileSchema = z.string().regex(/^09\d{9}$/, 'شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود')
 
-export const createBankAccountSchema = z.object({
-  iban: ibanChecked,
-  cardPan: z.string().refine(isValidCardPan, 'شماره کارت نامعتبر است').optional(),
-  alias: z.string().max(50).optional(),
-})
+// ثبت کارت — شبا اختیاری است؛ اگر نبود از شماره کارت سمت سرور resolve می‌شود
+export const createBankAccountSchema = z
+  .object({
+    iban: ibanChecked.optional(),
+    cardPan: z.string().refine(isValidCardPan, 'شماره کارت نامعتبر است').optional(),
+    alias: z.string().max(50).optional(),
+  })
+  .refine((d) => !!d.iban || !!d.cardPan, {
+    message: 'شماره کارت یا شبا الزامی است',
+  })
 
 export const createAddressSchema = z.object({
   title: z.string().max(50).optional(),

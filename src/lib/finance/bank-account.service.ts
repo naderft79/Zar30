@@ -7,7 +7,8 @@
 
 import prisma from '@/lib/db/prisma'
 import { ApiError } from '@/lib/errors/api-error'
-import { detectBank } from '@/lib/banks'
+import { detectBank, detectBankByCard } from '@/lib/banks'
+import { resolveIbanFromCard } from './card-iban.service'
 
 const MAX_CARDS = 5
 
@@ -30,25 +31,35 @@ export async function listBankAccounts(userId: string) {
 
 export async function createBankAccount(
   userId: string,
-  input: { iban: string; cardPan?: string; alias?: string },
+  input: { iban?: string; cardPan?: string; alias?: string },
 ) {
   const count = await prisma.bankAccount.count({ where: { userId } })
   if (count >= MAX_CARDS) {
     throw ApiError.badRequest(`حداکثر ${MAX_CARDS} حساب بانکی قابل ثبت است`)
   }
 
+  // شبا نداده؟ از شماره کارت سمت سرور resolve می‌شود
+  let iban = input.iban
+  if (!iban) {
+    if (!input.cardPan) throw ApiError.badRequest('شماره کارت یا شبا الزامی است')
+    iban = (await resolveIbanFromCard(input.cardPan)) ?? undefined
+    if (!iban) throw ApiError.badRequest('ورود شماره شبا الزامی است')
+  }
+
   const existing = await prisma.bankAccount.findUnique({
-    where: { userId_iban: { userId, iban: input.iban } },
+    where: { userId_iban: { userId, iban } },
   })
   if (existing) throw ApiError.conflict('این شبا قبلاً ثبت شده است')
 
-  const bank = detectBank(input.iban)
+  // نام بانک — اولویت با تشخیص از شماره کارت، وگرنه از شبا
+  const byCard = input.cardPan ? detectBankByCard(input.cardPan) : null
+  const bank = byCard && byCard.name !== 'بانک' ? byCard : detectBank(iban)
   const account = await prisma.bankAccount.create({
     data: {
       userId,
       bankCode: bank.code,
       bankName: bank.name,
-      iban: input.iban,
+      iban,
       cardPan: input.cardPan,
       alias: input.alias?.trim() || null,
       isDefault: count === 0, // اولین کارت = پیش‌فرض
