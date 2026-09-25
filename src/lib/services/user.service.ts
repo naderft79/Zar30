@@ -73,6 +73,17 @@ function toUserProfile(user: User): UserProfile {
 export async function getUserProfile(userId: string): Promise<UserProfile> {
   const user = await prisma.user.findUnique({ where: { id: userId } })
   if (!user) throw ApiError.unauthorized()
+  // اگر نام در پروفایل خالی است، از آخرین احراز هویت تأییدشده برمی‌داریم
+  if (!user.firstName && !user.lastName) {
+    const kyc = await prisma.kycSubmission.findFirst({
+      where: { userId, firstName: { not: null } },
+      orderBy: { createdAt: 'desc' },
+      select: { firstName: true, lastName: true },
+    })
+    if (kyc) {
+      return toUserProfile({ ...user, firstName: kyc.firstName, lastName: kyc.lastName })
+    }
+  }
   return toUserProfile(user)
 }
 
