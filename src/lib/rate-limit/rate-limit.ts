@@ -96,13 +96,6 @@ export async function checkRateLimit(
     await redis.zremrangebyscore(key, 0, windowStartMs)
     const count = await redis.zcard(key)
     if (count >= rule.limit) {
-      // زمان reset ≈ قدیمی‌ترین عضو پنجره + window
-      const oldest = await redis.zrange(key, 0, 0, 'WITHSCORES')
-      const oldestScore = oldest.length >= 2 ? Number(oldest[1]) : now
-      const resetSeconds = Math.max(
-        1,
-        Math.ceil((oldestScore + rule.windowSeconds * 1000 - now) / 1000),
-      )
       // زمان واقعی reset به کاربر نشان داده نمی‌شود — عدد رندوم کوتاه برای UX بهتر
       const displaySeconds = 5 + Math.floor(Math.random() * 6)
       throw ApiError.tooManyRequests(
