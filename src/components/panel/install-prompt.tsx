@@ -33,6 +33,11 @@ function isIosSafari(): boolean {
   return /iphone|ipad|ipod/i.test(ua) && !/android/i.test(ua)
 }
 
+// تشخیص دیوایس موبایل (Android یا iOS) — بنر نصب فقط برای این‌ها می‌آید
+function isMobileDevice(): boolean {
+  return /android|iphone|ipad|ipod/i.test(navigator.userAgent)
+}
+
 export function InstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null)
   const [showIosHint, setShowIosHint] = useState(false)
@@ -49,17 +54,18 @@ export function InstallPrompt() {
     }
     window.addEventListener('beforeinstallprompt', onPrompt)
 
-    // iOS رویدادی ندارد — بعد از تأخیر کوتاه راهنمای دستی نشان بده
-    let iosTimer: ReturnType<typeof setTimeout> | undefined
-    if (isIosSafari()) {
-      iosTimer = setTimeout(() => {
-        setShowIosHint(true)
+    // روی Android/iOS بنر بلافاصله پیشنهاد می‌شود — نصب واقعی هر زمان
+    // beforeinstallprompt برسد فعال است، قبل از آن راهنمای دستی نشان می‌دهیم
+    let mobileTimer: ReturnType<typeof setTimeout> | undefined
+    if (isMobileDevice()) {
+      mobileTimer = setTimeout(() => {
+        setShowIosHint(isIosSafari())
         setVisible(true)
-      }, 15_000)
+      }, 2_000)
     }
     return () => {
       window.removeEventListener('beforeinstallprompt', onPrompt)
-      if (iosTimer) clearTimeout(iosTimer)
+      if (mobileTimer) clearTimeout(mobileTimer)
     }
   }, [])
 
@@ -77,6 +83,7 @@ export function InstallPrompt() {
       if (choice.outcome === 'accepted') setVisible(false)
       setDeferred(null)
     } else {
+      // deferred هنوز نیامده — راهنمای دستی متناسب با پلتفرم
       setShowIosHint(true)
     }
   }
@@ -92,7 +99,7 @@ export function InstallPrompt() {
           type="button"
           onClick={dismiss}
           aria-label="بستن"
-          className="text-muted-foreground hover:bg-muted absolute top-2 left-2 flex size-7 items-center justify-center rounded-lg"
+          className="text-muted-foreground hover:bg-muted absolute top-2 right-2 flex size-7 items-center justify-center rounded-lg"
         >
           <IconX className="size-4" stroke={1.75} />
         </button>
@@ -103,7 +110,9 @@ export function InstallPrompt() {
             <p className="text-foreground text-xs font-bold">زرسی را نصب کنید</p>
             <p className="text-muted-foreground mt-0.5 text-[10px] leading-4">
               {showIosHint
-                ? 'از منوی Share گزینه «Add to Home Screen» را بزنید'
+                ? isIosSafari()
+                  ? 'از منوی Share گزینه «Add to Home Screen» را بزنید'
+                  : 'از منوی مرورگر گزینه «نصب برنامه» یا «Add to Home screen» را بزنید'
                 : 'دسترسی سریع‌تر و تجربه اپلیکیشن واقعی روی صفحه اصلی'}
             </p>
           </div>
