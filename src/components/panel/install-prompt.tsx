@@ -1,7 +1,7 @@
 // ============================================
 // Zar30 - PWA Install Prompt
 // ============================================
-// دعوت غیرمزاحم نصب اپ — فقط یک‌بار، قابل dismiss دائمی
+// دعوت غیرمزاحم نصب اپ — dismiss موقت (۶ ساعت) و تکرار پیشنهاد
 // Android/Chrome: beforeinstallprompt → prompt() واقعی
 // iOS Safari: راهنمای Add to Home Screen (بدون API برنامه‌ریزی‌پذیر)
 // در standalone هرگز نمایش داده نمی‌شود
@@ -13,6 +13,19 @@ import { useEffect, useState } from 'react'
 import { IconShare, IconX, IconDownload } from '@tabler/icons-react'
 
 const DISMISS_KEY = 'zar30:pwa-install-dismissed:v2'
+// بعد از ضربدر، بنر ۶ ساعت مخفی می‌ماند و دوباره پیشنهاد می‌شود
+const DISMISS_TTL_MS = 6 * 60 * 60 * 1000
+
+function isDismissed(): boolean {
+  const raw = localStorage.getItem(DISMISS_KEY)
+  if (!raw) return false
+  const ts = Number(raw)
+  if (!Number.isFinite(ts) || Date.now() - ts > DISMISS_TTL_MS) {
+    localStorage.removeItem(DISMISS_KEY)
+    return false
+  }
+  return true
+}
 
 // Event غیر استاندارد beforeinstallprompt در تایپ‌های DOM نیست
 interface BeforeInstallPromptEvent extends Event {
@@ -45,7 +58,7 @@ export function InstallPrompt() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (isStandalone() || localStorage.getItem(DISMISS_KEY)) return
+    if (isStandalone() || isDismissed()) return
 
     const onPrompt = (e: Event) => {
       e.preventDefault()
@@ -72,7 +85,7 @@ export function InstallPrompt() {
   if (!visible) return null
 
   const dismiss = () => {
-    localStorage.setItem(DISMISS_KEY, '1')
+    localStorage.setItem(DISMISS_KEY, String(Date.now()))
     setVisible(false)
   }
 
