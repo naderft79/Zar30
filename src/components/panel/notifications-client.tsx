@@ -37,15 +37,15 @@ interface NotificationView {
 
 // دسته‌بندی بصری اعلان بر اساس نوع — یک خانواده آیکون (Lucide)
 const TYPE_ICONS: Record<string, { icon: TablerIcon; className: string }> = {
-  SECURITY: { icon: IconShieldCheck, className: 'bg-error/10 text-error' },
-  ORDER: { icon: IconRepeat, className: 'bg-gold-500/15 text-gold-600 dark:text-gold-400' },
-  TRANSACTION: { icon: IconWallet, className: 'bg-info/10 text-info' },
-  INSTALLMENT: { icon: IconCalendarClock, className: 'bg-muted text-muted-foreground' },
+  SECURITY: { icon: IconShieldCheck, className: 'text-error' },
+  ORDER: { icon: IconRepeat, className: 'text-gold-600 dark:text-gold-400' },
+  TRANSACTION: { icon: IconWallet, className: 'text-info' },
+  INSTALLMENT: { icon: IconCalendarClock, className: 'text-muted-foreground' },
 }
 
 function typeVisual(type: string) {
   const key = Object.keys(TYPE_ICONS).find((k) => type.toUpperCase().includes(k))
-  return key ? TYPE_ICONS[key]! : { icon: IconBell, className: 'bg-muted text-muted-foreground' }
+  return key ? TYPE_ICONS[key]! : { icon: IconBell, className: 'text-muted-foreground' }
 }
 
 type Filter = 'all' | 'unread'
@@ -172,15 +172,11 @@ export function NotificationsClient() {
                 >
                   <div className="flex min-w-0 items-start gap-3">
                     {/* آیکون دسته‌بندی */}
-                    <span
+                    <Icon
                       aria-hidden="true"
-                      className={cn(
-                        'mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg',
-                        visual.className,
-                      )}
-                    >
-                      <Icon className="size-4" strokeWidth={1.75} />
-                    </span>
+                      className={cn('mt-0.5 size-6 shrink-0', visual.className)}
+                      strokeWidth={1.75}
+                    />
                     <div className="min-w-0">
                       <p className="text-foreground flex flex-wrap items-center gap-2 text-sm font-medium">
                         {n.title}

@@ -57,13 +57,12 @@ export function LiveGoldPriceCard({ initialPrice }: LivePriceCardProps) {
       {/* سربرگ — نام دارایی + وضعیت */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <span className="from-gold-300 to-gold-600 inline-flex size-10 items-center justify-center rounded-full bg-gradient-to-br">
-            <svg viewBox="0 0 24 24" fill="none" className="size-5" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" fill="#0f1a33" opacity="0.25" />
-              <circle cx="12" cy="12" r="9" stroke="#0f1a33" strokeWidth="1.6" />
+          <span className="text-gold-600 inline-flex items-center justify-center">
+            <svg viewBox="0 0 24 24" fill="none" className="size-7" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
               <path
                 d="M9 8h6l-3.8 5H15"
-                stroke="#0f1a33"
+                stroke="currentColor"
                 strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"

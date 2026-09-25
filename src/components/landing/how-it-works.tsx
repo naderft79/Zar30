@@ -34,9 +34,11 @@ export function HowItWorks() {
                 >
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span className="bg-cream-100 text-gold-600 absolute top-5 left-5 inline-flex size-10 items-center justify-center rounded-xl transition-transform duration-250 group-hover:scale-[1.04]">
-                  <step.icon className="size-4.5" strokeWidth={1.75} aria-hidden="true" />
-                </span>
+                <step.icon
+                  className="text-gold-600 absolute top-5 left-5 size-7 transition-transform duration-250 group-hover:scale-110"
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                />
                 <h3 className="text-navy-950 mt-4 text-[15px] font-bold">{step.title}</h3>
                 <p className="text-navy-500 mt-2 text-[13px] leading-6 text-pretty">
                   {step.description}

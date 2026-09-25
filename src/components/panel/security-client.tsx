@@ -98,9 +98,7 @@ export function SecurityClient() {
         className="surface-wealth relative overflow-hidden rounded-2xl border p-6"
       >
         <div className="relative flex flex-wrap items-center gap-4">
-          <span className="bg-gold-500/15 text-gold-400 ring-gold-500/30 flex size-14 shrink-0 items-center justify-center rounded-2xl ring-1">
-            <IconShieldCheck className="size-7" stroke={1.5} />
-          </span>
+          <IconShieldCheck className="text-gold-400 size-10 shrink-0" stroke={1.5} />
           <div className="min-w-0 flex-1">
             <p className="text-cream-50 text-base font-bold">امنیت حساب شما</p>
             <p className="text-cream-300/60 mt-1 text-xs leading-5 text-pretty">

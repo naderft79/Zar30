@@ -19,11 +19,11 @@ const TONE_CLASSES: Record<MetricTone, string> = {
 }
 
 const TONE_ICON_BG: Record<MetricTone, string> = {
-  default: 'bg-muted text-muted-foreground',
-  success: 'bg-success/10 text-success',
-  warning: 'bg-warning/10 text-warning',
-  error: 'bg-error/10 text-error',
-  gold: 'bg-gold-500/10 text-gold-600 dark:text-gold-400',
+  default: 'text-muted-foreground',
+  success: 'text-success',
+  warning: 'text-warning',
+  error: 'text-error',
+  gold: 'text-gold-600 dark:text-gold-400',
 }
 
 interface AdminMetricProps {
@@ -59,15 +59,11 @@ export function AdminMetric({
       <div className="flex items-center justify-between gap-3">
         <p className="text-muted-foreground text-[11px] font-medium">{label}</p>
         {Icon && (
-          <span
+          <Icon
             aria-hidden="true"
-            className={cn(
-              'flex size-8 shrink-0 items-center justify-center rounded-lg',
-              TONE_ICON_BG[tone],
-            )}
-          >
-            <Icon className="size-4" strokeWidth={1.75} />
-          </span>
+            className={cn('size-5 shrink-0', TONE_ICON_BG[tone])}
+            strokeWidth={1.75}
+          />
         )}
       </div>
       <p

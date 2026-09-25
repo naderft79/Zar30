@@ -20,24 +20,24 @@ export type TransactionStatus = 'success' | 'pending' | 'failed'
 
 const kindConfig: Record<TransactionKind, { icon: TablerIcon; label: string; iconClass: string }> =
   {
-    deposit: { icon: IconArrowDownLeft, label: 'واریز', iconClass: 'bg-success/10 text-success' },
-    withdraw: { icon: IconArrowUpLeft, label: 'برداشت', iconClass: 'bg-error/10 text-error' },
+    deposit: { icon: IconArrowDownLeft, label: 'واریز', iconClass: 'text-success' },
+    withdraw: { icon: IconArrowUpLeft, label: 'برداشت', iconClass: 'text-error' },
     buy: {
       icon: IconRepeat,
       label: 'خرید طلا',
-      iconClass: 'bg-gold-500/15 text-gold-600 dark:text-gold-400',
+      iconClass: 'text-gold-600 dark:text-gold-400',
     },
     sell: {
       icon: IconRepeat,
       label: 'فروش طلا',
-      iconClass: 'bg-muted text-muted-foreground',
+      iconClass: 'text-muted-foreground',
     },
     installment: {
       icon: IconCalendarClock,
       label: 'پرداخت قسط',
-      iconClass: 'bg-info/10 text-info',
+      iconClass: 'text-info',
     },
-    transfer: { icon: IconWallet, label: 'انتقال', iconClass: 'bg-muted text-muted-foreground' },
+    transfer: { icon: IconWallet, label: 'انتقال', iconClass: 'text-muted-foreground' },
   }
 
 const statusTone: Record<
@@ -77,14 +77,7 @@ export function TransactionItem({
 
   return (
     <div data-slot="transaction-item" className={cn('flex items-center gap-3 py-3', className)}>
-      <div
-        className={cn(
-          'flex size-10 shrink-0 items-center justify-center rounded-full',
-          config.iconClass,
-        )}
-      >
-        <Icon className="size-4.5" strokeWidth={1.75} />
-      </div>
+      <Icon className={cn('size-6 shrink-0', config.iconClass)} strokeWidth={1.75} />
       <div className="min-w-0 flex-1">
         <p className="text-foreground truncate text-sm font-medium">{title ?? config.label}</p>
         <div className="mt-0.5 flex items-center gap-2">

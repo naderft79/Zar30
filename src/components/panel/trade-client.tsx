@@ -239,19 +239,14 @@ export function TradeClient() {
               {orders.map((o) => (
                 <li key={o.id} className="flex items-center justify-between gap-3 py-3">
                   <div className="flex items-center gap-3">
-                    <span
-                      className={`flex size-9 items-center justify-center rounded-xl ${
-                        o.type === 'BUY'
-                          ? 'bg-gold-500/15 text-gold-600'
-                          : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {o.type === 'BUY' ? (
-                        <IconArrowDownLeft className="size-4" stroke={2} />
-                      ) : (
-                        <IconArrowUpLeft className="size-4" stroke={2} />
-                      )}
-                    </span>
+                    {o.type === 'BUY' ? (
+                      <IconArrowDownLeft className="text-gold-600 size-6 shrink-0" stroke={1.75} />
+                    ) : (
+                      <IconArrowUpLeft
+                        className="text-muted-foreground size-6 shrink-0"
+                        stroke={1.75}
+                      />
+                    )}
                     <div>
                       <p className="text-foreground text-xs font-semibold">
                         {o.type === 'BUY' ? 'خرید' : 'فروش'} — {formatExactAmount(o.goldAmount)} گرم

@@ -143,12 +143,12 @@ export function WithdrawSheet({
               )}
             >
               <span className="flex items-center gap-2.5">
-                <span
-                  className="flex size-9 items-center justify-center rounded-lg text-white"
-                  style={{ background: `linear-gradient(135deg, ${bank.from}, ${bank.to})` }}
-                >
-                  <IconCreditCard className="size-4.5" stroke={1.75} aria-hidden="true" />
-                </span>
+                <IconCreditCard
+                  className="size-6 shrink-0"
+                  style={{ color: bank.from }}
+                  stroke={1.75}
+                  aria-hidden="true"
+                />
                 <span>
                   <span className="text-foreground block text-xs font-bold">
                     {a.alias || a.bankName}

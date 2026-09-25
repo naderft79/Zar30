@@ -22,12 +22,12 @@ interface StatusCardProps {
 }
 
 const toneRing: Record<StatusTone, string> = {
-  success: 'bg-success/10 text-success',
-  warning: 'bg-warning/10 text-warning',
-  error: 'bg-error/10 text-error',
-  info: 'bg-info/10 text-info',
-  gold: 'bg-gold-500/15 text-gold-600 dark:text-gold-400',
-  neutral: 'bg-muted text-muted-foreground',
+  success: 'text-success',
+  warning: 'text-warning',
+  error: 'text-error',
+  info: 'text-info',
+  gold: 'text-gold-600 dark:text-gold-400',
+  neutral: 'text-muted-foreground',
 }
 
 export function StatusCard({
@@ -47,14 +47,7 @@ export function StatusCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div
-            className={cn(
-              'flex size-9 items-center justify-center rounded-lg',
-              toneRing[statusTone],
-            )}
-          >
-            <Icon className="size-4.5" strokeWidth={1.75} />
-          </div>
+          <Icon className={cn('size-6 shrink-0', toneRing[statusTone])} strokeWidth={1.75} />
           <div>
             <p className="text-foreground text-sm font-semibold">{title}</p>
             <div className="mt-1">

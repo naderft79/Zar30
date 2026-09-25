@@ -273,16 +273,13 @@ export function DashboardOverview() {
                       className="hover:bg-muted/50 focus-visible:ring-ring -mx-2 flex w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-xl px-2 py-3.5 text-right transition-colors focus-visible:ring-2 focus-visible:outline-none"
                     >
                       <div className="flex min-w-0 items-center gap-3">
-                        <span
+                        <Icon
                           className={cn(
-                            'flex size-10 shrink-0 items-center justify-center rounded-xl',
-                            incoming
-                              ? 'bg-success/12 text-success'
-                              : 'bg-gold-500/12 text-gold-600',
+                            'size-6 shrink-0',
+                            incoming ? 'text-success' : 'text-gold-600',
                           )}
-                        >
-                          <Icon className="size-4.5" strokeWidth={1.75} />
-                        </span>
+                          strokeWidth={1.75}
+                        />
                         <div className="min-w-0">
                           <p className="text-foreground truncate text-sm font-semibold">
                             {TX_LABELS[t.type] ?? t.type}

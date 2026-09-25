@@ -84,9 +84,7 @@ export default function SecurityPage() {
         description="امنیت برای ما یک قابلیت نیست — بخشی از معماری است."
       >
         <div className="mx-auto max-w-3xl text-center">
-          <div className="bg-gold/15 mx-auto mb-6 flex size-16 items-center justify-center rounded-2xl">
-            <IconShieldCheck className="text-gold size-8" />
-          </div>
+          <IconShieldCheck className="text-gold mx-auto mb-6 size-12" strokeWidth={1.5} />
           <p className="text-muted-foreground leading-relaxed">
             زرسی از ابتدا با استانداردهای FinTech طراحی شده است. در ادامه لایه‌های امنیتی پلتفرم را
             می‌بینید — از احراز هویت کاربر تا یکپارچگی دفتر کل مالی.
@@ -98,9 +96,7 @@ export default function SecurityPage() {
         <div className="grid gap-6 sm:grid-cols-2">
           {LAYERS.map((layer) => (
             <div key={layer.title} className="border-border/60 bg-card rounded-2xl border p-6">
-              <div className="bg-gold/15 mb-4 flex size-12 items-center justify-center rounded-xl">
-                <layer.icon className="text-gold size-6" />
-              </div>
+              <layer.icon className="text-gold mb-4 size-8" strokeWidth={1.5} />
               <h3 className="text-foreground mb-3 text-lg font-semibold">{layer.title}</h3>
               <ul className="text-muted-foreground space-y-2 text-sm">
                 {layer.items.map((item) => (

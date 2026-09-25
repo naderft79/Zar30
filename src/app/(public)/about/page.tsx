@@ -62,9 +62,7 @@ export default function AboutPage() {
               key={v.title}
               className="border-border/60 bg-card rounded-2xl border p-6 text-center"
             >
-              <div className="bg-gold/15 mx-auto mb-4 flex size-12 items-center justify-center rounded-xl">
-                <v.icon className="text-gold size-6" />
-              </div>
+              <v.icon className="text-gold mx-auto mb-4 size-8" strokeWidth={1.5} />
               <h3 className="text-foreground mb-2 font-semibold">{v.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{v.text}</p>
             </div>

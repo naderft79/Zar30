@@ -32,9 +32,7 @@ export function ErrorState({
         className,
       )}
     >
-      <div className="bg-error/10 text-error flex size-14 items-center justify-center rounded-2xl">
-        <IconAlertTriangle className="size-7" stroke={1.5} />
-      </div>
+      <IconAlertTriangle className="text-error size-10" stroke={1.5} />
       <div className="space-y-1">
         <p className="text-foreground text-sm font-semibold">{title}</p>
         <p className="text-muted-foreground mx-auto max-w-xs text-xs leading-5">{description}</p>

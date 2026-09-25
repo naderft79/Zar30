@@ -173,16 +173,15 @@ export function SessionsClient() {
                       )}
                     >
                       <td className="py-3.5 pr-1">
-                        <span
+                        <Icon
                           className={cn(
-                            'inline-flex size-9 items-center justify-center rounded-lg',
+                            'size-6',
                             s.isCurrent
-                              ? 'bg-gold-500/15 text-gold-600 dark:text-gold-400'
-                              : 'bg-muted text-muted-foreground',
+                              ? 'text-gold-600 dark:text-gold-400'
+                              : 'text-muted-foreground',
                           )}
-                        >
-                          <Icon className="size-4.5" strokeWidth={1.75} />
-                        </span>
+                          strokeWidth={1.75}
+                        />
                       </td>
                       <td className="text-foreground py-3.5 font-medium">
                         {s.browser} · {s.os}
@@ -233,16 +232,13 @@ export function SessionsClient() {
                   )}
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div
+                    <Icon
                       className={cn(
-                        'flex size-11 shrink-0 items-center justify-center rounded-xl',
-                        s.isCurrent
-                          ? 'bg-gold-500/15 text-gold-600 dark:text-gold-400'
-                          : 'bg-muted text-muted-foreground',
+                        'size-6 shrink-0',
+                        s.isCurrent ? 'text-gold-600 dark:text-gold-400' : 'text-muted-foreground',
                       )}
-                    >
-                      <Icon className="size-5" strokeWidth={1.75} />
-                    </div>
+                      strokeWidth={1.75}
+                    />
                     <div className="min-w-0">
                       <p className="text-foreground flex flex-wrap items-center gap-2 text-sm font-medium">
                         <span className="truncate">

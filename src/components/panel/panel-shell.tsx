@@ -340,9 +340,11 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
               href="/dashboard/profile"
               className="group bg-muted/60 hover:bg-muted border-border hover:border-gold-500/30 flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-all duration-(--duration-normal)"
             >
-              <span className="border-border/50 bg-navy-700 text-cream-50 flex size-9 shrink-0 items-center justify-center rounded-xl border">
-                <IconUser className="size-4.5" stroke={1.75} aria-hidden="true" />
-              </span>
+              <IconUser
+                className="text-gold-600 size-6 shrink-0"
+                stroke={1.75}
+                aria-hidden="true"
+              />
               <span className="min-w-0 flex-1">
                 <span className="text-foreground block truncate text-xs font-medium">
                   {displayName}

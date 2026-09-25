@@ -52,9 +52,7 @@ export default function ContactPage() {
           {CHANNELS.map((ch) => (
             <Card key={ch.title} className="border-border/60 text-center">
               <CardContent className="p-6">
-                <div className="bg-gold/15 mx-auto mb-4 flex size-12 items-center justify-center rounded-xl">
-                  <ch.icon className="text-gold size-6" />
-                </div>
+                <ch.icon className="text-gold mx-auto mb-4 size-8" strokeWidth={1.5} />
                 <h3 className="text-foreground mb-1 font-semibold">{ch.title}</h3>
                 <p className="text-muted-foreground mb-3 text-sm">{ch.description}</p>
                 {ch.href ? (

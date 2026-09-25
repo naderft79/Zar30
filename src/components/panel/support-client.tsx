@@ -59,9 +59,10 @@ export function SupportClient() {
             href="/faq"
             className="border-border/60 bg-card hover:border-gold-500/40 group flex flex-col gap-3 rounded-xl border p-4 transition-all duration-(--duration-normal) hover:-translate-y-0.5 hover:shadow-md"
           >
-            <span className="bg-gold-500/12 text-gold-600 dark:text-gold-400 flex size-10 items-center justify-center rounded-xl transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-105">
-              <Icon className="size-5" strokeWidth={1.75} />
-            </span>
+            <Icon
+              className="text-gold-600 dark:text-gold-400 size-7 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-110"
+              strokeWidth={1.5}
+            />
             <span>
               <span className="text-foreground block text-sm font-semibold">{title}</span>
               <span className="text-muted-foreground mt-1 block text-[11px] leading-4">

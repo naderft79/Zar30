@@ -278,9 +278,7 @@ function AdminPermissionDenied() {
   return (
     <div className="bg-background flex min-h-dvh items-center justify-center p-6">
       <div className="bg-card border-border/60 w-full max-w-sm rounded-2xl border p-8 text-center shadow-sm">
-        <span className="bg-error/10 text-error mx-auto mb-4 flex size-12 items-center justify-center rounded-full">
-          <IconShieldX className="size-6" stroke={1.75} aria-hidden="true" />
-        </span>
+        <IconShieldX className="text-error mx-auto mb-4 size-9" stroke={1.75} aria-hidden="true" />
         <h1 className="text-foreground text-lg font-bold">دسترسی مجاز نیست</h1>
         <p className="text-muted-foreground mt-2 text-xs leading-6">
           حساب شما دسترسی مرکز عملیات را ندارد یا سطح دسترسی لازم را ندارید.

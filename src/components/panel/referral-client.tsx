@@ -97,9 +97,7 @@ export function ReferralClient() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <CardContent className="flex items-center gap-4 py-5">
-            <span className="bg-gold-500/15 text-gold-600 dark:text-gold-400 flex size-12 shrink-0 items-center justify-center rounded-2xl">
-              <IconUsers className="size-6" stroke={1.5} />
-            </span>
+            <IconUsers className="text-gold-600 dark:text-gold-400 size-7 shrink-0" stroke={1.5} />
             <div className="min-w-0">
               <p className="text-muted-foreground text-label">دعوت‌های موفق</p>
               <p className="text-financial-lg text-foreground mt-1 tabular-nums">—</p>
@@ -111,9 +109,10 @@ export function ReferralClient() {
         </Card>
         <Card>
           <CardContent className="flex items-center gap-4 py-5">
-            <span className="bg-gold-500/15 text-gold-600 dark:text-gold-400 flex size-12 shrink-0 items-center justify-center rounded-2xl">
-              <IconTrendingUp className="size-6" stroke={1.5} />
-            </span>
+            <IconTrendingUp
+              className="text-gold-600 dark:text-gold-400 size-7 shrink-0"
+              stroke={1.5}
+            />
             <div className="min-w-0">
               <p className="text-muted-foreground text-label">پاداش معرفی</p>
               <p className="text-financial-lg text-foreground mt-1 tabular-nums">—</p>

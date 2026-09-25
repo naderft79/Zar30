@@ -59,14 +59,10 @@ export function OrderCard({
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div
-            className={cn(
-              'flex size-9 items-center justify-center rounded-lg',
-              isBuy ? 'bg-success/10 text-success' : 'bg-error/10 text-error',
-            )}
-          >
-            <Icon className="size-4.5" strokeWidth={2} />
-          </div>
+          <Icon
+            className={cn('size-6 shrink-0', isBuy ? 'text-success' : 'text-error')}
+            strokeWidth={1.75}
+          />
           <div>
             <p className="text-foreground text-sm font-semibold">
               {isBuy ? 'خرید طلا' : 'فروش طلا'}

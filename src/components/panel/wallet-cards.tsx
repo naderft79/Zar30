@@ -58,9 +58,7 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
         <CardContent className="space-y-3 p-3.5 sm:p-5">
           <div className="flex items-center justify-between gap-1">
             <div className="flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-xl bg-white/15 sm:size-9">
-                <IconCoins className="size-4.5 text-white sm:size-5" stroke={1.75} />
-              </span>
+              <IconCoins className="size-6 shrink-0 text-white sm:size-7" stroke={1.75} />
               <p className="text-xs font-bold text-white">موجودی طلا</p>
             </div>
             {goldValue != null && pnl != null && !hidden && (
@@ -139,9 +137,7 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
       <Card className="border-success/40 from-success bg-gradient-to-br via-[#177f45] to-[#0d5c30]">
         <CardContent className="space-y-3 p-3.5 sm:p-5">
           <div className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-xl bg-white/15 sm:size-9">
-              <IconWallet className="size-4.5 text-white sm:size-5" stroke={1.75} />
-            </span>
+            <IconWallet className="size-6 shrink-0 text-white sm:size-7" stroke={1.75} />
             <p className="text-xs font-bold text-white">موجودی تومانی</p>
           </div>
 

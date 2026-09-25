@@ -304,9 +304,10 @@ export function ProfileClient() {
             href={href}
             className="border-border/60 bg-card hover:border-gold-500/40 group flex items-center gap-3.5 rounded-xl border p-4 transition-all duration-(--duration-normal) hover:-translate-y-0.5 hover:shadow-sm"
           >
-            <span className="bg-gold-500/12 text-gold-600 dark:text-gold-400 flex size-11 shrink-0 items-center justify-center rounded-xl transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-105">
-              <Icon className="size-5" strokeWidth={1.75} />
-            </span>
+            <Icon
+              className="text-gold-600 dark:text-gold-400 size-6 shrink-0 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-110"
+              strokeWidth={1.75}
+            />
             <span className="min-w-0 flex-1">
               <span className="text-foreground block text-sm font-semibold">{title}</span>
               <span className="text-muted-foreground mt-0.5 block truncate text-xs">
@@ -318,9 +319,7 @@ export function ProfileClient() {
         ))}
         {/* Legal */}
         <div className="border-border/60 bg-muted/30 flex items-center gap-3.5 rounded-xl border border-dashed p-4 sm:col-span-2 lg:col-span-1">
-          <span className="bg-muted text-muted-foreground flex size-11 shrink-0 items-center justify-center rounded-xl">
-            <IconFileText className="size-5" stroke={1.75} />
-          </span>
+          <IconFileText className="text-muted-foreground size-6 shrink-0" stroke={1.75} />
           <span className="min-w-0 flex-1">
             <span className="text-foreground block text-sm font-semibold">قوانین و مقررات</span>
             <span className="mt-1 flex flex-wrap gap-x-3 gap-y-1">

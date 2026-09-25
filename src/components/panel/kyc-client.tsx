@@ -326,9 +326,7 @@ function KycIntro({
       className="surface-wealth gold-rings relative overflow-hidden rounded-2xl border p-6 sm:p-8"
     >
       <div className="relative flex flex-col items-start gap-5 sm:flex-row sm:items-center">
-        <span className="from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/40 shadow-gold flex size-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-bl ring-1">
-          <IconShieldCheck className="size-8" stroke={1.5} />
-        </span>
+        <IconShieldCheck className="text-gold-400 size-11 shrink-0" stroke={1.5} />
         <div className="min-w-0 flex-1">
           <h2 className="text-cream-50 text-lg font-bold text-balance sm:text-xl">
             {approved ? 'هویت شما تایید شده است' : 'احراز هویت سطح ۲'}
@@ -384,9 +382,10 @@ function StatusView({ submission }: { submission: KycSubmission }) {
   return (
     <Card className="overflow-hidden">
       <div className="surface-wealth relative px-6 py-8 text-center">
-        <span className="bg-gold-500/15 text-gold-400 ring-gold-500/30 mx-auto flex size-16 items-center justify-center rounded-full ring-1">
-          <IconLoader2 className="size-7 animate-spin" style={{ animationDuration: '3s' }} />
-        </span>
+        <IconLoader2
+          className="text-gold-400 mx-auto size-10 animate-spin"
+          style={{ animationDuration: '3s' }}
+        />
         <h2 className="text-cream-50 mt-4 text-lg font-bold">{meta.label}</h2>
         <p className="text-cream-200/70 mx-auto mt-2 max-w-md text-sm leading-6">{meta.desc}</p>
         {submission.submittedAt && (
@@ -987,13 +986,11 @@ function DocUpload({
       }`}
     >
       <div className="flex items-start gap-3">
-        <span
-          className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${
-            doc ? 'bg-success/15 text-success' : 'bg-gold-500/12 text-gold-600'
-          }`}
-        >
-          {doc ? <IconCheck className="size-5" /> : <Icon className="size-5" strokeWidth={1.75} />}
-        </span>
+        {doc ? (
+          <IconCheck className="text-success size-6 shrink-0" strokeWidth={1.75} />
+        ) : (
+          <Icon className="text-gold-600 size-6 shrink-0" strokeWidth={1.75} />
+        )}
         <div className="min-w-0 flex-1">
           <p className="text-foreground text-sm font-semibold">
             {slot.title}
