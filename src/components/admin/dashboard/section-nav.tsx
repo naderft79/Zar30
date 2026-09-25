@@ -46,7 +46,7 @@ export function AdminSectionNav({ permissions }: { permissions: readonly Permiss
       ref={ref}
       role="navigation"
       aria-label="دسترسی سریع بخش‌ها"
-      className="flex [scrollbar-width:none] gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      className="grid grid-cols-2 gap-2 pb-1 sm:grid-cols-4"
     >
       {sections.map((section) => {
         const open = openKey === section.key
@@ -54,11 +54,11 @@ export function AdminSectionNav({ permissions }: { permissions: readonly Permiss
         // بخش‌های بدون آیتم بالاتر فیلتر شدند — اولین آیتم حتماً هست
         const first = section.items[0]!
         return (
-          <div key={section.key} className="relative shrink-0">
+          <div key={section.key} className="relative">
             {/* دکمه دو‌بخشی — عنوان بخش + chevron لیست */}
             <div
               className={cn(
-                'border-border/60 bg-card flex items-stretch overflow-hidden rounded-xl border transition-all duration-(--duration-normal)',
+                'border-border/60 bg-card flex w-full items-stretch overflow-hidden rounded-xl border transition-all duration-(--duration-normal)',
                 open
                   ? 'border-gold-500/50 shadow-gold-500/10 shadow-md'
                   : 'hover:border-border hover:shadow-sm',
@@ -67,13 +67,13 @@ export function AdminSectionNav({ permissions }: { permissions: readonly Permiss
               <Link
                 href={first.href}
                 className={cn(
-                  'text-foreground hover:bg-muted/60 focus-visible:ring-ring flex h-10 items-center gap-2 pr-3 pl-2.5 text-xs font-semibold transition-colors',
+                  'text-foreground hover:bg-muted/60 focus-visible:ring-ring flex h-10 min-w-0 flex-1 items-center gap-2 pr-3 pl-2.5 text-xs font-semibold transition-colors',
                   'focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
                 )}
               >
                 <span
                   className={cn(
-                    'flex size-6 items-center justify-center rounded-md transition-colors',
+                    'flex size-6 shrink-0 items-center justify-center rounded-md transition-colors',
                     open
                       ? 'bg-gold-500/15 text-gold-700 dark:text-gold-300'
                       : 'bg-muted text-muted-foreground',
@@ -81,7 +81,7 @@ export function AdminSectionNav({ permissions }: { permissions: readonly Permiss
                 >
                   <SectionIcon className="size-3.5" strokeWidth={1.75} aria-hidden="true" />
                 </span>
-                {section.label}
+                <span className="truncate">{section.label}</span>
               </Link>
               <button
                 type="button"
@@ -90,7 +90,7 @@ export function AdminSectionNav({ permissions }: { permissions: readonly Permiss
                 aria-expanded={open}
                 aria-haspopup="menu"
                 className={cn(
-                  'border-border/60 text-muted-foreground flex w-8 items-center justify-center border-r transition-colors',
+                  'border-border/60 text-muted-foreground flex w-8 shrink-0 items-center justify-center border-r transition-colors',
                   'hover:bg-muted/60 hover:text-foreground focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
                   open && 'bg-gold-500/10 text-gold-600 dark:text-gold-300',
                 )}
