@@ -52,22 +52,22 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
       : null
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      {/* ===== کارت طلای آب‌شده ===== */}
-      <Card className="border-gold-500/25">
-        <CardContent className="space-y-3 p-4 sm:p-5">
-          <div className="flex items-center justify-between">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4">
+      {/* ===== کارت موجودی طلا — گرادیانت طلایی ===== */}
+      <Card className="border-gold-700/50 from-gold-600 to-gold-700 bg-gradient-to-br">
+        <CardContent className="space-y-3 p-3.5 sm:p-5">
+          <div className="flex items-center justify-between gap-1">
             <div className="flex items-center gap-2">
-              <span className="bg-gold-500/12 flex size-9 items-center justify-center rounded-xl">
-                <IconCoins className="text-gold-600 size-5" stroke={1.75} />
+              <span className="flex size-8 items-center justify-center rounded-xl bg-white/15 sm:size-9">
+                <IconCoins className="size-4.5 text-white sm:size-5" stroke={1.75} />
               </span>
-              <p className="text-foreground text-xs font-bold">طلای آب‌شده ۱۸ عیار</p>
+              <p className="text-xs font-bold text-white">موجودی طلا</p>
             </div>
             {goldValue != null && pnl != null && !hidden && (
               <span
                 className={cn(
-                  'flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold tabular-nums',
-                  pnl >= 0 ? 'bg-success/10 text-success' : 'bg-error/10 text-error',
+                  'flex shrink-0 items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold tabular-nums',
+                  pnl >= 0 ? 'text-success' : 'text-error',
                 )}
                 dir="ltr"
               >
@@ -82,7 +82,7 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
           </div>
 
           {loading ? (
-            <div className="skeleton-shimmer h-8 w-40 rounded-lg" />
+            <div className="skeleton-shimmer h-8 w-32 rounded-lg" />
           ) : (
             <div>
               <Masked hidden={hidden}>
@@ -90,37 +90,40 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
                   value={data.goldBalance}
                   unit="گرم"
                   decimals={4}
-                  className="text-foreground text-2xl"
-                  unitClassName="text-muted-foreground text-xs font-medium"
+                  className="text-lg text-white sm:text-2xl"
+                  unitClassName="text-[10px] font-medium text-white/70 sm:text-xs"
                 />
               </Masked>
               {!hidden && Number(data.goldLocked) > 0 && (
-                <p className="text-muted-foreground mt-0.5 text-[10px] tabular-nums" dir="ltr">
+                <p className="mt-0.5 text-[10px] text-white/70 tabular-nums" dir="ltr">
                   {formatExactAmount(data.goldLocked)} گرم مسدود
                 </p>
               )}
             </div>
           )}
 
-          <div className="border-border/50 flex items-center justify-between border-t pt-2.5 text-[11px]">
-            <span className="text-muted-foreground">ارزش لحظه‌ای</span>
+          <div className="flex items-center justify-between gap-1 border-t border-white/20 pt-2.5 text-[11px]">
+            <span className="text-white/70">ارزش لحظه‌ای</span>
             {goldValue != null ? (
               <Masked hidden={hidden}>
-                <span className="text-foreground font-bold tabular-nums" dir="ltr">
+                <span className="font-bold text-white tabular-nums" dir="ltr">
                   {formatExactAmount(String(Math.round(goldValue)))}{' '}
-                  <span className="text-muted-foreground font-normal">تومان</span>
+                  <span className="font-normal text-white/70">تومان</span>
                 </span>
               </Masked>
             ) : (
-              <span className="text-muted-foreground">—</span>
+              <span className="text-white/70">—</span>
             )}
           </div>
           {pnl != null && (
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="text-muted-foreground">سود/زیان</span>
+            <div className="flex items-center justify-between gap-1 text-[11px]">
+              <span className="text-white/70">سود/زیان</span>
               <Masked hidden={hidden}>
                 <span
-                  className={cn('font-bold tabular-nums', pnl >= 0 ? 'text-success' : 'text-error')}
+                  className={cn(
+                    'font-bold tabular-nums',
+                    pnl >= 0 ? 'text-emerald-100' : 'text-red-100',
+                  )}
                   dir="ltr"
                 >
                   {pnl >= 0 ? '+' : ''}
@@ -132,18 +135,18 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
         </CardContent>
       </Card>
 
-      {/* ===== کارت کیف تومانی ===== */}
-      <Card>
-        <CardContent className="space-y-3 p-4 sm:p-5">
+      {/* ===== کارت موجودی تومانی — گرادیانت سبز ===== */}
+      <Card className="border-success/40 from-success bg-gradient-to-br via-[#177f45] to-[#0d5c30]">
+        <CardContent className="space-y-3 p-3.5 sm:p-5">
           <div className="flex items-center gap-2">
-            <span className="bg-navy-800/8 flex size-9 items-center justify-center rounded-xl">
-              <IconWallet className="text-navy-700 size-5" stroke={1.75} />
+            <span className="flex size-8 items-center justify-center rounded-xl bg-white/15 sm:size-9">
+              <IconWallet className="size-4.5 text-white sm:size-5" stroke={1.75} />
             </span>
-            <p className="text-foreground text-xs font-bold">کیف پول تومانی</p>
+            <p className="text-xs font-bold text-white">موجودی تومانی</p>
           </div>
 
           {loading ? (
-            <div className="skeleton-shimmer h-8 w-40 rounded-lg" />
+            <div className="skeleton-shimmer h-8 w-32 rounded-lg" />
           ) : (
             <div>
               <Masked hidden={hidden}>
@@ -151,22 +154,22 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
                   value={data.tomanBalance}
                   unit="تومان"
                   decimals={0}
-                  className="text-foreground text-2xl"
-                  unitClassName="text-muted-foreground text-xs font-medium"
+                  className="text-lg text-white sm:text-2xl"
+                  unitClassName="text-[10px] font-medium text-white/70 sm:text-xs"
                 />
               </Masked>
               {!hidden && Number(data.tomanLocked) > 0 && (
-                <p className="text-muted-foreground mt-0.5 text-[10px] tabular-nums" dir="ltr">
+                <p className="mt-0.5 text-[10px] text-white/70 tabular-nums" dir="ltr">
                   {formatExactAmount(data.tomanLocked)} تومان مسدود
                 </p>
               )}
             </div>
           )}
 
-          <div className="border-border/50 border-t pt-2.5">
+          <div className="border-t border-white/20 pt-2.5">
             <Link
               href="/dashboard/trade?side=buy"
-              className="text-gold-600 hover:text-gold-700 text-[11px] font-semibold transition-colors"
+              className="text-[11px] font-semibold text-white transition-colors hover:text-white/80"
             >
               خرید طلا با موجودی تومانی ←
             </Link>
