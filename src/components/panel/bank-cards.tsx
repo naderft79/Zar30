@@ -105,8 +105,8 @@ function BankCardFace({
           پیش‌فرض
         </span>
       )}
-      {/* چیپ طلایی — وسط عمودی، سمت چپ */}
-      <div className="absolute top-1/2 left-3 -translate-y-1/2">
+      {/* چیپ طلایی — کمی بالای وسط، سمت چپ */}
+      <div className="absolute top-[44%] left-3 -translate-y-1/2">
         <CardChip />
       </div>
       {/* شماره کارت — دقیقاً مرکز کارت — و شبا با فاصله زیر آن */}
@@ -118,8 +118,11 @@ function BankCardFace({
           {formatIban(iban || 'IR0000000000000000000000')}
         </p>
       </div>
-      {/* نام و نام خانوادگی دارنده — گوشه پایین سمت چپ */}
-      <p className="absolute bottom-4 left-4 max-w-[70%] truncate text-[11px] font-semibold tracking-wide">
+      {/* نام و نام خانوادگی دارنده — گوشه پایین سمت راست */}
+      <p
+        dir="rtl"
+        className="absolute right-4 bottom-4 max-w-[70%] truncate text-[11px] font-semibold tracking-wide"
+      >
         {holderName}
       </p>
     </div>
@@ -134,7 +137,7 @@ interface BankCardsProps {
 
 export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
   const { user } = usePanelUser()
-  const holderName = [user.firstName, user.lastName].filter(Boolean).join(' ')
+  const holderName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.mobile
   const [sheetOpen, setSheetOpen] = useState(false)
   const [iban, setIban] = useState('')
   const [cardPan, setCardPan] = useState('')
