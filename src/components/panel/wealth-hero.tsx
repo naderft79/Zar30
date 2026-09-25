@@ -41,8 +41,8 @@ interface WealthHeroProps {
 
 // اکشن‌های مالی داخل کارت — ورود سریع به مقصدهای اصلی
 const HERO_ACTIONS = [
-  { href: '/dashboard/assets?action=deposit', label: 'واریز', icon: IconCashBanknotePlus },
-  { href: '/dashboard/assets?action=withdraw', label: 'انتقال', icon: IconTransfer },
+  { href: '/dashboard/deposit', label: 'واریز', icon: IconCashBanknotePlus },
+  { href: '/dashboard/transfer', label: 'انتقال', icon: IconTransfer },
   { href: '/dashboard/assets', label: 'دارایی', icon: IconWallet },
 ] as const
 

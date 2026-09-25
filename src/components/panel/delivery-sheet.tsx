@@ -37,9 +37,11 @@ interface DeliverySheetProps {
   onClose: () => void
   online: boolean
   onCompleted: () => void
+  /** حالت صفحه مستقل — بدون قاب BottomSheet */
+  inline?: boolean
 }
 
-export function DeliverySheet({ open, onClose, online, onCompleted }: DeliverySheetProps) {
+export function DeliverySheet({ open, onClose, online, onCompleted, inline }: DeliverySheetProps) {
   // تب — طلای آب‌شده یا تبدیل به سکه/شمش
   const [tab, setTab] = useState<'GOLD' | 'COINS'>('GOLD')
   const [grams, setGrams] = useState('')
@@ -150,48 +152,80 @@ export function DeliverySheet({ open, onClose, online, onCompleted }: DeliverySh
     addrText.trim().length >= 10 &&
     /^\d{10}$/.test(postalCode)
 
-  return (
-    <BottomSheet
-      open={open}
-      onClose={() => {
-        reset()
-        onClose()
-      }}
-      title="تحویل فیزیکی طلا"
-    >
-      {done ? (
-        <div className="space-y-4 py-4 text-center">
-          <p className="text-success text-sm font-bold">درخواست تحویل ثبت شد</p>
-          <p className="text-muted-foreground text-xs leading-5">
-            درخواست شما در صف بررسی قرار گرفت؛ وضعیت آن را در سوابق تحویل‌ها دنبال کنید.
-          </p>
-          <Button
-            className="w-full"
-            onClick={() => {
-              reset()
-              onClose()
-            }}
+  const content = done ? (
+    <div className="space-y-4 py-4 text-center">
+      <p className="text-success text-sm font-bold">درخواست تحویل ثبت شد</p>
+      <p className="text-muted-foreground text-xs leading-5">
+        درخواست شما در صف بررسی قرار گرفت؛ وضعیت آن را در سوابق تحویل‌ها دنبال کنید.
+      </p>
+      <Button
+        className="w-full"
+        onClick={() => {
+          reset()
+          onClose()
+        }}
+      >
+        بستن
+      </Button>
+    </div>
+  ) : (
+    <>
+      {/* تب — طلای آب‌شده یا سکه/شمش */}
+      <div className="bg-muted/60 mb-4 grid grid-cols-2 gap-1 rounded-xl p-1">
+        {(
+          [
+            { key: 'GOLD', label: 'طلای آب‌شده' },
+            { key: 'COINS', label: 'سکه و شمش' },
+          ] as const
+        ).map(({ key, label }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setTab(key)}
+            className={cn(
+              'rounded-lg py-2 text-xs font-semibold transition-colors',
+              tab === key
+                ? 'bg-card text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
           >
-            بستن
-          </Button>
-        </div>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'COINS' ? (
+        <CoinsSection online={online} onChanged={onCompleted} />
       ) : (
-        <>
-          {/* تب — طلای آب‌شده یا سکه/شمش */}
-          <div className="bg-muted/60 mb-4 grid grid-cols-2 gap-1 rounded-xl p-1">
+        <div className="space-y-4">
+          <label className="block space-y-1.5">
+            <span className="text-muted-foreground text-[11px]">مقدار طلا (گرم) — حداقل ۱ گرم</span>
+            <input
+              type="text"
+              inputMode="decimal"
+              dir="ltr"
+              value={grams}
+              onChange={(e) => setGrams(e.target.value.replace(/[^\d.]/g, ''))}
+              placeholder="1"
+              className={cn(inputClass, 'tabular-nums')}
+            />
+          </label>
+
+          {/* روش تحویل */}
+          <div className="bg-muted/60 grid grid-cols-2 gap-1 rounded-xl p-1">
             {(
               [
-                { key: 'GOLD', label: 'طلای آب‌شده' },
-                { key: 'COINS', label: 'سکه و شمش' },
+                { key: 'POST', label: 'ارسال پستی' },
+                { key: 'PICKUP', label: 'تحویل حضوری' },
               ] as const
             ).map(({ key, label }) => (
               <button
                 key={key}
                 type="button"
-                onClick={() => setTab(key)}
+                onClick={() => setMethod(key)}
                 className={cn(
                   'rounded-lg py-2 text-xs font-semibold transition-colors',
-                  tab === key
+                  method === key
                     ? 'bg-card text-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground',
                 )}
@@ -201,214 +235,175 @@ export function DeliverySheet({ open, onClose, online, onCompleted }: DeliverySh
             ))}
           </div>
 
-          {tab === 'COINS' ? (
-            <CoinsSection online={online} onChanged={onCompleted} />
-          ) : (
-            <div className="space-y-4">
-              <label className="block space-y-1.5">
-                <span className="text-muted-foreground text-[11px]">
-                  مقدار طلا (گرم) — حداقل ۱ گرم
-                </span>
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  dir="ltr"
-                  value={grams}
-                  onChange={(e) => setGrams(e.target.value.replace(/[^\d.]/g, ''))}
-                  placeholder="1"
-                  className={cn(inputClass, 'tabular-nums')}
-                />
-              </label>
+          {method === 'PICKUP' && (
+            <p className="text-muted-foreground bg-muted/50 rounded-xl p-3 text-[11px] leading-5">
+              پس از تایید درخواست، محل و زمان تحویل حضوری از طریق پشتیبانی با شما هماهنگ می‌شود.
+            </p>
+          )}
 
-              {/* روش تحویل */}
-              <div className="bg-muted/60 grid grid-cols-2 gap-1 rounded-xl p-1">
-                {(
-                  [
-                    { key: 'POST', label: 'ارسال پستی' },
-                    { key: 'PICKUP', label: 'تحویل حضوری' },
-                  ] as const
-                ).map(({ key, label }) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setMethod(key)}
-                    className={cn(
-                      'rounded-lg py-2 text-xs font-semibold transition-colors',
-                      method === key
-                        ? 'bg-card text-foreground shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground',
-                    )}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-
-              {method === 'PICKUP' && (
-                <p className="text-muted-foreground bg-muted/50 rounded-xl p-3 text-[11px] leading-5">
-                  پس از تایید درخواست، محل و زمان تحویل حضوری از طریق پشتیبانی با شما هماهنگ می‌شود.
-                </p>
-              )}
-
-              {/* دفترچه آدرس — فقط برای ارسال پستی */}
-              {method === 'POST' && !showNewAddress && (
-                <div className="space-y-2">
-                  <p className="text-muted-foreground text-[11px]">آدرس تحویل</p>
-                  {addresses.map((a) => (
-                    <button
-                      key={a.id}
-                      type="button"
-                      onClick={() => setAddressId(a.id)}
-                      className={cn(
-                        'flex w-full items-start gap-2.5 rounded-xl border p-3 text-right transition-colors',
-                        addressId === a.id
-                          ? 'border-gold-500 bg-gold-500/8'
-                          : 'border-border/60 hover:border-gold-500/40',
-                      )}
-                    >
-                      <IconMapPin
-                        className={cn(
-                          'mt-0.5 size-4.5 shrink-0',
-                          addressId === a.id ? 'text-gold-600' : 'text-muted-foreground',
-                        )}
-                        stroke={1.75}
-                        aria-hidden="true"
-                      />
-                      <span>
-                        <span className="text-foreground block text-xs font-bold">
-                          {a.title || a.recipientName}
-                          {a.isDefault && (
-                            <span className="text-gold-600 ms-1.5 text-[10px]">پیش‌فرض</span>
-                          )}
-                        </span>
-                        <span className="text-muted-foreground mt-0.5 block text-[10px] leading-4">
-                          {a.province}، {a.city} — {a.address}
-                        </span>
-                      </span>
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowNewAddress(true)
-                      setAddressId(null)
-                    }}
-                    className="text-gold-600 hover:text-gold-700 flex items-center gap-1.5 text-[11px] font-semibold transition-colors"
-                  >
-                    <IconPlus className="size-4" aria-hidden="true" />
-                    ثبت آدرس جدید
-                  </button>
-                </div>
-              )}
-
-              {/* فرم آدرس جدید */}
-              {method === 'POST' && showNewAddress && (
-                <div className="border-border/60 space-y-3 rounded-xl border p-3">
-                  <p className="text-foreground text-xs font-bold">آدرس جدید</p>
-                  <input
-                    type="text"
-                    value={recipientName}
-                    onChange={(e) => setRecipientName(e.target.value)}
-                    placeholder="نام و نام خانوادگی گیرنده"
-                    className={inputClass}
-                  />
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    dir="ltr"
-                    value={addrMobile}
-                    onChange={(e) =>
-                      setAddrMobile(e.target.value.replace(/[^\d]/g, '').slice(0, 11))
-                    }
-                    placeholder="موبایل گیرنده (09…)"
-                    className={cn(inputClass, 'tabular-nums')}
-                  />
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      value={province}
-                      onChange={(e) => setProvince(e.target.value)}
-                      placeholder="استان"
-                      className={inputClass}
-                    />
-                    <input
-                      type="text"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="شهر"
-                      className={inputClass}
-                    />
-                  </div>
-                  <textarea
-                    value={addrText}
-                    onChange={(e) => setAddrText(e.target.value)}
-                    placeholder="آدرس کامل پستی"
-                    rows={2}
-                    className={cn(inputClass, 'h-auto py-2 leading-6')}
-                  />
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    dir="ltr"
-                    value={postalCode}
-                    onChange={(e) =>
-                      setPostalCode(e.target.value.replace(/[^\d]/g, '').slice(0, 10))
-                    }
-                    placeholder="کد پستی ۱۰ رقمی"
-                    className={cn(inputClass, 'tabular-nums')}
-                  />
-                  {addresses.length > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowNewAddress(false)
-                        setAddressId(addresses.find((a) => a.isDefault)?.id ?? addresses[0]!.id)
-                      }}
-                      className="text-muted-foreground text-[11px] font-semibold"
-                    >
-                      ← انتخاب از آدرس‌های ثبت‌شده
-                    </button>
+          {/* دفترچه آدرس — فقط برای ارسال پستی */}
+          {method === 'POST' && !showNewAddress && (
+            <div className="space-y-2">
+              <p className="text-muted-foreground text-[11px]">آدرس تحویل</p>
+              {addresses.map((a) => (
+                <button
+                  key={a.id}
+                  type="button"
+                  onClick={() => setAddressId(a.id)}
+                  className={cn(
+                    'flex w-full items-start gap-2.5 rounded-xl border p-3 text-right transition-colors',
+                    addressId === a.id
+                      ? 'border-gold-500 bg-gold-500/8'
+                      : 'border-border/60 hover:border-gold-500/40',
                   )}
-                </div>
-              )}
-
-              {/* توضیح هزینه — متن ساده به‌جای ماشین‌حساب */}
-              <p className="text-muted-foreground bg-muted/50 rounded-xl p-3 text-[11px] leading-5">
-                <IconPackage
-                  className="text-gold-600 me-1 mb-0.5 inline size-4"
-                  aria-hidden="true"
-                />
-                هزینه بسته‌بندی، بیمه و ارسال پس از بررسی درخواست محاسبه و قبل از ارسال نهایی به شما
-                اعلام می‌شود. طلای شما تا زمان تایید نهایی در کیف پول باقی می‌ماند.
-              </p>
-
-              {/* OTP مالی */}
-              <div className="border-border/50 space-y-2 border-t pt-3">
-                <p className="text-muted-foreground text-[11px]">تایید امنیتی</p>
-                <FinancialOtp value={otpCode} onChange={setOtpCode} disabled={!online} />
-              </div>
-
-              {error && (
-                <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
-                  <IconAlertTriangle className="size-3.5" aria-hidden="true" />
-                  {error}
-                </p>
-              )}
-
-              <Button
-                className="w-full"
-                onClick={submit}
-                disabled={
-                  busy || !online || (method === 'POST' && showNewAddress && !newAddressValid)
-                }
-                title={!online ? 'اتصال اینترنت برقرار نیست' : undefined}
+                >
+                  <IconMapPin
+                    className={cn(
+                      'mt-0.5 size-4.5 shrink-0',
+                      addressId === a.id ? 'text-gold-600' : 'text-muted-foreground',
+                    )}
+                    stroke={1.75}
+                    aria-hidden="true"
+                  />
+                  <span>
+                    <span className="text-foreground block text-xs font-bold">
+                      {a.title || a.recipientName}
+                      {a.isDefault && (
+                        <span className="text-gold-600 ms-1.5 text-[10px]">پیش‌فرض</span>
+                      )}
+                    </span>
+                    <span className="text-muted-foreground mt-0.5 block text-[10px] leading-4">
+                      {a.province}، {a.city} — {a.address}
+                    </span>
+                  </span>
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setShowNewAddress(true)
+                  setAddressId(null)
+                }}
+                className="text-gold-600 hover:text-gold-700 flex items-center gap-1.5 text-[11px] font-semibold transition-colors"
               >
-                {!online ? 'آفلاین' : busy ? 'در حال ثبت…' : 'ثبت درخواست تحویل'}
-              </Button>
+                <IconPlus className="size-4" aria-hidden="true" />
+                ثبت آدرس جدید
+              </button>
             </div>
           )}
-        </>
+
+          {/* فرم آدرس جدید */}
+          {method === 'POST' && showNewAddress && (
+            <div className="border-border/60 space-y-3 rounded-xl border p-3">
+              <p className="text-foreground text-xs font-bold">آدرس جدید</p>
+              <input
+                type="text"
+                value={recipientName}
+                onChange={(e) => setRecipientName(e.target.value)}
+                placeholder="نام و نام خانوادگی گیرنده"
+                className={inputClass}
+              />
+              <input
+                type="text"
+                inputMode="numeric"
+                dir="ltr"
+                value={addrMobile}
+                onChange={(e) => setAddrMobile(e.target.value.replace(/[^\d]/g, '').slice(0, 11))}
+                placeholder="موبایل گیرنده (09…)"
+                className={cn(inputClass, 'tabular-nums')}
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  value={province}
+                  onChange={(e) => setProvince(e.target.value)}
+                  placeholder="استان"
+                  className={inputClass}
+                />
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="شهر"
+                  className={inputClass}
+                />
+              </div>
+              <textarea
+                value={addrText}
+                onChange={(e) => setAddrText(e.target.value)}
+                placeholder="آدرس کامل پستی"
+                rows={2}
+                className={cn(inputClass, 'h-auto py-2 leading-6')}
+              />
+              <input
+                type="text"
+                inputMode="numeric"
+                dir="ltr"
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value.replace(/[^\d]/g, '').slice(0, 10))}
+                placeholder="کد پستی ۱۰ رقمی"
+                className={cn(inputClass, 'tabular-nums')}
+              />
+              {addresses.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowNewAddress(false)
+                    setAddressId(addresses.find((a) => a.isDefault)?.id ?? addresses[0]!.id)
+                  }}
+                  className="text-muted-foreground text-[11px] font-semibold"
+                >
+                  ← انتخاب از آدرس‌های ثبت‌شده
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* توضیح هزینه — متن ساده به‌جای ماشین‌حساب */}
+          <p className="text-muted-foreground bg-muted/50 rounded-xl p-3 text-[11px] leading-5">
+            <IconPackage className="text-gold-600 me-1 mb-0.5 inline size-4" aria-hidden="true" />
+            هزینه بسته‌بندی، بیمه و ارسال پس از بررسی درخواست محاسبه و قبل از ارسال نهایی به شما
+            اعلام می‌شود. طلای شما تا زمان تایید نهایی در کیف پول باقی می‌ماند.
+          </p>
+
+          {/* OTP مالی */}
+          <div className="border-border/50 space-y-2 border-t pt-3">
+            <p className="text-muted-foreground text-[11px]">تایید امنیتی</p>
+            <FinancialOtp value={otpCode} onChange={setOtpCode} disabled={!online} />
+          </div>
+
+          {error && (
+            <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
+              <IconAlertTriangle className="size-3.5" aria-hidden="true" />
+              {error}
+            </p>
+          )}
+
+          <Button
+            className="w-full"
+            onClick={submit}
+            disabled={busy || !online || (method === 'POST' && showNewAddress && !newAddressValid)}
+            title={!online ? 'اتصال اینترنت برقرار نیست' : undefined}
+          >
+            {!online ? 'آفلاین' : busy ? 'در حال ثبت…' : 'ثبت درخواست تحویل'}
+          </Button>
+        </div>
       )}
+    </>
+  )
+
+  if (inline) return content
+
+  return (
+    <BottomSheet
+      open={open}
+      onClose={() => {
+        reset()
+        onClose()
+      }}
+      title="تحویل فیزیکی طلا"
+    >
+      {content}
     </BottomSheet>
   )
 }

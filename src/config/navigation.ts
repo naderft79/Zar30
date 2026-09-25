@@ -83,3 +83,11 @@ export function isNavItemActive(item: NavItem, pathname: string): boolean {
 export const UTILITY_ROUTES = {
   notifications: '/dashboard/notifications',
 } as const
+
+// صفحات تمام‌صفحه عملیات مالی — بدون هدر پنل (طراحی صورتحساب)
+export const BARE_ROUTES = [
+  '/dashboard/deposit',
+  '/dashboard/withdraw',
+  '/dashboard/transfer',
+  '/dashboard/delivery',
+] as const

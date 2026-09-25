@@ -23,7 +23,7 @@ import {
 
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { Logo } from '@/components/shared/logo'
-import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
+import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES, BARE_ROUTES } from '@/config/navigation'
 import { OfflineIndicator, DATA_REFRESH_EVENT } from './offline-indicator'
 import { InstallPrompt } from './install-prompt'
 import { cn } from 'cn'
@@ -195,6 +195,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const [user, setUser] = useState<PanelUser | null>(null)
+  // صفحات عملیات مالی — بدون هدر پنل (طراحی صورتحساب تمام‌صفحه)
+  const isBareRoute = BARE_ROUTES.some((r) => pathname.startsWith(r))
 
   const load = useCallback(async () => {
     const res = await apiGetWithRefresh<{ user: PanelUser }>('/api/v1/users/me')
@@ -361,33 +363,35 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* ============ Header — شیشه‌ای فشرده + safe-area notch ============ */}
-        <header className="border-border/40 bg-background/70 sticky top-0 z-(--z-sticky) grid h-[calc(3.25rem+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center gap-3 border-b px-4 pt-[env(safe-area-inset-top)] backdrop-blur-xl sm:px-6 md:pr-68 md:pl-8">
-          {/* موبایل — آواتار پروفایل (سمت راست در RTL) */}
-          <div className="flex items-center md:hidden">
-            <UserAvatar user={user} size="sm" />
-          </div>
-          {/* دسکتاپ — عنوان صفحه + تاریخ امروز */}
-          <div className="hidden min-w-0 items-baseline gap-2.5 md:flex">
-            <p className="text-foreground truncate text-sm font-bold">{pageTitle(pathname)}</p>
-            <p className="text-muted-foreground/70 shrink-0 text-[10px] tabular-nums">{today}</p>
-          </div>
-          {/* مرکز — مارک برند در خانه، عنوان صفحه در بقیه (فقط موبایل) */}
-          {pathname === '/dashboard' ? (
-            <Link href="/dashboard" aria-label="زرسی" className="justify-self-center md:hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand-mark.png" alt="زرسی" className="h-8 w-auto" />
-            </Link>
-          ) : (
-            <p className="text-foreground justify-self-center truncate text-sm font-bold md:hidden">
-              {pageTitle(pathname)}
-            </p>
-          )}
-          <div className="hidden md:block" />
-          <div className="flex items-center gap-1.5 justify-self-end">
-            <HeaderAction pathname={pathname} />
-            <UserAvatar user={user} size="sm" className="hidden md:flex" />
-          </div>
-        </header>
+        {!isBareRoute && (
+          <header className="border-border/40 bg-background/70 sticky top-0 z-(--z-sticky) grid h-[calc(3.25rem+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center gap-3 border-b px-4 pt-[env(safe-area-inset-top)] backdrop-blur-xl sm:px-6 md:pr-68 md:pl-8">
+            {/* موبایل — آواتار پروفایل (سمت راست در RTL) */}
+            <div className="flex items-center md:hidden">
+              <UserAvatar user={user} size="sm" />
+            </div>
+            {/* دسکتاپ — عنوان صفحه + تاریخ امروز */}
+            <div className="hidden min-w-0 items-baseline gap-2.5 md:flex">
+              <p className="text-foreground truncate text-sm font-bold">{pageTitle(pathname)}</p>
+              <p className="text-muted-foreground/70 shrink-0 text-[10px] tabular-nums">{today}</p>
+            </div>
+            {/* مرکز — مارک برند در خانه، عنوان صفحه در بقیه (فقط موبایل) */}
+            {pathname === '/dashboard' ? (
+              <Link href="/dashboard" aria-label="زرسی" className="justify-self-center md:hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/brand-mark.png" alt="زرسی" className="h-8 w-auto" />
+              </Link>
+            ) : (
+              <p className="text-foreground justify-self-center truncate text-sm font-bold md:hidden">
+                {pageTitle(pathname)}
+              </p>
+            )}
+            <div className="hidden md:block" />
+            <div className="flex items-center gap-1.5 justify-self-end">
+              <HeaderAction pathname={pathname} />
+              <UserAvatar user={user} size="sm" className="hidden md:flex" />
+            </div>
+          </header>
+        )}
 
         {/* ============ Content + Pull-to-refresh ============ */}
         <OfflineIndicator />

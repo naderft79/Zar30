@@ -7,6 +7,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { IconChartPie, IconAlertTriangle, IconCircleCheck } from '@tabler/icons-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -16,29 +17,32 @@ import { useOnlineStatus } from './offline-indicator'
 import { AssetsHero, type AssetsAction } from './assets-hero'
 import { WalletCards, type WalletCardsData } from './wallet-cards'
 import { BankCards, type BankAccountRow } from './bank-cards'
-import { DepositSheet } from './deposit-sheet'
-import { WithdrawSheet } from './withdraw-sheet'
-import { TransferSheet } from './transfer-sheet'
-import { DeliverySheet } from './delivery-sheet'
 import { HistoryTabs } from './history-tabs'
+
+// صفحات مستقل عملیات مالی — ?action=… ورود سریع قدیمی به آن‌ها هدایت می‌شود
+const ACTION_ROUTES: Record<AssetsAction, string> = {
+  deposit: '/dashboard/deposit',
+  withdraw: '/dashboard/withdraw',
+  transfer: '/dashboard/transfer',
+  delivery: '/dashboard/delivery',
+}
 
 interface SummaryData extends WalletCardsData {
   priceChange24h: number | null
 }
 
 export function AssetsClient() {
+  const router = useRouter()
   const [summary, setSummary] = useState<SummaryData | null>(null)
   const [bankAccounts, setBankAccounts] = useState<BankAccountRow[]>([])
   const [loading, setLoading] = useState(true)
 
-  // شیت‌های مالی — ?action=deposit|withdraw ورود سریع از داشبورد
-  const [sheet, setSheet] = useState<'deposit' | 'withdraw' | 'transfer' | 'delivery' | null>(
-    () => {
-      if (typeof window === 'undefined') return null
-      const a = new URLSearchParams(window.location.search).get('action')
-      return a === 'deposit' || a === 'withdraw' ? a : null
-    },
-  )
+  // لینک قدیمی /dashboard/assets?action=… → صفحه مستقل اکشن
+  useEffect(() => {
+    const a = new URLSearchParams(window.location.search).get('action')
+    const route = ACTION_ROUTES[a as AssetsAction]
+    if (route) router.replace(route)
+  }, [router])
   // آفلاین → اکشن مالی غیرفعال (واریز/برداشت بدون اتصال واقعی ممکن نیست)
   const online = useOnlineStatus()
   // وضعیت برگشت از درگاه پرداخت — ?payment=success|cancelled|expired|failed|replayed
@@ -92,7 +96,7 @@ export function AssetsClient() {
   const totalValue = Number(summary?.tomanBalance ?? 0) + goldValue
 
   function handleHeroAction(action: AssetsAction) {
-    setSheet(action)
+    router.push(ACTION_ROUTES[action])
   }
 
   return (
@@ -123,33 +127,6 @@ export function AssetsClient() {
 
       {/* کارت‌های بانکی — اسکرول افقی + افزودن/حذف/پیش‌فرض */}
       <BankCards accounts={bankAccounts} online={online} onChanged={() => void loadAll()} />
-
-      {/* شیت‌های واریز/برداشت */}
-      <DepositSheet
-        open={sheet === 'deposit'}
-        onClose={() => setSheet(null)}
-        online={online}
-        onCompleted={() => void loadAll()}
-      />
-      <WithdrawSheet
-        open={sheet === 'withdraw'}
-        onClose={() => setSheet(null)}
-        online={online}
-        accounts={bankAccounts}
-        onCompleted={() => void loadAll()}
-      />
-      <TransferSheet
-        open={sheet === 'transfer'}
-        onClose={() => setSheet(null)}
-        online={online}
-        onCompleted={() => void loadAll()}
-      />
-      <DeliverySheet
-        open={sheet === 'delivery'}
-        onClose={() => setSheet(null)}
-        online={online}
-        onCompleted={() => void loadAll()}
-      />
 
       {error && (
         <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
