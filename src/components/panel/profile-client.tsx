@@ -13,6 +13,10 @@ import {
   IconArrowLeft,
   IconRosetteDiscountCheck,
   IconBell,
+  IconBellRinging,
+  IconBolt,
+  IconCalendarClock,
+  IconCoins,
   IconFileText,
   IconGift,
   IconLifebuoy,
@@ -20,9 +24,11 @@ import {
   IconMail,
   IconDevices,
   IconDeviceFloppy,
+  IconPackage,
   IconShieldCheck,
   IconDeviceMobile,
   IconPigMoney,
+  IconSparkles,
   IconUser,
 } from '@tabler/icons-react'
 import { apiPut } from '@/lib/api/client'
@@ -39,8 +45,20 @@ const KYC_LABELS: Record<string, string> = {
   LEVEL_3: 'سطح ۳ — کامل',
 }
 
-// بخش‌های فرعی پروفایل — طبق قرارداد ناوبری همه زیر «پروفایل»
-const PROFILE_SECTIONS = [
+// خدمات بیشتر — گرید ۴تایی مربعی عین میان‌برهای صفحه خانه
+const MORE_SERVICES = [
+  { label: 'خرید خودکار', href: '/dashboard/profile/savings', icon: IconPigMoney },
+  { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconBolt },
+  { label: 'زرکار', href: '/dashboard/zarkar', icon: IconSparkles },
+  { label: 'تحویل فیزیکی', href: '/dashboard/delivery', icon: IconPackage },
+  { label: 'سکه و شمش', href: '/dashboard/delivery', icon: IconCoins },
+  { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconCalendarClock },
+  { label: 'هشدار قیمت', href: '/dashboard/trade', icon: IconBellRinging },
+  { label: 'معرفی دوستان', href: '/dashboard/profile/referral', icon: IconGift },
+] as const
+
+// تنظیمات — ردیف‌های زیر هم
+const SETTINGS_ITEMS = [
   {
     href: '/dashboard/profile/kyc',
     icon: IconRosetteDiscountCheck,
@@ -64,18 +82,6 @@ const PROFILE_SECTIONS = [
     icon: IconBell,
     title: 'اعلان‌ها',
     description: 'مرکز اعلان و تنظیمات اطلاع‌رسانی',
-  },
-  {
-    href: '/dashboard/profile/savings',
-    icon: IconPigMoney,
-    title: 'خرید خودکار طلا',
-    description: 'پس‌انداز خودکار روزانه، هفتگی یا ماهانه',
-  },
-  {
-    href: '/dashboard/profile/referral',
-    icon: IconGift,
-    title: 'معرفی دوستان',
-    description: 'کد دعوت و پاداش معرفی',
   },
   {
     href: '/dashboard/profile/support',
@@ -296,46 +302,68 @@ export function ProfileClient() {
         </Card>
       </div>
 
-      {/* بخش‌های فرعی پروفایل — hub */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {PROFILE_SECTIONS.map(({ href, icon: Icon, title, description }) => (
-          <Link
-            key={href}
-            href={href}
-            className="border-border/60 bg-card hover:border-gold-500/40 group flex items-center gap-3.5 rounded-xl border p-4 transition-all duration-(--duration-normal) hover:-translate-y-0.5 hover:shadow-sm"
-          >
-            <Icon
-              className="text-gold-600 dark:text-gold-400 size-6 shrink-0 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-hover:scale-110"
-              strokeWidth={1.75}
-            />
+      {/* ============ خدمات بیشتر — گرید ۴تایی مربعی عین صفحه خانه ============ */}
+      <section aria-label="خدمات بیشتر">
+        <p className="text-muted-foreground mb-2.5 px-1 text-xs font-semibold">خدمات بیشتر</p>
+        <div className="grid grid-cols-4 gap-3">
+          {MORE_SERVICES.map((s) => (
+            <Link
+              key={s.label}
+              href={s.href}
+              className="border-border/60 bg-card hover:border-gold-500/40 focus-visible:ring-ring flex aspect-square flex-col items-center justify-center gap-2.5 rounded-2xl border transition-all duration-(--duration-normal) hover:shadow-md focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <s.icon className="text-gold-600 size-6 sm:size-7" stroke={1.5} />
+              <span className="text-foreground px-1 text-center text-[10px] font-medium sm:text-xs">
+                {s.label}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ============ تنظیمات — ردیف‌های زیر هم ============ */}
+      <section aria-label="تنظیمات">
+        <p className="text-muted-foreground mb-2.5 px-1 text-xs font-semibold">تنظیمات</p>
+        <div className="border-border/60 bg-card divide-border/50 divide-y overflow-hidden rounded-2xl border">
+          {SETTINGS_ITEMS.map(({ href, icon: Icon, title, description }) => (
+            <Link
+              key={href}
+              href={href}
+              className="hover:bg-muted/40 group flex items-center gap-3.5 p-4 transition-colors"
+            >
+              <Icon
+                className="text-gold-600 dark:text-gold-400 size-6 shrink-0"
+                strokeWidth={1.75}
+              />
+              <span className="min-w-0 flex-1">
+                <span className="text-foreground block text-sm font-semibold">{title}</span>
+                <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                  {description}
+                </span>
+              </span>
+              <IconArrowLeft className="text-muted-foreground group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
+            </Link>
+          ))}
+          {/* قوانین و مقررات */}
+          <div className="flex items-center gap-3.5 p-4">
+            <IconFileText className="text-muted-foreground size-6 shrink-0" stroke={1.75} />
             <span className="min-w-0 flex-1">
-              <span className="text-foreground block text-sm font-semibold">{title}</span>
-              <span className="text-muted-foreground mt-0.5 block truncate text-xs">
-                {description}
+              <span className="text-foreground block text-sm font-semibold">قوانین و مقررات</span>
+              <span className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                {LEGAL_LINKS.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className="text-gold-600 dark:text-gold-400 text-xs hover:underline"
+                  >
+                    {l.label}
+                  </Link>
+                ))}
               </span>
             </span>
-            <IconArrowLeft className="text-muted-foreground group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
-          </Link>
-        ))}
-        {/* Legal */}
-        <div className="border-border/60 bg-muted/30 flex items-center gap-3.5 rounded-xl border border-dashed p-4 sm:col-span-2 lg:col-span-1">
-          <IconFileText className="text-muted-foreground size-6 shrink-0" stroke={1.75} />
-          <span className="min-w-0 flex-1">
-            <span className="text-foreground block text-sm font-semibold">قوانین و مقررات</span>
-            <span className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
-              {LEGAL_LINKS.map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className="text-gold-600 dark:text-gold-400 text-xs hover:underline"
-                >
-                  {l.label}
-                </Link>
-              ))}
-            </span>
-          </span>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* خروج از حساب — در موبایل تنها راه خروج است (sidebar مخفی است) */}
       <div className="border-border/60 flex items-center justify-between rounded-xl border p-4">
