@@ -5,6 +5,8 @@
 // هر بانک نام فارسی + گرادیانت رنگ رسمی برای رندر کارت دارد
 // ============================================
 
+import { getBankInfoWithCardNumber } from 'ir-banks-info'
+
 export interface BankInfo {
   code: string
   name: string
@@ -12,6 +14,8 @@ export interface BankInfo {
   from: string
   to: string
   text: string
+  /** لوگوی رسمی بانک — data URI */
+  logo?: string
 }
 
 const GENERIC = { from: '#37415c', to: '#1f2940', text: '#f3ead1' }
@@ -58,6 +62,21 @@ export function detectBank(iban: string): BankInfo {
   const found = BANKS[code]
   if (found) return { code, ...GENERIC, ...found }
   return { code, name: 'بانک', ...GENERIC }
+}
+
+/**
+ * تشخیص بانک از شماره کارت — BIN = ۶ رقم اول PAN
+ * نام و لوگوی رسمی از ir-banks-info (پوشش تمام بانک‌های ایران)
+ * گرادیانت از جدول داخلی با تطبیق نام فارسی
+ */
+export function detectBankByCard(pan: string): BankInfo {
+  if (!/^\d{6}/.test(pan)) return { code: '', name: 'بانک', ...GENERIC }
+  const info = getBankInfoWithCardNumber(pan.slice(0, 6))
+  if (!info?.name) return { code: '', name: 'بانک', ...GENERIC }
+  const entry = Object.entries(BANKS).find(([, b]) => b.name === info.name)
+  const code = entry?.[0] ?? ''
+  const colors = entry?.[1] ?? GENERIC
+  return { code, name: info.name, ...colors, logo: info.logo }
 }
 
 /** ماسک شبا برای نمایش — IR•• •••• •••• ۱۲۳۴ */

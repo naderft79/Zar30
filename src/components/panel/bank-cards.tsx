@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { EmptyState } from '@/components/ui/empty-state'
 import { apiPost, apiDelete } from '@/lib/api/client'
-import { detectBank, type BankInfo } from '@/lib/banks'
+import { detectBank, detectBankByCard, type BankInfo } from '@/lib/banks'
 import { usePanelUser } from './panel-shell'
 
 export interface BankAccountRow {
@@ -68,14 +68,12 @@ function formatIban(iban: string) {
 
 function BankCardFace({
   bank,
-  alias,
   cardPan,
   iban,
   isDefault,
   holderName,
 }: {
   bank: BankInfo
-  alias: string | null
   cardPan: string | null
   iban: string
   isDefault: boolean
@@ -83,7 +81,7 @@ function BankCardFace({
 }) {
   return (
     <div
-      className="relative flex h-44 w-64 shrink-0 flex-col overflow-hidden rounded-2xl p-4 shadow-md"
+      className="relative h-44 w-64 shrink-0 overflow-hidden rounded-2xl p-4 shadow-md"
       dir="ltr"
       style={{ background: `linear-gradient(135deg, ${bank.from}, ${bank.to})`, color: bank.text }}
     >
@@ -92,24 +90,28 @@ function BankCardFace({
         aria-hidden="true"
         className="absolute -top-10 -left-10 size-40 rounded-full bg-white/10 blur-xl"
       />
-      {/* ردیف بالا — نام بانک + بج پیش‌فرض */}
-      <div className="relative flex items-start justify-between">
-        <div>
-          <p className="text-[11px] font-medium opacity-80">{bank.name}</p>
-          {alias && <p className="mt-0.5 text-xs font-bold">{alias}</p>}
-        </div>
-        {isDefault && (
-          <span className="flex items-center gap-1 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold">
-            <IconStar className="size-3" aria-hidden="true" />
-            پیش‌فرض
-          </span>
+      {/* بانک — گوشه بالا سمت راست: لوگو + نام */}
+      <div className="absolute top-4 right-4 flex items-center gap-1.5">
+        <p className="text-[11px] font-semibold">{bank.name}</p>
+        {bank.logo && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={bank.logo} alt="" className="size-6 object-contain" />
         )}
       </div>
-      {/* چیپ طلایی */}
-      <CardChip />
+      {/* بج پیش‌فرض — گوشه بالا سمت چپ */}
+      {isDefault && (
+        <span className="absolute top-4 left-4 flex items-center gap-1 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold">
+          <IconStar className="size-3" aria-hidden="true" />
+          پیش‌فرض
+        </span>
+      )}
+      {/* چیپ طلایی — وسط عمودی، سمت چپ */}
+      <div className="absolute top-1/2 left-3 -translate-y-1/2">
+        <CardChip />
+      </div>
       {/* شماره کارت — دقیقاً مرکز کارت — و شبا با فاصله زیر آن */}
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-        <p className="text-base font-bold tracking-wider tabular-nums">
+        <p className="text-sm font-bold tracking-wider tabular-nums">
           {cardPan ? formatPan(cardPan) : '•••• •••• •••• ••••'}
         </p>
         <p className="text-[10px] tracking-wider tabular-nums opacity-80">
@@ -117,7 +119,7 @@ function BankCardFace({
         </p>
       </div>
       {/* نام و نام خانوادگی دارنده — گوشه پایین سمت چپ */}
-      <p className="relative mt-auto truncate text-[11px] font-semibold tracking-wide">
+      <p className="absolute bottom-4 left-4 max-w-[70%] truncate text-[11px] font-semibold tracking-wide">
         {holderName}
       </p>
     </div>
@@ -136,14 +138,23 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [iban, setIban] = useState('')
   const [cardPan, setCardPan] = useState('')
-  const [alias, setAlias] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // پیش‌نمایش زنده کارت بر اساس شبای واردشده
+  // پیش‌نمایش زنده کارت — با ۶ رقم شماره کارت از BIN، وگرنه از شبا
   const normalizedIban = iban.replace(/\s/g, '').toUpperCase()
+  const cardBank = cardPan.length >= 6 ? detectBankByCard(cardPan) : null
   const previewBank =
-    normalizedIban.length >= 7 ? detectBank(normalizedIban) : detectBank('IR000000')
+    cardBank && cardBank.name !== 'بانک'
+      ? cardBank
+      : detectBank(normalizedIban.length >= 7 ? normalizedIban : 'IR000000')
+
+  // کارت ذخیره‌شده — لوگو از BIN کارت، رنگ از شبا
+  function bankFor(a: BankAccountRow): BankInfo {
+    const base = detectBank(a.iban)
+    const byCard = a.cardPan && a.cardPan.length >= 6 ? detectBankByCard(a.cardPan) : null
+    return byCard && byCard.name !== 'بانک' ? { ...base, logo: byCard.logo } : base
+  }
   const canAdd = accounts.length < MAX_CARDS
 
   async function submit() {
@@ -160,7 +171,6 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
     const res = await apiPost('/api/v1/bank-accounts', {
       iban: normalizedIban,
       cardPan: cardPan || undefined,
-      alias: alias || undefined,
     })
     setBusy(false)
     if (!res.ok) {
@@ -170,7 +180,6 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
     setSheetOpen(false)
     setIban('')
     setCardPan('')
-    setAlias('')
     onChanged()
   }
 
@@ -231,8 +240,7 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
             {accounts.map((a) => (
               <div key={a.id} className="shrink-0">
                 <BankCardFace
-                  bank={detectBank(a.iban)}
-                  alias={a.alias}
+                  bank={bankFor(a)}
                   cardPan={a.cardPan}
                   iban={a.iban}
                   isDefault={a.isDefault}
@@ -290,7 +298,6 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
               <div className="flex justify-center">
                 <BankCardFace
                   bank={previewBank}
-                  alias={alias || null}
                   cardPan={cardPan || null}
                   iban={normalizedIban || 'IR0000000000000000000000'}
                   isDefault={false}
@@ -320,16 +327,14 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
                   placeholder="6219861034529007"
                   className={inputClass}
                 />
-              </label>
-              <label className="block space-y-1.5">
-                <span className="text-muted-foreground text-[11px]">نام مستعار (اختیاری)</span>
-                <input
-                  type="text"
-                  value={alias}
-                  onChange={(e) => setAlias(e.target.value.slice(0, 50))}
-                  placeholder="مثلاً حساب اصلی"
-                  className={inputClass}
-                />
+                {/* تشخیص بانک از ۶ رقم اول کارت */}
+                {cardBank && cardBank.name !== 'بانک' && (
+                  <span className="text-muted-foreground flex items-center gap-1.5 pt-0.5 text-[11px]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={cardBank.logo} alt="" className="size-4 object-contain" />
+                    {cardBank.name}
+                  </span>
+                )}
               </label>
               {/* هشدار قانونی — الزامی در پلتفرم‌های طلای ایران */}
               <p className="text-warning bg-warning/10 flex items-start gap-2 rounded-xl p-3 text-[11px] leading-5">
