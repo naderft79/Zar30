@@ -286,6 +286,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
     day: 'numeric',
     month: 'long',
   })
+  // در صفحه پروفایل، آواتار هدر رندر نمی‌شود — خود صفحه هویت کاربر را نشان می‌دهد
+  const isProfilePage = pathname.startsWith('/dashboard/profile')
 
   return (
     <PanelContext.Provider value={{ user: effectiveUser, reload: load, logout }}>
@@ -386,9 +388,9 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
 
         {/* ============ Header — شیشه‌ای فشرده + safe-area notch ============ */}
         <header className="border-border/40 bg-background/70 sticky top-0 z-(--z-sticky) grid h-[calc(3.25rem+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center gap-3 border-b px-4 pt-[env(safe-area-inset-top)] backdrop-blur-xl sm:px-6 md:pr-68 md:pl-8">
-          {/* موبایل — آواتار پروفایل (سمت راست در RTL) */}
+          {/* موبایل — آواتار پروفایل (سمت راست در RTL) — در خود صفحه پروفایل مخفی */}
           <div className="flex items-center md:hidden">
-            <UserAvatar user={effectiveUser} size="sm" />
+            {!isProfilePage && <UserAvatar user={effectiveUser} size="sm" />}
           </div>
           {/* دسکتاپ — عنوان صفحه + تاریخ امروز */}
           <div className="hidden min-w-0 items-baseline gap-2.5 md:flex">
@@ -409,9 +411,11 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           <div className="hidden md:block" />
           <div className="flex items-center gap-1.5 justify-self-end">
             {/* تاگل تم فقط در هدر صفحه پروفایل */}
-            {pathname.startsWith('/dashboard/profile') && <PanelThemeToggle />}
+            {isProfilePage && <PanelThemeToggle />}
             <HeaderAction pathname={pathname} />
-            <UserAvatar user={effectiveUser} size="sm" className="hidden md:flex" />
+            {!isProfilePage && (
+              <UserAvatar user={effectiveUser} size="sm" className="hidden md:flex" />
+            )}
           </div>
         </header>
 
