@@ -140,7 +140,7 @@ export function ProfileClient() {
             <p className="text-cream-50 truncate text-lg font-bold sm:text-xl">
               {[user.firstName, user.lastName].filter(Boolean).join(' ') || 'کاربر زرسی'}
             </p>
-            <p className="text-cream-300/60 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            <p className="text-cream-300/60 mt-1 flex items-baseline gap-x-2.5 text-xs whitespace-nowrap">
               <span dir="ltr" className="tabular-nums">
                 {user.mobile}
               </span>
