@@ -66,6 +66,9 @@ export const createAddressSchema = z.object({
   address: z.string().min(10, 'آدرس کامل وارد کنید').max(500),
   postalCode: z.string().regex(/^\d{10}$/, 'کد پستی باید ۱۰ رقم باشد'),
   isDefault: z.boolean().optional(),
+  // مختصات جغرافیایی — از دسترسی موقعیت مکانی کاربر (اختیاری)
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
 })
 
 const goldGrams = z

@@ -38,6 +38,8 @@ export interface AdminDeliveryDetail extends Omit<AdminDeliveryRow, 'address'> {
     city: string | null
     address: string
     postalCode: string
+    latitude: string | null
+    longitude: string | null
   } | null
   audit: AdminAuditRow[]
 }
@@ -141,6 +143,8 @@ export async function getAdminDelivery(id: string): Promise<AdminDeliveryDetail 
           city: true,
           address: true,
           postalCode: true,
+          latitude: true,
+          longitude: true,
         },
       },
       processor: { select: { id: true, user: { select: { firstName: true, lastName: true } } } },
@@ -183,7 +187,13 @@ export async function getAdminDelivery(id: string): Promise<AdminDeliveryDetail 
             r.processor.id,
         }
       : null,
-    address: r.address,
+    address: r.address
+      ? {
+          ...r.address,
+          latitude: r.address.latitude?.toString() ?? null,
+          longitude: r.address.longitude?.toString() ?? null,
+        }
+      : null,
     audit: auditRows.map((a) => ({ ...a, createdAt: a.createdAt.toISOString() })),
   }
 }

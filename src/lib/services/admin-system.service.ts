@@ -10,6 +10,7 @@ import { redis } from '@/lib/redis/client'
 import { ApiError } from '@/lib/errors/api-error'
 import { toAuditData } from '@/lib/audit/audit'
 import { logger } from '@/lib/logger/logger'
+import { notifyUsersPushOnly } from '@/lib/services/notification.service'
 import {
   PERMISSIONS,
   ROLE_LABELS,
@@ -99,6 +100,14 @@ export async function broadcastAdminNotification(
       entityType: 'notification',
       after: { title: input.title, audience: input.audience, sent },
     }),
+  })
+
+  // Web Push به دستگاه‌های مشترک — fail-open، پاسخ را بلاک نمی‌کند
+  notifyUsersPushOnly(userIds, {
+    title: input.title,
+    body: input.body,
+    url: '/dashboard/notifications',
+    tag: 'admin_broadcast',
   })
   return { sent }
 }

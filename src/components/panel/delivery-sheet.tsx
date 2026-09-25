@@ -9,10 +9,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { IconAlertTriangle, IconMapPin, IconPackage, IconPlus } from '@tabler/icons-react'
+import {
+  IconAlertTriangle,
+  IconCurrentLocation,
+  IconMapPin,
+  IconPackage,
+  IconPlus,
+} from '@tabler/icons-react'
 import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { Button } from '@/components/ui/button'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
+import { getCurrentPosition } from '@/lib/mobile/geolocation'
 import { FinancialOtp } from './financial-otp'
 import { CoinsSection } from './coins-section'
 import { cn } from 'cn'
@@ -61,6 +68,23 @@ export function DeliverySheet({ open, onClose, online, onCompleted, inline }: De
   const [city, setCity] = useState('')
   const [addrText, setAddrText] = useState('')
   const [postalCode, setPostalCode] = useState('')
+  // مختصات موقعیت مکانی — اختیاری، برای تحویل دقیق‌تر
+  const [geo, setGeo] = useState<{ lat: number; lng: number } | null>(null)
+  const [geoBusy, setGeoBusy] = useState(false)
+  const [geoMsg, setGeoMsg] = useState<string | null>(null)
+
+  async function captureLocation() {
+    setGeoBusy(true)
+    setGeoMsg(null)
+    const res = await getCurrentPosition()
+    setGeoBusy(false)
+    if (res.ok && res.latitude !== undefined && res.longitude !== undefined) {
+      setGeo({ lat: res.latitude, lng: res.longitude })
+      setGeoMsg('موقعیت مکانی ثبت شد')
+    } else {
+      setGeoMsg(res.message ?? 'دریافت موقعیت ناموفق بود')
+    }
+  }
 
   useEffect(() => {
     if (!open) return
@@ -90,6 +114,8 @@ export function DeliverySheet({ open, onClose, online, onCompleted, inline }: De
     setCity('')
     setAddrText('')
     setPostalCode('')
+    setGeo(null)
+    setGeoMsg(null)
   }
 
   async function submit() {
@@ -118,6 +144,7 @@ export function DeliverySheet({ open, onClose, online, onCompleted, inline }: De
         city: city || undefined,
         address: addrText.trim(),
         postalCode,
+        ...(geo ? { latitude: geo.lat, longitude: geo.lng } : {}),
       })
       if (!addrRes.ok) {
         setBusy(false)
@@ -344,6 +371,30 @@ export function DeliverySheet({ open, onClose, online, onCompleted, inline }: De
                 placeholder="کد پستی ۱۰ رقمی"
                 className={cn(inputClass, 'tabular-nums')}
               />
+
+              {/* موقعیت مکانی — اختیاری؛ در APK و PWA هر دو کار می‌کند */}
+              <div className="border-border/50 bg-muted/40 space-y-2 rounded-lg border p-2.5">
+                <button
+                  type="button"
+                  onClick={() => void captureLocation()}
+                  disabled={geoBusy}
+                  className="text-navy-700 dark:text-navy-200 hover:text-gold-700 dark:hover:text-gold-300 focus-visible:ring-ring flex items-center gap-1.5 rounded-md text-[11px] font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:opacity-50"
+                >
+                  <IconCurrentLocation className="size-4" strokeWidth={1.75} aria-hidden="true" />
+                  {geoBusy ? 'در حال دریافت موقعیت…' : 'ثبت موقعیت مکانی من'}
+                </button>
+                {geo && (
+                  <p className="text-success text-[10px] tabular-nums" dir="ltr">
+                    {geo.lat.toFixed(5)}, {geo.lng.toFixed(5)}
+                  </p>
+                )}
+                {geoMsg && !geo && (
+                  <p className="text-muted-foreground text-[10px] leading-4">{geoMsg}</p>
+                )}
+                <p className="text-muted-foreground text-[9px] leading-4">
+                  برای تحویل دقیق‌تر، موقعیت مکانی شما همراه آدرس ثبت می‌شود (اختیاری)
+                </p>
+              </div>
               {addresses.length > 0 && (
                 <button
                   type="button"

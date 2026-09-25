@@ -55,6 +55,10 @@ const envSchema = z.object({
   // Business config (PENDING BUSINESS DECISION - dev defaults only)
   BUSINESS_SPREAD_PERCENT: z.coerce.number().default(0.5),
   BUSINESS_TRADING_FEE_PERCENT: z.coerce.number().default(0.5),
+
+  // Web Push (VAPID) — بدون کلید، push ارسال نمی‌شود ولی سیستم کار می‌کند
+  VAPID_PRIVATE_KEY: z.string().optional(),
+  VAPID_SUBJECT: z.string().default('mailto:admin@zar30.com'),
 })
 
 export type Env = z.infer<typeof envSchema>

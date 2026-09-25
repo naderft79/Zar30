@@ -24,6 +24,7 @@ import {
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
 import { OfflineIndicator, DATA_REFRESH_EVENT } from './offline-indicator'
+import { NativeNotificationBridge } from './native-notification-bridge'
 import { cn } from 'cn'
 
 export interface PanelUser {
@@ -276,6 +277,9 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   return (
     <PanelContext.Provider value={{ user, reload: load, logout }}>
       <div className="bg-background min-h-dvh">
+        {/* پل اعلان native — فقط در APK فعال است */}
+        <NativeNotificationBridge />
+
         {/* ============ Desktop — Sidebar گرافیت لوکس ============ */}
         <aside className="bg-surface border-border/60 fixed inset-y-0 right-0 z-30 hidden w-64 flex-col border-l md:flex">
           {/* لوگو */}

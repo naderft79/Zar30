@@ -5,8 +5,7 @@
 // شکست notification هرگز عملیات مالی را خراب نمی کند
 // ============================================
 
-import prisma from '@/lib/db/prisma'
-import { logger } from '@/lib/logger/logger'
+import { notifyUser } from '@/lib/services/notification.service'
 
 export function notifyFinancial(
   userId: string,
@@ -15,18 +14,6 @@ export function notifyFinancial(
   body: string,
   data?: Record<string, unknown>,
 ): void {
-  prisma.notification
-    .create({
-      data: {
-        userId,
-        type,
-        title,
-        body,
-        data: data ? JSON.parse(JSON.stringify(data)) : undefined,
-        channel: 'IN_APP',
-      },
-    })
-    .catch((err) => {
-      logger.error({ err, userId, type }, 'Financial notification failed')
-    })
+  // رکورد DB + Web Push — هر دو fail-open
+  void notifyUser({ userId, type, title, body, data })
 }

@@ -38,4 +38,9 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+ — اعلان‌های سراسری (Push + Local) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- موقعیت مکانی — ثبت آدرس دقیق تحویل طلا -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>

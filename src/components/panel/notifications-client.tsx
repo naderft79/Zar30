@@ -23,6 +23,7 @@ import { StatusBadge } from '@/components/ui/status-badge'
 import { SkeletonListItem } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PageHeader } from './page-header'
+import { NotificationPermissionCard } from './notification-permission-card'
 import { cn } from 'cn'
 
 interface NotificationView {
@@ -89,6 +90,9 @@ export function NotificationsClient() {
           unreadCount > 0 ? `${unreadCount} اعلان خوانده‌نشده` : 'مرکز اعلان‌های حساب شما'
         }
       />
+
+      {/* درخواست دسترسی اعلان — APK و PWA */}
+      <NotificationPermissionCard />
 
       {error && (
         <p role="alert" className="bg-error/10 text-error rounded-lg px-3 py-2 text-sm">

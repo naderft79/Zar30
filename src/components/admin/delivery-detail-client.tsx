@@ -284,6 +284,22 @@ export function AdminDeliveryDetailClient() {
                     </span>
                   }
                 />
+                {d.address.latitude && d.address.longitude && (
+                  <Field
+                    label="موقعیت مکانی"
+                    value={
+                      <a
+                        href={`https://maps.google.com/?q=${d.address.latitude},${d.address.longitude}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-info text-xs tabular-nums hover:underline"
+                        dir="ltr"
+                      >
+                        {d.address.latitude}, {d.address.longitude}
+                      </a>
+                    }
+                  />
+                )}
               </dl>
             </Section>
           )}

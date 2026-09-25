@@ -1,5 +1,26 @@
 # Zar30 — Changelog
 
+## [1.3.0] — Phase 13 Upgrade: Web Push + Native Notifications + Geolocation Address
+
+### Added
+
+- **Web Push واقعی** — `src/lib/push/webpush.ts` (VAPID، TTL یک‌ساعته، پاک‌سازی خودکار اشتراک‌های 404/410)، جدول `PushSubscription` (per-device، `userAgent`، `lastSeen`)، API اشتراک `POST/DELETE /api/v1/notifications/push` با Zod + auth
+- **Fan-out واحد** — `src/lib/services/notification.service.ts`: `notifyUser` = رکورد DB + push به همه دستگاه‌ها (fail-open)؛ `notifyUsersPushOnly` برای broadcast ادمین — `notifyFinancial` و `sendBroadcast` هر دو به آن وصل شدند
+- **Service Worker** — `src/sw.ts`: handlerهای `push` (نمایش RTL فارسی با fallback امن) و `notificationclick` (فوکوس تب موجود یا باز کردن URL مقصد)
+- **پل Native** — `src/lib/mobile/` (`capacitor.ts`، `notifications.ts`، `geolocation.ts`) + `NativeNotificationBridge` در PanelShell: روی APK هر ۶۰ ثانیه اعلان‌های خوانده‌نشده را با `LocalNotifications` به tray می‌برد؛ listener `pushNotificationActionPerformed` برای FCM آماده است؛ pluginهای `@capacitor/push-notifications|local-notifications|geolocation|splash-screen|preferences` نصب و `cap update android` انجام شد
+- **کارت دسترسی اعلان** — `NotificationPermissionCard` در مرکز اعلان کاربر؛ روی Web `Notification.requestPermission` + `pushManager.subscribe` (VAPID)، روی APK درخواست دسترسی سیستمی — پیام‌های فارسی برای granted/denied/unsupported
+- **موقعیت مکانی آدرس تحویل** — دکمه «موقعیت من» در فرم آدرس (`delivery-sheet`) که مختصات را می‌گیرد و در آدرس ذخیره می‌کند؛ `Address.latitude/longitude` (Decimal) + validation محدوده زمین + نمایش لینک نقشه در detail ادمین
+- **AndroidManifest** — `POST_NOTIFICATIONS`، `ACCESS_FINE/COARSE_LOCATION`
+- تست‌ها — `tests/unit/notifications.test.ts` (۹ سناریو: validatorهای اشتراک + مختصات آدرس)
+
+### Security / Config
+
+- کلیدهای VAPID فقط در env سرور (`VAPID_PRIVATE_KEY` اختیاری — بدون آن push بی‌صدا رد می‌شود)؛ `.env.example` فقط placeholder؛ اشتراک‌ها user-scoped هستند و DELETE فقط روی رکورد خود کاربر اثر دارد
+
+### Verification
+
+- typecheck ✅ / lint ✅ / vitest 34 فایل / 259 تست ✅ / `cap update android` ✅
+
 ## [1.2.0] — Real Gold Price Feed (Milli → TGJU)
 
 ### Added

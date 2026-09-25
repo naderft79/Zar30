@@ -64,3 +64,52 @@ const serwist = new Serwist({
 })
 
 serwist.addEventListeners()
+
+// ============================================
+// Web Push — دریافت اعلان و نمایش سیستمی
+// ============================================
+
+interface PushPayload {
+  title: string
+  body: string
+  url?: string
+  tag?: string
+  data?: Record<string, unknown>
+}
+
+self.addEventListener('push', (event) => {
+  if (!event.data) return
+  let payload: PushPayload
+  try {
+    payload = event.data.json() as PushPayload
+  } catch {
+    payload = { title: 'زرسی', body: event.data.text() }
+  }
+  event.waitUntil(
+    self.registration.showNotification(payload.title || 'زرسی', {
+      body: payload.body,
+      icon: '/icon.svg',
+      badge: '/icon.svg',
+      dir: 'rtl',
+      lang: 'fa',
+      tag: payload.tag,
+      data: { url: payload.url ?? '/dashboard/notifications', ...payload.data },
+    }),
+  )
+})
+
+// کلیک روی اعلان — فوکوس تب موجود یا بازکردن تب جدید
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const url = (event.notification.data?.url as string) ?? '/dashboard/notifications'
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      const existing = clients.find((c) => c.url.includes(self.location.origin))
+      if (existing) {
+        void existing.focus()
+        return existing.navigate(url)
+      }
+      return self.clients.openWindow(url)
+    }),
+  )
+})

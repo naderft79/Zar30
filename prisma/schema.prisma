@@ -244,6 +244,7 @@ model User {
   tickets         Ticket[]
   ticketMessages  TicketMessage[]
   notifications   Notification[]
+  pushSubscriptions PushSubscription[]
   referralsMade   Referral[]         @relation("Referrer")
   referralReceived Referral?         @relation("Referred")
   installmentContracts InstallmentContract[]
@@ -623,6 +624,9 @@ model Address {
   city          String?
   address       String
   postalCode    String   @map("postal_code")
+  // مختصات جغرافیایی — از Geolocation مرورگر/Capacitor (اختیاری)
+  latitude      Decimal? @db.Decimal(10, 7) @map("latitude")
+  longitude     Decimal? @db.Decimal(10, 7) @map("longitude")
   isDefault     Boolean  @default(false) @map("is_default")
   createdAt     DateTime @default(now()) @map("created_at")
 
@@ -887,6 +891,23 @@ model Notification {
   @@index([userId, createdAt])
   @@index([status])
   @@map("notifications")
+}
+
+// اشتراک Web Push — endpoint یکتا per device؛ expiry مدیریت‌شده
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+  lastSeen  DateTime @default(now()) @map("last_seen")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscriptions")
 }
 
 model NotificationTemplate {
