@@ -27,17 +27,6 @@ interface SessionRow {
   createdAt: string
   user: { id: string; mobile: string; firstName: string | null; lastName: string | null }
 }
-interface NotificationRow {
-  id: string
-  type: string
-  title: string
-  channel: string
-  status: string
-  sentAt: string | null
-  readAt: string | null
-  createdAt: string
-  user: { id: string; mobile: string }
-}
 interface TeamRow {
   id: string
   role: string
@@ -137,22 +126,6 @@ const sessionColumns: AdminColumn<SessionRow>[] = [
   },
   { key: 'expires', header: 'انقضا', render: (r) => date(r.expiresAt) },
 ]
-const notificationColumns: AdminColumn<NotificationRow>[] = [
-  {
-    key: 'title',
-    header: 'اعلان',
-    render: (r) => (
-      <div>
-        <span className="block font-medium">{r.title}</span>
-        <span className="text-muted-foreground text-[10px]">{r.type}</span>
-      </div>
-    ),
-  },
-  { key: 'user', header: 'کاربر', render: (r) => mobile(r.user.mobile) },
-  { key: 'channel', header: 'کانال', render: (r) => r.channel },
-  { key: 'status', header: 'وضعیت', render: (r) => <AdminStatus status={r.status} /> },
-  { key: 'created', header: 'ایجاد', render: (r) => date(r.createdAt) },
-]
 const teamColumns: AdminColumn<TeamRow>[] = [
   {
     key: 'user',
@@ -249,18 +222,6 @@ export const AdminSecuritySessionsClient = () => (
     keyOf={(r) => r.id}
     readOnlyNotice={false}
     searchPlaceholder="موبایل، IP یا دستگاه…"
-  />
-)
-export const AdminNotificationsClient = () => (
-  <AdminFinanceList
-    title="اعلان‌ها"
-    eyebrow="خدمات"
-    description="وضعیت تحویل اعلان‌های ثبت‌شده؛ ارسال کمپین تا اتصال worker غیرفعال است"
-    endpoint="/api/v1/admin/notifications"
-    dataKey="notifications"
-    columns={notificationColumns}
-    keyOf={(r) => r.id}
-    searchPlaceholder="عنوان، نوع یا موبایل…"
   />
 )
 export const AdminTeamClient = () => (

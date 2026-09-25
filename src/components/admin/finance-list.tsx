@@ -48,6 +48,8 @@ interface AdminFinanceListProps<T> {
   refreshKey?: number
   /** اکشن‌های per-row (ویرایش/حذف) */
   rowActions?: (row: T) => React.ReactNode
+  /** سطح عنوان لیست — وقتی صفحه h1 جداگانه دارد h2 بدهید */
+  titleAs?: 'h1' | 'h2'
 }
 
 const selectClass =
@@ -73,6 +75,7 @@ export function AdminFinanceList<T>({
   headerAction,
   refreshKey = 0,
   rowActions,
+  titleAs,
 }: AdminFinanceListProps<T>) {
   const router = useRouter()
   const pathname = usePathname()
@@ -154,7 +157,7 @@ export function AdminFinanceList<T>({
   return (
     <div>
       <div className="flex items-start justify-between gap-3">
-        <AdminPageHeader title={title} eyebrow={eyebrow} description={description} />
+        <AdminPageHeader title={title} eyebrow={eyebrow} description={description} as={titleAs} />
         {headerAction}
       </div>
 

@@ -22,7 +22,7 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
-import type { Permission } from '@/lib/auth/rbac'
+import { ROLE_LABELS as BASE_ROLE_LABELS, type Permission } from '@/lib/auth/rbac'
 import { Logo } from '@/components/shared/logo'
 import {
   ADMIN_NAV_SECTIONS,
@@ -65,17 +65,7 @@ export function useAdmin(): AdminContextValue {
 }
 
 // برچسب فارسی نقش‌ها — فقط نمایشی؛ enforce همیشه سمت API است
-const ROLE_LABELS: Record<string, string> = {
-  SUPER_ADMIN: 'مدیر ارشد',
-  FINANCE: 'مالی',
-  SUPPORT: 'پشتیبانی',
-  KYC: 'احراز هویت',
-  RISK: 'ریسک',
-  CONTENT: 'محتوا',
-  OPERATIONS: 'عملیات',
-  ANALYST: 'تحلیلگر',
-  READ_ONLY: 'فقط‌خواندنی',
-}
+const ROLE_LABELS: Record<string, string> = BASE_ROLE_LABELS
 
 // وضعیت جمع‌شدگی سایدبار بین reloadها حفظ می‌شود
 const SIDEBAR_PREF_KEY = 'zar30-admin-sidebar-collapsed'

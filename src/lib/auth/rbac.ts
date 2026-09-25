@@ -111,7 +111,8 @@ export function isPermission(value: unknown): value is Permission {
 }
 
 // نقش‌های ادمین (طبق MEGAPLAN بخش ۲۲) — least privilege
-const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
+// export برای صفحه نقش‌ها و overrideهای per-member در مرکز عملیات
+export const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
   SUPER_ADMIN: ALL_PERMISSIONS,
   FINANCE: [
     PERMISSIONS.DASHBOARD_READ,
@@ -235,6 +236,19 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
   ],
   ANALYST: [...READ_PERMISSIONS, PERMISSIONS.REPORTS_EXPORT],
   READ_ONLY: READ_PERMISSIONS,
+}
+
+// برچسب فارسی نقش‌ها — مشترک بین shell و صفحه نقش‌ها
+export const ROLE_LABELS: Record<AdminRole, string> = {
+  SUPER_ADMIN: 'مدیر ارشد',
+  FINANCE: 'مالی',
+  SUPPORT: 'پشتیبانی',
+  KYC: 'احراز هویت',
+  RISK: 'ریسک',
+  CONTENT: 'محتوا',
+  OPERATIONS: 'عملیات',
+  ANALYST: 'تحلیلگر',
+  READ_ONLY: 'فقط‌خواندنی',
 }
 
 // ساختار custom permissions روی AdminUser.permissions (Json):

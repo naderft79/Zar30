@@ -13,6 +13,8 @@ interface AdminPageHeaderProps {
   eyebrow?: string
   actions?: React.ReactNode
   className?: string
+  /** پیش‌فرض h1 — برای سکشن‌های داخلی صفحه h2 بدهید */
+  as?: 'h1' | 'h2'
 }
 
 export function AdminPageHeader({
@@ -21,6 +23,7 @@ export function AdminPageHeader({
   eyebrow,
   actions,
   className,
+  as: Heading = 'h1',
 }: AdminPageHeaderProps) {
   return (
     <div className={cn('mb-6 flex flex-wrap items-end justify-between gap-4', className)}>
@@ -30,7 +33,7 @@ export function AdminPageHeader({
             {eyebrow}
           </p>
         )}
-        <h1 className="text-foreground text-xl font-bold sm:text-2xl">{title}</h1>
+        <Heading className="text-foreground text-xl font-bold sm:text-2xl">{title}</Heading>
         {description && (
           <p className="text-muted-foreground mt-1 max-w-2xl text-xs sm:text-sm">{description}</p>
         )}

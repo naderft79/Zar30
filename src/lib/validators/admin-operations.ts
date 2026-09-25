@@ -9,6 +9,10 @@ const pagination = z.object({
 
 export const adminPlatformQuerySchema = pagination
 
+export const adminNotificationQuerySchema = pagination.extend({
+  status: z.enum(['QUEUED', 'SENT', 'DELIVERED', 'FAILED', 'READ']).optional(),
+})
+
 export const adminInstallmentQuerySchema = pagination.extend({
   status: z.enum(['PENDING', 'ACTIVE', 'COMPLETED', 'DEFAULTED']).optional(),
 })

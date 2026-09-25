@@ -1,9 +1,13 @@
 import type { Prisma } from '@/generated/prisma'
 import prisma from '@/lib/db/prisma'
 import type { z } from 'zod'
-import type { adminPlatformQuerySchema } from '@/lib/validators/admin-operations'
+import type {
+  adminNotificationQuerySchema,
+  adminPlatformQuerySchema,
+} from '@/lib/validators/admin-operations'
 
 export type AdminPlatformQuery = z.infer<typeof adminPlatformQuerySchema>
+export type AdminNotificationQuery = z.infer<typeof adminNotificationQuerySchema>
 
 async function paged<T>(
   count: Promise<number>,
@@ -95,16 +99,19 @@ export async function listAdminSessions(input: AdminPlatformQuery) {
   }
 }
 
-export async function listAdminNotifications(input: AdminPlatformQuery) {
-  const where: Prisma.NotificationWhereInput = input.q
-    ? {
-        OR: [
-          { title: { contains: input.q, mode: 'insensitive' } },
-          { type: { contains: input.q, mode: 'insensitive' } },
-          { user: { mobile: { contains: input.q, mode: 'insensitive' } } },
-        ],
-      }
-    : {}
+export async function listAdminNotifications(input: AdminNotificationQuery) {
+  const where: Prisma.NotificationWhereInput = {
+    ...(input.status && { status: input.status }),
+    ...(input.q
+      ? {
+          OR: [
+            { title: { contains: input.q, mode: 'insensitive' } },
+            { type: { contains: input.q, mode: 'insensitive' } },
+            { user: { mobile: { contains: input.q, mode: 'insensitive' } } },
+          ],
+        }
+      : {}),
+  }
   const result = await paged(
     prisma.notification.count({ where }),
     prisma.notification.findMany({
