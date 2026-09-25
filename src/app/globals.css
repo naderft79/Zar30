@@ -723,6 +723,8 @@ html {
 }
 
 /* جلوگیری از pull-to-refresh/overscroll بومی — نسخه اختصاصی پیاده می‌شود */
+/* باید روی html (root scroller) هم باشد تا Chrome در PWA رفرش نکند */
+html,
 body {
   overscroll-behavior-y: none;
 }
