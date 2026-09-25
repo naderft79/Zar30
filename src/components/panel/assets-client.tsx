@@ -178,36 +178,77 @@ export function AssetsClient() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {Number(summary?.goldBalance ?? 0) === 0 && Number(summary?.tomanBalance ?? 0) === 0 ? (
+            {loading ? (
+              <div className="skeleton-shimmer h-24 rounded-lg" />
+            ) : Number(summary?.goldBalance ?? 0) === 0 &&
+              Number(summary?.tomanBalance ?? 0) === 0 ? (
               <EmptyState
                 icon={IconChartPie}
                 title="دارایی فعالی ندارید"
                 description="نمودار ترکیب طلا و تومان پس از اولین تراکنش نمایش داده می‌شود."
               />
             ) : (
-              <dl className="divide-border/40 divide-y text-xs">
-                <div className="flex items-center justify-between py-2">
-                  <dt className="text-muted-foreground">طلای آب‌شده</dt>
-                  <dd className="text-foreground font-semibold tabular-nums" dir="ltr">
-                    {formatExactAmount(summary?.goldBalance ?? '0')} گرم
-                  </dd>
-                </div>
-                <div className="flex items-center justify-between py-2">
-                  <dt className="text-muted-foreground">تومان</dt>
-                  <dd className="text-foreground font-semibold tabular-nums" dir="ltr">
-                    {formatExactAmount(summary?.tomanBalance ?? '0')} تومان
-                  </dd>
-                </div>
-                {Number(summary?.goldLocked ?? 0) + Number(summary?.tomanLocked ?? 0) > 0 && (
-                  <div className="flex items-center justify-between py-2">
-                    <dt className="text-muted-foreground">مسدود شده</dt>
-                    <dd className="text-foreground font-semibold tabular-nums" dir="ltr">
-                      {formatExactAmount(summary?.tomanLocked ?? '0')} تومان +{' '}
-                      {formatExactAmount(summary?.goldLocked ?? '0')} گرم
-                    </dd>
-                  </div>
-                )}
-              </dl>
+              <div className="space-y-4">
+                {/* نوار ترکیب — سهم طلا و تومان از ارزش کل */}
+                {(() => {
+                  const goldPct = totalValue > 0 ? Math.round((goldValue / totalValue) * 100) : 0
+                  const tomanPct = 100 - goldPct
+                  return (
+                    <>
+                      <div
+                        className="bg-muted/60 flex h-3.5 w-full overflow-hidden rounded-full"
+                        role="img"
+                        aria-label={`ترکیب دارایی: ${goldPct} درصد طلا، ${tomanPct} درصد تومان`}
+                      >
+                        <div
+                          className="bg-gold-500 h-full transition-all duration-500"
+                          style={{ width: `${goldPct}%` }}
+                        />
+                        <div
+                          className="bg-navy-700 h-full transition-all duration-500"
+                          style={{ width: `${tomanPct}%` }}
+                        />
+                      </div>
+                      <div className="space-y-2.5 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
+                            <span
+                              className="bg-gold-500 size-2.5 rounded-full"
+                              aria-hidden="true"
+                            />
+                            طلای آب‌شده
+                          </span>
+                          <span className="text-foreground font-semibold tabular-nums" dir="ltr">
+                            {formatExactAmount(summary?.goldBalance ?? '0')} گرم · {goldPct}٪
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
+                            <span
+                              className="bg-navy-700 size-2.5 rounded-full"
+                              aria-hidden="true"
+                            />
+                            تومان
+                          </span>
+                          <span className="text-foreground font-semibold tabular-nums" dir="ltr">
+                            {formatExactAmount(summary?.tomanBalance ?? '0')} تومان · {tomanPct}٪
+                          </span>
+                        </div>
+                        {Number(summary?.goldLocked ?? 0) + Number(summary?.tomanLocked ?? 0) >
+                          0 && (
+                          <div className="border-border/50 flex items-center justify-between border-t pt-2.5">
+                            <span className="text-muted-foreground">مسدود شده</span>
+                            <span className="text-foreground font-semibold tabular-nums" dir="ltr">
+                              {formatExactAmount(summary?.tomanLocked ?? '0')} تومان +{' '}
+                              {formatExactAmount(summary?.goldLocked ?? '0')} گرم
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )
+                })()}
+              </div>
             )}
           </CardContent>
         </Card>
