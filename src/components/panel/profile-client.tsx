@@ -320,7 +320,13 @@ export function ProfileClient() {
       </section>
 
       {/* خروج از حساب — در موبایل تنها راه خروج است (sidebar مخفی است) */}
-      <div className="border-border/60 flex items-center justify-end rounded-xl border p-4">
+      <div className="border-border/60 flex items-center justify-between rounded-xl border p-4">
+        <div className="min-w-0">
+          <p className="text-muted-foreground text-[11px] leading-5">
+            زرسی — خرید، فروش و نگهداری طلای آب‌شده ۱۸ عیار
+          </p>
+          <p className="text-muted-foreground/60 text-[10px] tabular-nums">نسخه ۰.۱.۰</p>
+        </div>
         <Button
           variant="outline"
           size="sm"
