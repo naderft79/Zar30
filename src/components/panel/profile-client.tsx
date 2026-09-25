@@ -15,6 +15,10 @@ import {
   IconBell,
   IconBellRinging,
   IconBolt,
+  IconBrandInstagram,
+  IconBrandTelegram,
+  IconBrandX,
+  IconBrandYoutube,
   IconBuildingStore,
   IconCalendarClock,
   IconCertificate,
@@ -101,6 +105,14 @@ const SETTINGS_ITEMS = [
 const LEGAL_LINKS = [
   { href: '/terms', label: 'شرایط استفاده' },
   { href: '/privacy', label: 'حریم خصوصی' },
+] as const
+
+// شبکه‌های اجتماعی — آیکون ساده بدون بک‌گراند، کنار هم
+const SOCIAL_LINKS = [
+  { href: 'https://instagram.com/zar30', label: 'اینستاگرام', icon: IconBrandInstagram },
+  { href: 'https://t.me/zar30', label: 'تلگرام', icon: IconBrandTelegram },
+  { href: 'https://youtube.com/@zar30', label: 'یوتیوب', icon: IconBrandYoutube },
+  { href: 'https://x.com/zar30', label: 'ایکس', icon: IconBrandX },
 ] as const
 
 export function ProfileClient() {
@@ -331,6 +343,22 @@ export function ProfileClient() {
           </Link>
         </div>
       </section>
+
+      {/* شبکه‌های اجتماعی — آیکون‌های ساده کنار هم، بدون بک‌گراند */}
+      <div className="flex items-center justify-center gap-6 py-1">
+        {SOCIAL_LINKS.map((social) => (
+          <a
+            key={social.href}
+            href={social.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={social.label}
+            className="text-muted-foreground hover:text-gold-600 dark:hover:text-gold-400 transition-colors"
+          >
+            <social.icon className="size-6" stroke={1.75} />
+          </a>
+        ))}
+      </div>
 
       {/* خروج از حساب — در موبایل تنها راه خروج است (sidebar مخفی است) */}
       <div className="border-border/60 flex items-center justify-between rounded-xl border p-4">
