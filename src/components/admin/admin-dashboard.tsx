@@ -144,7 +144,7 @@ export function AdminDashboard() {
       />
 
       {/* ===== Hero — context اجرایی ===== */}
-      <div className="border-border mb-6 rounded-2xl border bg-gradient-to-l from-[#f7f9fc] to-white p-5 sm:p-6">
+      <div className="border-border from-field to-card mb-6 rounded-2xl border bg-gradient-to-l p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-foreground text-sm font-semibold sm:text-base">
@@ -157,7 +157,10 @@ export function AdminDashboard() {
           {price ? (
             <div className="text-left" dir="ltr">
               <p className="text-muted-foreground text-[10px]">آخرین قیمت طلا — {price.source}</p>
-              <p className="text-gold-600 mt-0.5 text-sm font-bold tabular-nums" dir="rtl">
+              <p
+                className="text-gold-600 dark:text-gold-400 mt-0.5 text-sm font-bold tabular-nums"
+                dir="rtl"
+              >
                 خرید {formatExactAmount(price.buyPrice)} تومان · فروش{' '}
                 {formatExactAmount(price.sellPrice)} تومان
               </p>

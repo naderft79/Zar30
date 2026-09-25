@@ -215,7 +215,7 @@ function AdminHeaderIdentity({ admin, onLogout }: { admin: AdminIdentity; onLogo
     <div className="border-border/60 bg-card/60 flex items-center gap-2 rounded-xl border py-1 pr-1 pl-1.5 sm:gap-2.5 sm:py-1.5 sm:pr-1.5 sm:pl-3">
       <span
         aria-hidden="true"
-        className="from-gold-500/30 to-gold-600/20 text-gold-700 ring-gold-500/30 flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-[11px] font-bold ring-1"
+        className="from-gold-500/30 to-gold-600/20 text-gold-700 dark:text-gold-300 ring-gold-500/30 flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-[11px] font-bold ring-1"
       >
         {displayName.slice(0, 2)}
       </span>

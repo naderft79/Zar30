@@ -21,7 +21,7 @@ function UserLink({ id, name, mobile }: { id: string; name: string; mobile: stri
   return (
     <Link
       href={`/admin/users/${id}`}
-      className="hover:text-gold-600 block min-w-0 transition-colors"
+      className="hover:text-gold-600 dark:hover:text-gold-400 block min-w-0 transition-colors"
     >
       <span className="text-foreground block truncate text-xs font-medium">{name}</span>
       <span className="text-muted-foreground block text-[10px] tabular-nums" dir="ltr">
