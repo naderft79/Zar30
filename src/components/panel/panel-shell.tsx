@@ -408,8 +408,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           )}
           <div className="hidden md:block" />
           <div className="flex items-center gap-1.5 justify-self-end">
-            <HeaderAction pathname={pathname} />
             <PanelThemeToggle />
+            <HeaderAction pathname={pathname} />
             <UserAvatar user={effectiveUser} size="sm" className="hidden md:flex" />
           </div>
         </header>
