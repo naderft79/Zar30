@@ -25,6 +25,7 @@ export async function listBankAccounts(userId: string) {
     cardPan: a.cardPan,
     alias: a.alias,
     isDefault: a.isDefault,
+    blocked: a.blockedAt !== null,
     createdAt: a.createdAt,
   }))
 }
@@ -101,8 +102,11 @@ export async function setDefaultBankAccount(userId: string, id: string) {
 export async function getOwnedIban(userId: string, bankAccountId: string): Promise<string> {
   const account = await prisma.bankAccount.findFirst({
     where: { id: bankAccountId, userId },
-    select: { iban: true },
+    select: { iban: true, blockedAt: true },
   })
   if (!account) throw ApiError.badRequest('حساب بانکی انتخاب‌شده متعلق به شما نیست')
+  if (account.blockedAt) {
+    throw ApiError.badRequest('این کارت بانکی توسط پشتیبانی مسدود شده است')
+  }
   return account.iban
 }

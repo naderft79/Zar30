@@ -51,6 +51,7 @@ const STATUS_LABELS: Record<string, string> = {
   APPROVED: 'تایید شده',
   REJECTED: 'رد شده',
   PAID: 'پرداخت شده',
+  PREPARING: 'در حال آماده‌سازی',
   SHIPPED: 'ارسال شده',
   DELIVERED: 'تحویل شده',
   CANCELLED: 'لغو شده',

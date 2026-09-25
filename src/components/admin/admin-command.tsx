@@ -23,6 +23,7 @@ const TYPE_LABELS: Record<AdminSearchResult['type'], string> = {
   transaction: 'تراکنش‌ها',
   ticket: 'پشتیبانی',
   audit: 'ممیزی',
+  delivery: 'تحویل فیزیکی',
 }
 
 const DEBOUNCE_MS = 250

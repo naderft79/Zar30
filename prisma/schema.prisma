@@ -442,6 +442,7 @@ model JournalEntry {
   transactions  Transaction[]
   withdrawals   WithdrawalRequest[]
   internalTransfers InternalTransfer[]
+  deliveryRequests GoldDeliveryRequest[]
 
   @@index([referenceType, referenceId])
   @@index([status])
@@ -592,6 +593,8 @@ model BankAccount {
   cardPan   String?  @map("card_pan")
   alias     String?
   isDefault Boolean  @default(false) @map("is_default")
+  blockedAt DateTime? @map("blocked_at")
+  blockNote String?   @map("block_note")
   createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -639,6 +642,7 @@ enum DeliveryMethod {
 enum DeliveryStatus {
   PENDING
   APPROVED
+  PREPARING
   REJECTED
   SHIPPED
   DELIVERED
@@ -654,6 +658,10 @@ model GoldDeliveryRequest {
   status       DeliveryStatus  @default(PENDING)
   reviewNote   String?         @map("review_note")
   trackingCode String?         @map("tracking_code")
+  pickupBranch String?         @map("pickup_branch")
+  pickupAt     DateTime?       @map("pickup_at")
+  feeToman     BigInt?         @map("fee_toman")
+  journalEntryId String?       @map("journal_entry_id")
   processedBy  String?         @map("processed_by")
   processedAt  DateTime?       @map("processed_at")
   createdAt    DateTime        @default(now()) @map("created_at")
@@ -661,6 +669,7 @@ model GoldDeliveryRequest {
   user      User            @relation(fields: [userId], references: [id])
   address   Address?        @relation(fields: [addressId], references: [id])
   processor AdminUser?      @relation(fields: [processedBy], references: [id])
+  journalEntry JournalEntry? @relation(fields: [journalEntryId], references: [id])
 
   @@index([userId, createdAt])
   @@index([status])
@@ -688,6 +697,9 @@ model InternalTransfer {
   giftMessage   String?       @map("gift_message")
   journalEntryId String?      @map("journal_entry_id")
   status        String        @default("COMPLETED")
+  flaggedAt     DateTime?     @map("flagged_at")
+  flagReason    String?       @map("flag_reason")
+  flaggedBy     String?       @map("flagged_by")
   createdAt     DateTime      @default(now()) @map("created_at")
 
   sender    User          @relation("TransferSender", fields: [senderId], references: [id])
@@ -1127,4 +1139,20 @@ model FeatureFlag {
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@map("feature_flags")
+}
+
+// ============================================
+// Platform Settings (پیکربندی‌های قابل‌ویرایش ادمین)
+// ============================================
+// key/value ساده برای تنظیمات عملیاتی — هزینه تحویل، حداقل‌ها و…
+// هر تغییر با actor و زمان به‌روزرسانی همراه است؛ audit در سرویس ثبت می‌شود
+
+model PlatformSetting {
+  key       String   @id
+  value     Json
+  updatedBy String?  @map("updated_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("platform_settings")
 }

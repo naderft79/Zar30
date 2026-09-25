@@ -124,6 +124,22 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         permissions: [PERMISSIONS.ACCOUNTS_READ],
       },
       {
+        key: 'bank-accounts',
+        label: 'کارت‌های بانکی',
+        href: '/admin/bank-accounts',
+        icon: IconBuildingBank,
+        description: 'کارت‌ها و شباهای ثبت‌شده کاربران',
+        permissions: [PERMISSIONS.BANK_ACCOUNTS_READ],
+      },
+      {
+        key: 'addresses',
+        label: 'آدرس‌ها',
+        href: '/admin/addresses',
+        icon: IconMapPin,
+        description: 'آدرس‌های تحویل فیزیکی کاربران',
+        permissions: [PERMISSIONS.ADDRESSES_READ],
+      },
+      {
         key: 'sessions',
         label: 'نشست‌ها',
         href: '/admin/security/sessions',
@@ -184,7 +200,15 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         href: '/admin/transfers',
         icon: IconArrowsLeftRight,
         description: 'انتقال‌های داخلی بین کاربران',
-        permissions: [PERMISSIONS.TRANSACTIONS_READ],
+        permissions: [PERMISSIONS.TRANSFERS_READ],
+      },
+      {
+        key: 'payments',
+        label: 'پرداخت‌های درگاه',
+        href: '/admin/payments',
+        icon: IconCashBanknote,
+        description: 'تراکنش‌های درگاه پرداخت',
+        permissions: [PERMISSIONS.PAYMENTS_READ],
       },
       {
         key: 'deposits',
@@ -324,10 +348,10 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
       {
         key: 'product-transactions',
         label: 'تحویل فیزیکی',
-        href: '/admin/product-transactions',
+        href: '/admin/delivery',
         icon: IconPackages,
         description: 'درخواست‌ها و سفارش‌های تحویل فیزیکی',
-        permissions: [PERMISSIONS.GOLD_READ],
+        permissions: [PERMISSIONS.DELIVERY_READ],
       },
       {
         key: 'delivery-locations',

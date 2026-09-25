@@ -32,6 +32,10 @@ const STATUS_MAP: Record<string, { label: string; tone: Tone }> = {
   REVERSED: { label: 'برگشت‌خورده', tone: 'warning' },
   PAID: { label: 'پرداخت‌شده', tone: 'success' },
   POSTED: { label: 'ثبت‌شده', tone: 'success' },
+  EXPIRED: { label: 'منقضی‌شده', tone: 'neutral' },
+  // Delivery
+  PREPARING: { label: 'در حال آماده‌سازی', tone: 'info' },
+  SHIPPED: { label: 'ارسال‌شده', tone: 'info' },
   // Wallet
   active: { label: 'فعال', tone: 'success' },
   frozen: { label: 'مسدود', tone: 'error' },

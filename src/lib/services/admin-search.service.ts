@@ -10,7 +10,7 @@ import prisma from '@/lib/db/prisma'
 import { hasPermission, PERMISSIONS, type Permission } from '@/lib/auth/rbac'
 
 export type AdminSearchResult = {
-  type: 'user' | 'kyc' | 'order' | 'transaction' | 'ticket' | 'audit'
+  type: 'user' | 'kyc' | 'order' | 'transaction' | 'ticket' | 'audit' | 'delivery'
   id: string
   label: string
   description: string
@@ -193,6 +193,35 @@ export async function searchAdminEntities(
             description: `کاربر ${t.user.mobile}`,
             href: `/admin/support/${t.id}`,
             status: t.status,
+          })),
+        ),
+    )
+  }
+
+  if (hasPermission(permissions, PERMISSIONS.DELIVERY_READ)) {
+    tasks.push(
+      prisma.goldDeliveryRequest
+        .findMany({
+          where: {
+            OR: [{ id: contains }, { trackingCode: contains }, { user: { mobile: contains } }],
+          },
+          select: {
+            id: true,
+            status: true,
+            grams: true,
+            user: { select: { mobile: true, firstName: true, lastName: true } },
+          },
+          orderBy: { createdAt: 'desc' },
+          take: CATEGORY_LIMIT,
+        })
+        .then((rows) =>
+          rows.map((d) => ({
+            type: 'delivery' as const,
+            id: d.id,
+            label: `تحویل فیزیکی ${d.grams.toString()} گرم — ${personName(d.user)}`,
+            description: `کاربر ${d.user.mobile}`,
+            href: `/admin/delivery/${d.id}`,
+            status: d.status,
           })),
         ),
     )
