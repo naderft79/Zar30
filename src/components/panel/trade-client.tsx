@@ -13,7 +13,6 @@ import {
   IconArrowDownLeft,
   IconArrowUpLeft,
   IconHistory,
-  IconChartLine,
   IconRepeat,
   IconAlertTriangle,
   IconCircleCheck,
@@ -26,13 +25,6 @@ import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { useOnlineStatus } from './offline-indicator'
 import { PriceAlertsCard } from './price-alerts-card'
-
-interface WalletAccount {
-  assetType: string
-  balance: string
-  lockedBalance: string
-  available: string
-}
 
 interface OrderRow {
   id: string
@@ -57,10 +49,8 @@ const inputClass =
   'border-border/60 bg-background text-foreground focus-visible:ring-ring h-10 w-full rounded-lg border px-3 text-sm tabular-nums focus-visible:ring-2 focus-visible:outline-none'
 
 export function TradeClient() {
-  const [accounts, setAccounts] = useState<WalletAccount[]>([])
   const [orders, setOrders] = useState<OrderRow[]>([])
   const [price, setPrice] = useState<PriceData | null>(null)
-  const [loading, setLoading] = useState(true)
 
   // side=buy|sell از query (مثلاً لینک قیمت داشبورد) حالت اولیه را تعیین می‌کند
   const searchParams = useSearchParams()
@@ -75,38 +65,29 @@ export function TradeClient() {
   const [success, setSuccess] = useState<string | null>(null)
 
   async function loadAll() {
-    const [walletRes, ordersRes, priceRes] = await Promise.all([
-      apiGetWithRefresh<{ accounts: WalletAccount[] }>('/api/v1/wallet'),
+    const [ordersRes, priceRes] = await Promise.all([
       apiGetWithRefresh<{ orders: OrderRow[] }>('/api/v1/orders?limit=10'),
       apiGetWithRefresh<PriceData>('/api/v1/price'),
     ])
-    if (walletRes.ok) setAccounts(walletRes.data?.accounts ?? [])
     if (ordersRes.ok) setOrders(ordersRes.data?.orders ?? [])
     if (priceRes.ok && priceRes.data) setPrice(priceRes.data)
-    setLoading(false)
   }
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
-      const [walletRes, ordersRes, priceRes] = await Promise.all([
-        apiGetWithRefresh<{ accounts: WalletAccount[] }>('/api/v1/wallet'),
+      const [ordersRes, priceRes] = await Promise.all([
         apiGetWithRefresh<{ orders: OrderRow[] }>('/api/v1/orders?limit=10'),
         apiGetWithRefresh<PriceData>('/api/v1/price'),
       ])
       if (cancelled) return
-      if (walletRes.ok) setAccounts(walletRes.data?.accounts ?? [])
       if (ordersRes.ok) setOrders(ordersRes.data?.orders ?? [])
       if (priceRes.ok && priceRes.data) setPrice(priceRes.data)
-      setLoading(false)
     })()
     return () => {
       cancelled = true
     }
   }, [])
-
-  const toman = accounts.find((a) => a.assetType === 'TOMAN')
-  const gold = accounts.find((a) => a.assetType === 'GOLD')
 
   async function submit() {
     setError(null)
@@ -138,53 +119,6 @@ export function TradeClient() {
 
   return (
     <div className="animate-stagger space-y-5">
-      {/* موجودی + قیمت لحظه‌ای */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
-          <CardContent className="pt-5 pb-4">
-            <p className="text-muted-foreground text-[11px]">موجودی تومان (آزاد)</p>
-            <p className="text-foreground mt-1 text-lg font-bold tabular-nums">
-              {loading ? '…' : `${formatExactAmount(toman?.available ?? '0')} تومان`}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-5 pb-4">
-            <p className="text-muted-foreground text-[11px]">موجودی طلا (آزاد)</p>
-            <p className="text-foreground mt-1 text-lg font-bold tabular-nums">
-              {loading ? '…' : `${formatExactAmount(gold?.available ?? '0')} گرم`}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="surface-wealth gold-rings relative overflow-hidden">
-          <CardContent className="relative pt-5 pb-4">
-            <p className="text-cream-300/60 flex items-center gap-1.5 text-[11px]">
-              <IconChartLine className="text-gold-400 size-3.5" stroke={1.75} />
-              نرخ لحظه‌ای (هر گرم)
-            </p>
-            {price ? (
-              <div className="text-cream-50 mt-1 space-y-0.5 text-sm font-bold tabular-nums">
-                <p>
-                  خرید:{' '}
-                  <span dir="ltr">{formatExactAmount(String(Math.round(price.buyPrice)))}</span>
-                </p>
-                <p>
-                  فروش:{' '}
-                  <span dir="ltr">{formatExactAmount(String(Math.round(price.sellPrice)))}</span>
-                </p>
-                {!price.isLive && (
-                  <p className="text-warning text-[10px] font-medium">قیمت نمایشی — demo</p>
-                )}
-              </div>
-            ) : (
-              <p className="text-cream-300/50 mt-1 text-xs">
-                {loading ? '…' : 'قیمت در دسترس نیست'}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
       {/* فرم معامله */}
       <Card>
         <CardHeader>

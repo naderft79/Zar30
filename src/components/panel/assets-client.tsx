@@ -15,7 +15,7 @@ import { apiGetWithRefresh } from '@/lib/api/client'
 import { formatExactAmount } from '@/lib/utils/format'
 import { useOnlineStatus } from './offline-indicator'
 import { AssetsHero, type AssetsAction } from './assets-hero'
-import type { WalletCardsData } from './wallet-cards'
+import { WalletCards, type WalletCardsData } from './wallet-cards'
 import { BankCards, type BankAccountRow } from './bank-cards'
 import { HistoryTabs } from './history-tabs'
 
@@ -108,6 +108,21 @@ export function AssetsClient() {
         loading={loading}
         online={online}
         onAction={handleHeroAction}
+      />
+
+      {/* کارت‌های کیف — طلا (سود/زیان) + تومان */}
+      <WalletCards
+        data={
+          summary ?? {
+            goldBalance: '0',
+            goldLocked: '0',
+            tomanBalance: '0',
+            tomanLocked: '0',
+            sellPrice: null,
+            avgBuyPrice: null,
+          }
+        }
+        loading={loading}
       />
 
       {/* کارت‌های بانکی — اسکرول افقی + افزودن/حذف/پیش‌فرض */}
