@@ -8,6 +8,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import {
   IconAlertTriangle,
@@ -26,6 +27,17 @@ import type { AdminDashboardData } from '@/lib/services/admin-dashboard.service'
 import { AdminMetric } from '@/components/admin/admin-metric'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { formatExactAmount, toPersianDigits } from '@/lib/utils/format'
+
+// recharts فقط هنگام نیاز لود می‌شود — خارج از باندل اولیه
+const AdminCharts = dynamic(() => import('@/components/admin/admin-charts'), {
+  ssr: false,
+  loading: () => (
+    <div className="mb-6 grid gap-4 lg:grid-cols-2">
+      <div className="skeleton-shimmer h-64 rounded-xl" />
+      <div className="skeleton-shimmer h-64 rounded-xl" />
+    </div>
+  ),
+})
 
 function DashboardSkeleton() {
   return (
@@ -205,6 +217,9 @@ export function AdminDashboard() {
           tone={data.financial.pendingWithdrawals > 0 ? 'warning' : 'default'}
         />
       </div>
+
+      {/* ===== نمودارهای ۳۰ روزه ===== */}
+      {data.trend.length > 0 && <AdminCharts trend={data.trend} />}
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* ===== Customers + KYC pipeline ===== */}

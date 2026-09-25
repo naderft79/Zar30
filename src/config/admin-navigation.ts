@@ -18,9 +18,7 @@ import {
   IconBell,
   IconCalculator,
   IconCalendarClock,
-  IconChartCandle,
   IconClipboardList,
-  IconCode,
   IconCoins,
   IconFileDownload,
   IconFileText,
@@ -45,7 +43,6 @@ import {
   IconShieldCheck,
   IconShoppingBag,
   IconAdjustmentsHorizontal,
-  IconBuildingStore,
   IconTag,
   IconDiscount,
   IconTrendingUp,
@@ -54,7 +51,6 @@ import {
   IconUsers,
   IconUsersGroup,
   IconWallet,
-  IconBolt,
   type TablerIcon,
 } from '@tabler/icons-react'
 import { PERMISSIONS, type Permission } from '@/lib/auth/rbac'
@@ -67,6 +63,8 @@ export interface AdminNavItem {
   description: string
   /** حداقل یکی از این permissionها برای دیدن item لازم است */
   permissions: readonly Permission[]
+  /** کلید شمارنده pending — از GET /api/v1/admin/nav-badges تغذیه می‌شود */
+  badgeKey?: 'kyc' | 'withdrawals' | 'orders' | 'tickets' | 'risk' | 'delivery'
 }
 
 export interface AdminNavSection {
@@ -111,6 +109,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'kyc',
         label: 'احراز هویت',
         href: '/admin/kyc',
+        badgeKey: 'kyc',
         icon: IconUserCheck,
         description: 'صف بررسی و تصمیم KYC',
         permissions: [PERMISSIONS.KYC_READ],
@@ -155,25 +154,10 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
     icon: IconArrowsLeftRight,
     items: [
       {
-        key: 'trades',
-        label: 'معاملات آنی',
-        href: '/admin/trades',
-        icon: IconBolt,
-        description: 'خرید و فروش آنی طلا',
-        permissions: [PERMISSIONS.ORDERS_READ],
-      },
-      {
-        key: 'orderbooks',
-        label: 'معاملات پیشرفته',
-        href: '/admin/orderbooks',
-        icon: IconChartCandle,
-        description: 'دفتر سفارشات و معاملات پیشرفته',
-        permissions: [PERMISSIONS.ORDERS_READ],
-      },
-      {
         key: 'orders',
         label: 'سفارش‌ها',
         href: '/admin/orders',
+        badgeKey: 'orders',
         icon: IconClipboardList,
         description: 'سفارش‌های خرید و فروش',
         permissions: [PERMISSIONS.ORDERS_READ],
@@ -184,14 +168,6 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         href: '/admin/transactions',
         icon: IconArrowsLeftRight,
         description: 'تراکنش‌های مالی',
-        permissions: [PERMISSIONS.TRANSACTIONS_READ],
-      },
-      {
-        key: 'fiat-transactions',
-        label: 'تراکنش‌های تومان',
-        href: '/admin/fiat-transactions',
-        icon: IconCashBanknote,
-        description: 'واریز و برداشت تومانی',
         permissions: [PERMISSIONS.TRANSACTIONS_READ],
       },
       {
@@ -222,6 +198,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'withdrawals',
         label: 'برداشت‌ها',
         href: '/admin/withdrawals',
+        badgeKey: 'withdrawals',
         icon: IconUpload,
         description: 'درخواست‌های برداشت',
         permissions: [PERMISSIONS.WITHDRAWALS_READ],
@@ -330,14 +307,6 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
     icon: IconPackage,
     items: [
       {
-        key: 'tradeables',
-        label: 'واحدهای قابل معامله',
-        href: '/admin/tradeables',
-        icon: IconCoins,
-        description: 'واحدها و دارایی‌های قابل معامله',
-        permissions: [PERMISSIONS.GOLD_READ],
-      },
-      {
         key: 'products',
         label: 'محصولات',
         href: '/admin/products',
@@ -397,25 +366,10 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'product-transactions',
         label: 'تحویل فیزیکی',
         href: '/admin/delivery',
+        badgeKey: 'delivery',
         icon: IconPackages,
         description: 'درخواست‌ها و سفارش‌های تحویل فیزیکی',
         permissions: [PERMISSIONS.DELIVERY_READ],
-      },
-      {
-        key: 'delivery-locations',
-        label: 'ارسال پستی محصولات',
-        href: '/admin/delivery-locations',
-        icon: IconMapPin,
-        description: 'تنظیمات ارسال و مناطق پستی',
-        permissions: [PERMISSIONS.SETTINGS_READ],
-      },
-      {
-        key: 'products-branch',
-        label: 'شعب و زمان‌بندی',
-        href: '/admin/products-branch',
-        icon: IconBuildingStore,
-        description: 'شعب حضوری و زمان‌بندی تحویل',
-        permissions: [PERMISSIONS.SETTINGS_READ],
       },
     ],
   },
@@ -428,6 +382,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'support',
         label: 'پشتیبانی',
         href: '/admin/support',
+        badgeKey: 'tickets',
         icon: IconLifebuoy,
         description: 'تیکت‌های پشتیبانی',
         permissions: [PERMISSIONS.TICKETS_READ],
@@ -451,6 +406,7 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         key: 'risk',
         label: 'ریسک',
         href: '/admin/risk',
+        badgeKey: 'risk',
         icon: IconShieldExclamation,
         description: 'قوانین و هشدارهای ریسک',
         permissions: [PERMISSIONS.RISK_READ],
@@ -565,14 +521,6 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         permissions: [PERMISSIONS.SETTINGS_READ],
       },
       {
-        key: 'orderbook-settings',
-        label: 'تنظیمات معاملات پیشرفته',
-        href: '/admin/orderbook',
-        icon: IconGauge,
-        description: 'پارامترهای دفتر سفارشات',
-        permissions: [PERMISSIONS.SETTINGS_READ],
-      },
-      {
         key: 'feature-flags',
         label: 'Feature Flags',
         href: '/admin/feature-flags',
@@ -587,14 +535,6 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         icon: IconGauge,
         description: 'قوانین محدودیت نرخ درخواست',
         permissions: [PERMISSIONS.RATELIMIT_READ],
-      },
-      {
-        key: 'api',
-        label: 'API',
-        href: '/admin/api',
-        icon: IconCode,
-        description: 'کلیدها و webhookها',
-        permissions: [PERMISSIONS.API_READ],
       },
       {
         key: 'system-health',

@@ -21,7 +21,7 @@ import {
   IconShieldX,
   IconX,
 } from '@tabler/icons-react'
-import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
+import { apiGet, apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { ROLE_LABELS as BASE_ROLE_LABELS, type Permission } from '@/lib/auth/rbac'
 import { Logo } from '@/components/shared/logo'
 import {
@@ -32,6 +32,8 @@ import {
   isAdminNavSectionActive,
   type AdminNavItem,
 } from '@/config/admin-navigation'
+import type { AdminNavBadgeCounts } from '@/lib/services/admin-dashboard.service'
+import { toPersianDigits } from '@/lib/utils/format'
 import { AdminCommand } from '@/components/admin/admin-command'
 import { AdminThemeToggle } from '@/components/admin/admin-theme-toggle'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
@@ -77,11 +79,13 @@ const SIDEBAR_PREF_KEY = 'zar30-admin-sidebar-collapsed'
 function AdminNav({
   permissions,
   pathname,
+  badges,
   onNavigate,
   collapsed = false,
 }: {
   permissions: readonly Permission[]
   pathname: string
+  badges: AdminNavBadgeCounts
   onNavigate?: () => void
   collapsed?: boolean
 }) {
@@ -129,6 +133,7 @@ function AdminNav({
                   key={item.key}
                   item={item}
                   pathname={pathname}
+                  badge={item.badgeKey ? badges[item.badgeKey] : undefined}
                   onNavigate={onNavigate}
                   collapsed={collapsed}
                 />
@@ -144,11 +149,13 @@ function AdminNav({
 function AdminNavLink({
   item,
   pathname,
+  badge,
   onNavigate,
   collapsed = false,
 }: {
   item: AdminNavItem
   pathname: string
+  badge?: number
   onNavigate?: () => void
   collapsed?: boolean
 }) {
@@ -190,6 +197,20 @@ function AdminNavLink({
         >
           {item.label}
         </span>
+        {/* badge شمارنده pending — در حالت collapsed فقط نقطه نشان می‌دهد */}
+        {badge !== undefined && badge > 0 && (
+          <span
+            aria-label={`${toPersianDigits(badge)} مورد در انتظار`}
+            className={cn(
+              'bg-warning/15 text-warning border-warning/25 rounded-md border font-semibold tabular-nums',
+              collapsed
+                ? 'bg-warning absolute top-1 left-1 size-1.5 rounded-full border-0 p-0'
+                : 'mr-auto px-1.5 py-0.5 text-[10px]',
+            )}
+          >
+            {collapsed ? '' : toPersianDigits(badge)}
+          </span>
+        )}
       </Link>
     </li>
   )
@@ -298,6 +319,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [admin, setAdmin] = useState<AdminIdentity | null>(null)
   const [denied, setDenied] = useState(false)
   const [navOpen, setNavOpen] = useState(false)
+  const [navBadges, setNavBadges] = useState<AdminNavBadgeCounts>({})
   // ترجیح جمع‌شدگی — skeleton به collapsed وابسته نیست، پس mismatch نداریم
   const [collapsed, setCollapsed] = useState(
     () => typeof window !== 'undefined' && localStorage.getItem(SIDEBAR_PREF_KEY) === 'collapsed',
@@ -331,6 +353,22 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       cancelled = true
     }
   }, [router, pathname])
+
+  // badgeهای nav — هر ۶۰ ثانیه؛ سکوت‌دار روی خطا (badge غیربحرانی است)
+  useEffect(() => {
+    if (!admin) return
+    let cancelled = false
+    async function loadBadges() {
+      const res = await apiGet<{ badges: AdminNavBadgeCounts }>('/api/v1/admin/nav-badges')
+      if (!cancelled && res.ok && res.data?.badges) setNavBadges(res.data.badges)
+    }
+    void loadBadges()
+    const t = setInterval(loadBadges, 60_000)
+    return () => {
+      cancelled = true
+      clearInterval(t)
+    }
+  }, [admin])
 
   async function logout() {
     await apiPost('/api/v1/auth/logout')
@@ -390,7 +428,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             className="from-gold-500/40 via-gold-500/10 h-px bg-gradient-to-l to-transparent"
           />
 
-          <AdminNav permissions={admin.permissions} pathname={pathname} collapsed={collapsed} />
+          <AdminNav
+            permissions={admin.permissions}
+            pathname={pathname}
+            badges={navBadges}
+            collapsed={collapsed}
+          />
 
           {/* نسخه/برند پایین سایدبار — فشرده */}
           <div
@@ -476,7 +519,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             </ol>
           </nav>
 
-          <AdminCommand />
+          <AdminCommand permissions={admin.permissions} />
 
           {/* سوییچ تم light/dark */}
           <AdminThemeToggle />
@@ -528,6 +571,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <AdminNav
               permissions={admin.permissions}
               pathname={pathname}
+              badges={navBadges}
               onNavigate={() => setNavOpen(false)}
             />
           </DialogContent>

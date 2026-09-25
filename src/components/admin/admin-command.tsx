@@ -12,6 +12,8 @@ import Link from 'next/link'
 import { IconSearch, IconLoader2 } from '@tabler/icons-react'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { apiGet } from '@/lib/api/client'
+import { ADMIN_NAV_SECTIONS, canSeeAdminItem, type AdminNavItem } from '@/config/admin-navigation'
+import type { Permission } from '@/lib/auth/rbac'
 import type { AdminSearchResult } from '@/lib/services/admin-search.service'
 import { toPersianDigits } from '@/lib/utils/format'
 import { cn } from 'cn'
@@ -30,7 +32,7 @@ const TYPE_LABELS: Record<AdminSearchResult['type'], string> = {
 
 const DEBOUNCE_MS = 250
 
-export function AdminCommand() {
+export function AdminCommand({ permissions }: { permissions: readonly Permission[] }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<AdminSearchResult[]>([])
@@ -106,7 +108,20 @@ export function AdminCommand() {
     .map((type) => ({ type, items: results.filter((r) => r.type === type) }))
     .filter((g) => g.items.length > 0)
 
-  const trimmedLen = query.trim().length
+  // تطبیق صفحات nav — سمت کلاینت روی برچسب فارسی؛ permission-aware
+  const trimmed = query.trim()
+  const pageMatches: AdminNavItem[] =
+    trimmed.length >= 2
+      ? ADMIN_NAV_SECTIONS.flatMap((s) => s.items).filter(
+          (item) =>
+            canSeeAdminItem(item, permissions) &&
+            (item.label.includes(trimmed) ||
+              item.description.includes(trimmed) ||
+              item.href.toLowerCase().includes(trimmed.toLowerCase())),
+        )
+      : []
+
+  const trimmedLen = trimmed.length
 
   return (
     <>
@@ -174,10 +189,54 @@ export function AdminCommand() {
               </p>
             )}
 
-            {!error && !loading && trimmedLen >= 2 && results.length === 0 && (
-              <p className="text-muted-foreground px-3 py-6 text-center text-xs">
-                نتیجه‌ای یافت نشد
-              </p>
+            {!error &&
+              !loading &&
+              trimmedLen >= 2 &&
+              results.length === 0 &&
+              pageMatches.length === 0 && (
+                <p className="text-muted-foreground px-3 py-6 text-center text-xs">
+                  نتیجه‌ای یافت نشد
+                </p>
+              )}
+
+            {/* صفحات — تطبیق برچسب nav */}
+            {pageMatches.length > 0 && (
+              <div className="mb-1">
+                <p className="text-muted-foreground px-3 pt-2 pb-1 text-[10px] font-semibold">
+                  صفحات
+                </p>
+                <ul>
+                  {pageMatches.map((item) => {
+                    const Icon = item.icon
+                    return (
+                      <li key={`page-${item.key}`}>
+                        <Link
+                          href={item.href}
+                          onClick={() => onOpenChange(false)}
+                          className={cn(
+                            'hover:bg-muted focus-visible:bg-muted flex items-center gap-3 rounded-lg px-3 py-2.5',
+                            'focus-visible:outline-none',
+                          )}
+                        >
+                          <Icon
+                            className="text-muted-foreground size-4 shrink-0"
+                            strokeWidth={1.75}
+                            aria-hidden="true"
+                          />
+                          <span className="min-w-0">
+                            <span className="text-foreground block truncate text-sm">
+                              {item.label}
+                            </span>
+                            <span className="text-muted-foreground block truncate text-[11px]">
+                              {item.description}
+                            </span>
+                          </span>
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
             )}
 
             {grouped.map((group) => (
