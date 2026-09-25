@@ -15,8 +15,8 @@ import {
   IconBell,
   IconBellRinging,
   IconBolt,
+  IconBuildingStore,
   IconCalendarClock,
-  IconCoins,
   IconFileText,
   IconGift,
   IconLifebuoy,
@@ -39,12 +39,12 @@ import { Input } from '@/components/ui/input'
 
 // خدمات بیشتر — گرید ۴تایی مربعی عین میان‌برهای صفحه خانه
 const MORE_SERVICES = [
-  { label: 'خرید خودکار', href: '/dashboard/profile/savings', icon: IconPigMoney },
-  { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconBolt },
   { label: 'زرکار', href: '/dashboard/zarkar', icon: IconSparkles },
-  { label: 'تحویل فیزیکی', href: '/dashboard/delivery', icon: IconPackage },
-  { label: 'سکه و شمش', href: '/dashboard/delivery', icon: IconCoins },
   { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconCalendarClock },
+  { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconBolt },
+  { label: 'تحویل فیزیکی', href: '/dashboard/delivery', icon: IconPackage },
+  { label: 'فروشگاه طلا', href: '/dashboard/delivery', icon: IconBuildingStore },
+  { label: 'خرید خودکار', href: '/dashboard/profile/savings', icon: IconPigMoney },
   { label: 'هشدار قیمت', href: '/dashboard/trade', icon: IconBellRinging },
   { label: 'معرفی دوستان', href: '/dashboard/profile/referral', icon: IconGift },
 ] as const
