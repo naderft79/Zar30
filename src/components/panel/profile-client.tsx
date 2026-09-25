@@ -27,11 +27,13 @@ import {
   IconPackage,
   IconShieldCheck,
   IconDeviceMobile,
+  IconPencil,
   IconPigMoney,
   IconSparkles,
   IconUser,
 } from '@tabler/icons-react'
 import { apiPut } from '@/lib/api/client'
+import { toPersianDigits } from '@/lib/utils/format'
 import { usePanelUser, type PanelUser } from './panel-shell'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -119,19 +121,22 @@ export function ProfileClient() {
 
   return (
     <div className="animate-stagger space-y-5">
-      {!editing && (
-        <div className="flex justify-end">
-          <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
-            ویرایش
-          </Button>
-        </div>
-      )}
-
       {/* ============ Identity Header — سطح ممتاز ============ */}
       <section
         aria-label="هویت حساب"
         className="surface-wealth gold-rings relative overflow-hidden rounded-2xl border p-6"
       >
+        {/* ویرایش — آیکون مداد گوشه بالا چپ */}
+        {!editing && (
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            aria-label="ویرایش پروفایل"
+            className="text-cream-300/70 hover:bg-cream-50/10 hover:text-cream-50 absolute top-4 left-4 z-10 flex size-9 items-center justify-center rounded-xl transition-colors"
+          >
+            <IconPencil className="size-4.5" stroke={1.75} />
+          </button>
+        )}
         <div className="relative flex flex-wrap items-center gap-4 sm:gap-5">
           <span className="from-gold-400 to-gold-600 text-navy-950 ring-gold-300/50 shadow-gold flex size-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-bl ring-1 sm:size-20">
             <IconUser className="size-8 sm:size-9" stroke={1.75} aria-hidden="true" />
@@ -141,9 +146,7 @@ export function ProfileClient() {
               {[user.firstName, user.lastName].filter(Boolean).join(' ') || 'کاربر زرسی'}
             </p>
             <p className="text-cream-300/60 mt-1 flex items-baseline gap-x-2.5 text-xs whitespace-nowrap">
-              <span dir="ltr" className="tabular-nums">
-                {user.mobile}
-              </span>
+              <span className="tabular-nums">{toPersianDigits(user.mobile)}</span>
               <span aria-hidden="true">·</span>
               <span>عضویت از {joinDate}</span>
             </p>
