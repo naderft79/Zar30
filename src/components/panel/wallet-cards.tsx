@@ -54,7 +54,8 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:gap-4">
       {/* ===== کارت موجودی طلا — گرادیانت طلایی ===== */}
-      <Card className="border-gold-700/50 from-gold-600 to-gold-700 bg-gradient-to-br">
+      {/* سطح طلایی — مقادیر اصلی scale pin می‌شوند تا در دارک مود کم‌رنگ/روشن نشود */}
+      <Card className="border-gold-700/50 from-gold-600 to-gold-700 bg-gradient-to-br [--gold-600:#a07e16] [--gold-700:#7c5f10]">
         <CardContent className="space-y-3 p-3.5 sm:p-5">
           <div className="flex items-center justify-between gap-1">
             <div className="flex items-center gap-2">

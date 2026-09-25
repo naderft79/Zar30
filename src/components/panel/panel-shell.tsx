@@ -289,7 +289,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
 
   return (
     <PanelContext.Provider value={{ user: effectiveUser, reload: load, logout }}>
-      <div className="bg-background min-h-dvh">
+      <div className="panel-scope bg-background min-h-dvh">
         {/* پل اعلان native — فقط در APK فعال است */}
         <NativeNotificationBridge />
 
@@ -469,7 +469,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                   >
                     <span
                       className={cn(
-                        'from-gold-400 via-gold-500 to-gold-600 ring-gold-500/30 shadow-gold relative -mt-9 mb-1 flex size-14 items-center justify-center rounded-full bg-gradient-to-bl ring-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) group-active:scale-95',
+                        'from-gold-400 via-gold-500 to-gold-600 ring-gold-500/30 shadow-gold relative -mt-9 mb-1 flex size-14 items-center justify-center rounded-full bg-gradient-to-bl ring-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) [--gold-600:#a07e16] group-active:scale-95',
                         active && 'animate-nav-pop',
                       )}
                     >

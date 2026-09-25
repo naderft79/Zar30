@@ -263,7 +263,7 @@ export function WealthHero({
         <Link
           key={bannerIdx}
           href={banner.href}
-          className="animate-fade-up bg-cream-50 focus-visible:ring-gold-500/70 flex items-center justify-between gap-3 rounded-2xl px-4 py-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:outline-none sm:px-5"
+          className="animate-fade-up bg-cream-50 focus-visible:ring-gold-500/70 flex items-center justify-between gap-3 rounded-2xl px-4 py-4 transition-transform duration-(--duration-normal) ease-(--ease-spring) [--gold-600:#a07e16] hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:outline-none sm:px-5"
         >
           {/* حداکثر ۳ خط — متن بلند به‌صورت متحرک نمایش داده می‌شود */}
           <div className="min-w-0 space-y-1">

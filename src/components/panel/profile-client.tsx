@@ -163,7 +163,7 @@ export function ProfileClient() {
           </button>
         )}
         <div className="relative flex flex-wrap items-center gap-4 sm:gap-5">
-          <span className="from-gold-400 to-gold-600 text-navy-950 ring-gold-300/50 shadow-gold flex size-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-bl ring-1 sm:size-20">
+          <span className="from-gold-400 to-gold-600 text-navy-950 ring-gold-300/50 shadow-gold flex size-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-bl ring-1 [--gold-600:#a07e16] sm:size-20">
             <IconUser className="size-8 sm:size-9" stroke={1.75} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
