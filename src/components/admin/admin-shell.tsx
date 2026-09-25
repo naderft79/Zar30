@@ -33,6 +33,7 @@ import {
   type AdminNavItem,
 } from '@/config/admin-navigation'
 import { AdminCommand } from '@/components/admin/admin-command'
+import { AdminThemeToggle } from '@/components/admin/admin-theme-toggle'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { cn } from 'cn'
 
@@ -484,6 +485,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <AdminCommand />
+
+          {/* سوییچ تم light/dark */}
+          <AdminThemeToggle />
 
           {/* هویت مدیر + خروج — منتقل‌شده از پایین سایدبار */}
           <AdminHeaderIdentity admin={admin} onLogout={logout} />

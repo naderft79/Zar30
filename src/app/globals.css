@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* Dark/Navy-first — حالت اصلی برند؛ dark: variant به کلاس .dark متصل است
-   (html همیشه کلاس dark دارد — ترجیح OS اثر ندارد) */
+/* تم با next-themes روی کلاس html سوار است — dark: variant به .dark متصل است
+   defaultTheme=light؛ انتخاب کاربر در localStorage (zar30-theme) می‌ماند */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================
@@ -711,6 +711,34 @@ html {
 }
 .installment-slider::-moz-range-track {
   background: transparent;
+}
+
+/* انیمیشن ورود آیکون تم — چرخش + ظهور فنری؛ keyframe است تا با ترنزیشن رنگ‌ها تداخل نکند */
+@keyframes theme-icon-in {
+  from {
+    opacity: 0;
+    transform: rotate(-100deg) scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+.animate-theme-icon-in {
+  animation: theme-icon-in 0.35s var(--ease-spring) both;
+}
+
+/* ترنزیشن نرم رنگ‌ها فقط در لحظه تعویض تم — کلاس توسط دکمه toggle اضافه و برداشته می‌شود */
+html.theme-animating,
+html.theme-animating *,
+html.theme-animating *::before,
+html.theme-animating *::after {
+  transition:
+    background-color 0.35s var(--ease-in-out),
+    border-color 0.35s var(--ease-in-out),
+    color 0.35s var(--ease-in-out),
+    fill 0.35s var(--ease-in-out),
+    stroke 0.35s var(--ease-in-out) !important;
 }
 
 /* ============================================
