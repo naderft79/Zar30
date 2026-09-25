@@ -120,7 +120,7 @@ function BankCardFace({
           {cardPan ? formatPan(cardPan) : '•••• •••• •••• ••••'}
         </p>
         <p className="text-[10px] tracking-wider tabular-nums opacity-80">
-          {formatIban(iban || 'IR0000000000000000000000')}
+          {formatIban(iban || 'IR000000000000000000000000')}
         </p>
       </div>
       {/* نام و نام خانوادگی دارنده — گوشه پایین سمت راست */}
@@ -343,7 +343,7 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
                 <BankCardFace
                   bank={previewBank}
                   cardPan={cardPan || null}
-                  iban={normalizedIban || 'IR0000000000000000000000'}
+                  iban={normalizedIban || 'IR000000000000000000000000'}
                   isDefault={false}
                   holderName={holderName}
                 />
