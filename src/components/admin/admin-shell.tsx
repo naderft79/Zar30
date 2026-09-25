@@ -249,7 +249,7 @@ function AdminLoadingSkeleton() {
       aria-busy="true"
       aria-label="در حال بارگذاری مرکز عملیات"
     >
-      <div className="border-border fixed inset-y-0 right-0 left-auto z-30 hidden w-72 flex-col border-l bg-white xl:flex">
+      <div className="border-border bg-card fixed inset-y-0 right-0 left-auto z-30 hidden w-72 flex-col border-l xl:flex">
         <div className="border-border flex h-16 items-center border-b px-5">
           <div className="skeleton-shimmer h-8 w-28 rounded-lg" />
         </div>
@@ -357,7 +357,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         {/* ============ Desktop — Sidebar جمع‌شونده ============ */}
         <aside
           className={cn(
-            'border-border fixed inset-y-0 right-0 z-40 hidden flex-col border-l bg-white xl:flex',
+            'border-border bg-card fixed inset-y-0 right-0 z-40 hidden flex-col border-l xl:flex',
             'transition-[width] duration-300 ease-(--ease-out)',
             collapsed ? 'w-[76px]' : 'w-72',
           )}
@@ -510,7 +510,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <Dialog open={navOpen} onOpenChange={setNavOpen}>
           <DialogContent
             showCloseButton={false}
-            className="border-border top-0 right-0 left-auto flex h-dvh w-72 max-w-[85vw] translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-l bg-white p-0"
+            className="border-border bg-card top-0 right-0 left-auto flex h-dvh w-72 max-w-[85vw] translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-l p-0"
           >
             <DialogTitle className="sr-only">ناوبری مرکز عملیات</DialogTitle>
             <DialogDescription className="sr-only">

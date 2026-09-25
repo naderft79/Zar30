@@ -111,27 +111,28 @@
   --z-toast: 70;
 }
 
-/* سازگاری: کلاس dark همان حالت اصلی است */
+/* ==== Dark Mode — Deep Navy ====
+   سورمه‌ای عمیق به‌جای سیاه — canvas از navy-950 و سطوح از پل‌های روشن‌تر */
 .dark {
-  --background: #0b0a08;
-  --surface: #12100d;
-  --card: #181511;
-  --elevated: #1f1a14;
-  --overlay: #282119;
-  --field: #14110d;
-  --border: #2c251b;
-  --border-strong: #403523;
-  --foreground: #f4eee0;
-  --text-secondary: #cfc5ae;
-  --muted-foreground: #9a8f79;
+  --background: var(--navy-950);
+  --surface: var(--navy-900);
+  --card: var(--navy-800);
+  --elevated: var(--navy-700);
+  --overlay: var(--navy-600);
+  --field: #0a1224;
+  --border: #1c2d50;
+  --border-strong: var(--navy-400);
+  --foreground: var(--cream-100);
+  --text-secondary: var(--navy-100);
+  --muted-foreground: var(--navy-200);
   --card-foreground: var(--foreground);
   --input: var(--field);
   --input-foreground: var(--foreground);
   --primary: var(--gold-500);
   --primary-foreground: #171105;
-  --secondary: #282119;
-  --secondary-foreground: #f4eee0;
-  --muted: #1e1a14;
+  --secondary: var(--navy-700);
+  --secondary-foreground: var(--cream-100);
+  --muted: var(--navy-900);
   --accent: var(--gold-500);
   --accent-foreground: #171105;
   --destructive: #e05c5c;
@@ -291,13 +292,19 @@
 }
 
 body {
-  /* عمق ظریف — halo سورمه‌ای بسیار کم‌رنگ بالای canvas سفید */
+  /* عمق ظریف — halo سورمه‌ای بسیار کم‌رنگ بالای canvas */
   background:
-    radial-gradient(1200px 600px at 85% -10%, rgb(53 84 138 / 0.05), transparent 60%),
+    radial-gradient(1200px 600px at 85% -10%, rgb(53 84 138 / 0.06), transparent 60%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-vazirmatn), Arial, Helvetica, sans-serif;
   direction: rtl;
+}
+/* halo در دارک مود کمی قوی‌تر تا عمق navy حس شود */
+.dark body {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgb(53 84 138 / 0.18), transparent 60%),
+    var(--background);
 }
 .light body {
   background: var(--background);
@@ -728,7 +735,20 @@ html {
   animation: theme-icon-in 0.35s var(--ease-spring) both;
 }
 
-/* ترنزیشن نرم رنگ‌ها فقط در لحظه تعویض تم — کلاس توسط دکمه toggle اضافه و برداشته می‌شود */
+/* تعویض تم — مسیر اصلی: View Transition (موج دایره‌ای از دکمه)؛ fallback: ترنزیشن رنگ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2147483646;
+}
+
+/* fallback برای مرورگرهای بدون startViewTransition — ترنزیشن رنگ کوتاه و موقت */
 html.theme-animating,
 html.theme-animating *,
 html.theme-animating *::before,

@@ -1,8 +1,9 @@
 // ============================================
 // Zar30 - Admin Theme Toggle
 // ============================================
-// دکمه سوییچ light/dark در هدر مرکز عملیات — انیمیشن آیکون + ترنزیشن نرم رنگ‌ها
-// آیکون با keyframe animation کار می‌کند تا در لحظه تعویض تم زیر transition رنگ‌ها نرود
+// دکمه سوییچ light/dark در هدر مرکز عملیات
+// انیمیشن اصلی: موج دایره‌ای View Transition از محل دکمه تا دورترین گوشه صفحه
+// fallback (مرورگرهای بدون startViewTransition یا reduced-motion): ترنزیشن نرم رنگ
 // ============================================
 
 'use client'
@@ -23,12 +24,48 @@ export function AdminThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
   const mounted = useMounted()
 
-  function toggle() {
-    // ترنزیشن نرم رنگ‌ها فقط در لحظه تعویض تم — بعد از انیمیشن کلاس برداشته می‌شود
+  function toggle(e: React.MouseEvent<HTMLButtonElement>) {
     const root = document.documentElement
-    root.classList.add('theme-animating')
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
-    window.setTimeout(() => root.classList.remove('theme-animating'), 450)
+    const next = resolvedTheme === 'dark' ? 'light' : 'dark'
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    const apply = () => {
+      root.classList.add('theme-animating')
+      setTheme(next)
+    }
+    const cleanup = () => root.classList.remove('theme-animating')
+
+    // مسیر انیمیشنی — موج دایره‌ای از مرکز دکمه تا دورترین گوشه
+    if (typeof document.startViewTransition === 'function' && !prefersReducedMotion) {
+      const rect = e.currentTarget.getBoundingClientRect()
+      const x = rect.left + rect.width / 2
+      const y = rect.top + rect.height / 2
+      const radius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y),
+      )
+      const transition = document.startViewTransition(apply)
+      transition.ready
+        .then(() => {
+          root.animate(
+            {
+              clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`],
+            },
+            {
+              duration: 550,
+              easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+              pseudoElement: '::view-transition-new(root)',
+            },
+          )
+        })
+        .catch(() => {})
+      transition.finished.then(cleanup, cleanup)
+      return
+    }
+
+    // fallback — ترنزیشن نرم رنگ‌ها
+    apply()
+    window.setTimeout(cleanup, 450)
   }
 
   const isDark = mounted && resolvedTheme === 'dark'
