@@ -21,12 +21,10 @@ import {
   IconGift,
   IconLifebuoy,
   IconLogout,
-  IconMail,
   IconDevices,
   IconDeviceFloppy,
   IconPackage,
   IconShieldCheck,
-  IconDeviceMobile,
   IconPencil,
   IconPigMoney,
   IconSparkles,
@@ -154,8 +152,8 @@ export function ProfileClient() {
         </div>
       </section>
 
-      <div>
-        {/* اطلاعات حساب */}
+      {/* اطلاعات حساب — فقط در حالت ویرایش (آیکون مداد) باز می‌شود */}
+      {editing && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -164,97 +162,71 @@ export function ProfileClient() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {editing ? (
-              <form onSubmit={save} className="space-y-4" noValidate>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="pf-first"
-                      className="text-foreground mb-1.5 block text-sm font-medium"
-                    >
-                      نام
-                    </label>
-                    <Input
-                      id="pf-first"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      maxLength={64}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="pf-last"
-                      className="text-foreground mb-1.5 block text-sm font-medium"
-                    >
-                      نام خانوادگی
-                    </label>
-                    <Input
-                      id="pf-last"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      maxLength={64}
-                    />
-                  </div>
+            <form onSubmit={save} className="space-y-4" noValidate>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="pf-first"
+                    className="text-foreground mb-1.5 block text-sm font-medium"
+                  >
+                    نام
+                  </label>
+                  <Input
+                    id="pf-first"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    maxLength={64}
+                  />
                 </div>
                 <div>
                   <label
-                    htmlFor="pf-email"
+                    htmlFor="pf-last"
                     className="text-foreground mb-1.5 block text-sm font-medium"
                   >
-                    ایمیل (اختیاری)
+                    نام خانوادگی
                   </label>
                   <Input
-                    id="pf-email"
-                    type="email"
-                    dir="ltr"
-                    className="text-left"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="pf-last"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    maxLength={64}
                   />
                 </div>
-                {error && (
-                  <p role="alert" className="bg-error/10 text-error rounded-lg px-3 py-2 text-sm">
-                    {error}
-                  </p>
-                )}
-                <div className="flex gap-2">
-                  <Button type="submit" variant="default" disabled={saving}>
-                    <IconDeviceFloppy className="size-4" />
-                    {saving ? 'در حال ذخیره…' : 'ذخیره'}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setEditing(false)}>
-                    انصراف
-                  </Button>
-                </div>
-              </form>
-            ) : (
-              <dl className="divide-border/40 divide-y text-sm">
-                {[
-                  ['نام', user.firstName ?? '—'],
-                  ['نام خانوادگی', user.lastName ?? '—'],
-                  ['شماره موبایل', user.mobile],
-                  ['ایمیل', user.email ?? '—'],
-                  ['تاریخ عضویت', joinDate],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between py-2.5">
-                    <dt className="text-muted-foreground flex items-center gap-2">
-                      {label === 'شماره موبایل' && <IconDeviceMobile className="size-4" />}
-                      {label === 'ایمیل' && <IconMail className="size-4" />}
-                      {label}
-                    </dt>
-                    <dd
-                      className="text-foreground font-medium"
-                      dir={label === 'ایمیل' || label === 'شماره موبایل' ? 'ltr' : undefined}
-                    >
-                      {value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            )}
+              </div>
+              <div>
+                <label
+                  htmlFor="pf-email"
+                  className="text-foreground mb-1.5 block text-sm font-medium"
+                >
+                  ایمیل (اختیاری)
+                </label>
+                <Input
+                  id="pf-email"
+                  type="email"
+                  dir="ltr"
+                  className="text-left"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              {error && (
+                <p role="alert" className="bg-error/10 text-error rounded-lg px-3 py-2 text-sm">
+                  {error}
+                </p>
+              )}
+              <div className="flex gap-2">
+                <Button type="submit" variant="default" disabled={saving}>
+                  <IconDeviceFloppy className="size-4" />
+                  {saving ? 'در حال ذخیره…' : 'ذخیره'}
+                </Button>
+                <Button type="button" variant="outline" onClick={() => setEditing(false)}>
+                  انصراف
+                </Button>
+              </div>
+            </form>
           </CardContent>
         </Card>
-      </div>
+      )}
 
       {/* ============ خدمات بیشتر — گرید ۴تایی مربعی عین صفحه خانه ============ */}
       <section aria-label="خدمات بیشتر">
