@@ -173,9 +173,9 @@ export function ProfileClient() {
         </div>
       </section>
 
-      <div className="grid gap-5 lg:grid-cols-5">
+      <div>
         {/* اطلاعات حساب */}
-        <Card className="lg:col-span-3">
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <IconUser className="text-gold-600 size-5" stroke={1.75} />
@@ -271,33 +271,6 @@ export function ProfileClient() {
                 ))}
               </dl>
             )}
-          </CardContent>
-        </Card>
-
-        {/* وضعیت حساب */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-base">وضعیت حساب</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">وضعیت حساب</span>
-              <StatusBadge tone={user.status === 'ACTIVE' ? 'success' : 'error'}>
-                {user.status === 'ACTIVE' ? 'فعال' : user.status}
-              </StatusBadge>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">سطح احراز هویت</span>
-              <StatusBadge tone={kycDone ? 'success' : 'warning'}>
-                {KYC_LABELS[user.kycLevel] ?? user.kycLevel}
-              </StatusBadge>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">تایید موبایل</span>
-              <StatusBadge tone={user.mobileVerifiedAt ? 'success' : 'warning'}>
-                {user.mobileVerifiedAt ? 'تایید شده' : 'تایید نشده'}
-              </StatusBadge>
-            </div>
           </CardContent>
         </Card>
       </div>
