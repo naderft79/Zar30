@@ -22,7 +22,6 @@ import {
 } from '@tabler/icons-react'
 
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
-import { Logo } from '@/components/shared/logo'
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
 import { OfflineIndicator, DATA_REFRESH_EVENT } from './offline-indicator'
 import { InstallPrompt } from './install-prompt'
@@ -283,7 +282,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           {/* لوگو */}
           <div className="border-border/60 flex h-13 items-center border-b px-5">
             <Link href="/" aria-label="زرسی — صفحه اصلی">
-              <Logo size="md" textClassName="text-foreground" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/brand-header.png" alt="زرسی" className="h-9 w-auto" />
             </Link>
           </div>
 
@@ -383,7 +383,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           {pathname === '/dashboard' ? (
             <Link href="/dashboard" aria-label="زرسی" className="justify-self-center md:hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand-mark.png" alt="زرسی" className="h-8 w-auto" />
+              <img src="/brand-header.png" alt="زرسی" className="h-8 w-auto" />
             </Link>
           ) : (
             <p className="text-foreground justify-self-center truncate text-sm font-bold md:hidden">
