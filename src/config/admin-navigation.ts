@@ -267,6 +267,22 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         permissions: [PERMISSIONS.PRICING_READ],
       },
       {
+        key: 'savings-plans',
+        label: 'خرید خودکار',
+        href: '/admin/savings-plans',
+        icon: IconCalendarClock,
+        description: 'طرح‌های خرید خودکار (SIP) کاربران',
+        permissions: [PERMISSIONS.SIP_READ],
+      },
+      {
+        key: 'price-alerts',
+        label: 'هشدارهای قیمت',
+        href: '/admin/price-alerts',
+        icon: IconBell,
+        description: 'هشدارهای قیمت ثبت‌شده کاربران',
+        permissions: [PERMISSIONS.ALERTS_READ],
+      },
+      {
         key: 'withdraw-limits',
         label: 'محدودیت برداشت',
         href: '/admin/withdraw-limits',
@@ -289,6 +305,14 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         icon: IconArrowsLeftRight,
         description: 'سقف‌های انتقال طلا بین کاربران',
         permissions: [PERMISSIONS.LIMITS_READ],
+      },
+      {
+        key: 'reconciliation',
+        label: 'تطبیق دفتر کل',
+        href: '/admin/reconciliation',
+        icon: IconCalculator,
+        description: 'تطبیق موجودی‌ها با دفتر کل و مغایرت‌ها',
+        permissions: [PERMISSIONS.LEDGER_READ],
       },
       {
         key: 'financial',
@@ -555,6 +579,14 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         icon: IconFlag,
         description: 'پرچم‌های قابلیت',
         permissions: [PERMISSIONS.FLAGS_READ],
+      },
+      {
+        key: 'rate-limits',
+        label: 'Rate Limiting',
+        href: '/admin/rate-limits',
+        icon: IconGauge,
+        description: 'قوانین محدودیت نرخ درخواست',
+        permissions: [PERMISSIONS.RATELIMIT_READ],
       },
       {
         key: 'api',

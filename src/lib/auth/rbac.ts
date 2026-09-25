@@ -92,6 +92,11 @@ export const PERMISSIONS = {
   LIMITS_MANAGE: 'limits.manage',
   LEVELS_READ: 'levels.read',
   LEVELS_MANAGE: 'levels.manage',
+  SIP_READ: 'savings.read',
+  SIP_MANAGE: 'savings.manage',
+  ALERTS_READ: 'alerts.read',
+  RATELIMIT_READ: 'ratelimit.read',
+  RATELIMIT_MANAGE: 'ratelimit.manage',
 } as const
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
@@ -147,6 +152,9 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     PERMISSIONS.LIMITS_MANAGE,
     PERMISSIONS.PRICING_UPDATE,
     PERMISSIONS.LEVELS_READ,
+    PERMISSIONS.SIP_READ,
+    PERMISSIONS.SIP_MANAGE,
+    PERMISSIONS.ALERTS_READ,
   ],
   SUPPORT: [
     PERMISSIONS.DELIVERY_READ,
@@ -222,6 +230,8 @@ const ROLE_PERMISSIONS: Record<AdminRole, readonly Permission[]> = {
     PERMISSIONS.API_READ,
     PERMISSIONS.API_MANAGE,
     PERMISSIONS.REPORTS_READ,
+    PERMISSIONS.RATELIMIT_READ,
+    PERMISSIONS.RATELIMIT_MANAGE,
   ],
   ANALYST: [...READ_PERMISSIONS, PERMISSIONS.REPORTS_EXPORT],
   READ_ONLY: READ_PERMISSIONS,
