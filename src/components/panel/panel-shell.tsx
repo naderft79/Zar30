@@ -408,7 +408,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           )}
           <div className="hidden md:block" />
           <div className="flex items-center gap-1.5 justify-self-end">
-            <PanelThemeToggle />
+            {/* تاگل تم فقط در هدر صفحه پروفایل */}
+            {pathname.startsWith('/dashboard/profile') && <PanelThemeToggle />}
             <HeaderAction pathname={pathname} />
             <UserAvatar user={effectiveUser} size="sm" className="hidden md:flex" />
           </div>
