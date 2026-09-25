@@ -12,8 +12,10 @@ import { IconChartPie, IconAlertTriangle, IconCircleCheck } from '@tabler/icons-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { apiGetWithRefresh } from '@/lib/api/client'
+import { usePanelCache, writePanelCache } from '@/lib/panel-cache'
 import { formatExactAmount } from '@/lib/utils/format'
 import { useOnlineStatus } from './offline-indicator'
+import { usePanelUser } from './panel-shell'
 import { AssetsHero, type AssetsAction } from './assets-hero'
 import { WalletCards, type WalletCardsData } from './wallet-cards'
 import { BankCards, type BankAccountRow } from './bank-cards'
@@ -33,9 +35,18 @@ interface SummaryData extends WalletCardsData {
 
 export function AssetsClient() {
   const router = useRouter()
+  const { user } = usePanelUser()
+  // null = fetch اولیه هنوز تمام نشده؛ کش محلی بلافاصله overlay می‌شود
   const [summary, setSummary] = useState<SummaryData | null>(null)
-  const [bankAccounts, setBankAccounts] = useState<BankAccountRow[]>([])
-  const [loading, setLoading] = useState(true)
+  const [bankAccounts, setBankAccounts] = useState<BankAccountRow[] | null>(null)
+  const [booted, setBooted] = useState(false)
+
+  const uid = user.id
+  const cachedSummary = usePanelCache<SummaryData>(`summary:${uid}`)
+  const cachedBank = usePanelCache<BankAccountRow[]>(`bank:${uid}`)
+  const shownSummary = summary ?? cachedSummary
+  const shownBank = bankAccounts ?? cachedBank ?? []
+  const loading = shownSummary === null && !booted
 
   // لینک قدیمی /dashboard/assets?action=… → صفحه مستقل اکشن
   useEffect(() => {
@@ -68,9 +79,16 @@ export function AssetsClient() {
       apiGetWithRefresh<{ summary: SummaryData }>('/api/v1/wallet/summary'),
       apiGetWithRefresh<{ accounts: BankAccountRow[] }>('/api/v1/bank-accounts'),
     ])
-    if (summaryRes.ok && summaryRes.data) setSummary(summaryRes.data.summary)
-    if (bankRes.ok) setBankAccounts(bankRes.data?.accounts ?? [])
-    setLoading(false)
+    if (summaryRes.ok && summaryRes.data) {
+      setSummary(summaryRes.data.summary)
+      writePanelCache(`summary:${uid}`, summaryRes.data.summary)
+    }
+    if (bankRes.ok) {
+      const next = bankRes.data?.accounts ?? []
+      setBankAccounts(next)
+      writePanelCache(`bank:${uid}`, next)
+    }
+    setBooted(true)
   }
 
   useEffect(() => {
@@ -81,19 +99,28 @@ export function AssetsClient() {
         apiGetWithRefresh<{ accounts: BankAccountRow[] }>('/api/v1/bank-accounts'),
       ])
       if (cancelled) return
-      if (summaryRes.ok && summaryRes.data) setSummary(summaryRes.data.summary)
-      if (bankRes.ok) setBankAccounts(bankRes.data?.accounts ?? [])
-      setLoading(false)
+      if (summaryRes.ok && summaryRes.data) {
+        setSummary(summaryRes.data.summary)
+        writePanelCache(`summary:${uid}`, summaryRes.data.summary)
+      }
+      if (bankRes.ok) {
+        const next = bankRes.data?.accounts ?? []
+        setBankAccounts(next)
+        writePanelCache(`bank:${uid}`, next)
+      }
+      setBooted(true)
     })()
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [uid])
 
   // ارزش کل = تومان آزاد + ارزش طلا با نرخ فروش لحظه‌ای
   const goldValue =
-    summary?.sellPrice != null ? Number(summary.goldBalance) * Number(summary.sellPrice) : 0
-  const totalValue = Number(summary?.tomanBalance ?? 0) + goldValue
+    shownSummary?.sellPrice != null
+      ? Number(shownSummary.goldBalance) * Number(shownSummary.sellPrice)
+      : 0
+  const totalValue = Number(shownSummary?.tomanBalance ?? 0) + goldValue
 
   function handleHeroAction(action: AssetsAction) {
     router.push(ACTION_ROUTES[action])
@@ -104,7 +131,7 @@ export function AssetsClient() {
       {/* هیروی سورمه‌ای — ارزش کل + ۴ اکشن مالی */}
       <AssetsHero
         totalValue={Math.round(totalValue)}
-        changePercent={summary?.priceChange24h ?? null}
+        changePercent={shownSummary?.priceChange24h ?? null}
         loading={loading}
         online={online}
         onAction={handleHeroAction}
@@ -113,7 +140,7 @@ export function AssetsClient() {
       {/* کارت‌های کیف — طلا (سود/زیان) + تومان */}
       <WalletCards
         data={
-          summary ?? {
+          shownSummary ?? {
             goldBalance: '0',
             goldLocked: '0',
             tomanBalance: '0',
@@ -126,7 +153,7 @@ export function AssetsClient() {
       />
 
       {/* کارت‌های بانکی — اسکرول افقی + افزودن/حذف/پیش‌فرض */}
-      <BankCards accounts={bankAccounts} online={online} onChanged={() => void loadAll()} />
+      <BankCards accounts={shownBank} online={online} onChanged={() => void loadAll()} />
 
       {error && (
         <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
@@ -157,8 +184,8 @@ export function AssetsClient() {
           <CardContent>
             {loading ? (
               <div className="skeleton-shimmer h-24 rounded-lg" />
-            ) : Number(summary?.goldBalance ?? 0) === 0 &&
-              Number(summary?.tomanBalance ?? 0) === 0 ? (
+            ) : Number(shownSummary?.goldBalance ?? 0) === 0 &&
+              Number(shownSummary?.tomanBalance ?? 0) === 0 ? (
               <EmptyState
                 icon={IconChartPie}
                 title="دارایی فعالی ندارید"
@@ -196,7 +223,7 @@ export function AssetsClient() {
                             طلای آب‌شده
                           </span>
                           <span className="text-foreground font-semibold tabular-nums" dir="ltr">
-                            {formatExactAmount(summary?.goldBalance ?? '0')} گرم · {goldPct}٪
+                            {formatExactAmount(shownSummary?.goldBalance ?? '0')} گرم · {goldPct}٪
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
@@ -208,16 +235,18 @@ export function AssetsClient() {
                             تومان
                           </span>
                           <span className="text-foreground font-semibold tabular-nums" dir="ltr">
-                            {formatExactAmount(summary?.tomanBalance ?? '0')} تومان · {tomanPct}٪
+                            {formatExactAmount(shownSummary?.tomanBalance ?? '0')} تومان ·{' '}
+                            {tomanPct}٪
                           </span>
                         </div>
-                        {Number(summary?.goldLocked ?? 0) + Number(summary?.tomanLocked ?? 0) >
+                        {Number(shownSummary?.goldLocked ?? 0) +
+                          Number(shownSummary?.tomanLocked ?? 0) >
                           0 && (
                           <div className="border-border/50 flex items-center justify-between border-t pt-2.5">
                             <span className="text-muted-foreground">مسدود شده</span>
                             <span className="text-foreground font-semibold tabular-nums" dir="ltr">
-                              {formatExactAmount(summary?.tomanLocked ?? '0')} تومان +{' '}
-                              {formatExactAmount(summary?.goldLocked ?? '0')} گرم
+                              {formatExactAmount(shownSummary?.tomanLocked ?? '0')} تومان +{' '}
+                              {formatExactAmount(shownSummary?.goldLocked ?? '0')} گرم
                             </span>
                           </div>
                         )}

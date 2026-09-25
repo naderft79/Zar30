@@ -22,6 +22,7 @@ import {
 } from '@tabler/icons-react'
 
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
+import { clearPanelCache, usePanelCache, writePanelCache } from '@/lib/panel-cache'
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
 import { OfflineIndicator, DATA_REFRESH_EVENT } from './offline-indicator'
 import { NativeNotificationBridge } from './native-notification-bridge'
@@ -200,14 +201,20 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const [user, setUser] = useState<PanelUser | null>(null)
+  // آخرین پروفایل ذخیره‌شده — shell بلافاصله رندر می‌شود و fetch فقط تازه‌سازی است
+  const cachedUser = usePanelCache<PanelUser>('user')
+  const effectiveUser = user ?? cachedUser
 
   const load = useCallback(async () => {
     const res = await apiGetWithRefresh<{ user: PanelUser }>('/api/v1/users/me')
     if (!res.ok) {
+      // نشست واقعاً نامعتبر است — کش را پاک کن تا داده کاربر قبلی نماند
+      clearPanelCache()
       router.push('/login')
       return
     }
     setUser(res.data!.user)
+    writePanelCache('user', res.data!.user)
   }, [router])
 
   useEffect(() => {
@@ -216,10 +223,12 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
       const res = await apiGetWithRefresh<{ user: PanelUser }>('/api/v1/users/me')
       if (cancelled) return
       if (!res.ok) {
+        clearPanelCache()
         router.push('/login')
         return
       }
       setUser(res.data!.user)
+      writePanelCache('user', res.data!.user)
     })()
     return () => {
       cancelled = true
@@ -227,6 +236,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   }, [router])
 
   async function logout() {
+    clearPanelCache()
     await apiPost('/api/v1/auth/logout')
     router.push('/login')
     router.refresh()
@@ -265,9 +275,11 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
     setPullY(0)
   }
 
-  if (!user) return <PanelLoadingSkeleton />
+  if (!effectiveUser) return <PanelLoadingSkeleton />
 
-  const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.mobile
+  const displayName =
+    [effectiveUser.firstName, effectiveUser.lastName].filter(Boolean).join(' ') ||
+    effectiveUser.mobile
   const today = new Date().toLocaleDateString('fa-IR', {
     weekday: 'long',
     day: 'numeric',
@@ -275,7 +287,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   })
 
   return (
-    <PanelContext.Provider value={{ user, reload: load, logout }}>
+    <PanelContext.Provider value={{ user: effectiveUser, reload: load, logout }}>
       <div className="bg-background min-h-dvh">
         {/* پل اعلان native — فقط در APK فعال است */}
         <NativeNotificationBridge />
@@ -356,7 +368,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
                   className="text-muted-foreground/70 block truncate text-[10px] tabular-nums"
                   dir="ltr"
                 >
-                  {user.mobile}
+                  {effectiveUser.mobile}
                 </span>
               </span>
               <IconChevronLeft className="text-muted-foreground/60 group-hover:text-gold-600 size-4 shrink-0 transition-colors" />
@@ -375,7 +387,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
         <header className="border-border/40 bg-background/70 sticky top-0 z-(--z-sticky) grid h-[calc(3.25rem+env(safe-area-inset-top))] grid-cols-[1fr_auto_1fr] items-center gap-3 border-b px-4 pt-[env(safe-area-inset-top)] backdrop-blur-xl sm:px-6 md:pr-68 md:pl-8">
           {/* موبایل — آواتار پروفایل (سمت راست در RTL) */}
           <div className="flex items-center md:hidden">
-            <UserAvatar user={user} size="sm" />
+            <UserAvatar user={effectiveUser} size="sm" />
           </div>
           {/* دسکتاپ — عنوان صفحه + تاریخ امروز */}
           <div className="hidden min-w-0 items-baseline gap-2.5 md:flex">
@@ -396,7 +408,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           <div className="hidden md:block" />
           <div className="flex items-center gap-1.5 justify-self-end">
             <HeaderAction pathname={pathname} />
-            <UserAvatar user={user} size="sm" className="hidden md:flex" />
+            <UserAvatar user={effectiveUser} size="sm" className="hidden md:flex" />
           </div>
         </header>
 

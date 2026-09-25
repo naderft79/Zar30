@@ -23,6 +23,7 @@ import {
   IconWallet,
 } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
+import { usePanelCache, writePanelCache } from '@/lib/panel-cache'
 import { formatExactAmount } from '@/lib/utils/format'
 import { usePanelUser } from './panel-shell'
 import { DATA_REFRESH_EVENT } from './offline-indicator'
@@ -112,10 +113,24 @@ export function DashboardOverview() {
     month: 'long',
   })
 
-  const [accounts, setAccounts] = useState<WalletAccount[]>([])
-  const [txs, setTxs] = useState<TxRow[]>([])
+  // null = هنوز fetch اولیه تمام نشده؛ کش محلی بلافاصله overlay می‌شود
+  const [accounts, setAccounts] = useState<WalletAccount[] | null>(null)
+  const [txs, setTxs] = useState<TxRow[] | null>(null)
   const [price, setPrice] = useState<PriceData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [booted, setBooted] = useState(false)
+
+  // آخرین داده cached — موجودی بدون هیچ skeleton یا باکس خالی رندر می‌شود
+  const uid = user.id
+  const cachedAccounts = usePanelCache<WalletAccount[]>(`wallet:${uid}`)
+  const cachedTxs = usePanelCache<TxRow[]>(`txs:${uid}`)
+  const cachedPrice = usePanelCache<PriceData>('price')
+
+  const shownAccounts = accounts ?? cachedAccounts ?? []
+  const shownTxs = txs ?? cachedTxs ?? []
+  const shownPrice = price ?? cachedPrice
+  const walletReady = accounts !== null || cachedAccounts !== null
+  const priceLoading = shownPrice === null && !booted
+  const txLoading = shownTxs.length === 0 && !booted
 
   // تراکنش انتخاب‌شده — جزئیات در bottom sheet موبایل
   const [selectedTx, setSelectedTx] = useState<TxRow | null>(null)
@@ -129,10 +144,21 @@ export function DashboardOverview() {
         apiGetWithRefresh<PriceData>('/api/v1/price'),
       ])
       if (cancelled) return
-      if (walletRes.ok) setAccounts(walletRes.data?.accounts ?? [])
-      if (txRes.ok) setTxs(txRes.data?.transactions ?? [])
-      if (priceRes.ok && priceRes.data) setPrice(priceRes.data)
-      setLoading(false)
+      if (walletRes.ok) {
+        const next = walletRes.data?.accounts ?? []
+        setAccounts(next)
+        writePanelCache(`wallet:${uid}`, next)
+      }
+      if (txRes.ok) {
+        const next = txRes.data?.transactions ?? []
+        setTxs(next)
+        writePanelCache(`txs:${uid}`, next)
+      }
+      if (priceRes.ok && priceRes.data) {
+        setPrice(priceRes.data)
+        writePanelCache('price', priceRes.data)
+      }
+      setBooted(true)
     }
     void fetchAll()
     // pull-to-refresh و reconnect → رفرش داده
@@ -141,12 +167,12 @@ export function DashboardOverview() {
       cancelled = true
       window.removeEventListener(DATA_REFRESH_EVENT, fetchAll)
     }
-  }, [])
+  }, [uid])
 
-  const toman = accounts.find((a) => a.assetType === 'TOMAN')
-  const gold = accounts.find((a) => a.assetType === 'GOLD')
+  const toman = shownAccounts.find((a) => a.assetType === 'TOMAN')
+  const gold = shownAccounts.find((a) => a.assetType === 'GOLD')
   // ارزش کل = موجودی تومانی + ارزش تقریبی طلا با نرخ فروش لحظه‌ای
-  const goldValue = price && gold ? Number(gold.balance) * price.sellPrice : 0
+  const goldValue = shownPrice && gold ? Number(gold.balance) * shownPrice.sellPrice : 0
   const totalValue = Number(toman?.balance ?? 0) + goldValue
 
   return (
@@ -155,13 +181,13 @@ export function DashboardOverview() {
       <div className="border-border/60 bg-card/70 flex items-center justify-between gap-3 rounded-full border px-4 py-2 shadow-sm backdrop-blur-sm sm:px-5">
         <div className="flex min-w-0 items-center gap-2">
           <span className="relative flex size-2 shrink-0" aria-hidden="true">
-            {price?.isLive && (
+            {shownPrice?.isLive && (
               <span className="bg-success/60 absolute inline-flex h-full w-full animate-ping rounded-full" />
             )}
             <span
               className={cn(
                 'relative inline-flex size-2 rounded-full',
-                price?.isLive ? 'bg-success' : 'bg-muted-foreground/40',
+                shownPrice?.isLive ? 'bg-success' : 'bg-muted-foreground/40',
               )}
             />
           </span>
@@ -170,9 +196,9 @@ export function DashboardOverview() {
           </p>
         </div>
         <div className="flex items-center gap-3 sm:gap-5">
-          {loading ? (
+          {priceLoading ? (
             <div className="skeleton-shimmer h-5 w-32 rounded-md" />
-          ) : price && price.buyPrice > 0 ? (
+          ) : shownPrice && shownPrice.buyPrice > 0 ? (
             <>
               <Link
                 href="/dashboard/trade?side=buy"
@@ -184,7 +210,7 @@ export function DashboardOverview() {
                   className="text-success text-sm font-bold tabular-nums sm:text-base"
                   dir="ltr"
                 >
-                  {formatExactAmount(String(Math.round(price.buyPrice)))}
+                  {formatExactAmount(String(Math.round(shownPrice.buyPrice)))}
                 </span>
               </Link>
               <span className="bg-border h-4 w-px" aria-hidden="true" />
@@ -198,7 +224,7 @@ export function DashboardOverview() {
                   className="text-gold-600 text-sm font-bold tabular-nums sm:text-base"
                   dir="ltr"
                 >
-                  {formatExactAmount(String(Math.round(price.sellPrice)))}
+                  {formatExactAmount(String(Math.round(shownPrice.sellPrice)))}
                 </span>
               </Link>
             </>
@@ -215,7 +241,7 @@ export function DashboardOverview() {
         goldGrams={gold?.balance ?? '0'}
         tomanBalance={toman?.available ?? '0'}
         lockedToman={toman?.lockedBalance ?? '0'}
-        loading={loading}
+        loading={!walletReady}
       />
 
       {/* ============ ۲. میان‌برهای خدمات — ۴ کارت مربعی ============ */}
@@ -247,13 +273,13 @@ export function DashboardOverview() {
           </div>
         </CardHeader>
         <CardContent>
-          {loading ? (
+          {txLoading ? (
             <ul className="space-y-3">
               {Array.from({ length: 3 }).map((_, i) => (
                 <li key={i} className="skeleton-shimmer h-14 rounded-xl" />
               ))}
             </ul>
-          ) : txs.length === 0 ? (
+          ) : shownTxs.length === 0 ? (
             <EmptyState
               icon={IconHistory}
               title="هنوز تراکنشی ثبت نشده است"
@@ -262,7 +288,7 @@ export function DashboardOverview() {
             />
           ) : (
             <ul className="divide-border/40 divide-y">
-              {txs.map((t) => {
+              {shownTxs.map((t) => {
                 const Icon = txIcon(t.type)
                 const incoming = isIncoming(t.type)
                 return (
