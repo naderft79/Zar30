@@ -26,6 +26,7 @@ import { clearPanelCache, usePanelCache, writePanelCache } from '@/lib/panel-cac
 import { PANEL_NAV_ITEMS, isNavItemActive, UTILITY_ROUTES } from '@/config/navigation'
 import { OfflineIndicator, DATA_REFRESH_EVENT } from './offline-indicator'
 import { NativeNotificationBridge } from './native-notification-bridge'
+import { PanelThemeToggle } from './panel-theme-toggle'
 import { cn } from 'cn'
 
 export interface PanelUser {
@@ -408,6 +409,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           <div className="hidden md:block" />
           <div className="flex items-center gap-1.5 justify-self-end">
             <HeaderAction pathname={pathname} />
+            <PanelThemeToggle />
             <UserAvatar user={effectiveUser} size="sm" className="hidden md:flex" />
           </div>
         </header>
