@@ -17,6 +17,7 @@ import { postJournal, type JournalLeg } from './ledger.service'
 import { ensureAssetAccount } from './wallet.service'
 import { enforceLimit } from './limit.service'
 import { notifyFinancial } from './notify'
+import { triggerRiskEvaluation } from '@/lib/services/admin-risk.service'
 
 const MAX_TOMAN_TRANSFER = BigInt(process.env.MAX_TRANSFER_TOMAN ?? '500000000')
 const MAX_GOLD_TRANSFER_G = new Decimal(process.env.MAX_TRANSFER_GOLD ?? '100')
@@ -150,6 +151,7 @@ export async function createTransfer(
     input.giftMessage ?? '',
     { transferId: transfer.id, amount: amountLabel, gift: isGift },
   )
+  triggerRiskEvaluation(senderId)
 
   return transfer
 }

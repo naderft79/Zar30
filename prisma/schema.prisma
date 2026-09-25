@@ -257,6 +257,7 @@ model User {
   sipPlans          RecurringBuyPlan[]
   coinHoldings      CoinHolding[]
   feeOverride       UserFeeOverride?
+  riskEvents        RiskEvent[]
 
   @@index([referredById])
   @@index([status])
@@ -278,6 +279,7 @@ model AdminUser {
   tickets             Ticket[]
   installmentContracts InstallmentContract[]
   deliveryRequests    GoldDeliveryRequest[]
+  exportRecords       ExportRecord[]
 
   @@map("admin_users")
 }
@@ -1330,4 +1332,76 @@ model KycLevelConfig {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("kyc_level_configs")
+}
+
+// ============================================
+// Risk Engine (امتیاز ریسک — فاز ۴)
+// ============================================
+// قوانین پویا: هر قانون روی یک متریک کاربر در بازه زمانی ارزیابی می‌شود
+// و در صورت عبور از آستانه، RiskEvent با امتیاز ثبت می‌شود
+
+enum RiskMetric {
+  WITHDRAW_SUM        // مجموع برداشت‌های تومانی
+  TRADE_SUM           // مجموع معاملات تومانی
+  TRANSFER_COUNT      // تعداد انتقال‌های خروجی
+  TRANSFER_GOLD       // مجموع گرم انتقال خروجی
+  FAILED_PAYMENTS     // تعداد پرداخت‌های ناموفق
+  FLAGGED_TRANSFERS   // انتقال‌های پرچم‌دار
+  BLOCKED_CARDS       // کارت‌های بانکی مسدود
+  LOGIN_IP_CHANGES    // تعداد IPهای متمایز ورود
+}
+
+model RiskRule {
+  id          String     @id @default(uuid())
+  name        String
+  metric      RiskMetric
+  threshold   Decimal    @db.Decimal(20, 4) // آستانه — واحد به نوع متریک بستگی دارد
+  windowHours Int        @default(24) @map("window_hours")
+  scoreWeight Int        @default(10) @map("score_weight") // امتیازی که به ریسک کاربر اضافه می‌شود
+  active      Boolean    @default(true)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  events RiskEvent[]
+
+  @@index([active])
+  @@map("risk_rules")
+}
+
+model RiskEvent {
+  id         String     @id @default(uuid())
+  userId     String     @map("user_id")
+  ruleId     String?    @map("rule_id")
+  metric     String     // متریک/نوع سیگنال — برای رویدادهای دستی هم کار می‌کند
+  score      Int        @default(0)
+  detail     Json?
+  reviewedAt DateTime?  @map("reviewed_at")
+  reviewedBy String?    @map("reviewed_by")
+  reviewNote String?    @map("review_note")
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rule RiskRule? @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([reviewedAt])
+  @@map("risk_events")
+}
+
+// ============================================
+// Export History (تاریخچه خروجی‌ها)
+// ============================================
+
+model ExportRecord {
+  id        String   @id @default(uuid())
+  adminId   String   @map("admin_id")
+  kind      String   // orders | transactions | withdrawals | users | ...
+  params    Json?
+  rowCount  Int      @default(0) @map("row_count")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  admin AdminUser @relation(fields: [adminId], references: [id])
+
+  @@index([adminId, createdAt])
+  @@map("export_records")
 }

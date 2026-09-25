@@ -36,6 +36,7 @@ import { calculateUserTradeFee, MIN_ORDER_TOMAN } from './fee.service'
 import { enforceLimit } from './limit.service'
 import { KYC_LIMITS } from './limits'
 import { notifyFinancial } from './notify'
+import { triggerRiskEvaluation } from '@/lib/services/admin-risk.service'
 
 // سقف روزانه معامله بر اساس مجموع سفارش‌های FILLED امروز
 async function checkDailyLimit(userId: string, kycLevel: KycLevel, tomanAmount: bigint) {
@@ -159,6 +160,7 @@ export async function buyGold(
     goldAmount: goldAmount.toString(),
     tomanAmount: input.tomanAmount.toString(),
   })
+  triggerRiskEvaluation(ctx.userId)
 
   return toOrderResult(order)
 }
@@ -227,6 +229,7 @@ export async function sellGold(
     goldAmount: goldAmount.toString(),
     tomanAmount: net.toString(),
   })
+  triggerRiskEvaluation(ctx.userId)
 
   return toOrderResult(order)
 }

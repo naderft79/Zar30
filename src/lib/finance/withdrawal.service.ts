@@ -21,6 +21,7 @@ import { MIN_WITHDRAWAL_TOMAN } from './fee.service'
 import { KYC_LIMITS } from './limits'
 import { enforceLimit } from './limit.service'
 import { notifyFinancial } from './notify'
+import { triggerRiskEvaluation } from '@/lib/services/admin-risk.service'
 
 type Tx = Prisma.TransactionClient
 
@@ -108,6 +109,7 @@ export async function requestWithdrawal(
     withdrawalId: result.withdrawal.id,
     amount: input.amount.toString(),
   })
+  triggerRiskEvaluation(ctx.userId)
 
   return {
     id: result.withdrawal.id,
