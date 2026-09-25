@@ -24,10 +24,14 @@ export const passwordSchema = z
   .regex(/[a-zA-Z]/, 'رمز عبور باید شامل حروف باشد')
   .regex(/\d/, 'رمز عبور باید شامل عدد باشد')
 
-// شماره شبا ایرانی
+// شماره شبا ایرانی — با یا بدون پیشوند IR پذیرفته می‌شود
 export const ibanSchema = z
   .string()
-  .regex(/^IR\d{24}$/, 'شماره شبا باید با IR شروع و ۲۶ کاراکتر باشد')
+  .transform((v) => {
+    const raw = v.replace(/\s/g, '').toUpperCase()
+    return raw.startsWith('IR') ? raw : `IR${raw}`
+  })
+  .pipe(z.string().regex(/^IR\d{24}$/, 'شماره شبا باید ۲۴ رقم باشد'))
 
 // مبلغ تومانی (مثبت)
 export const tomanAmountSchema = z

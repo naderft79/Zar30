@@ -167,7 +167,7 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
   async function submit() {
     setError(null)
     if (!/^IR\d{24}$/.test(normalizedIban)) {
-      setError('شماره شبا باید با IR شروع و ۲۶ کاراکتر باشد')
+      setError('شماره شبا باید ۲۴ رقم باشد')
       return
     }
     if (cardPan && !/^\d{16}$/.test(cardPan)) {
@@ -312,12 +312,18 @@ export function BankCards({ accounts, online, onChanged }: BankCardsProps) {
                 />
               </div>
               <label className="block space-y-1.5">
-                <span className="text-muted-foreground text-[11px]">شماره شبا</span>
+                <span className="text-muted-foreground text-[11px]">شماره شبا (۲۴ رقم)</span>
                 <input
                   type="text"
                   dir="ltr"
                   value={iban}
-                  onChange={(e) => setIban(e.target.value.toUpperCase().replace(/[^\dA-Z]/g, ''))}
+                  onChange={(e) => {
+                    // IR خودکار — با یا بدون تایپ IR، فقط ۲۴ رقم پذیرفته می‌شود
+                    const raw = e.target.value.toUpperCase().replace(/[^\dA-Z]/g, '')
+                    if (!raw) return setIban('')
+                    const digits = raw.replace(/\D/g, '')
+                    setIban(`IR${digits}`.slice(0, 26))
+                  }}
                   placeholder="IR062960000000100324200001"
                   maxLength={26}
                   className={inputClass}

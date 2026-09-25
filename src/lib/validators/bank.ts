@@ -37,7 +37,11 @@ export function isValidCardPan(pan: string): boolean {
 // ---------- schemas ----------
 const ibanChecked = z
   .string()
-  .transform((v) => v.replace(/\s/g, '').toUpperCase())
+  .transform((v) => {
+    // با یا بدون IR پذیرفته می‌شود — نرمال‌سازی به IR + ۲۴ رقم
+    const raw = v.replace(/\s/g, '').toUpperCase()
+    return raw.startsWith('IR') ? raw : `IR${raw}`
+  })
   .refine(isValidIban, 'شماره شبا نامعتبر است — ارقام آن را بررسی کنید')
 
 const mobileSchema = z.string().regex(/^09\d{9}$/, 'شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود')

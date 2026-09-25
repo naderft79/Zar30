@@ -67,7 +67,7 @@ export function WithdrawSheet({
     }
     const normalized = manualIban.replace(/\s/g, '').toUpperCase()
     if (useManual && !/^IR\d{24}$/.test(normalized)) {
-      setError('شماره شبا باید با IR شروع و ۲۶ کاراکتر باشد')
+      setError('شماره شبا باید ۲۴ رقم باشد')
       return
     }
     if (!/^\d{4,8}$/.test(otpCode)) {
@@ -183,7 +183,13 @@ export function WithdrawSheet({
             type="text"
             dir="ltr"
             value={manualIban}
-            onChange={(e) => setManualIban(e.target.value.toUpperCase().replace(/[^\dA-Z]/g, ''))}
+            onChange={(e) => {
+              // IR خودکار — با یا بدون تایپ IR، فقط ۲۴ رقم پذیرفته می‌شود
+              const raw = e.target.value.toUpperCase().replace(/[^\dA-Z]/g, '')
+              if (!raw) return setManualIban('')
+              const digits = raw.replace(/\D/g, '')
+              setManualIban(`IR${digits}`.slice(0, 26))
+            }}
             placeholder="IR062960000000100324200001"
             maxLength={26}
             className={inputClass}

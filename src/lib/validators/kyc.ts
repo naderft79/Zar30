@@ -52,7 +52,11 @@ export const nationalCodeStrict = z
 
 export const ibanStrict = z
   .string()
-  .transform((v) => v.replace(/\s/g, '').toUpperCase())
+  .transform((v) => {
+    // با یا بدون IR پذیرفته می‌شود — نرمال‌سازی به IR + ۲۴ رقم
+    const raw = v.replace(/\s/g, '').toUpperCase()
+    return raw.startsWith('IR') ? raw : `IR${raw}`
+  })
   .pipe(z.string().refine(isValidIban, 'شماره شبا معتبر نیست'))
 
 export const cardNumberSchema = z
