@@ -63,7 +63,11 @@ function formatPan(pan: string) {
   return pan.replace(/(\d{4})(?=\d)/g, '$1 ')
 }
 function formatIban(iban: string) {
-  return iban.replace(/(.{4})(?=.)/g, '$1 ')
+  // قالب شبا: IR + ۲ رقم کنترلی، سپس گروه‌های ۴ رقمی، و ۲ رقم پایانی
+  const head = iban.slice(0, 4)
+  const rest = iban.slice(4)
+  const body = rest.slice(0, -2).replace(/(\d{4})(?=\d)/g, '$1 ')
+  return `${head} ${body} ${rest.slice(-2)}`
 }
 
 function BankCardFace({
@@ -109,8 +113,8 @@ function BankCardFace({
       <div className="absolute top-[44%] left-3 -translate-y-1/2">
         <CardChip />
       </div>
-      {/* شماره کارت — دقیقاً مرکز کارت — و شبا با فاصله زیر آن */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+      {/* شماره کارت و شبا — مرکز عمودی، کمی راست‌تر و دور از چیپ */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pl-12">
         <p className="text-sm font-bold tracking-wider tabular-nums">
           {cardPan ? formatPan(cardPan) : '•••• •••• •••• ••••'}
         </p>
