@@ -28,6 +28,29 @@ const FALLBACK_RULES: Record<string, RateLimitRule> = {
 }
 
 let cachedRules: { rules: Record<string, RateLimitRule>; loadedAt: number } | null = null
+let cachedAdminIds: { ids: Set<string>; loadedAt: number } | null = null
+
+// شناسه‌های ادمین‌های فعال (userId + mobile) — rate limit روی آن‌ها اعمال نمی‌شود
+// کش ۶۰ ثانیه‌ای تا به ازای هر request کوئری اضافی زده نشود
+async function loadAdminIdentifiers(): Promise<Set<string>> {
+  if (cachedAdminIds && Date.now() - cachedAdminIds.loadedAt < 60_000) return cachedAdminIds.ids
+  try {
+    const admins = await prisma.adminUser.findMany({
+      where: { active: true },
+      select: { userId: true, user: { select: { mobile: true } } },
+    })
+    const ids = new Set<string>()
+    for (const admin of admins) {
+      ids.add(admin.userId)
+      ids.add(admin.user.mobile)
+    }
+    cachedAdminIds = { ids, loadedAt: Date.now() }
+    return ids
+  } catch (err) {
+    logger.warn({ err }, 'Admin identifiers load failed — continuing without bypass')
+    return cachedAdminIds?.ids ?? new Set()
+  }
+}
 
 // پیکربندی از DB با cache ۶۰ ثانیه‌ای — ادمین می‌تواند بدون deploy تغییر دهد
 async function loadRules(): Promise<Record<string, RateLimitRule>> {
@@ -58,6 +81,13 @@ export async function checkRateLimit(
 ): Promise<RateLimitResult> {
   const rules = await loadRules()
   const rule = rules[configKey] ?? FALLBACK_RULES['api.general']!
+
+  // ادمین‌های فعال از rate limit معاف‌اند — هم userId و هم mobile
+  const adminIds = await loadAdminIdentifiers()
+  if (adminIds.has(identifier)) {
+    return { limit: rule.limit, remaining: rule.limit, resetSeconds: rule.windowSeconds }
+  }
+
   const key = `ratelimit:${configKey}:${identifier}`
   const now = Date.now()
   const windowStartMs = now - rule.windowSeconds * 1000
@@ -73,8 +103,10 @@ export async function checkRateLimit(
         1,
         Math.ceil((oldestScore + rule.windowSeconds * 1000 - now) / 1000),
       )
+      // زمان واقعی reset به کاربر نشان داده نمی‌شود — عدد رندوم کوتاه برای UX بهتر
+      const displaySeconds = 5 + Math.floor(Math.random() * 6)
       throw ApiError.tooManyRequests(
-        `تعداد درخواست‌ها بیش از حد مجاز است. تا ${resetSeconds} ثانیه دیگر تلاش کنید`,
+        `تعداد درخواست‌ها بیش از حد مجاز است. تا ${displaySeconds} ثانیه دیگر تلاش کنید`,
       )
     }
     await redis.zadd(key, now, `${now}:${Math.random().toString(36).slice(2)}`)
