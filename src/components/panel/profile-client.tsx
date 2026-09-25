@@ -320,10 +320,7 @@ export function ProfileClient() {
       </section>
 
       {/* خروج از حساب — در موبایل تنها راه خروج است (sidebar مخفی است) */}
-      <div className="border-border/60 flex items-center justify-between rounded-xl border p-4">
-        <p className="text-muted-foreground text-xs leading-5">
-          با خروج، نشست فعلی این دستگاه لغو می‌شود.
-        </p>
+      <div className="border-border/60 flex items-center justify-end rounded-xl border p-4">
         <Button
           variant="outline"
           size="sm"
