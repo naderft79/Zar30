@@ -142,8 +142,8 @@ export function ProfileClient() {
         className="surface-wealth gold-rings relative overflow-hidden rounded-2xl border p-6"
       >
         <div className="relative flex flex-wrap items-center gap-4 sm:gap-5">
-          <span className="from-gold-500/30 to-gold-600/15 text-gold-300 ring-gold-500/40 shadow-gold flex size-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-bl text-xl font-extrabold ring-1 sm:size-20 sm:text-2xl">
-            {([user.firstName, user.lastName].filter(Boolean).join(' ') || user.mobile).slice(0, 2)}
+          <span className="from-gold-400 to-gold-600 text-navy-950 ring-gold-300/50 shadow-gold flex size-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-bl ring-1 sm:size-20">
+            <IconUser className="size-8 sm:size-9" stroke={1.75} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-cream-50 truncate text-lg font-bold sm:text-xl">
