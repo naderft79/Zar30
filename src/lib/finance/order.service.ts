@@ -37,6 +37,7 @@ import { enforceLimit } from './limit.service'
 import { KYC_LIMITS } from './limits'
 import { notifyFinancial } from './notify'
 import { triggerRiskEvaluation } from '@/lib/services/admin-risk.service'
+import { isTradingHalted } from '@/lib/services/admin-system.service'
 
 // سقف روزانه معامله بر اساس مجموع سفارش‌های FILLED امروز
 async function checkDailyLimit(userId: string, kycLevel: KycLevel, tomanAmount: bigint) {
@@ -97,6 +98,8 @@ export async function buyGold(
   ctx: { userId: string; kycLevel: KycLevel },
   input: { tomanAmount: bigint },
 ): Promise<OrderResult> {
+  // توقف اضطراری ادمین — fail-open (پیوستگی کسب‌وکار)
+  if (await isTradingHalted()) throw FinanceErrors.tradingHalted()
   if (input.tomanAmount < MIN_ORDER_TOMAN) {
     throw FinanceErrors.invalidAmount(
       `حداقل مبلغ خرید ${MIN_ORDER_TOMAN.toLocaleString('en')} تومان است`,
@@ -170,6 +173,8 @@ export async function sellGold(
   ctx: { userId: string; kycLevel: KycLevel },
   input: { goldAmount: Decimal },
 ): Promise<OrderResult> {
+  // توقف اضطراری ادمین — fail-open (پیوستگی کسب‌وکار)
+  if (await isTradingHalted()) throw FinanceErrors.tradingHalted()
   const goldAmount = floorGold(input.goldAmount)
   if (goldAmount.lte(0)) throw FinanceErrors.invalidAmount('مقدار طلا باید مثبت باشد')
 

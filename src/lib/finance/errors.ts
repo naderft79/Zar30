@@ -140,4 +140,21 @@ export const FinanceErrors = {
 
   providerUnavailable: (detail = 'سرویس قیمت در دسترس نیست') =>
     new ApiError(503, 'Price Provider Unavailable', detail, `${BASE}/provider-unavailable`),
+
+  // توقف اضطراری — توسط kill switch داشبورد فعال می‌شود (423 Locked)
+  tradingHalted: () =>
+    new ApiError(
+      423,
+      'Trading Halted',
+      'معاملات موقتاً توسط مدیریت متوقف شده است؛ لطفاً بعداً تلاش کنید',
+      `${BASE}/trading-halted`,
+    ),
+
+  withdrawalsHalted: () =>
+    new ApiError(
+      423,
+      'Withdrawals Halted',
+      'برداشت وجه موقتاً توسط مدیریت متوقف شده است؛ لطفاً بعداً تلاش کنید',
+      `${BASE}/withdrawals-halted`,
+    ),
 } as const

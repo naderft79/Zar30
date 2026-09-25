@@ -270,6 +270,8 @@ model AdminUser {
   role        AdminRole @default(READ_ONLY)
   permissions Json
   active      Boolean   @default(true)
+  // ترجیحات داشبورد — آرایه id ویجت‌های مخفی‌شده (admin dashboard v2)
+  preferences Json?
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 

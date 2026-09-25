@@ -13,6 +13,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
+  IconAlertOctagon,
   IconChevronLeft,
   IconChevronsLeft,
   IconChevronsRight,
@@ -536,6 +537,28 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             collapsed ? 'xl:pr-[76px]' : 'xl:pr-72',
           )}
         >
+          {/* بنر توقف اضطراری — فقط وقتی halt فعال است */}
+          {navBadges.halted && (navBadges.halted.trading || navBadges.halted.withdrawals) && (
+            <div
+              role="alert"
+              className="bg-error/10 border-error/30 flex items-center justify-center gap-2 border-b px-4 py-2"
+            >
+              <IconAlertOctagon className="text-error size-4 shrink-0" strokeWidth={2} />
+              <p className="text-error text-xs font-semibold">
+                توقف اضطراری فعال است
+                {navBadges.halted.trading && ' — معاملات'}
+                {navBadges.halted.withdrawals && ' — برداشت‌ها'}
+                {' · '}
+                <Link
+                  href="/admin/dashboard"
+                  className="focus-visible:ring-ring rounded hover:underline focus-visible:ring-2 focus-visible:outline-none"
+                >
+                  مشاهده در داشبورد
+                </Link>
+              </p>
+            </div>
+          )}
+
           <div key={pathname} className="animate-page-in mx-auto max-w-[1400px] p-4 py-6 sm:px-6">
             {children}
           </div>

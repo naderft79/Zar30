@@ -507,3 +507,27 @@
 **خارج از دامنه:** صفحات داخلی عمومی (about/faq/contact/…) هنوز Navy قدیمی‌اند و با هدر روشن جدید هم‌دم نیستند — فاز بعدی.
 
 **Verification:** lint ✅ / typecheck ✅ / test 187/187 ✅ / e2e landing 30 ✅ / build ✅
+
+---
+
+## Admin Dashboard V2 — مرکز فرماندهی (2026-09-25)
+
+**وضعیت:** ✅ DONE — بازطراحی کامل `/admin/dashboard` به مرکز فرماندهی عملیاتی
+
+| بخش      | محتوا                                                                                                                                           |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| KPI      | ۴ کارت با sparkline ۷روزه + delta + تب ۲۴h/۷d/۳۰d (موجودی تومان/طلا، کارمزد، کاربران فعال)                                                      |
+| صف‌ها    | ۶ صف pending با ردیف‌های actionable + اکشن inline (approve/reject برداشت، claim پرونده KYC، approve تحویل، بررسی ریسک) + badge قدیمی‌ترین + SLA |
+| نمودارها | ۷ ویجت lazy (حجم، قیمت طلا، کارمزد، donut دارایی، funnel احراز هویت، heatmap ساعات اوج، درآمد محصول) + overlay دوره قبل + drill-down            |
+| مالی     | مانده ledger، P&L، گردش نقد، وضعیت تطبیق + لینک anchor به کارت حساب در `/admin/financial`                                                       |
+| فیدها    | audit تیم، broadcast اخیر، مدیران آنلاین (۵min)، health compact                                                                                 |
+| عملیاتی  | نوت تیمی، quick actions، kill switch دومرحله‌ای (تأیید عبارت فارسی + audit + `system.manage`)                                                   |
+| زیرساخت  | `AdminUser.preferences` (layout مخفی)، Redis cache ۳۰s، halt flags با کش ۵s، بنر توقف سراسری در shell                                           |
+| سیم‌کشی  | `isTradingHalted` (fail-open) در buy/sell، `isWithdrawalsHalted` (fail-closed) در requestWithdrawal                                             |
+| API      | ۷ route جدید زیر `/api/v1/admin/dashboard/*` با Zod + permission دانه‌ای                                                                        |
+
+**drill-down:** همه لینک‌ها به پارامترهای مصرف‌شونده صفحات مقصد وصل شدند (`status/type/from/to/q`؛ ریسک `?status=open`؛ تیکت `?q=<id>`؛ ledger به‌صورت `#acct-<code>` anchor).
+
+**تست:** ۳۳ تست جدید (۲۵ unit validator + ۸ integration halt/dashboard) + فیکس ۲ تست قدیمی (Logo img، seed قیمت با allowAbnormal).
+
+**Verification:** lint ✅ / typecheck ✅ / vitest unit+integration جدید ✅ / finance regression ✅

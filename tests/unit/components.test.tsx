@@ -21,7 +21,8 @@ describe('Logo', () => {
 
   it('بدون متن هم قابل رندر است', () => {
     const { container } = render(<Logo showText={false} />)
-    expect(container.querySelector('svg')).toBeTruthy()
+    // نشان برند به‌صورت تصویر img رندر می‌شود
+    expect(container.querySelector('img')).toBeTruthy()
     expect(screen.queryByText('زرسی')).toBeNull()
   })
 })

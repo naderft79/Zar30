@@ -97,7 +97,13 @@ describe('Financial Core (Real PostgreSQL)', () => {
 
     // قیمت‌های junk آینده‌نگر (داده‌های قدیمی تست) پاک می‌شوند
     await prisma.goldPrice.deleteMany({ where: { recordedAt: { gt: new Date() } } })
-    await recordPrice({ buyPrice: PRICE_BUY, sellPrice: PRICE_SELL, source: 'test' })
+    // allowAbnormal فقط برای seed اولیه — ممکن است آخرین قیمت DB متفاوت باشد
+    await recordPrice({
+      buyPrice: PRICE_BUY,
+      sellPrice: PRICE_SELL,
+      source: 'test',
+      allowAbnormal: true,
+    })
   })
 
   afterAll(async () => {

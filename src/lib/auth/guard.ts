@@ -8,6 +8,7 @@
 import type { AdminRole, KycLevel } from '@/generated/prisma'
 import prisma from '@/lib/db/prisma'
 import { ApiError } from '@/lib/errors/api-error'
+import { trackAdminOnline } from '@/lib/cache/admin-presence'
 import { hasPermission, resolvePermissions, type Permission } from './rbac'
 import { verifyAccessToken } from './jwt'
 import { ACCESS_COOKIE } from './cookies'
@@ -97,6 +98,8 @@ export async function requireAdmin(req: Request): Promise<AdminContext> {
     select: { id: true, role: true, active: true, permissions: true },
   })
   if (!admin || !admin.active) throw ApiError.forbidden('دسترسی ادمین لازم است')
+  // ردیابی آنلاین — fire-and-forget؛ خطای Redis احراز را fail نمی‌کند
+  trackAdminOnline(admin.id)
   return {
     ...auth,
     adminId: admin.id,

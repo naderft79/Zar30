@@ -82,7 +82,11 @@ export function AdminFinancialClient() {
             {accounts.map((a) => {
               const isGold = a.code.includes('GOLD')
               return (
-                <div key={a.code} className="bg-card border-border/60 rounded-xl border p-3">
+                <div
+                  key={a.code}
+                  id={`acct-${a.code}`}
+                  className="bg-card border-border/60 scroll-mt-24 rounded-xl border p-3"
+                >
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <p className="truncate text-xs font-bold">{a.name}</p>

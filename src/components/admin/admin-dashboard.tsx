@@ -1,315 +1,510 @@
 // ============================================
-// Zar30 - Admin Dashboard (Real Data)
+// Zar30 - Admin Dashboard V2 — مرکز فرماندهی
 // ============================================
-// شاخص‌های عملیاتی از /api/v1/admin/dashboard — هیچ داده fake
-// states: loading skeleton / error + retry / unavailable برای قیمت طلا
+// گرید ۱۲ ستونی — KPI + صف‌ها + هشدارها + نمودارها + مالی + فیدها
+// auto-refresh متفاوت per بخش — lazy sections — preferences per-admin
 // ============================================
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   IconAlertTriangle,
-  IconUpload,
   IconClipboardList,
   IconCoins,
+  IconCoin,
   IconLifebuoy,
+  IconPackage,
   IconRefresh,
-  IconTag,
+  IconShieldExclamation,
+  IconTrendingUp,
   IconUserCheck,
   IconUsers,
   IconWallet,
 } from '@tabler/icons-react'
 import { apiGetWithRefresh } from '@/lib/api/client'
-import type { AdminDashboardData } from '@/lib/services/admin-dashboard.service'
-import { AdminMetric } from '@/components/admin/admin-metric'
+import type {
+  AdminDashboardV2,
+  DashboardCharts,
+  DashboardFeeds,
+  DashboardFinance,
+} from '@/lib/services/admin-dashboard.service'
+import { useAdmin } from '@/components/admin/admin-shell'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
-import { formatExactAmount, toPersianDigits } from '@/lib/utils/format'
+import { AlertFeed } from '@/components/admin/dashboard/alert-feed'
+import { KpiCard, KpiCardSkeleton, type KpiPeriod } from '@/components/admin/dashboard/kpi-card'
+import { QueueCard } from '@/components/admin/dashboard/queue-card'
+import { QueueRowActions } from '@/components/admin/dashboard/queue-actions'
+import { KillSwitch } from '@/components/admin/dashboard/kill-switch'
+import { NotesWidget } from '@/components/admin/dashboard/notes-widget'
+import {
+  PreferencesPopover,
+  type WidgetDef,
+} from '@/components/admin/dashboard/preferences-popover'
+import { QuickActions } from '@/components/admin/dashboard/quick-actions'
+import { Segmented } from '@/components/admin/dashboard/segmented'
+import {
+  AuditFeedWidget,
+  BroadcastFeedWidget,
+  HealthWidget,
+  OnlineAdminsWidget,
+} from '@/components/admin/dashboard/feeds'
+import {
+  CashflowWidget,
+  LedgerBalancesWidget,
+  PnlWidget,
+  ReconWidget,
+} from '@/components/admin/dashboard/finance-widgets'
+import type { ChartRange } from '@/components/admin/dashboard/chart-widget'
+import { PERMISSIONS, hasPermission } from '@/lib/auth/rbac'
+import { formatExactAmount } from '@/lib/utils/format'
 
-// recharts فقط هنگام نیاز لود می‌شود — خارج از باندل اولیه
-const AdminCharts = dynamic(() => import('@/components/admin/admin-charts'), {
-  ssr: false,
-  loading: () => (
-    <div className="mb-6 grid gap-4 lg:grid-cols-2">
-      <div className="skeleton-shimmer h-64 rounded-xl" />
-      <div className="skeleton-shimmer h-64 rounded-xl" />
-    </div>
-  ),
-})
+// ============================================
+// Lazy chart bundle — خارج از باندل اولیه
+// ============================================
+
+const ChartsBundle = dynamic(
+  () => import('@/components/admin/dashboard/charts').then((m) => m.ChartsSection),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="grid gap-4 xl:grid-cols-2">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div key={i} className="skeleton-shimmer h-80 rounded-xl" />
+        ))}
+      </div>
+    ),
+  },
+)
+
+// ============================================
+// Constants
+// ============================================
+
+const PERIODS: { value: KpiPeriod; label: string }[] = [
+  { value: '24h', label: '۲۴h' },
+  { value: '7d', label: '۷d' },
+  { value: '30d', label: '۳۰d' },
+]
+
+const QUEUE_ICONS: Record<
+  string,
+  React.ComponentType<{ className?: string; strokeWidth?: number }>
+> = {
+  kyc: IconUserCheck,
+  withdrawals: IconWallet,
+  orders: IconClipboardList,
+  tickets: IconLifebuoy,
+  delivery: IconPackage,
+  risk: IconShieldExclamation,
+}
+
+const ALL_WIDGETS: WidgetDef[] = [
+  { id: 'kpis', label: 'شاخص‌های کلیدی (KPI)' },
+  { id: 'queues', label: 'صف‌های عملیاتی' },
+  { id: 'alerts', label: 'هشدارها' },
+  { id: 'charts', label: 'نمودارها' },
+  { id: 'finance', label: 'ویجت‌های مالی' },
+  { id: 'feeds', label: 'فیدهای فعالیت' },
+  { id: 'notes', label: 'یادداشت تیمی' },
+  { id: 'quick-actions', label: 'دسترسی سریع' },
+  { id: 'kill-switch', label: 'کنترل اضطراری' },
+]
+
+const INTERVAL_QUEUES = 30_000
+const INTERVAL_FEEDS = 60_000
+const INTERVAL_CHARTS = 5 * 60_000
+
+// ============================================
+// Skeleton
+// ============================================
 
 function DashboardSkeleton() {
   return (
-    <div aria-busy="true" aria-label="در حال بارگذاری داشبورد">
-      <div className="skeleton-shimmer mb-6 h-24 rounded-2xl" />
+    <div aria-busy="true" aria-label="در حال بارگذاری مرکز فرماندهی">
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="skeleton-shimmer h-24 rounded-xl" />
+          <KpiCardSkeleton key={i} />
         ))}
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="skeleton-shimmer h-52 rounded-xl" />
-        <div className="skeleton-shimmer h-52 rounded-xl" />
+      <div className="mb-6 grid gap-4 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="skeleton-shimmer h-48 rounded-xl" />
+        ))}
       </div>
+      <div className="skeleton-shimmer h-64 rounded-xl" />
     </div>
   )
 }
 
-function QueueLink({
-  href,
-  icon: Icon,
-  label,
-  count,
-  tone,
-}: {
-  href: string
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
-  label: string
-  count: number
-  tone: 'default' | 'warning' | 'error'
-}) {
-  return (
-    <Link
-      href={href}
-      className="border-border/60 bg-card hover:bg-muted/50 focus-visible:ring-ring flex items-center justify-between gap-3 rounded-xl border p-4 transition-colors focus-visible:ring-2 focus-visible:outline-none"
-    >
-      <span className="flex min-w-0 items-center gap-3">
-        <Icon className="text-muted-foreground size-5 shrink-0" strokeWidth={1.75} />
-        <span className="text-foreground truncate text-sm font-medium">{label}</span>
-      </span>
-      <span
-        className={
-          tone === 'error'
-            ? 'text-error text-lg font-bold tabular-nums'
-            : tone === 'warning'
-              ? 'text-warning text-lg font-bold tabular-nums'
-              : 'text-foreground text-lg font-bold tabular-nums'
-        }
-      >
-        {toPersianDigits(count)}
-      </span>
-    </Link>
-  )
-}
+// ============================================
+// Main Component
+// ============================================
 
 export function AdminDashboard() {
-  const [data, setData] = useState<AdminDashboardData | null>(null)
+  const { admin } = useAdmin()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const urlRange = (searchParams.get('range') as ChartRange | null) ?? '30'
+  const urlPeriod = (searchParams.get('period') as KpiPeriod | null) ?? '24h'
+
+  const [dashboard, setDashboard] = useState<AdminDashboardV2 | null>(null)
+  const [charts, setCharts] = useState<DashboardCharts | null>(null)
+  const [finance, setFinance] = useState<DashboardFinance | null>(null)
+  const [feeds, setFeeds] = useState<DashboardFeeds | null>(null)
+  const [hiddenWidgets, setHiddenWidgets] = useState<string[]>([])
+
+  const [period, setPeriod] = useState<KpiPeriod>(urlPeriod)
+  const [range, setRange] = useState<ChartRange>(urlRange)
+  const [overlay, setOverlay] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [reloadKey, setReloadKey] = useState(0)
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+
+  const isVisible = (id: string) => !hiddenWidgets.includes(id)
+  const mounted = useRef(true)
+
+  // ---------- Fetch helpers ----------
+
+  const loadDashboard = useCallback(async (p: KpiPeriod) => {
+    const res = await apiGetWithRefresh<{ dashboard: AdminDashboardV2 }>(
+      `/api/v1/admin/dashboard?period=${p}`,
+    )
+    if (!mounted.current) return
+    if (!res.ok) {
+      setError(res.error ?? 'بارگذاری داشبورد ناموفق بود')
+      return
+    }
+    setError(null)
+    setDashboard(res.data!.dashboard)
+    setLastRefresh(new Date())
+  }, [])
+
+  const loadCharts = useCallback(async (r: ChartRange) => {
+    const res = await apiGetWithRefresh<{ charts: DashboardCharts }>(
+      `/api/v1/admin/dashboard/charts?range=${r}`,
+    )
+    if (!mounted.current) return
+    if (res.ok) setCharts(res.data!.charts)
+  }, [])
+
+  const loadFinance = useCallback(async () => {
+    if (!hasPermission(admin.permissions, PERMISSIONS.LEDGER_READ)) return
+    const res = await apiGetWithRefresh<{ finance: DashboardFinance }>(
+      '/api/v1/admin/dashboard/finance',
+    )
+    if (!mounted.current) return
+    if (res.ok) setFinance(res.data!.finance)
+  }, [admin.permissions])
+
+  const loadFeeds = useCallback(async () => {
+    const res = await apiGetWithRefresh<{ feeds: DashboardFeeds }>('/api/v1/admin/dashboard/feeds')
+    if (!mounted.current) return
+    if (res.ok) setFeeds(res.data!.feeds)
+  }, [])
+
+  const loadLayout = useCallback(async () => {
+    const res = await apiGetWithRefresh<{ layout: { hiddenWidgets: string[] } }>(
+      '/api/v1/admin/dashboard/layout',
+    )
+    if (!mounted.current) return
+    if (res.ok) setHiddenWidgets(res.data!.layout.hiddenWidgets)
+  }, [])
+
+  // ---------- Effects ----------
 
   useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      const res = await apiGetWithRefresh<{ dashboard: AdminDashboardData }>(
-        '/api/v1/admin/dashboard',
-      )
-      if (cancelled) return
-      if (!res.ok) {
-        setError(res.error ?? 'بارگذاری داشبورد ناموفق بود')
-        return
-      }
-      setError(null)
-      setData(res.data!.dashboard)
-    })()
+    mounted.current = true
     return () => {
-      cancelled = true
+      mounted.current = false
     }
-  }, [reloadKey])
+  }, [])
 
-  if (error && !data) {
+  // initial load — IIFE جلو setState synchronous را می‌گیرد
+  useEffect(() => {
+    ;(async () => {
+      await Promise.all([loadDashboard(period), loadLayout(), loadFeeds(), loadFinance()])
+    })()
+  }, [loadDashboard, loadLayout, loadFeeds, loadFinance, period])
+
+  // charts — lazy بعد از mount
+  useEffect(() => {
+    ;(async () => {
+      await loadCharts(range)
+    })()
+  }, [loadCharts, range])
+
+  // auto-refresh intervals — فقط وقتی صفحه visible است
+  useEffect(() => {
+    if (document.hidden) return
+    const iv = setInterval(() => void loadDashboard(period), INTERVAL_QUEUES)
+    return () => clearInterval(iv)
+  }, [loadDashboard, period])
+
+  useEffect(() => {
+    if (document.hidden) return
+    const iv = setInterval(() => void loadFeeds(), INTERVAL_FEEDS)
+    return () => clearInterval(iv)
+  }, [loadFeeds])
+
+  useEffect(() => {
+    if (document.hidden) return
+    const iv = setInterval(() => void loadCharts(range), INTERVAL_CHARTS)
+    return () => clearInterval(iv)
+  }, [loadCharts, range])
+
+  // ---------- Handlers ----------
+
+  const handlePeriodChange = (p: KpiPeriod) => {
+    setPeriod(p)
+    router.replace(`?period=${p}&range=${range}`, { scroll: false })
+  }
+
+  const handleRangeChange = (r: ChartRange) => {
+    setRange(r)
+    router.replace(`?period=${period}&range=${r}`, { scroll: false })
+  }
+
+  const refreshAll = () => {
+    void loadDashboard(period)
+    void loadCharts(range)
+    void loadFinance()
+    void loadFeeds()
+  }
+
+  // ---------- Render ----------
+
+  if (error && !dashboard) {
     return (
       <div className="bg-card border-border/60 flex flex-col items-center rounded-2xl border p-10 text-center">
-        <IconAlertTriangle className="text-error mb-3 size-8" stroke={1.75} aria-hidden="true" />
-        <p className="text-foreground text-sm font-semibold">خطا در بارگذاری داشبورد</p>
+        <IconAlertTriangle
+          className="text-error mb-3 size-8"
+          strokeWidth={1.75}
+          aria-hidden="true"
+        />
+        <p className="text-foreground text-sm font-semibold">خطا در بارگذاری مرکز فرماندهی</p>
         <p className="text-muted-foreground mt-1 text-xs">{error}</p>
         <button
           type="button"
-          onClick={() => {
-            setData(null)
-            setError(null)
-            setReloadKey((k) => k + 1)
-          }}
+          onClick={refreshAll}
           className="border-border/60 text-foreground hover:bg-muted focus-visible:ring-ring mt-4 inline-flex h-9 items-center gap-2 rounded-lg border px-4 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
-          <IconRefresh className="size-3.5" stroke={1.75} />
+          <IconRefresh className="size-3.5" strokeWidth={1.75} />
           تلاش مجدد
         </button>
       </div>
     )
   }
 
-  if (!data) return <DashboardSkeleton />
+  if (!dashboard) return <DashboardSkeleton />
 
-  const generated = new Date(data.generatedAt).toLocaleString('fa-IR', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  })
-  const price = data.financial.latestGoldPrice
+  const price = dashboard.goldPrice
+  const haltActive = dashboard.halted.trading || dashboard.halted.withdrawals
 
   return (
-    <div>
-      <AdminPageHeader
-        title="داشبورد عملیاتی"
-        eyebrow="مرکز عملیات"
-        description="شاخص‌های کلیدی پلتفرم — داده‌های عملیاتی از PostgreSQL"
-      />
-
-      {/* ===== Hero — context اجرایی ===== */}
-      <div className="border-border from-field to-card mb-6 rounded-2xl border bg-gradient-to-l p-5 sm:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-foreground text-sm font-semibold sm:text-base">
-              آخرین وضعیت ثبت‌شده پلتفرم
-            </p>
-            <p className="text-muted-foreground mt-1 text-[11px] tabular-nums">
-              تولیدشده در {generated}
-            </p>
-          </div>
-          {price ? (
-            <div className="text-left" dir="ltr">
-              <p className="text-muted-foreground text-[10px]">آخرین قیمت طلا — {price.source}</p>
-              <p
-                className="text-gold-600 dark:text-gold-400 mt-0.5 text-sm font-bold tabular-nums"
-                dir="rtl"
-              >
-                خرید {formatExactAmount(price.buyPrice)} تومان · فروش{' '}
-                {formatExactAmount(price.sellPrice)} تومان
-              </p>
-              <p className="text-muted-foreground mt-0.5 text-[10px] tabular-nums" dir="rtl">
-                اسپرد {formatExactAmount(price.spread)}٪ —{' '}
-                {new Date(price.recordedAt).toLocaleString('fa-IR', { timeStyle: 'short' })}
-              </p>
+    <div className="space-y-6">
+      {/* ===== Header ===== */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <AdminPageHeader
+          title="مرکز فرماندهی"
+          eyebrow="زرسی — Admin Command Center"
+          description="نمای زندهٔ کل پلتفرم — صف‌ها، مالی، نمودارها و اقدامات"
+        />
+        <div className="flex items-center gap-2">
+          {/* Gold price chip */}
+          {price && (
+            <div className="border-border/60 bg-card flex items-center gap-1.5 rounded-xl border px-3 py-2">
+              <IconCoin className="text-gold-500 size-4" strokeWidth={1.75} aria-hidden="true" />
+              <div className="text-right">
+                <p className="text-gold-700 dark:text-gold-300 text-xs font-bold tabular-nums">
+                  {formatExactAmount(price.buyPrice)}
+                </p>
+                <p className="text-muted-foreground text-[9px]">تومان/گرم</p>
+              </div>
             </div>
-          ) : (
-            <p className="border-border text-muted-foreground rounded-lg border border-dashed px-3 py-2 text-[11px]">
-              قیمت طلا در دسترس نیست — هیچ رکوردی ثبت نشده است
-            </p>
           )}
+          {/* Range selector */}
+          <Segmented
+            options={[
+              { value: '7', label: '۷ روز' },
+              { value: '30', label: '۳۰ روز' },
+              { value: '90', label: '۹۰ روز' },
+            ]}
+            value={range}
+            onChange={handleRangeChange}
+            ariaLabel="بازه نمودارها"
+          />
+          {/* Preferences */}
+          <PreferencesPopover
+            widgets={ALL_WIDGETS}
+            hidden={hiddenWidgets}
+            onChange={setHiddenWidgets}
+          />
+          <button
+            type="button"
+            onClick={refreshAll}
+            aria-label="به‌روزرسانی همه"
+            className="border-border/60 text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring inline-flex size-9 items-center justify-center rounded-lg border transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          >
+            <IconRefresh className="size-4" strokeWidth={1.75} />
+          </button>
         </div>
       </div>
 
-      {/* ===== Financial strip ===== */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <AdminMetric
-          label="مانده حساب‌های تومانی کاربران"
-          value={formatExactAmount(data.financial.tomanBalance)}
-          unit="تومان"
-          icon={IconWallet}
-        />
-        <AdminMetric
-          label="موجودی طلای کاربران"
-          value={formatExactAmount(data.financial.goldBalance)}
-          unit="گرم"
-          icon={IconCoins}
-          tone="gold"
-        />
-        <AdminMetric
-          label="حجم تراکنش — ۲۴ ساعت اخیر"
-          value={formatExactAmount(data.financial.completedVolumeLast24Hours)}
-          unit="تومان"
-          icon={IconTag}
-        />
-        <AdminMetric
-          label="برداشت‌های در انتظار"
-          value={data.financial.pendingWithdrawals}
-          icon={IconUpload}
-          tone={data.financial.pendingWithdrawals > 0 ? 'warning' : 'default'}
-        />
-      </div>
+      {/* ===== Halt banner ===== */}
+      {haltActive && (
+        <div
+          role="alert"
+          className="border-error/40 bg-error/10 flex items-center gap-3 rounded-xl border px-4 py-3"
+        >
+          <IconAlertTriangle className="text-error size-5 shrink-0" strokeWidth={1.75} />
+          <div className="flex-1">
+            <p className="text-error text-sm font-bold">
+              {dashboard.halted.trading && dashboard.halted.withdrawals
+                ? 'معاملات و برداشت‌ها متوقف است'
+                : dashboard.halted.trading
+                  ? 'معاملات متوقف است'
+                  : 'برداشت‌ها متوقف است'}
+            </p>
+            <p className="text-error/80 text-[11px]">
+              از کنترل اضطراری در پایین صفحه ازسرگیری کنید
+            </p>
+          </div>
+        </div>
+      )}
 
-      {/* ===== نمودارهای ۳۰ روزه ===== */}
-      {data.trend.length > 0 && <AdminCharts trend={data.trend} />}
+      {/* ===== KPI Row ===== */}
+      {isVisible('kpis') && (
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <KpiCard
+            id="kpi-toman"
+            label="موجودی تومان کاربران"
+            value={dashboard.kpis.userTomanBalance.value}
+            unit="تومان"
+            netChange={dashboard.kpis.userTomanBalance.netChange}
+            netChangeLabel="جریان خالص"
+            sparkline={dashboard.kpis.userTomanBalance.sparkline}
+            icon={IconWallet}
+            href="/admin/wallets"
+            periods={PERIODS}
+            activePeriod={period}
+            onPeriodChange={handlePeriodChange}
+          />
+          <KpiCard
+            id="kpi-gold"
+            label="موجودی طلای کاربران"
+            value={dashboard.kpis.userGoldBalance.value}
+            unit="گرم"
+            sparkline={dashboard.kpis.userGoldBalance.sparkline}
+            icon={IconCoins}
+            href="/admin/gold"
+            gold
+          />
+          <KpiCard
+            id="kpi-fee"
+            label="درآمد کارمزد"
+            value={dashboard.kpis.feeRevenue.value}
+            unit="تومان"
+            deltaPct={dashboard.kpis.feeRevenue.deltaPct}
+            sparkline={dashboard.kpis.feeRevenue.sparkline}
+            icon={IconTrendingUp}
+            href="/admin/transactions?type=FEE"
+            periods={PERIODS}
+            activePeriod={period}
+            onPeriodChange={handlePeriodChange}
+          />
+          <KpiCard
+            id="kpi-users"
+            label="کاربران فعال / جدید"
+            value={dashboard.kpis.activeUsers.value}
+            deltaPct={dashboard.kpis.newUsers.deltaPct}
+            sparkline={dashboard.kpis.newUsers.sparkline}
+            icon={IconUsers}
+            href="/admin/users"
+          />
+        </div>
+      )}
 
+      {/* ===== Queues + Alerts ===== */}
+      {isVisible('queues') && (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {dashboard.queues.map((q) => (
+            <QueueCard
+              key={q.key}
+              queue={q}
+              icon={QUEUE_ICONS[q.key] ?? IconClipboardList}
+              onRefresh={() => void loadDashboard(period)}
+              rowActions={(row) => (
+                <QueueRowActions
+                  queueKey={q.key}
+                  rowId={row.id}
+                  permissions={admin.permissions}
+                  onDone={() => void loadDashboard(period)}
+                />
+              )}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* ===== Alerts + Online ===== */}
+      {isVisible('alerts') && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <AlertFeed alerts={dashboard.alerts} />
+          <OnlineAdminsWidget feeds={feeds} loading={feeds === null} />
+        </div>
+      )}
+
+      {/* ===== Charts — lazy ===== */}
+      {isVisible('charts') && (
+        <ChartsBundle
+          charts={charts}
+          range={range}
+          onRangeChange={handleRangeChange}
+          overlay={overlay}
+          onOverlayChange={setOverlay}
+        />
+      )}
+
+      {/* ===== Finance ===== */}
+      {isVisible('finance') && hasPermission(admin.permissions, PERMISSIONS.LEDGER_READ) && (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <LedgerBalancesWidget
+            finance={finance}
+            loading={finance === null}
+            onRefresh={loadFinance}
+          />
+          <PnlWidget finance={finance} loading={finance === null} onRefresh={loadFinance} />
+          <CashflowWidget finance={finance} loading={finance === null} onRefresh={loadFinance} />
+          <ReconWidget finance={finance} loading={finance === null} onRefresh={loadFinance} />
+        </div>
+      )}
+
+      {/* ===== Feeds ===== */}
+      {isVisible('feeds') && (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <AuditFeedWidget feeds={feeds} loading={feeds === null} onRefresh={loadFeeds} />
+          <BroadcastFeedWidget feeds={feeds} loading={feeds === null} onRefresh={loadFeeds} />
+          <HealthWidget health={dashboard.health} loading={false} />
+          {isVisible('kill-switch') && (
+            <KillSwitch halted={dashboard.halted} onChange={() => void loadDashboard(period)} />
+          )}
+        </div>
+      )}
+
+      {/* ===== Notes + Quick Actions ===== */}
       <div className="grid gap-4 lg:grid-cols-2">
-        {/* ===== Customers + KYC pipeline ===== */}
-        <section className="bg-card border-border/60 rounded-xl border p-5">
-          <h2 className="text-foreground mb-4 flex items-center gap-2 text-sm font-bold">
-            <IconUsers className="text-muted-foreground size-4" stroke={1.75} aria-hidden="true" />
-            مشتریان و احراز هویت
-          </h2>
-          <div className="mb-4 grid grid-cols-3 gap-3">
-            <div className="bg-muted/40 rounded-lg p-3 text-center">
-              <p className="text-foreground text-lg font-bold tabular-nums">
-                {toPersianDigits(data.customers.total)}
-              </p>
-              <p className="text-muted-foreground mt-0.5 text-[10px]">کل کاربران</p>
-            </div>
-            <div className="bg-muted/40 rounded-lg p-3 text-center">
-              <p className="text-success text-lg font-bold tabular-nums">
-                {toPersianDigits(data.customers.active)}
-              </p>
-              <p className="text-muted-foreground mt-0.5 text-[10px]">فعال</p>
-            </div>
-            <div className="bg-muted/40 rounded-lg p-3 text-center">
-              <p className="text-foreground text-lg font-bold tabular-nums">
-                {toPersianDigits(data.customers.newLast24Hours)}
-              </p>
-              <p className="text-muted-foreground mt-0.5 text-[10px]">جدید — ۲۴ ساعت اخیر</p>
-            </div>
-          </div>
-          <ul className="space-y-2 text-xs">
-            {[
-              ['در صف بررسی', data.kyc.submitted],
-              ['در حال بررسی', data.kyc.underReview],
-              ['تاییدشده', data.kyc.approved],
-              ['نیازمند اقدام', data.kyc.needsAction],
-            ].map(([label, count]) => (
-              <li key={label as string} className="flex items-center justify-between">
-                <span className="text-muted-foreground flex items-center gap-2">
-                  <IconUserCheck className="size-3.5" stroke={1.75} aria-hidden="true" />
-                  {label}
-                </span>
-                <span className="text-foreground font-semibold tabular-nums">
-                  {toPersianDigits(count as number)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* ===== Operational queues — لینک به صفحات ===== */}
-        <section className="bg-card border-border/60 rounded-xl border p-5">
-          <h2 className="text-foreground mb-4 flex items-center gap-2 text-sm font-bold">
-            <IconClipboardList
-              className="text-muted-foreground size-4"
-              strokeWidth={1.75}
-              aria-hidden="true"
-            />
-            صف‌های عملیاتی
-          </h2>
-          <div className="space-y-2.5">
-            <QueueLink
-              href="/admin/kyc"
-              icon={IconUserCheck}
-              label="احراز هویت در انتظار بررسی"
-              count={data.kyc.submitted + data.kyc.underReview}
-              tone={data.kyc.submitted + data.kyc.underReview > 0 ? 'warning' : 'default'}
-            />
-            <QueueLink
-              href="/admin/orders"
-              icon={IconClipboardList}
-              label="سفارش‌های در انتظار"
-              count={data.operations.pendingOrders}
-              tone={data.operations.pendingOrders > 0 ? 'warning' : 'default'}
-            />
-            <QueueLink
-              href="/admin/support"
-              icon={IconLifebuoy}
-              label="تیکت‌های باز"
-              count={data.operations.openTickets}
-              tone="default"
-            />
-            <QueueLink
-              href="/admin/transactions"
-              icon={IconAlertTriangle}
-              label="تراکنش‌های ناموفق"
-              count={data.operations.failedTransactions}
-              tone={data.operations.failedTransactions > 0 ? 'error' : 'default'}
-            />
-          </div>
-        </section>
+        {isVisible('notes') && <NotesWidget />}
+        {isVisible('quick-actions') && <QuickActions />}
       </div>
+
+      {/* ===== Last refresh timestamp ===== */}
+      {lastRefresh && (
+        <p className="text-muted-foreground text-center text-[10px] tabular-nums">
+          آخرین به‌روزرسانی: {lastRefresh.toLocaleTimeString('fa-IR')} — داده کش‌شده تا ۳۰ ثانیه
+        </p>
+      )}
     </div>
   )
 }

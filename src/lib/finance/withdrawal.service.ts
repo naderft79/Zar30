@@ -22,6 +22,7 @@ import { KYC_LIMITS } from './limits'
 import { enforceLimit } from './limit.service'
 import { notifyFinancial } from './notify'
 import { triggerRiskEvaluation } from '@/lib/services/admin-risk.service'
+import { isWithdrawalsHalted } from '@/lib/services/admin-system.service'
 
 type Tx = Prisma.TransactionClient
 
@@ -39,6 +40,8 @@ export async function requestWithdrawal(
   ctx: { userId: string; kycLevel: KycLevel },
   input: { amount: bigint; iban: string },
 ) {
+  // توقف اضطراری ادمین — fail-closed (امنیت)
+  if (await isWithdrawalsHalted()) throw FinanceErrors.withdrawalsHalted()
   if (input.amount < MIN_WITHDRAWAL_TOMAN) {
     throw FinanceErrors.invalidAmount(
       `حداقل مبلغ برداشت ${MIN_WITHDRAWAL_TOMAN.toLocaleString('en')} تومان است`,

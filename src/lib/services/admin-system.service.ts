@@ -482,3 +482,122 @@ export async function getAdminProfile(adminId: string) {
     permissionCatalog: PERMISSION_CATALOG as Permission[],
   }
 }
+
+// ============================================
+// Kill Switch — توقف اضطراری معاملات/برداشت (Dashboard V2)
+// ============================================
+// پرچم‌ها در PlatformSetting — کش Redis ۵ ثانیه برای hot path
+// معاملات: fail-open (پیوستگی کسب‌وکار) | برداشت: fail-closed (امنیت)
+// ============================================
+
+export type HaltScope = 'TRADING' | 'WITHDRAWALS'
+export interface HaltFlags {
+  trading: { halted: boolean; at: string | null; by: string | null }
+  withdrawals: { halted: boolean; at: string | null; by: string | null }
+}
+
+const HALT_CACHE_KEY = 'admin:halt:flags'
+const HALT_CACHE_TTL = 5
+const HALT_KEYS = { TRADING: 'trading.halted', WITHDRAWALS: 'withdrawals.halted' } as const
+
+interface HaltSettingValue {
+  halted?: boolean
+  at?: string
+  by?: string
+}
+
+async function readHaltFlags(): Promise<HaltFlags> {
+  const rows = await prisma.platformSetting.findMany({
+    where: { key: { in: [HALT_KEYS.TRADING, HALT_KEYS.WITHDRAWALS] } },
+    select: { key: true, value: true, updatedBy: true, updatedAt: true },
+  })
+  const parse = (key: string): HaltFlags['trading'] => {
+    const row = rows.find((r) => r.key === key)
+    const v = (row?.value ?? {}) as HaltSettingValue
+    return {
+      halted: v.halted === true,
+      at: v.at ?? row?.updatedAt?.toISOString() ?? null,
+      by: v.by ?? row?.updatedBy ?? null,
+    }
+  }
+  return { trading: parse(HALT_KEYS.TRADING), withdrawals: parse(HALT_KEYS.WITHDRAWALS) }
+}
+
+// خواندن پرچم‌ها با کش ۵ ثانیه — hot path سفارش/برداشت
+export async function getHaltFlags(): Promise<HaltFlags> {
+  try {
+    const cached = await redis.get(HALT_CACHE_KEY)
+    if (cached) return JSON.parse(cached) as HaltFlags
+  } catch {
+    // کش خراب — ادامه به DB
+  }
+  const flags = await readHaltFlags()
+  try {
+    await redis.set(HALT_CACHE_KEY, JSON.stringify(flags), 'EX', HALT_CACHE_TTL)
+  } catch {
+    // کش اختیاری است
+  }
+  return flags
+}
+
+// fail-open: خطای بررسی → معامله ادامه می‌یابد (پیوستگی کسب‌وکار)
+export async function isTradingHalted(): Promise<boolean> {
+  try {
+    return (await getHaltFlags()).trading.halted
+  } catch (err) {
+    logger.error({ err }, 'Halt flag check failed (trading) — fail-open')
+    return false
+  }
+}
+
+// fail-closed: خطای بررسی → برداشت متوقف می‌شود (امنیت)
+export async function isWithdrawalsHalted(): Promise<boolean> {
+  try {
+    return (await getHaltFlags()).withdrawals.halted
+  } catch (err) {
+    logger.error({ err }, 'Halt flag check failed (withdrawals) — fail-closed')
+    return true
+  }
+}
+
+// تغییر وضعیت halt — audit اجباری با before/after + ابطال کش
+export async function setHaltFlag(
+  ctx: AdminActCtx,
+  scope: HaltScope,
+  halted: boolean,
+  meta: AuditMeta,
+): Promise<HaltFlags> {
+  const key = HALT_KEYS[scope]
+  const value: HaltSettingValue = {
+    halted,
+    at: new Date().toISOString(),
+    by: ctx.adminId,
+  }
+  const json = value as unknown as Prisma.InputJsonValue
+
+  await prisma.$transaction(async (tx) => {
+    const before = await tx.platformSetting.findUnique({ where: { key } })
+    await tx.platformSetting.upsert({
+      where: { key },
+      create: { key, value: json, updatedBy: ctx.adminId },
+      update: { value: json, updatedBy: ctx.adminId },
+    })
+    await tx.auditLog.create({
+      data: audit(ctx, meta, {
+        action: halted ? 'system.kill_switch.halt' : 'system.kill_switch.resume',
+        entityType: 'platform_setting',
+        entityId: key,
+        reason: `${scope} ${halted ? 'HALTED' : 'RESUMED'}`,
+        before: before?.value,
+        after: value,
+      }),
+    })
+  })
+
+  try {
+    await redis.del(HALT_CACHE_KEY)
+  } catch {
+    // ابطال کش اختیاری — TTL ۵ ثانیه است
+  }
+  return readHaltFlags()
+}
