@@ -307,11 +307,7 @@ export function AdminDashboard() {
     <div className="space-y-6">
       {/* ===== Header ===== */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <AdminPageHeader
-          title="مرکز فرماندهی"
-          eyebrow="زرسی — Admin Command Center"
-          description="نمای زندهٔ کل پلتفرم — صف‌ها، مالی، نمودارها و اقدامات"
-        />
+        <AdminPageHeader title="مرکز فرماندهی" />
         <div className="flex items-center gap-2">
           {/* Gold price chip */}
           {price && (
