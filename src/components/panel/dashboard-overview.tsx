@@ -7,7 +7,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   IconArrowDownLeft,
@@ -105,6 +105,9 @@ const QUICK_SERVICES = [
   { label: 'تحویل فیزیکی', href: '/dashboard/assets', icon: IconPackage },
 ] as const
 
+// موجودی و قیمت هر ۳۰ ثانیه به‌روز می‌شوند — کاربر نیازی به رفرش دستی ندارد
+const LIVE_POLL_MS = 30_000
+
 export function DashboardOverview() {
   const { user } = usePanelUser()
   const today = new Date().toLocaleDateString('fa-IR', {
@@ -118,6 +121,7 @@ export function DashboardOverview() {
   const [txs, setTxs] = useState<TxRow[] | null>(null)
   const [price, setPrice] = useState<PriceData | null>(null)
   const [booted, setBooted] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   // آخرین داده cached — موجودی بدون هیچ skeleton یا باکس خالی رندر می‌شود
   const uid = user.id
@@ -135,39 +139,54 @@ export function DashboardOverview() {
   // تراکنش انتخاب‌شده — جزئیات در bottom sheet موبایل
   const [selectedTx, setSelectedTx] = useState<TxRow | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
-    const fetchAll = async () => {
-      const [walletRes, txRes, priceRes] = await Promise.all([
-        apiGetWithRefresh<{ accounts: WalletAccount[] }>('/api/v1/wallet'),
-        apiGetWithRefresh<{ transactions: TxRow[] }>('/api/v1/wallet/transactions?limit=5'),
-        apiGetWithRefresh<PriceData>('/api/v1/price'),
-      ])
-      if (cancelled) return
-      if (walletRes.ok) {
-        const next = walletRes.data?.accounts ?? []
-        setAccounts(next)
-        writePanelCache(`wallet:${uid}`, next)
-      }
-      if (txRes.ok) {
-        const next = txRes.data?.transactions ?? []
-        setTxs(next)
-        writePanelCache(`txs:${uid}`, next)
-      }
-      if (priceRes.ok && priceRes.data) {
-        setPrice(priceRes.data)
-        writePanelCache('price', priceRes.data)
-      }
-      setBooted(true)
+  const fetchAll = useCallback(async () => {
+    const [walletRes, txRes, priceRes] = await Promise.all([
+      apiGetWithRefresh<{ accounts: WalletAccount[] }>('/api/v1/wallet'),
+      apiGetWithRefresh<{ transactions: TxRow[] }>('/api/v1/wallet/transactions?limit=5'),
+      apiGetWithRefresh<PriceData>('/api/v1/price'),
+    ])
+    if (walletRes.ok) {
+      const next = walletRes.data?.accounts ?? []
+      setAccounts(next)
+      writePanelCache(`wallet:${uid}`, next)
     }
-    void fetchAll()
+    if (txRes.ok) {
+      const next = txRes.data?.transactions ?? []
+      setTxs(next)
+      writePanelCache(`txs:${uid}`, next)
+    }
+    if (priceRes.ok && priceRes.data) {
+      setPrice(priceRes.data)
+      writePanelCache('price', priceRes.data)
+    }
+    setBooted(true)
+  }, [uid])
+
+  useEffect(() => {
+    ;(async () => {
+      await fetchAll()
+    })()
     // pull-to-refresh و reconnect → رفرش داده
     window.addEventListener(DATA_REFRESH_EVENT, fetchAll)
+    // موجودی لحظه‌ای — هر ۳۰ ثانیه؛ وقتی تب مخفی است poll نمی‌شود
+    const poll = setInterval(() => {
+      if (!document.hidden) void fetchAll()
+    }, LIVE_POLL_MS)
     return () => {
-      cancelled = true
+      clearInterval(poll)
       window.removeEventListener(DATA_REFRESH_EVENT, fetchAll)
     }
-  }, [uid])
+  }, [fetchAll])
+
+  // رفرش دستی از آیکون هیرو — فقط نمایش انیمیشن؛ داده‌ها از همان fetchAll می‌آیند
+  async function onRefresh() {
+    setRefreshing(true)
+    try {
+      await fetchAll()
+    } finally {
+      setRefreshing(false)
+    }
+  }
 
   const toman = shownAccounts.find((a) => a.assetType === 'TOMAN')
   const gold = shownAccounts.find((a) => a.assetType === 'GOLD')
@@ -242,6 +261,8 @@ export function DashboardOverview() {
         tomanBalance={toman?.available ?? '0'}
         lockedToman={toman?.lockedBalance ?? '0'}
         loading={!walletReady}
+        onRefresh={() => void onRefresh()}
+        refreshing={refreshing}
       />
 
       {/* ============ ۲. میان‌برهای خدمات — ۴ کارت مربعی ============ */}

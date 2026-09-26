@@ -6,7 +6,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { IconChartPie, IconAlertTriangle, IconCircleCheck } from '@tabler/icons-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -29,6 +29,9 @@ const ACTION_ROUTES: Record<AssetsAction, string> = {
   delivery: '/dashboard/delivery',
 }
 
+// موجودی هر ۳۰ ثانیه به‌روز می‌شود — مثل صفحه خانه
+const LIVE_POLL_MS = 30_000
+
 interface SummaryData extends WalletCardsData {
   priceChange24h: number | null
 }
@@ -40,6 +43,7 @@ export function AssetsClient() {
   const [summary, setSummary] = useState<SummaryData | null>(null)
   const [bankAccounts, setBankAccounts] = useState<BankAccountRow[] | null>(null)
   const [booted, setBooted] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const uid = user.id
   const cachedSummary = usePanelCache<SummaryData>(`summary:${uid}`)
@@ -74,7 +78,7 @@ export function AssetsClient() {
     return null
   })
 
-  async function loadAll() {
+  const loadAll = useCallback(async () => {
     const [summaryRes, bankRes] = await Promise.all([
       apiGetWithRefresh<{ summary: SummaryData }>('/api/v1/wallet/summary'),
       apiGetWithRefresh<{ accounts: BankAccountRow[] }>('/api/v1/bank-accounts'),
@@ -89,31 +93,28 @@ export function AssetsClient() {
       writePanelCache(`bank:${uid}`, next)
     }
     setBooted(true)
-  }
+  }, [uid])
 
   useEffect(() => {
-    let cancelled = false
     ;(async () => {
-      const [summaryRes, bankRes] = await Promise.all([
-        apiGetWithRefresh<{ summary: SummaryData }>('/api/v1/wallet/summary'),
-        apiGetWithRefresh<{ accounts: BankAccountRow[] }>('/api/v1/bank-accounts'),
-      ])
-      if (cancelled) return
-      if (summaryRes.ok && summaryRes.data) {
-        setSummary(summaryRes.data.summary)
-        writePanelCache(`summary:${uid}`, summaryRes.data.summary)
-      }
-      if (bankRes.ok) {
-        const next = bankRes.data?.accounts ?? []
-        setBankAccounts(next)
-        writePanelCache(`bank:${uid}`, next)
-      }
-      setBooted(true)
+      await loadAll()
     })()
-    return () => {
-      cancelled = true
+    // موجودی لحظه‌ای — هر ۳۰ ثانیه؛ تب مخفی poll نمی‌شود
+    const poll = setInterval(() => {
+      if (!document.hidden) void loadAll()
+    }, LIVE_POLL_MS)
+    return () => clearInterval(poll)
+  }, [loadAll])
+
+  // رفرش دستی از آیکون هیرو
+  async function onRefresh() {
+    setRefreshing(true)
+    try {
+      await loadAll()
+    } finally {
+      setRefreshing(false)
     }
-  }, [uid])
+  }
 
   // ارزش کل = تومان آزاد + ارزش طلا با نرخ فروش لحظه‌ای
   const goldValue =
@@ -135,6 +136,8 @@ export function AssetsClient() {
         loading={loading}
         online={online}
         onAction={handleHeroAction}
+        onRefresh={() => void onRefresh()}
+        refreshing={refreshing}
       />
 
       {/* کارت‌های کیف — طلا (سود/زیان) + تومان */}
