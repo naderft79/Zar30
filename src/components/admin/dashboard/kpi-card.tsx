@@ -89,6 +89,18 @@ export function KpiCard({
 
   const content = (
     <>
+      {/* تب انتخاب دوره — بالای کارت */}
+      {periods && activePeriod && onPeriodChange && (
+        <div className="mb-3">
+          <Segmented
+            options={periods}
+            value={activePeriod}
+            onChange={onPeriodChange}
+            ariaLabel={`بازه ${label}`}
+          />
+        </div>
+      )}
+
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <p className="text-muted-foreground text-[11px] font-medium">{label}</p>
@@ -102,8 +114,20 @@ export function KpiCard({
             {unit && <span className="text-muted-foreground mr-1 text-xs font-normal">{unit}</span>}
           </p>
         </div>
-        <div className="bg-muted/50 text-muted-foreground rounded-lg p-2">
-          <Icon className="size-4" strokeWidth={1.75} aria-hidden="true" />
+        {/* دکمه مشاهده جفت آیکون — کل کارت لینک نیست */}
+        <div className="flex items-center gap-1.5">
+          {href && (
+            <Link
+              href={href}
+              className="border-border/60 text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:ring-ring inline-flex h-7 items-center gap-1 rounded-lg border px-2.5 text-[11px] font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              مشاهده
+              <IconChevronLeft className="size-3" strokeWidth={2} aria-hidden="true" />
+            </Link>
+          )}
+          <div className="bg-muted/50 text-muted-foreground rounded-lg p-2">
+            <Icon className="size-4" strokeWidth={1.75} aria-hidden="true" />
+          </div>
         </div>
       </div>
 
@@ -132,33 +156,12 @@ export function KpiCard({
         </div>
       )}
 
-      {sparkline && sparkline.length >= 2 && (
-        <MiniSparkline data={sparkline} className="mt-2 h-8 w-full" />
-      )}
-
-      {periods && activePeriod && onPeriodChange && (
-        <div className="mt-3">
-          <Segmented
-            options={periods}
-            value={activePeriod}
-            onChange={onPeriodChange}
-            ariaLabel={`بازه ${label}`}
-          />
-        </div>
-      )}
-
-      {/* دکمه مشخص ورود به صفحه — کل کارت لینک نیست */}
-      {href && (
-        <div className="mt-auto pt-3">
-          <Link
-            href={href}
-            className="border-border/60 text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:ring-ring inline-flex h-7 items-center gap-1 rounded-lg border px-2.5 text-[11px] font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
-          >
-            مشاهده
-            <IconChevronLeft className="size-3" strokeWidth={2} aria-hidden="true" />
-          </Link>
-        </div>
-      )}
+      {/* مینی چارت — ناحیه با ارتفاع ثابت تا کارت‌ها و چارت‌ها هم‌تراز بمانند */}
+      <div className="mt-auto h-10 w-full">
+        {sparkline && sparkline.length >= 2 && (
+          <MiniSparkline data={sparkline} className="mt-2 h-8 w-full" />
+        )}
+      </div>
     </>
   )
 
