@@ -70,28 +70,28 @@ export function AssetsHero({
         className="from-gold-500/15 pointer-events-none absolute -top-24 -left-24 size-72 rounded-full bg-gradient-to-br to-transparent blur-2xl"
       />
 
-      {/* رفرش دستی موجودی — گوشه بالا سمت راست */}
-      {onRefresh && (
-        <button
-          type="button"
-          onClick={onRefresh}
-          disabled={refreshing}
-          aria-label="به‌روزرسانی موجودی"
-          title="به‌روزرسانی موجودی"
-          className="text-cream-300/60 hover:text-gold-300 hover:bg-cream-50/8 focus-visible:ring-ring absolute top-3 right-3 z-10 flex size-8 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:opacity-60 sm:top-4 sm:right-4"
-        >
-          <IconRefresh
-            className={cn('size-4', refreshing && 'animate-spin')}
-            stroke={1.75}
-            aria-hidden="true"
-          />
-        </button>
-      )}
-
-      {/* بج تغییر ۲۴ ساعته — گوشه بالا سمت چپ کارت */}
-      {!loading && !hidden && changePercent != null && (
-        <div className="absolute top-4 left-4 sm:top-5 sm:left-5">
-          <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" />
+      {/* گوشه بالا سمت چپ — آیکون رفرش + بج تغییر ۲۴ ساعته */}
+      {(onRefresh || (!loading && !hidden && changePercent != null)) && (
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 sm:top-5 sm:left-5">
+          {onRefresh && (
+            <button
+              type="button"
+              onClick={onRefresh}
+              disabled={refreshing}
+              aria-label="به‌روزرسانی موجودی"
+              title="به‌روزرسانی موجودی"
+              className="text-cream-300/60 hover:text-gold-300 hover:bg-cream-50/8 focus-visible:ring-ring flex size-7 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:opacity-60"
+            >
+              <IconRefresh
+                className={cn('size-4', refreshing && 'animate-spin')}
+                stroke={1.75}
+                aria-hidden="true"
+              />
+            </button>
+          )}
+          {!loading && !hidden && changePercent != null && (
+            <TrendBadge value={changePercent} caption="۲۴ ساعت اخیر" />
+          )}
         </div>
       )}
 
