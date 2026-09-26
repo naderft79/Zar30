@@ -1,5 +1,30 @@
 # Zar30 — Changelog
 
+## [1.4.0] — Testing & Coverage (Phase 19 شروع)
+
+### Added
+
+- **Integration tests مالی** — `tests/integration/assets-v2.test.ts` (۲۱ تست روی PostgreSQL واقعی): انتقال داخلی تومان/طلا با journal متقارن، تحویل فیزیکی (قفل/آزادسازی/lifecycle ادمین)، SIP، زرکار (قفل طلا + payout)، تبدیل سکه، هشدار قیمت، LimitRule، آدرس، حساب بانکی، خلاصه مالی، wallet.service
+- **Integration tests ادمین** — `tests/integration/admin-services.test.ts` (۱۵ تست): حساب بانکی (مسدود/جزئیات)، انتقال (flag)، fee/limit/kyc rules، risk rules/events، exports، commerce (product/category/discount)، delivery، automation (SIP/alerts/security/rate-limits)، settings/SEO/health/halt flags، role matrix، team member update (محافظت از خود-تغییر و آخرین SUPER_ADMIN)، broadcast، admin search
+- **Integration tests امنیت** — `tests/integration/auth-guard.test.ts` (۶ تست) + `tests/integration/rate-limit.test.ts` (۳ تست Redis واقعی: limit DB-configured، fallback، bypass ادمین)
+- **Unit tests** — `validators-v2.test.ts` (۱۹ تست برای validatorهای صفر درصد: auth/finance/admin) + `installment-plans.test.ts` (۷ تست: محاسبه annuity، کارمزدها، کف/سقف طرح)
+
+### Changed
+
+- `vitest.config.ts` — coverage scoped به `src/lib` + **thresholds: statements/lines/functions ≥ ۸۰٪، branches ≥ ۶۵٪**
+- `.github/workflows/ci.yml` — سرویس‌های postgres:16 و redis:7 + migrate/seed قبل از تست؛ تست‌ها حالا با `--coverage` اجرا و گزارش به‌عنوان artifact آپلود می‌شود
+- `scripts/_cov.mjs` — helper تجمیع coverage از روی `coverage-final.json`
+
+### Results
+
+- **۴۰ فایل تست / ۳۳۰ تست — همه سبز** (قبل: ۳۴ فایل / ۲۵۹ تست)
+- **Coverage src/lib: ۸۰٫۵٪** statements (قبل: ۴۴٫۰۹٪) — هدف «>۸۰٪» محقق شد
+
+### Verification
+
+- `pnpm exec vitest run --coverage`: 330/330 ✅ با thresholdهای فعال
+- `pnpm typecheck` ✅ / `pnpm lint` ✅ / `prettier --check` ✅
+
 ## [1.3.0] — Phase 13 Upgrade: Web Push + Native Notifications + Geolocation Address
 
 ### Added

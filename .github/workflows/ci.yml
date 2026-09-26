@@ -17,6 +17,31 @@ jobs:
     name: Quality Checks
     runs-on: ubuntu-latest
 
+    # تست‌های integration به PostgreSQL و Redis واقعی نیاز دارند
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,8 +67,21 @@ jobs:
       - name: Format check
         run: pnpm format:check || true
 
-      - name: Unit Tests
-        run: pnpm test
+      - name: Generate Prisma Client
+        run: pnpm db:generate
+        env:
+          DATABASE_URL: "postgresql://test:test@localhost:5432/test"
+
+      - name: Migrate + Seed test database
+        run: pnpm exec prisma migrate deploy && pnpm db:seed
+        env:
+          DATABASE_URL: "postgresql://test:test@localhost:5432/test"
+          JWT_ACCESS_SECRET: "test_access_secret_min_32_chars_long!!"
+          JWT_REFRESH_SECRET: "test_refresh_secret_min_32_chars_long!!"
+          PASSWORD_PEPPER: "test_pepper"
+
+      - name: Tests + Coverage
+        run: pnpm exec vitest run --coverage
         env:
           DATABASE_URL: "postgresql://test:test@localhost:5432/test"
           REDIS_URL: "redis://localhost:6379"
@@ -51,10 +89,13 @@ jobs:
           JWT_REFRESH_SECRET: "test_refresh_secret_min_32_chars_long!!"
           PASSWORD_PEPPER: "test_pepper"
 
-      - name: Generate Prisma Client
-        run: pnpm db:generate
-        env:
-          DATABASE_URL: "postgresql://test:test@localhost:5432/test"
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
 
       - name: Build
         run: pnpm build

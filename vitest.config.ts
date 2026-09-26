@@ -19,7 +19,25 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'tests/', '.next/'],
+      // پوشش معنادار فقط روی منطق دامنه (src/lib) سنجیده می‌شود —
+      // صفحات React و routeهای نازل API توسط تست‌های e2e پوشش داده می‌شوند
+      include: ['src/lib/**/*.ts'],
+      exclude: [
+        'node_modules/',
+        'tests/',
+        '.next/',
+        'src/generated/**',
+        'src/types/**',
+        'src/lib/types/**',
+        'src/lib/mobile/**',
+      ],
+      // کف پوشش روی منطق دامنه — اندازه‌گیری فعلی: ~۸۰.۵٪ stmts / ~۸۲٪ funcs / ~۶۹٪ branches
+      thresholds: {
+        statements: 80,
+        lines: 80,
+        functions: 80,
+        branches: 65,
+      },
     },
   },
 })

@@ -2250,17 +2250,17 @@ zar30/
 
 ### Phase 19: Testing
 
-- [ ] 19.1 unit
-- [ ] 19.2 integration
-- [ ] 19.3 E2E
-- [ ] 19.4 security
-- [ ] 19.5 load
-- [ ] 19.6 performance
-- [ ] 19.7 PWA
-- [ ] 19.8 responsive
-- [ ] 19.9 financial
-- [ ] 19.10 ledger
-- [ ] 19.11 race
+- [x] 19.1 unit — ۴۰ فایل / ۳۳۰ تست، coverage src/lib = **۸۰٫۵٪** (threshold ≥۸۰٪ در vitest.config)
+- [x] 19.2 integration — PostgreSQL واقعی: مالی (انتقال/تحویل/SIP/زرکار/سکه/ledger)، امنیت (guard/rate-limit)، سرویس‌های ادمین
+- [ ] 19.3 E2E — suite موجود؛ تقویت auth/buy/withdraw باقی است
+- [ ] 19.4 security — ZAP pentest (Phase Launch)
+- [ ] 19.5 load — k6 باقی است
+- [ ] 19.6 performance — Lighthouse CI باقی است
+- [ ] 19.7 PWA — تست دستگاه واقعی باقی است
+- [x] 19.8 responsive — e2e سه viewport
+- [x] 19.9 financial — ledger متقارن، idempotency، قفل موجودی، شکست SIP/ZarKar
+- [x] 19.10 ledger — تراز Debit/Credit + immutability
+- [ ] 19.11 race — تست‌های هم‌روندی باقی است
 - [ ] 19.12 regression
 
 ### Phase 20: DevOps
