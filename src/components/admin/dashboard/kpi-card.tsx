@@ -5,7 +5,7 @@
 'use client'
 
 import Link from 'next/link'
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
+import { IconChevronLeft, IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
 import { useAdmin } from '@/components/admin/admin-shell'
 import { hasPermission, type Permission } from '@/lib/auth/rbac'
 import { Segmented } from './segmented'
@@ -146,34 +146,30 @@ export function KpiCard({
           />
         </div>
       )}
+
+      {/* دکمه مشخص ورود به صفحه — کل کارت لینک نیست */}
+      {href && (
+        <div className="mt-auto pt-3">
+          <Link
+            href={href}
+            className="border-border/60 text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:ring-ring inline-flex h-7 items-center gap-1 rounded-lg border px-2.5 text-[11px] font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          >
+            مشاهده
+            <IconChevronLeft className="size-3" strokeWidth={2} aria-hidden="true" />
+          </Link>
+        </div>
+      )}
     </>
   )
 
-  const card = (
-    <div
-      className={cn(
-        'border-border/60 bg-card rounded-xl border p-4 transition-colors',
-        href && 'hover:border-border hover:shadow-md',
-      )}
-    >
+  return (
+    <div className="border-border/60 bg-card flex h-full flex-col rounded-xl border p-4">
       {content}
       {sparkline && sparkline.length >= 2 && (
         <span className="sr-only">روند ۷ روز: {sparkline.map(toPersianDigits).join('، ')}</span>
       )}
     </div>
   )
-
-  if (href) {
-    return (
-      <Link
-        href={href}
-        className="focus-visible:ring-ring block rounded-xl focus-visible:ring-2 focus-visible:outline-none"
-      >
-        {card}
-      </Link>
-    )
-  }
-  return card
 }
 
 export function KpiCardSkeleton() {
