@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { IconCoins, IconTrendingDown, IconTrendingUp, IconWallet } from '@tabler/icons-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { FinancialNumber } from '@/components/financial/financial-number'
-import { formatExactAmount } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount } from '@/lib/utils/format'
 import { useBalanceVisibility } from '@/lib/hooks/use-balance-visibility'
 import { cn } from 'cn'
 
@@ -95,7 +95,7 @@ export function WalletCards({ data, loading = false }: WalletCardsProps) {
               </Masked>
               {!hidden && Number(data.goldLocked) > 0 && (
                 <p className="mt-0.5 text-[10px] text-white/70 tabular-nums" dir="ltr">
-                  {formatExactAmount(data.goldLocked)} گرم مسدود
+                  {formatGoldAmount(data.goldLocked)} گرم مسدود
                 </p>
               )}
             </div>

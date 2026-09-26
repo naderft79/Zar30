@@ -16,7 +16,7 @@ import { AdminFilterBar } from '@/components/admin/admin-filter-bar'
 import { AdminPagination } from '@/components/admin/admin-pagination'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminStatus } from '@/components/admin/admin-status'
-import { formatExactAmount, toPersianDigits } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount, toPersianDigits } from '@/lib/utils/format'
 
 const KYC_LEVEL_LABELS: Record<string, string> = {
   LEVEL_0: 'سطح ۰',
@@ -70,7 +70,7 @@ const columns: AdminColumn<AdminUserListRow>[] = [
   {
     key: 'gold',
     header: 'طلا (گرم)',
-    render: (u) => <span className="tabular-nums">{formatExactAmount(u.goldBalance)}</span>,
+    render: (u) => <span className="tabular-nums">{formatGoldAmount(u.goldBalance)}</span>,
   },
   {
     key: 'lastLoginAt',

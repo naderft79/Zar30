@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { cn } from 'cn'
-import { formatAmount } from '@/lib/utils/format'
+import { formatAmount, formatGoldAmount } from '@/lib/utils/format'
 
 // ============================================
 // Financial Number — عدد مالی با سلسله‌مراتب بصری
@@ -13,6 +13,8 @@ interface FinancialNumberProps {
   value: number | string
   /** واحد — مثلاً «تومان» یا «گرم» */
   unit?: string
+  /** مقدار گرم طلا است — قانون نمایش ۵ رقم truncate اعمال می‌شود (AGENTS.md §12) */
+  gold?: boolean
   digits?: 'fa' | 'en'
   decimals?: number
   /** اندازه بصری */
@@ -50,6 +52,7 @@ function prefersReducedMotion(): boolean {
 export function FinancialNumber({
   value,
   unit,
+  gold,
   digits = 'fa',
   decimals,
   size = 'md',
@@ -88,6 +91,7 @@ export function FinancialNumber({
   }, [target, animating])
 
   const shown = animating ? display : target
+  const isGold = gold || unit === 'گرم'
 
   return (
     <span
@@ -96,7 +100,9 @@ export function FinancialNumber({
       className={cn('tnum inline-flex items-baseline gap-1', sizeClasses[size], className)}
       dir="rtl"
     >
-      <span>{formatAmount(shown, { digits, decimals })}</span>
+      <span>
+        {isGold ? formatGoldAmount(shown, { digits }) : formatAmount(shown, { digits, decimals })}
+      </span>
       {unit && (
         <span
           className={cn('text-muted-foreground font-normal', unitSizeClasses[size], unitClassName)}

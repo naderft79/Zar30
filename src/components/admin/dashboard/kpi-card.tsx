@@ -9,7 +9,7 @@ import { IconChevronLeft, IconTrendingDown, IconTrendingUp } from '@tabler/icons
 import { useAdmin } from '@/components/admin/admin-shell'
 import { hasPermission, type Permission } from '@/lib/auth/rbac'
 import { Segmented } from './segmented'
-import { formatExactAmount, toPersianDigits } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount, toPersianDigits } from '@/lib/utils/format'
 import { cn } from 'cn'
 
 // sparkline ساده — بدون recharts تا باندل اولیه سبک بماند
@@ -110,7 +110,7 @@ export function KpiCard({
               gold ? 'text-gold-700 dark:text-gold-300' : 'text-foreground',
             )}
           >
-            {formatExactAmount(value)}
+            {gold ? formatGoldAmount(value) : formatExactAmount(value)}
             {unit && <span className="text-muted-foreground mr-1 text-xs font-normal">{unit}</span>}
           </p>
         </div>

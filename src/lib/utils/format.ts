@@ -33,12 +33,56 @@ export function formatToman(value: number | string, options?: { digits?: 'fa' | 
   return `${formatAmount(value, options)} تومان`
 }
 
-// وزن طلا به گرم — ۳ رقم اعشار
+// ============================================
+// قانون نمایش گرم طلا — PERMANENT PROJECT RULE (AGENTS.md §12)
+// ============================================
+// حداکثر ۵ رقم اعشار — همیشه truncate، هرگز رند.
+// دقت ذخیره‌سازی در DB هشت رقم است (GOLD_DECIMALS=8)؛ این قانون
+// فقط لایه نمایش را محدود می‌کند و به محاسبات/ledger دست نمی‌زند.
+// هر نمایش گرم طلا در کل پروژه (پنل کاربر، ادمین، پیام‌ها) باید از
+// formatGoldAmount / formatGoldGrams استفاده کند — نه toFixed و نه toLocaleString.
+export const GOLD_DISPLAY_DECIMALS = 5
+
+// مقدار طلا به گرم — truncate به حداکثر ۵ رقم اعشار، بدون رند، بدون واهدار
+export function formatGoldAmount(
+  value: string | number | bigint,
+  options: { digits?: 'fa' | 'en' } = {},
+): string {
+  const { digits = 'fa' } = options
+  const invalid = digits === 'fa' ? '۰' : '0'
+
+  // ورودی number → رشته اعشاری کامل (toLocaleString هرگز نماد علمی تولید نمی‌کند)
+  let raw: string
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) return invalid
+    raw = value.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 })
+  } else {
+    raw = String(value).trim()
+  }
+  if (!/^-?\d+(?:\.\d+)?$/.test(raw)) return invalid
+
+  const negative = raw.startsWith('-')
+  const unsigned = negative ? raw.slice(1) : raw
+  const dotIndex = unsigned.indexOf('.')
+  const intPart = dotIndex === -1 ? unsigned : unsigned.slice(0, dotIndex)
+  const fracPart = dotIndex === -1 ? '' : unsigned.slice(dotIndex + 1)
+
+  // truncate به حداکثر ۵ رقم — صفرهای انتهایی حذف می‌شوند (۱٫۵ نه ۱٫۵۰۰۰۰)
+  const frac = fracPart.slice(0, GOLD_DISPLAY_DECIMALS).replace(/0+$/, '')
+
+  const int = intPart.replace(/^0+(?=\d)/, '')
+  const grouped = int.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+  const body = `${negative ? '-' : ''}${grouped}${frac ? `.${frac}` : ''}`
+  return digits === 'fa' ? toPersianDigits(body) : body
+}
+
+// وزن طلا با واحد — نمونه: «۶٫۲۶۱۹۴ گرم»
 export function formatGoldGrams(
-  value: number | string,
+  value: string | number | bigint,
   options?: { digits?: 'fa' | 'en' },
 ): string {
-  return `${formatAmount(value, { ...options, decimals: 3 })} گرم`
+  return `${formatGoldAmount(value, options)} گرم`
 }
 
 // مقدار مالی دقیق — برای string/bigint هیچ Number conversion و هیچ round/truncate

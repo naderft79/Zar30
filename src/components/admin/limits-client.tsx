@@ -155,7 +155,7 @@ export function AdminLimitsClient({ scope, title, description }: AdminLimitsClie
           {
             key: 'gold',
             header: 'سقف گرم',
-            render: (r) => (r.amountGold ? `${formatGoldGrams(r.amountGold)} گرم` : '—'),
+            render: (r) => (r.amountGold ? formatGoldGrams(r.amountGold) : '—'),
           },
           {
             key: 'active',

@@ -178,7 +178,7 @@ export function AdminProductsClient() {
           {
             key: 'weight',
             header: 'وزن',
-            render: (p) => `${formatGoldGrams(p.weightGrams)} گرم`,
+            render: (p) => formatGoldGrams(p.weightGrams),
             mobile: false,
           },
           {

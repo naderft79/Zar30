@@ -40,7 +40,7 @@ const columns: AdminColumn<AdminOrderListRow>[] = [
   {
     key: 'gold',
     header: 'طلا (گرم)',
-    render: (o) => <FinancialValue value={o.goldAmount} />,
+    render: (o) => <FinancialValue value={o.goldAmount} gold />,
   },
   {
     key: 'total',

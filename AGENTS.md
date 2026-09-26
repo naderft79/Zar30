@@ -485,6 +485,22 @@ Never round intermediate financial calculations unless explicitly required.
 
 Round at defined business boundaries only.
 
+### Gold Display Precision (PERMANENT RULE — دائمی)
+
+```text
+Storage/Calculation precision: 8 decimals (GOLD_DECIMALS, Decimal(18,8))
+Display precision:             MAX 5 decimals — ALWAYS truncate, NEVER round
+```
+
+قانون الزامی برای **کل پروژه** (پنل کاربر، پنل ادمین، پیام‌ها، نوتیفیکیشن‌ها):
+
+- هر نمایش «گرم طلا» در UI **حداکثر ۵ رقم اعشار** دارد.
+- مقدار نمایشی **هرگز رند نمی‌شود** — truncate: «۶٫۲۶۱۹۴۰۳۶» → «۶٫۲۶۱۹۴» (نه «۶٫۲۶۱۹۵»).
+- صفرهای انتهایی اعشار حذف می‌شوند: «۱٫۵۰۰۰۰» → «۱٫۵».
+- تنها کانال مجاز: `formatGoldAmount` / `formatGoldGrams` در `src/lib/utils/format.ts` (ثابت `GOLD_DISPLAY_DECIMALS = 5`). کامپوننت‌های `FinancialValue` و `FinancialNumber` با `unit="گرم"` یا `gold` خودکار از آن استفاده می‌کنند.
+- ممنوع: `toFixed`، `toLocaleString` با اعشار، و `formatExactAmount` روی مقادیر گرم.
+- این قانون **فقط لایه نمایش** است — محاسبات، ledger و exportهای CSV با دقت کامل ۸ رقم ادامه می‌دهند.
+
 ---
 
 # 13. LEDGER PRINCIPLE

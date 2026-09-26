@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { apiGetWithRefresh } from '@/lib/api/client'
 import { usePanelCache, writePanelCache } from '@/lib/panel-cache'
-import { formatExactAmount } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount } from '@/lib/utils/format'
 import { useOnlineStatus } from './offline-indicator'
 import { usePanelUser } from './panel-shell'
 import { AssetsHero, type AssetsAction } from './assets-hero'
@@ -226,7 +226,7 @@ export function AssetsClient() {
                             طلای آب‌شده
                           </span>
                           <span className="text-foreground font-semibold tabular-nums" dir="ltr">
-                            {formatExactAmount(shownSummary?.goldBalance ?? '0')} گرم · {goldPct}٪
+                            {formatGoldAmount(shownSummary?.goldBalance ?? '0')} گرم · {goldPct}٪
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
@@ -249,7 +249,7 @@ export function AssetsClient() {
                             <span className="text-muted-foreground">مسدود شده</span>
                             <span className="text-foreground font-semibold tabular-nums" dir="ltr">
                               {formatExactAmount(shownSummary?.tomanLocked ?? '0')} تومان +{' '}
-                              {formatExactAmount(shownSummary?.goldLocked ?? '0')} گرم
+                              {formatGoldAmount(shownSummary?.goldLocked ?? '0')} گرم
                             </span>
                           </div>
                         )}

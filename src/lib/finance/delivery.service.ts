@@ -16,6 +16,7 @@ import { Decimal } from './money'
 import { postJournal } from './ledger.service'
 import { ensureAssetAccount } from './wallet.service'
 import { notifyFinancial } from './notify'
+import { formatGoldAmount } from '@/lib/utils/format'
 
 type Tx = Prisma.TransactionClient
 
@@ -125,7 +126,7 @@ export async function createDeliveryRequest(
 
   const config = await getDeliveryConfig()
   if (grams.lt(config.minGrams)) {
-    throw ApiError.badRequest(`حداقل مقدار تحویل ${config.minGrams} گرم است`)
+    throw ApiError.badRequest(`حداقل مقدار تحویل ${formatGoldAmount(config.minGrams)} گرم است`)
   }
   const fee = input.method === 'POST' ? config.feePost : config.feePickup
 

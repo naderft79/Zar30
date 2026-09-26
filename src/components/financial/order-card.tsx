@@ -82,7 +82,7 @@ export function OrderCard({
         <div>
           <dt className="text-muted-foreground text-[11px]">مقدار</dt>
           <dd className="mt-1">
-            <FinancialNumber value={goldAmount} size="sm" decimals={3} />
+            <FinancialNumber value={goldAmount} size="sm" gold />
             <span className="text-muted-foreground mr-1 text-[10px]">گرم</span>
           </dd>
         </div>

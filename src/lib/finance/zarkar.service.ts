@@ -21,6 +21,7 @@ import { FinanceErrors } from './errors'
 import { postJournal } from './ledger.service'
 import { ensureAssetAccount } from './wallet.service'
 import { notifyFinancial } from './notify'
+import { formatGoldAmount } from '@/lib/utils/format'
 import type { KycLevel } from '@/generated/prisma'
 
 // طول هر دوره پرداخت سود — ۳۰ روز
@@ -86,7 +87,9 @@ export async function subscribeZarkar(
     throw ApiError.notFound('طرح زرکار یافت نشد یا غیرفعال است')
   }
   if (grams.lt(plan.minGoldGram)) {
-    throw FinanceErrors.invalidAmount(`حداقل سپرده این طرح ${plan.minGoldGram.toString()} گرم است`)
+    throw FinanceErrors.invalidAmount(
+      `حداقل سپرده این طرح ${formatGoldAmount(plan.minGoldGram.toString())} گرم است`,
+    )
   }
 
   const position = await prisma.$transaction(async (tx) => {

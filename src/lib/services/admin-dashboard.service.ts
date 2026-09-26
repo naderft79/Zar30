@@ -15,6 +15,7 @@ import { getOnlineAdmins } from '@/lib/cache/admin-presence'
 import { getHaltFlags, type HaltFlags } from '@/lib/services/admin-system.service'
 import { getSlaThresholds, slaState, type QueueKey, type SlaState } from '@/lib/config/admin-sla'
 import { ApiError } from '@/lib/errors/api-error'
+import { formatGoldAmount } from '@/lib/utils/format'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -1067,7 +1068,7 @@ export async function getQueueRows(key: QueueKey): Promise<QueueRow[]> {
       return rows.map((r) => ({
         id: r.id,
         title: r.user.mobile,
-        subtitle: `${r.grams.toString()} گرم — ${r.status}`,
+        subtitle: `${formatGoldAmount(r.grams.toString())} گرم — ${r.status}`,
         at: r.createdAt.toISOString(),
         href: `/admin/delivery/${r.id}`,
       }))

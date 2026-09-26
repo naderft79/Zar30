@@ -20,7 +20,7 @@ import {
   IconFileText,
 } from '@tabler/icons-react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
-import { formatExactAmount } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount } from '@/lib/utils/format'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -280,7 +280,7 @@ export function InstallmentsClient() {
               <p className="text-muted-foreground mt-1 text-lg font-bold">—</p>
             ) : (
               <p className="text-foreground mt-1 text-xl font-bold tabular-nums">
-                {faDigits(goldGrams.toFixed(2))}
+                {formatGoldAmount(goldGrams)}
                 <span className="text-gold-600 ms-1 text-xs font-medium">گرم</span>
               </p>
             )}

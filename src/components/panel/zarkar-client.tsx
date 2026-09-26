@@ -22,7 +22,7 @@ import { BottomSheet } from '@/components/ui/bottom-sheet'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
-import { formatExactAmount } from '@/lib/utils/format'
+import { formatGoldAmount } from '@/lib/utils/format'
 import { useOnlineStatus } from './offline-indicator'
 import { useBalanceVisibility } from '@/lib/hooks/use-balance-visibility'
 import { cn } from 'cn'
@@ -122,7 +122,7 @@ export function ZarkarClient() {
       return
     }
     if (gramsNum < Number(selectedPlan.minGoldGram)) {
-      setError(`حداقل سپرده این طرح ${selectedPlan.minGoldGram} گرم است`)
+      setError(`حداقل سپرده این طرح ${formatGoldAmount(selectedPlan.minGoldGram)} گرم است`)
       return
     }
     setBusy(true)
@@ -154,7 +154,7 @@ export function ZarkarClient() {
                 <p className="text-cream-50 text-3xl font-bold tracking-widest">••••••</p>
               ) : (
                 <p className="text-cream-50 text-3xl font-bold tabular-nums" dir="ltr">
-                  {activeGold.toFixed(4)}{' '}
+                  {formatGoldAmount(activeGold)}{' '}
                   <span className="text-cream-200/80 text-sm font-medium">گرم</span>
                 </p>
               )}
@@ -163,8 +163,7 @@ export function ZarkarClient() {
                   '••••••'
                 ) : (
                   <>
-                    سود دریافتی: <span dir="ltr">{formatExactAmount(totalEarned.toFixed(6))}</span>{' '}
-                    گرم
+                    سود دریافتی: <span dir="ltr">{formatGoldAmount(totalEarned)}</span> گرم
                   </>
                 )}
               </p>
@@ -207,7 +206,7 @@ export function ZarkarClient() {
                     {p.rate}٪
                   </p>
                   <p className="text-muted-foreground mt-1 text-[10px]">
-                    حداقل {p.minGoldGram} گرم · سود در {p.periods} قسط ماهانه
+                    حداقل {formatGoldAmount(p.minGoldGram)} گرم · سود در {p.periods} قسط ماهانه
                   </p>
                 </div>
               ))}
@@ -240,11 +239,11 @@ export function ZarkarClient() {
                   <li key={p.id} className="flex items-center justify-between gap-3 py-3">
                     <div className="min-w-0">
                       <p className="text-foreground text-xs font-semibold tabular-nums" dir="ltr">
-                        {formatExactAmount(p.goldAmount)}{' '}
+                        {formatGoldAmount(p.goldAmount)}{' '}
                         <span className="text-muted-foreground">گرم · {p.planName}</span>
                       </p>
                       <p className="text-muted-foreground mt-0.5 text-[10px]">
-                        سود پرداخت‌شده: {formatExactAmount(p.totalPaid)} گرم
+                        سود پرداخت‌شده: {formatGoldAmount(p.totalPaid)} گرم
                         {' · '}
                         {p.status === 'ACTIVE' ? 'سررسید' : 'تسویه'}:{' '}
                         {new Date(p.endDate).toLocaleDateString('fa-IR', { dateStyle: 'short' })}
@@ -292,7 +291,7 @@ export function ZarkarClient() {
           <label className="block space-y-1.5">
             <span className="text-muted-foreground text-[11px]">
               مقدار طلا (گرم)
-              {selectedPlan ? ` — حداقل ${selectedPlan.minGoldGram}` : ''}
+              {selectedPlan ? ` — حداقل ${formatGoldAmount(selectedPlan.minGoldGram)}` : ''}
             </span>
             <input
               type="text"
@@ -312,7 +311,7 @@ export function ZarkarClient() {
                 className="text-gold-700 dark:text-gold-400 text-sm font-bold tabular-nums"
                 dir="ltr"
               >
-                ≈ {estimatedYield.toFixed(4)} گرم
+                ≈ {formatGoldAmount(estimatedYield)} گرم
               </p>
               <p className="text-muted-foreground mt-0.5 text-[10px]">
                 پرداخت در {selectedPlan.periods} قسط ماهانه

@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react'
 import { IconAlertTriangle, IconCoin, IconMinus, IconPlus } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
-import { formatExactAmount } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount } from '@/lib/utils/format'
 import { cn } from 'cn'
 
 interface CoinProduct {
@@ -173,7 +173,7 @@ export function CoinsSection({ online, onChanged }: CoinsSectionProps) {
             >
               <p className="text-foreground text-xs font-bold">{p.name}</p>
               <p className="text-muted-foreground mt-1 text-[10px] tabular-nums" dir="ltr">
-                {formatExactAmount(p.weightGrams)} g
+                {formatGoldAmount(p.weightGrams)} g
               </p>
               <p className="text-gold-600 mt-0.5 text-[10px] font-semibold tabular-nums" dir="ltr">
                 {p.unitPriceToman ? `${formatExactAmount(p.unitPriceToman)} تومان` : 'قیمت نامشخص'}
@@ -215,7 +215,7 @@ export function CoinsSection({ online, onChanged }: CoinsSectionProps) {
           <div className="flex justify-between">
             <span className="text-muted-foreground">طلا از کیف شما</span>
             <span className="text-foreground font-semibold tabular-nums" dir="ltr">
-              {goldNeeded.toFixed(4)} گرم
+              {formatGoldAmount(goldNeeded)} گرم
             </span>
           </div>
           <div className="flex justify-between">

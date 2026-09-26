@@ -8,6 +8,7 @@
 
 import prisma from '@/lib/db/prisma'
 import { hasPermission, PERMISSIONS, type Permission } from '@/lib/auth/rbac'
+import { formatGoldAmount } from '@/lib/utils/format'
 
 export type AdminSearchResult = {
   type:
@@ -227,7 +228,7 @@ export async function searchAdminEntities(
           rows.map((d) => ({
             type: 'delivery' as const,
             id: d.id,
-            label: `تحویل فیزیکی ${d.grams.toString()} گرم — ${personName(d.user)}`,
+            label: `تحویل فیزیکی ${formatGoldAmount(d.grams.toString())} گرم — ${personName(d.user)}`,
             description: `کاربر ${d.user.mobile}`,
             href: `/admin/delivery/${d.id}`,
             status: d.status,

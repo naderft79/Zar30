@@ -20,7 +20,7 @@ import {
 } from '@tabler/icons-react'
 import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
 import { INSTALLMENT_TERMS } from '@/lib/data/installment-terms'
-import { formatExactAmount } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount } from '@/lib/utils/format'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Dialog,
@@ -168,7 +168,7 @@ export function InstallmentCheckoutClient() {
           <p className="text-muted-foreground text-3xl font-extrabold">—</p>
         ) : (
           <p className="text-foreground text-3xl font-extrabold tabular-nums">
-            {faDigits(goldGrams.toFixed(2))}
+            {formatGoldAmount(goldGrams)}
             <span className="text-gold-600 ms-1 text-sm font-bold">گرم</span>
           </p>
         )}

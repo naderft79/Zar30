@@ -72,7 +72,7 @@ export function AdminCoinHoldingsClient() {
         {
           key: 'weight',
           header: 'وزن واحد',
-          render: (h) => `${formatGoldGrams(h.product.weightGrams)} گرم`,
+          render: (h) => formatGoldGrams(h.product.weightGrams),
           mobile: false,
         },
         {
@@ -83,8 +83,7 @@ export function AdminCoinHoldingsClient() {
         {
           key: 'total',
           header: 'وزن کل',
-          render: (h) =>
-            `${formatGoldGrams(String(Number(h.product.weightGrams) * h.quantity))} گرم`,
+          render: (h) => formatGoldGrams(String(Number(h.product.weightGrams) * h.quantity)),
           mobile: false,
         },
         {

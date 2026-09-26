@@ -3,7 +3,7 @@
 // ============================================
 import { describe, it, expect } from 'vitest'
 import { toPersianDigits, formatToman, formatGold, generateReferralCode } from '@/lib/utils/utils'
-import { formatExactAmount } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount, formatGoldGrams } from '@/lib/utils/format'
 
 describe('Utils', () => {
   it('should convert digits to Persian', () => {
@@ -61,5 +61,32 @@ describe('formatExactAmount', () => {
     expect(formatExactAmount('abc')).toBe('۰')
     expect(formatExactAmount('1.2.3')).toBe('۰')
     expect(formatExactAmount('', { digits: 'en' })).toBe('0')
+  })
+})
+
+describe('formatGoldAmount — قانون نمایش گرم طلا (AGENTS.md §12)', () => {
+  it('حداکثر ۵ رقم اعشار — truncate نه رند', () => {
+    // ۶٫۲۶۱۹۴۰۳۶ → ۶٫۲۶۱۹۴ (نه ۶٫۲۶۱۹۵)
+    expect(formatGoldAmount('6.26194036', { digits: 'en' })).toBe('6.26194')
+    expect(formatGoldAmount('1.99999999', { digits: 'en' })).toBe('1.99999')
+    expect(formatGoldAmount('0.123456789', { digits: 'en' })).toBe('0.12345')
+  })
+
+  it('۵ رقم یا کمتر بدون تغییر؛ صفرهای انتهایی حذف می‌شوند', () => {
+    expect(formatGoldAmount('2.5', { digits: 'en' })).toBe('2.5')
+    expect(formatGoldAmount('1.50000', { digits: 'en' })).toBe('1.5')
+    expect(formatGoldAmount('10.000009', { digits: 'en' })).toBe('10')
+    expect(formatGoldAmount('42', { digits: 'en' })).toBe('42')
+  })
+
+  it('ورودی number و bigint و نامعتبر', () => {
+    expect(formatGoldAmount(6.26194036, { digits: 'en' })).toBe('6.26194')
+    expect(formatGoldAmount(3n, { digits: 'en' })).toBe('3')
+    expect(formatGoldAmount('abc')).toBe('۰')
+  })
+
+  it('ارقام فارسی + grouping', () => {
+    expect(formatGoldAmount('1234.56789', {})).toBe('۱,۲۳۴.۵۶۷۸۹')
+    expect(formatGoldGrams('0.75')).toBe('۰.۷۵ گرم')
   })
 })

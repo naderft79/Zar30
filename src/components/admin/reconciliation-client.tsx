@@ -25,7 +25,7 @@ interface ReconRow {
 }
 
 function fmt(asset: string, v: string): string {
-  return asset === 'GOLD' ? `${formatGoldGrams(v)} گرم` : `${formatToman(v)} تومان`
+  return asset === 'GOLD' ? formatGoldGrams(v) : `${formatToman(v)} تومان`
 }
 
 export function AdminReconciliationClient() {

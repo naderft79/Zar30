@@ -4,6 +4,7 @@
 
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { formatGoldAmount } from './format'
 
 // ترکیب کلاس‌های Tailwind (برای shadcn/ui)
 export function cn(...inputs: ClassValue[]) {
@@ -21,12 +22,9 @@ export function formatToman(amount: number | bigint): string {
   return new Intl.NumberFormat('fa-IR').format(Number(amount))
 }
 
-// فرمت وزن طلا (گرم)
+// فرمت وزن طلا (گرم) — حداکثر ۵ رقم اعشار، truncate (AGENTS.md §12)
 export function formatGold(grams: number): string {
-  return new Intl.NumberFormat('fa-IR', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 4,
-  }).format(grams)
+  return formatGoldAmount(grams)
 }
 
 // تولید کد دعوت (۸ کاراکتر)

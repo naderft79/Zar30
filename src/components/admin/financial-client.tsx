@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from 'react'
 import { apiGetWithRefresh } from '@/lib/api/client'
-import { toPersianDigits, formatToman } from '@/lib/utils/format'
+import { toPersianDigits, formatToman, formatGoldAmount } from '@/lib/utils/format'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminFinanceList } from '@/components/admin/finance-list'
 
@@ -99,7 +99,7 @@ export function AdminFinancialClient() {
                     </span>
                   </div>
                   <p className="mt-2 text-sm font-bold tabular-nums">
-                    {isGold ? `${toPersianDigits(a.balance)} گرم` : formatToman(Number(a.balance))}
+                    {isGold ? `${formatGoldAmount(a.balance)} گرم` : formatToman(Number(a.balance))}
                   </p>
                   <p className="text-muted-foreground text-[10px] tabular-nums">
                     بدهکار {toPersianDigits(a.debit)} · بستانکار {toPersianDigits(a.credit)}
@@ -162,7 +162,7 @@ export function AdminFinancialClient() {
                       {l.entryType === 'DEBIT' ? 'بدهکار' : 'بستانکار'}{' '}
                       {l.amountToman
                         ? `${toPersianDigits(l.amountToman)} تومان`
-                        : `${toPersianDigits(l.amountGold ?? '0')} گرم`}
+                        : `${formatGoldAmount(l.amountGold ?? '0')} گرم`}
                     </p>
                   ))}
                 </div>

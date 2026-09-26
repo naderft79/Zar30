@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { apiGetWithRefresh } from '@/lib/api/client'
-import { formatExactAmount } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount } from '@/lib/utils/format'
 import { ReceiptSheet, type ReceiptField } from './receipt-sheet'
 import { cn } from 'cn'
 
@@ -251,7 +251,7 @@ function mapRow(tab: TabKey, item: Record<string, unknown>): Row {
     const isToman = item.assetType === 'TOMAN'
     const amount = isToman
       ? `${formatExactAmount(String(item.tomanAmount))} تومان`
-      : `${formatExactAmount(String(item.goldAmount))} گرم`
+      : `${formatGoldAmount(String(item.goldAmount))} گرم`
     const isGift = item.kind === 'GIFT'
     const sender = item.sender as
       | { firstName?: string; lastName?: string; mobile?: string }
@@ -294,11 +294,11 @@ function mapRow(tab: TabKey, item: Record<string, unknown>): Row {
     id,
     title: `تحویل ${METHOD_LABELS[String(item.method)] ?? String(item.method)}`,
     subtitle: created,
-    amount: `${formatExactAmount(grams)} گرم`,
+    amount: `${formatGoldAmount(grams)} گرم`,
     status,
     fields: [
       { label: 'شناسه', value: id, mono: true },
-      { label: 'مقدار', value: `${formatExactAmount(grams)} گرم`, copyValue: grams },
+      { label: 'مقدار', value: `${formatGoldAmount(grams)} گرم`, copyValue: grams },
       { label: 'روش', value: METHOD_LABELS[String(item.method)] ?? String(item.method) },
       ...(address?.city || address?.province
         ? [{ label: 'مقصد', value: `${address.province ?? ''} ${address.city ?? ''}`.trim() }]

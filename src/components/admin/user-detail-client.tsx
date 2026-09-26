@@ -25,7 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { formatExactAmount, toPersianDigits } from '@/lib/utils/format'
+import { formatExactAmount, formatGoldAmount, toPersianDigits } from '@/lib/utils/format'
 
 const KYC_LEVEL_LABELS: Record<string, string> = {
   LEVEL_0: 'سطح ۰',
@@ -290,7 +290,7 @@ export function AdminUserDetailClient() {
                   >
                     <div>
                       <span className="text-foreground font-medium">
-                        {o.type === 'BUY' ? 'خرید' : 'فروش'} {formatExactAmount(o.goldAmount)} گرم
+                        {o.type === 'BUY' ? 'خرید' : 'فروش'} {formatGoldAmount(o.goldAmount)} گرم
                       </span>
                       <span className="text-muted-foreground mr-2 tabular-nums">
                         {formatExactAmount(o.total)} تومان

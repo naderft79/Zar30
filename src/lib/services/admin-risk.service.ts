@@ -14,6 +14,7 @@ import type { AdminRiskEventsQuery, AdminFraudQuery } from '@/lib/validators/adm
 import type { adminRiskRuleSchema } from '@/lib/validators/admin-risk'
 import type { z } from 'zod'
 import { Decimal } from '@/lib/finance/money'
+import { formatGoldAmount } from '@/lib/utils/format'
 
 interface AdminActCtx {
   adminId: string
@@ -446,7 +447,7 @@ export async function listAdminFraudSignals(input: AdminFraudQuery) {
       id: `flag-${t.id}`,
       kind: 'FLAGGED_TRANSFER' as const,
       user: serializeUser(t.sender),
-      label: `انتقال پرچم‌دار ${t.goldAmount ? `${t.goldAmount.toString()} گرم` : `${t.tomanAmount?.toString() ?? '0'} تومان`}`,
+      label: `انتقال پرچم‌دار ${t.goldAmount ? `${formatGoldAmount(t.goldAmount.toString())} گرم` : `${t.tomanAmount?.toString() ?? '0'} تومان`}`,
       detail: t.flagReason ?? 'بدون دلیل ثبت‌شده',
       at: (t.flaggedAt ?? t.createdAt).toISOString(),
       href: `/admin/transfers/${t.id}`,
