@@ -14,7 +14,6 @@ import { AdminDataTable, type AdminColumn } from '@/components/admin/admin-data-
 import { AdminFilterBar } from '@/components/admin/admin-filter-bar'
 import { AdminPagination } from '@/components/admin/admin-pagination'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
-import { ReadOnlyNotice } from '@/components/admin/read-only-notice'
 
 export interface FinanceListFilterDef {
   /** کلید query param */
@@ -40,8 +39,6 @@ interface AdminFinanceListProps<T> {
   dateRange?: boolean
   searchPlaceholder?: string
   emptyMessage?: string
-  /** نشان دادن بنر read-only */
-  readOnlyNotice?: boolean
   /** دکمه/اکشن کنار هدر — مثل «افزودن رکورد» */
   headerAction?: React.ReactNode
   /** کلید بازخوانی — با تغییر این مقدار fetch دوباره انجام می‌شود */
@@ -71,7 +68,6 @@ export function AdminFinanceList<T>({
   dateRange = false,
   searchPlaceholder = 'جستجو…',
   emptyMessage = 'رکوردی با این فیلترها یافت نشد',
-  readOnlyNotice = true,
   headerAction,
   refreshKey = 0,
   rowActions,
@@ -160,8 +156,6 @@ export function AdminFinanceList<T>({
         <AdminPageHeader title={title} eyebrow={eyebrow} description={description} as={titleAs} />
         {headerAction}
       </div>
-
-      {readOnlyNotice && <ReadOnlyNotice className="mb-4" />}
 
       <AdminFilterBar
         searchValue={searchInput}

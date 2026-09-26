@@ -105,7 +105,6 @@ export function AdminDiscountsClient() {
         dataKey="discounts"
         keyOf={(d) => d.id}
         searchPlaceholder="کد تخفیف…"
-        readOnlyNotice={false}
         refreshKey={refreshKey}
         filters={[
           {

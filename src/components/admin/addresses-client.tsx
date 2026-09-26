@@ -98,7 +98,6 @@ export function AdminAddressesClient() {
       columns={columns}
       keyOf={(a) => a.id}
       searchPlaceholder="جستجو: گیرنده، موبایل، کد پستی، موبایل کاربر…"
-      readOnlyNotice
     />
   )
 }

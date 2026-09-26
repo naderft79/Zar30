@@ -74,7 +74,6 @@ export function AdminSettingsClient() {
         keyOf={(s) => s.key}
         searchPlaceholder="کلید…"
         refreshKey={refreshKey}
-        readOnlyNotice={false}
         headerAction={
           <button
             type="button"

@@ -57,7 +57,6 @@ export function AdminSavingsPlansClient() {
       dataKey="plans"
       keyOf={(p) => p.id}
       searchPlaceholder="کاربر (موبایل/نام)…"
-      readOnlyNotice={false}
       refreshKey={refreshKey}
       filters={[
         {

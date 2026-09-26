@@ -15,7 +15,6 @@ import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminDataTable, type AdminColumn } from '@/components/admin/admin-data-table'
 import { AdminPagination } from '@/components/admin/admin-pagination'
 import { AdminMetric } from '@/components/admin/admin-metric'
-import { ReadOnlyNotice } from '@/components/admin/read-only-notice'
 import { FinancialValue } from '@/components/admin/financial-value'
 import { formatExactAmount, toPersianDigits } from '@/lib/utils/format'
 
@@ -107,8 +106,6 @@ export function AdminGoldClient() {
         eyebrow="مالی"
         description="موجودی طلای کاربران — aggregate واقعی PostgreSQL"
       />
-
-      <ReadOnlyNotice className="mb-4" />
 
       {error && !data ? (
         <div

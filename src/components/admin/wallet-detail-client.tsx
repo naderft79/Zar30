@@ -13,7 +13,6 @@ import type { AdminWalletDetail } from '@/lib/services/admin-finance.service'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminStatus } from '@/components/admin/admin-status'
 import { FinancialValue } from '@/components/admin/financial-value'
-import { ReadOnlyNotice } from '@/components/admin/read-only-notice'
 import { Field, Section, fmtDate, useAdminDetail } from '@/components/admin/detail-ui'
 import { AdminDataTable, type AdminColumn } from '@/components/admin/admin-data-table'
 import { toPersianDigits } from '@/lib/utils/format'
@@ -97,8 +96,6 @@ export function AdminWalletDetailClient() {
         description={`شناسه: ${wallet.id}`}
         actions={<AdminStatus status={wallet.status} />}
       />
-      <ReadOnlyNotice className="mb-4" />
-
       <div className="grid gap-4 lg:grid-cols-2">
         <Section title="کاربر">
           <dl className="divide-border/40 divide-y">

@@ -15,7 +15,7 @@ export function AdminDepositsClient() {
     <AdminFinanceList<AdminTransactionListRow>
       title="واریزها"
       eyebrow="مالی"
-      description="منبع داده: تراکنش‌ها (type=DEPOSIT) — فقط خواندنی"
+      description="منبع داده: تراکنش‌ها (type=DEPOSIT) — اعتبارسنجی/رد از صفحه جزئیات"
       endpoint="/api/v1/admin/deposits"
       dataKey="deposits"
       columns={transactionColumns}

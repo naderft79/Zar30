@@ -73,7 +73,6 @@ export function AdminProductGroupsClient() {
         dataKey="categories"
         keyOf={(c) => c.id}
         searchPlaceholder="نام یا slug…"
-        readOnlyNotice={false}
         refreshKey={refreshKey}
         headerAction={
           <button

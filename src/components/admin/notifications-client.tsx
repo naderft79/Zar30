@@ -187,7 +187,6 @@ export function AdminNotificationsClient() {
         keyOf={(n) => n.id}
         searchPlaceholder="عنوان، نوع یا موبایل…"
         refreshKey={refreshKey}
-        readOnlyNotice={false}
         filters={[
           {
             key: 'status',

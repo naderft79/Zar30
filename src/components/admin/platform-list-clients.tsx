@@ -207,7 +207,6 @@ export const AdminAuditLogsClient = () => (
     dataKey="logs"
     columns={auditColumns}
     keyOf={(r) => r.id}
-    readOnlyNotice={false}
     searchPlaceholder="عملیات، موجودیت یا Request ID…"
   />
 )
@@ -220,7 +219,6 @@ export const AdminSecuritySessionsClient = () => (
     dataKey="sessions"
     columns={sessionColumns}
     keyOf={(r) => r.id}
-    readOnlyNotice={false}
     searchPlaceholder="موبایل، IP یا دستگاه…"
   />
 )

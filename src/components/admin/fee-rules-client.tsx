@@ -128,7 +128,6 @@ export function AdminFeeRulesClient() {
         dataKey="rules"
         keyOf={(r) => r.id}
         searchPlaceholder="جستجو…"
-        readOnlyNotice={false}
         refreshKey={refreshKey}
         headerAction={
           <button

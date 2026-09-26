@@ -268,7 +268,6 @@ export function AdminRiskClient() {
           dataKey="events"
           keyOf={(e) => e.id}
           searchPlaceholder="موبایل کاربر…"
-          readOnlyNotice={false}
           refreshKey={refreshKey}
           filters={[
             {

@@ -37,7 +37,6 @@ export function AdminExportsClient() {
       dataKey="exports"
       keyOf={(e) => e.id}
       searchPlaceholder="نوع خروجی…"
-      readOnlyNotice
       columns={[
         {
           key: 'kind',

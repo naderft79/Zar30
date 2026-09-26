@@ -1,10 +1,15 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
+import { IconCheck, IconCoin, IconX } from '@tabler/icons-react'
 import { AdminFinanceList, type FinanceListFilterDef } from './finance-list'
 import type { AdminColumn } from './admin-data-table'
 import { AdminStatus } from './admin-status'
 import { FinancialValue } from './financial-value'
+import { useAdmin } from './admin-shell'
+import { hasPermission, PERMISSIONS } from '@/lib/auth/rbac'
+import { apiPost } from '@/lib/api/client'
 import type {
   AdminInstallmentRow,
   AdminInvestmentRow,
@@ -12,6 +17,120 @@ import type {
   AdminTicketRow,
 } from '@/lib/services/admin-operations.service'
 import { toPersianDigits } from '@/lib/utils/format'
+import { cn } from 'cn'
+
+// اکشن پرداخت پاداش معرف — فقط برای وضعیت QUALIFIED
+// پاداش از PlatformSetting (referral.reward_toman) خوانده می‌شود؛ سند double-entry
+// با ledger متوازن — payment سمت سرور idempotent (قفل ردیفی + REWARDED check)
+function ReferralRowActions({
+  row,
+  onDone,
+}: {
+  row: AdminReferralRow
+  onDone: (msg: string) => void
+}) {
+  const { admin } = useAdmin()
+  const canManage = hasPermission(admin.permissions, PERMISSIONS.REFERRALS_MANAGE)
+  const [busy, setBusy] = useState(false)
+
+  if (!canManage || row.status !== 'QUALIFIED') return null
+
+  async function pay() {
+    if (busy) return
+    if (
+      !window.confirm(
+        `پاداش معرفی برای ${row.referrer.name} پرداخت شود؟ مبلغ از تنظیمات سامانه خوانده و با سند حسابداری واریز می‌شود.`,
+      )
+    )
+      return
+    setBusy(true)
+    const res = await apiPost(`/api/v1/admin/referrals/${row.id}/reward`)
+    setBusy(false)
+    if (!res.ok) {
+      window.alert(res.error ?? 'پرداخت پاداش ناموفق بود')
+      return
+    }
+    onDone('پاداش معرفی پرداخت شد.')
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={busy}
+      onClick={pay}
+      title="پرداخت پاداش معرف"
+      className="text-success hover:bg-success/10 focus-visible:ring-ring inline-flex size-7 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:outline-none disabled:opacity-40"
+      aria-label="پرداخت پاداش معرف"
+    >
+      <IconCoin className="size-4" strokeWidth={2} />
+    </button>
+  )
+}
+
+// اکشن‌های inline قرارداد قسطی — فقط برای وضعیت PENDING
+// approve: صدور قرارداد (وصول پیش‌پرداخت + تحویل طلا + جدول اقساط)
+// reject: رد با دلیل — هر دو سرور-side با permission enforce و strict audit
+function InstallmentRowActions({ row, onDone }: { row: AdminInstallmentRow; onDone: () => void }) {
+  const { admin } = useAdmin()
+  const canReview = hasPermission(admin.permissions, PERMISSIONS.INSTALLMENTS_REVIEW)
+  const [busy, setBusy] = useState(false)
+
+  if (!canReview || row.status !== 'PENDING') return null
+
+  async function run(url: string, body?: unknown) {
+    if (busy) return
+    setBusy(true)
+    const res = await apiPost(url, body ?? {})
+    setBusy(false)
+    if (!res.ok) {
+      window.alert(res.error ?? 'عملیات ناموفق بود')
+      return
+    }
+    onDone()
+  }
+
+  function approve() {
+    if (
+      !window.confirm('صدور قرارداد تایید شود؟ پیش‌پرداخت از کیف پول کاربر کسر و طلا تحویل می‌شود.')
+    )
+      return
+    void run(`/api/v1/admin/installments/${row.id}/approve`)
+  }
+
+  function reject() {
+    const reason = window.prompt('دلیل رد را بنویسید (حداقل ۳ کاراکتر):')
+    if (!reason || reason.trim().length < 3) return
+    void run(`/api/v1/admin/installments/${row.id}/reject`, { reason: reason.trim() })
+  }
+
+  const btnBase =
+    'flex size-7 items-center justify-center rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-40'
+
+  return (
+    <>
+      <button
+        type="button"
+        disabled={busy}
+        title="تایید و صدور قرارداد"
+        aria-label="تایید و صدور قرارداد"
+        onClick={approve}
+        className={cn(btnBase, 'text-success hover:bg-success/10')}
+      >
+        <IconCheck className="size-4" strokeWidth={2} />
+      </button>
+      <button
+        type="button"
+        disabled={busy}
+        title="رد درخواست"
+        aria-label="رد درخواست"
+        onClick={reject}
+        className={cn(btnBase, 'text-error hover:bg-error/10')}
+      >
+        <IconX className="size-4" strokeWidth={2} />
+      </button>
+    </>
+  )
+}
 
 function date(value: string | null) {
   return value ? new Date(value).toLocaleDateString('fa-IR') : '—'
@@ -181,17 +300,24 @@ const ticketFilters: FinanceListFilterDef[] = [
 ]
 
 export function AdminInstallmentsClient() {
+  // refreshKey — پس از هر اکشن approve/reject لیست دوباره fetch می‌شود
+  const [refreshKey, setRefreshKey] = useState(0)
+
   return (
     <AdminFinanceList
       title="خرید قسطی"
       eyebrow="محصولات"
-      description="قراردادها و چرخه پرداخت اقساط — داده واقعی و فقط خواندنی"
+      description="قراردادها و چرخه پرداخت اقساط — قراردادهای در انتظار با اکشن تایید/رد"
       endpoint="/api/v1/admin/installments"
       dataKey="contracts"
       columns={installmentColumns}
       keyOf={(r) => r.id}
       filters={installmentFilters}
       searchPlaceholder="شناسه، موبایل یا نام طرح…"
+      refreshKey={refreshKey}
+      rowActions={(r) => (
+        <InstallmentRowActions row={r} onDone={() => setRefreshKey((k) => k + 1)} />
+      )}
     />
   )
 }
@@ -211,18 +337,42 @@ export function AdminInvestmentsClient() {
   )
 }
 export function AdminReferralsClient() {
+  // پس از پرداخت پاداش لیست refresh می‌شود
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [doneMsg, setDoneMsg] = useState<string | null>(null)
+
   return (
-    <AdminFinanceList
-      title="برنامه معرفی"
-      eyebrow="محصولات"
-      description="زنجیره معرف، کاربر دعوت‌شده و وضعیت پاداش"
-      endpoint="/api/v1/admin/referrals"
-      dataKey="referrals"
-      columns={referralColumns}
-      keyOf={(r) => r.id}
-      filters={referralFilters}
-      searchPlaceholder="موبایل، شناسه یا کد معرفی…"
-    />
+    <div className="space-y-3">
+      {doneMsg && (
+        <div
+          role="status"
+          className="text-success bg-success/10 rounded-xl p-3.5 text-xs font-medium"
+        >
+          {doneMsg}
+        </div>
+      )}
+      <AdminFinanceList
+        title="برنامه معرفی"
+        eyebrow="محصولات"
+        description="زنجیره معرف، کاربر دعوت‌شده و وضعیت پاداش — دعوت‌های واجد شرایط دکمه پرداخت پاداش دارند"
+        endpoint="/api/v1/admin/referrals"
+        dataKey="referrals"
+        columns={referralColumns}
+        keyOf={(r) => r.id}
+        filters={referralFilters}
+        searchPlaceholder="موبایل، شناسه یا کد معرفی…"
+        refreshKey={refreshKey}
+        rowActions={(r) => (
+          <ReferralRowActions
+            row={r}
+            onDone={(msg) => {
+              setDoneMsg(msg)
+              setRefreshKey((k) => k + 1)
+            }}
+          />
+        )}
+      />
+    </div>
   )
 }
 export function AdminSupportClient() {
@@ -230,14 +380,14 @@ export function AdminSupportClient() {
     <AdminFinanceList
       title="مرکز پشتیبانی"
       eyebrow="خدمات مشتری"
-      description="صندوق ورودی تیکت‌ها، اولویت و تخصیص کارشناس"
+      description="صندوق ورودی تیکت‌ها، اولویت و تخصیص کارشناس — برای پاسخ روی ردیف کلیک کنید"
       endpoint="/api/v1/admin/support"
       dataKey="tickets"
       columns={ticketColumns}
       keyOf={(r) => r.id}
       filters={ticketFilters}
       searchPlaceholder="موضوع، شناسه یا موبایل…"
-      readOnlyNotice={false}
+      detailHref={(r) => `/admin/support/${r.id}`}
     />
   )
 }

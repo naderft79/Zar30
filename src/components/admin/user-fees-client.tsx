@@ -97,7 +97,6 @@ export function AdminUserFeesClient() {
         dataKey="overrides"
         keyOf={(o) => o.id}
         searchPlaceholder="موبایل یا نام کاربر…"
-        readOnlyNotice={false}
         refreshKey={refreshKey}
         headerAction={
           <button

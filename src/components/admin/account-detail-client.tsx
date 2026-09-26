@@ -13,7 +13,6 @@ import type { AdminAccountDetail } from '@/lib/services/admin-finance.service'
 import { AdminPageHeader } from '@/components/admin/admin-page-header'
 import { AdminStatus } from '@/components/admin/admin-status'
 import { FinancialValue } from '@/components/admin/financial-value'
-import { ReadOnlyNotice } from '@/components/admin/read-only-notice'
 import {
   Field,
   LedgerEntriesTable,
@@ -67,8 +66,6 @@ export function AdminAccountDetailClient() {
         eyebrow="مالی — حساب‌های دارایی"
         description={`شناسه: ${account.id}`}
       />
-      <ReadOnlyNotice className="mb-4" />
-
       <div className="grid gap-4 lg:grid-cols-2">
         <Section title="مانده حساب">
           <dl className="divide-border/40 divide-y">

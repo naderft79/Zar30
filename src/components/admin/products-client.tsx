@@ -114,7 +114,6 @@ export function AdminProductsClient() {
         dataKey="products"
         keyOf={(p) => p.id}
         searchPlaceholder="نام یا SKU…"
-        readOnlyNotice={false}
         refreshKey={refreshKey}
         filters={[
           {

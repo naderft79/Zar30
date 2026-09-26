@@ -34,7 +34,6 @@ export function AdminFraudClient() {
       dataKey="signals"
       keyOf={(s) => s.id}
       searchPlaceholder="کاربر…"
-      readOnlyNotice
       columns={[
         {
           key: 'kind',

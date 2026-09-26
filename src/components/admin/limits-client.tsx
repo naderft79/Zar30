@@ -121,7 +121,6 @@ export function AdminLimitsClient({ scope, title, description }: AdminLimitsClie
         dataKey="rules"
         keyOf={(r) => r.id}
         searchPlaceholder="جستجو…"
-        readOnlyNotice={false}
         refreshKey={refreshKey}
         filters={[{ key: 'kycLevel', label: 'سطح KYC', options: KYC_OPTIONS }]}
         headerAction={

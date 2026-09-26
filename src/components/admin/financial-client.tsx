@@ -129,7 +129,6 @@ export function AdminFinancialClient() {
               ],
             },
           ]}
-          readOnlyNotice
           columns={[
             {
               key: 'reference',

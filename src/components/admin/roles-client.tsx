@@ -178,7 +178,6 @@ export function AdminRolesClient() {
         keyOf={(m) => m.id}
         searchPlaceholder="نام یا موبایل…"
         refreshKey={refreshKey}
-        readOnlyNotice={false}
         columns={[
           {
             key: 'user',
