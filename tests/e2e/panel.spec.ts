@@ -85,7 +85,7 @@ test.describe('User Panel', () => {
     await expect(page.getByRole('heading', { name: 'دارایی', exact: true })).toBeVisible()
     await expect(page.getByText(/هنوز تراکنشی ثبت نشده/)).toBeVisible()
 
-    // --- Installments (preview) ---
+    // --- Installments (backend واقعی) ---
     await page.goto('/dashboard/installments')
     await expect(page.getByRole('heading', { name: 'خرید قسطی', exact: true })).toBeVisible()
     await expect(page.getByText(/قراردادی ندارید/)).toBeVisible()

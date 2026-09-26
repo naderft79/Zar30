@@ -1000,6 +1000,8 @@ model InstallmentPlan {
   fee                Decimal @db.Decimal(5, 2)
   minAmount          BigInt  @map("min_amount")
   maxAmount          BigInt  @map("max_amount")
+  /** هزینه خدمات به ازای هر ۱۰ میلیون تومان اعتبار — تومان */
+  serviceFeePer10M   BigInt  @default(0) @map("service_fee_per_10m")
   active             Boolean @default(true)
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")

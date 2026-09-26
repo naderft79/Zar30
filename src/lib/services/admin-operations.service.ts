@@ -1,5 +1,6 @@
 import type { Prisma } from '@/generated/prisma'
 import prisma from '@/lib/db/prisma'
+import { ApiError } from '@/lib/errors/api-error'
 import type {
   AdminInstallmentQuery,
   AdminInvestmentQuery,
@@ -110,6 +111,137 @@ export async function listAdminInstallments(
       plan: row.plan,
       paymentsCount: row._count.payments,
     })),
+  }
+}
+
+// ============================================
+// Installment — آمار داشبوردی + جزئیات قرارداد
+// ============================================
+
+export interface AdminInstallmentStats {
+  pending: number
+  active: number
+  completed: number
+  defaulted: number
+  /** مجموع اصل قراردادهای فعال — تومان (string BigInt-safe) */
+  activePrincipal: string
+  /** مجموع اقساط پرداخت‌شده — تومان */
+  paidTotal: string
+  /** اقساط معوق (OVERDUE) */
+  overdueCount: number
+}
+
+export async function getAdminInstallmentStats(): Promise<AdminInstallmentStats> {
+  const [byStatus, activeAgg, paidAgg, overdue] = await Promise.all([
+    prisma.installmentContract.groupBy({ by: ['status'], _count: true }),
+    prisma.installmentContract.aggregate({
+      where: { status: 'ACTIVE' },
+      _sum: { principal: true },
+    }),
+    prisma.installmentPayment.aggregate({
+      where: { status: 'PAID' },
+      _sum: { amount: true, lateFee: true },
+    }),
+    prisma.installmentPayment.count({ where: { status: 'OVERDUE' } }),
+  ])
+
+  const countOf = (s: string) => byStatus.find((r) => r.status === s)?._count ?? 0
+  const paidSum = (paidAgg._sum.amount ?? 0n) + (paidAgg._sum.lateFee ?? 0n)
+
+  return {
+    pending: countOf('PENDING'),
+    active: countOf('ACTIVE'),
+    completed: countOf('COMPLETED'),
+    defaulted: countOf('DEFAULTED'),
+    activePrincipal: (activeAgg._sum.principal ?? 0n).toString(),
+    paidTotal: paidSum.toString(),
+    overdueCount: overdue,
+  }
+}
+
+export interface AdminInstallmentPaymentRow {
+  number: number
+  dueDate: string
+  amount: string
+  lateFee: string
+  status: string
+  paidAt: string | null
+}
+
+export interface AdminInstallmentDetail {
+  id: string
+  status: string
+  method: string
+  chequeNumber: string | null
+  principal: string
+  downPayment: string
+  totalPayable: string
+  createdAt: string
+  approvedAt: string | null
+  user: { id: string; mobile: string; name: string }
+  plan: {
+    id: string
+    name: string
+    months: number
+    interestRate: string
+    downPaymentPercent: string
+  }
+  payments: AdminInstallmentPaymentRow[]
+  /** خلاصه پیشرفت */
+  paidCount: number
+  overdueCount: number
+  remainingTotal: string
+}
+
+// جزئیات قرارداد برای ادمین — با جدول اقساط و خلاصه پیشرفت
+export async function getAdminInstallmentDetail(
+  contractId: string,
+): Promise<AdminInstallmentDetail> {
+  const contract = await prisma.installmentContract.findUnique({
+    where: { id: contractId },
+    include: {
+      plan: true,
+      user: { select: { id: true, mobile: true, firstName: true, lastName: true } },
+      payments: { orderBy: { installmentNumber: 'asc' } },
+    },
+  })
+  if (!contract) throw ApiError.notFound('قرارداد یافت نشد')
+
+  const paidCount = contract.payments.filter((p) => p.status === 'PAID').length
+  const overdueCount = contract.payments.filter((p) => p.status === 'OVERDUE').length
+  const remaining = contract.payments
+    .filter((p) => p.status !== 'PAID')
+    .reduce((acc, p) => acc + p.amount + p.lateFee, 0n)
+
+  return {
+    id: contract.id,
+    status: contract.status,
+    method: contract.method,
+    chequeNumber: contract.chequeNumber,
+    principal: contract.principal.toString(),
+    downPayment: contract.downPayment.toString(),
+    totalPayable: contract.totalPayable.toString(),
+    createdAt: contract.createdAt.toISOString(),
+    approvedAt: contract.approvedAt?.toISOString() ?? null,
+    user: { id: contract.user.id, mobile: contract.user.mobile, name: nameOf(contract.user) },
+    plan: {
+      id: contract.plan.id,
+      name: contract.plan.name,
+      months: contract.plan.months,
+      interestRate: contract.plan.interestRate.toString(),
+      downPaymentPercent: contract.plan.downPaymentPercent.toString(),
+    },
+    payments: contract.payments.map((p) => ({
+      number: p.installmentNumber,
+      dueDate: p.dueDate.toISOString(),
+      amount: p.amount.toString(),
+      lateFee: p.lateFee.toString(),
+      status: p.status,
+      paidAt: p.paidAt?.toISOString() ?? null,
+    })),
+    paidCount,
+    overdueCount,
+    remainingTotal: remaining.toString(),
   }
 }
 

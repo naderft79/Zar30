@@ -189,52 +189,59 @@ async function main() {
     console.log('✅ Initial gold price seeded')
   }
 
-  // Installment Plans (PENDING BUSINESS DECISION - dev defaults)
+  // Installment Plans — طرح‌های کانونیکال ۳/۶/۱۲/۱۸ ماهه
+  // منطبق بر src/lib/installments/plans.ts: حداقل ۱۰م تومان، سود سالانه ۲۳٪،
+  // هزینه خدمات مقیاس‌پذیر به ازای هر ۱۰م تومان اعتبار
   const installmentPlans = [
+    {
+      name: 'طرح ۳ ماهه',
+      months: 3,
+      downPaymentPercent: 0,
+      interestRate: 23,
+      fee: 0,
+      minAmount: 10000000,
+      maxAmount: 100000000,
+      serviceFeePer10M: 500000,
+      active: true,
+    },
+    {
+      name: 'طرح ۶ ماهه',
+      months: 6,
+      downPaymentPercent: 0,
+      interestRate: 23,
+      fee: 0,
+      minAmount: 10000000,
+      maxAmount: 200000000,
+      serviceFeePer10M: 800000,
+      active: true,
+    },
     {
       name: 'طرح ۱۲ ماهه',
       months: 12,
-      downPaymentPercent: 20,
-      interestRate: 10,
-      fee: 2,
-      minAmount: 500000,
-      maxAmount: 50000000,
+      downPaymentPercent: 0,
+      interestRate: 23,
+      fee: 0,
+      minAmount: 10000000,
+      maxAmount: 400000000,
+      serviceFeePer10M: 1400000,
       active: true,
     },
     {
       name: 'طرح ۱۸ ماهه',
       months: 18,
-      downPaymentPercent: 30,
-      interestRate: 12,
-      fee: 2,
-      minAmount: 500000,
-      maxAmount: 100000000,
-      active: true,
-    },
-    {
-      name: 'طرح ۲۴ ماهه',
-      months: 24,
-      downPaymentPercent: 40,
-      interestRate: 15,
-      fee: 2,
-      minAmount: 1000000,
-      maxAmount: 200000000,
+      downPaymentPercent: 0,
+      interestRate: 23,
+      fee: 0,
+      minAmount: 10000000,
+      maxAmount: 500000000,
+      serviceFeePer10M: 2100000,
       active: true,
     },
   ]
 
   for (const plan of installmentPlans) {
     await prisma.installmentPlan.create({
-      data: {
-        name: plan.name,
-        months: plan.months,
-        downPaymentPercent: plan.downPaymentPercent,
-        interestRate: plan.interestRate,
-        fee: plan.fee,
-        minAmount: plan.minAmount,
-        maxAmount: plan.maxAmount,
-        active: plan.active,
-      },
+      data: plan,
     })
   }
   console.log('✅ Installment plans seeded')

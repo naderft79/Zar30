@@ -61,14 +61,6 @@ export const adminRecordPriceSchema = z.object({
   source: z.string().min(1).max(50).default('admin'),
 })
 
-// پرداخت هزینه خدمات خرید اقساطی — مبلغ و ماه توسط سرور دوباره اعتبارسنجی می‌شوند
-export const installmentPaymentSchema = z.object({
-  amount: bigIntAmount,
-  months: z.number().int().min(1).max(36),
-  // origin مرورگر برای ساخت callback — سمت سرور sanitize می‌شود
-  origin: z.string().max(200).optional(),
-})
-
 export const financeListQuerySchema = paginationSchema.extend({
   status: z.string().optional(),
 })

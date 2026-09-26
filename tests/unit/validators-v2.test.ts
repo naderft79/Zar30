@@ -19,7 +19,6 @@ import {
   createDepositSchema,
   createWithdrawalSchema,
   adminRecordPriceSchema,
-  installmentPaymentSchema,
 } from '../../src/lib/validators/finance'
 import {
   adminBankAccountListQuerySchema,
@@ -134,14 +133,12 @@ describe('Finance Validators', () => {
     ).toBe(false)
   })
 
-  it('createDeposit + adminRecordPrice + installmentPayment', () => {
+  it('createDeposit + adminRecordPrice', () => {
     expect(createDepositSchema.safeParse({ amount: '1000' }).success).toBe(true)
     expect(createDepositSchema.safeParse({ amount: 'abc' }).success).toBe(false)
     expect(adminRecordPriceSchema.safeParse({ buyPrice: '100', sellPrice: '99' }).success).toBe(
       true,
     )
-    expect(installmentPaymentSchema.safeParse({ amount: '1000', months: 6 }).success).toBe(true)
-    expect(installmentPaymentSchema.safeParse({ amount: '1000', months: 40 }).success).toBe(false)
   })
 })
 
