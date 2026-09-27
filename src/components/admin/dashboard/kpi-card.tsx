@@ -65,6 +65,16 @@ export interface KpiCardProps {
   gold?: boolean
 }
 
+// فونت عدد — با طول متن کوچک می‌شود تا هرگز truncate نشود
+function valueSize(value: string, gold: boolean | undefined): string {
+  const len = value.length
+  if (gold) return 'text-lg sm:text-xl'
+  if (len <= 10) return 'text-xl sm:text-2xl'
+  if (len <= 14) return 'text-base sm:text-lg'
+  if (len <= 18) return 'text-sm sm:text-base'
+  return 'text-xs sm:text-sm'
+}
+
 export function KpiCard({
   label,
   value,
@@ -87,6 +97,9 @@ export function KpiCard({
   const delta = deltaPct ? parseFloat(deltaPct) : null
   const deltaPositive = delta !== null && delta >= 0
 
+  // مقدار فرمت‌شده — بدون هیچ truncate
+  const formatted = gold ? formatGoldAmount(value) : formatExactAmount(value)
+
   const content = (
     <>
       {/* تب انتخاب دوره — بالای کارت */}
@@ -106,16 +119,17 @@ export function KpiCard({
           <p className="text-muted-foreground text-[11px] font-medium">{label}</p>
           <p
             className={cn(
-              'mt-1 truncate text-xl font-bold tabular-nums sm:text-2xl',
+              'mt-1 leading-tight font-bold break-all tabular-nums',
+              valueSize(formatted, gold),
               gold ? 'text-gold-700 dark:text-gold-300' : 'text-foreground',
             )}
           >
-            {gold ? formatGoldAmount(value) : formatExactAmount(value)}
+            {formatted}
             {unit && <span className="text-muted-foreground mr-1 text-xs font-normal">{unit}</span>}
           </p>
         </div>
         {/* دکمه مشاهده جفت آیکون — کل کارت لینک نیست */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5">
           {href && (
             <Link
               href={href}
@@ -132,7 +146,7 @@ export function KpiCard({
       </div>
 
       {(delta !== null || netChange) && (
-        <div className="mt-2 flex items-center gap-2 text-[11px]">
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
           {delta !== null && (
             <span
               className={cn(

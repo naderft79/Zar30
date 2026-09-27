@@ -49,6 +49,6 @@ export class MiliProvider implements GoldPriceProvider {
     const timestamp = parsed && !Number.isNaN(parsed.getTime()) ? parsed : undefined
 
     // price18 واحدش ۱۰۰ تومان است → تومان/گرم
-    return platformQuote(price18 * 100, timestamp)
+    return await platformQuote(price18 * 100, timestamp)
   }
 }

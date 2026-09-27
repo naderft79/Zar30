@@ -165,6 +165,11 @@ export async function buyGold(
   })
   triggerRiskEvaluation(ctx.userId)
 
+  // کیفیت‌سنجی دعوت — fire-and-forget؛ هرگز مسیر خرید را خراب نمی‌کند
+  import('@/lib/services/referral.service')
+    .then((m) => m.qualifyReferralOnBuy(ctx.userId, input.tomanAmount))
+    .catch(() => {})
+
   return toOrderResult(order)
 }
 

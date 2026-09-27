@@ -353,7 +353,12 @@ describe('Admin Services (Real PostgreSQL)', () => {
     expect(updated.id).toBe(secondAdminId)
     expect(updated.role).toBe('FINANCE')
     await expect(
-      updateAdminMember(ADMIN, ADMIN.adminId, { role: 'SUPPORT' }, AUDIT),
+      updateAdminMember(
+        ADMIN,
+        ADMIN.adminId,
+        { role: 'SUPPORT', reason: 'تست نقش نامعتبر' },
+        AUDIT,
+      ),
     ).rejects.toThrow()
   })
 

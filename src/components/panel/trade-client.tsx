@@ -1,283 +1,83 @@
 // ============================================
-// Zar30 - Trade Client (Real Financial Engine)
+// Zar30 - Trade Terminal — خرید و فروش طلا
 // ============================================
-// خرید/فروش واقعی — POST /api/v1/orders با Idempotency-Key
-// قیمت از GoldPrice سرور؛ خطاهای مالی deterministic نمایش داده می‌شوند
+// چیدمان ۲ ستونه: نمودار + موقعیت | تیکت سفارش
+// کاملاً هماهنگ با تم برنامه — توکن‌های semantic (لایت + دارک)
 // ============================================
 
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-import {
-  IconArrowDownLeft,
-  IconArrowUpLeft,
-  IconHistory,
-  IconRepeat,
-  IconAlertTriangle,
-  IconCircleCheck,
-} from '@tabler/icons-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { EmptyState } from '@/components/ui/empty-state'
-import { StatusBadge } from '@/components/ui/status-badge'
-import { Button } from '@/components/ui/button'
-import { apiGetWithRefresh, apiPost } from '@/lib/api/client'
-import { formatExactAmount } from '@/lib/utils/format'
-import { useOnlineStatus } from './offline-indicator'
+import { useState } from 'react'
+import { IconBell, IconPigMoney, IconExchange, IconChevronDown } from '@tabler/icons-react'
+import { TradeTicket } from './trade/trade-ticket'
+import { LivePriceHeader } from './trade/live-price-header'
+import { OrdersHistory } from './trade/orders-history'
+import { SipCard } from './sip-card'
 import { PriceAlertsCard } from './price-alerts-card'
+import { cn } from 'cn'
 
-interface OrderRow {
-  id: string
-  type: 'BUY' | 'SELL'
-  goldAmount: string
-  tomanAmount: string
-  unitPrice: string
-  fee: string
-  total: string
-  status: string
-  createdAt: string
-}
+type Tab = 'spot' | 'sip' | 'alerts'
 
-interface PriceData {
-  buyPrice: number
-  sellPrice: number
-  isLive: boolean
-  updatedAt: string
-}
-
-const inputClass =
-  'border-border/60 bg-background text-foreground focus-visible:ring-ring h-10 w-full rounded-lg border px-3 text-sm tabular-nums focus-visible:ring-2 focus-visible:outline-none'
+const TABS: { key: Tab; label: string; Icon: typeof IconExchange }[] = [
+  { key: 'spot', label: 'معامله آنی', Icon: IconExchange },
+  { key: 'sip', label: 'خرید دوره‌ای', Icon: IconPigMoney },
+  { key: 'alerts', label: 'هشدار قیمت', Icon: IconBell },
+]
 
 export function TradeClient() {
-  const [orders, setOrders] = useState<OrderRow[]>([])
-  const [price, setPrice] = useState<PriceData | null>(null)
-
-  // side=buy|sell از query (مثلاً لینک قیمت داشبورد) حالت اولیه را تعیین می‌کند
-  const searchParams = useSearchParams()
-  const [mode, setMode] = useState<'BUY' | 'SELL'>(
-    searchParams.get('side') === 'sell' ? 'SELL' : 'BUY',
-  )
-  const [amount, setAmount] = useState('')
-  const [busy, setBusy] = useState(false)
-  // آفلاین → اکشن مالی غیرفعال (هیچ معامله‌ای بدون اتصال واقعی)
-  const online = useOnlineStatus()
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-
-  async function loadAll() {
-    const [ordersRes, priceRes] = await Promise.all([
-      apiGetWithRefresh<{ orders: OrderRow[] }>('/api/v1/orders?limit=10'),
-      apiGetWithRefresh<PriceData>('/api/v1/price'),
-    ])
-    if (ordersRes.ok) setOrders(ordersRes.data?.orders ?? [])
-    if (priceRes.ok && priceRes.data) setPrice(priceRes.data)
-  }
-
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      const [ordersRes, priceRes] = await Promise.all([
-        apiGetWithRefresh<{ orders: OrderRow[] }>('/api/v1/orders?limit=10'),
-        apiGetWithRefresh<PriceData>('/api/v1/price'),
-      ])
-      if (cancelled) return
-      if (ordersRes.ok) setOrders(ordersRes.data?.orders ?? [])
-      if (priceRes.ok && priceRes.data) setPrice(priceRes.data)
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  async function submit() {
-    setError(null)
-    setSuccess(null)
-    if (!/^\d+(\.\d{1,8})?$/.test(amount) || Number(amount) <= 0) {
-      setError(mode === 'BUY' ? 'مبلغ تومانی معتبر وارد کنید' : 'مقدار طلا معتبر وارد کنید')
-      return
-    }
-    setBusy(true)
-    const body =
-      mode === 'BUY' ? { type: 'BUY', tomanAmount: amount } : { type: 'SELL', goldAmount: amount }
-    const res = await apiPost<{ order: OrderRow }>('/api/v1/orders', body, {
-      'Idempotency-Key': crypto.randomUUID(),
-    })
-    setBusy(false)
-    if (!res.ok) {
-      setError(res.error ?? 'معامله ناموفق بود')
-      return
-    }
-    const o = res.data!.order
-    setSuccess(
-      mode === 'BUY'
-        ? `خرید انجام شد — ${formatExactAmount(o.goldAmount)} گرم طلا`
-        : `فروش انجام شد — ${formatExactAmount(o.total)} تومان به کیف پول شما واریز شد`,
-    )
-    setAmount('')
-    void loadAll()
-  }
+  const [tab, setTab] = useState<Tab>('spot')
+  const [refreshKey, setRefreshKey] = useState(0)
 
   return (
-    <div className="animate-stagger space-y-5">
-      {/* فرم معامله */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">معامله آنی</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Segmented control — pill لوکس با indicator طلایی */}
-          <div className="bg-muted border-border/50 grid grid-cols-2 gap-1 rounded-2xl border p-1">
-            <button
-              type="button"
-              onClick={() => {
-                setMode('BUY')
-                setError(null)
-                setSuccess(null)
-              }}
-              aria-pressed={mode === 'BUY'}
-              className={`flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-(--duration-normal) ${
-                mode === 'BUY'
-                  ? 'bg-navy-700 text-cream-50 shadow-md'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <IconArrowDownLeft className="size-4" stroke={2} />
-              خرید طلا
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMode('SELL')
-                setError(null)
-                setSuccess(null)
-              }}
-              aria-pressed={mode === 'SELL'}
-              className={`flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-(--duration-normal) ${
-                mode === 'SELL'
-                  ? 'bg-navy-700 text-cream-50 shadow-md'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <IconArrowUpLeft className="size-4" stroke={2} />
-              فروش طلا
-            </button>
+    <div className="animate-stagger space-y-4">
+      {/* نوار بازار */}
+      <LivePriceHeader />
+
+      {/* تب‌های سرویس */}
+      <div className="bg-muted/60 inline-flex rounded-lg p-0.5" role="tablist">
+        {TABS.map(({ key, label, Icon }) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={tab === key}
+            onClick={() => setTab(key)}
+            className={cn(
+              'focus-visible:ring-ring flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none',
+              tab === key
+                ? 'bg-card text-foreground shadow-xs'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            <Icon className="size-3.5" stroke={1.75} aria-hidden="true" />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'spot' && (
+        <>
+          {/* تیکت سفارش */}
+          <div className="terminal-canvas border-border overflow-hidden rounded-2xl border p-4">
+            <div className="mx-auto max-w-md">
+              <TradeTicket onExecuted={() => setRefreshKey((k) => k + 1)} />
+            </div>
           </div>
 
-          <label className="block space-y-1.5">
-            <span className="text-muted-foreground text-[11px]">
-              {mode === 'BUY' ? 'مبلغ خرید (تومان)' : 'مقدار فروش (گرم)'}
-            </span>
-            <input
-              type="text"
-              inputMode="decimal"
-              dir="ltr"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder={mode === 'BUY' ? '100000' : '0.500'}
-              className={inputClass}
-            />
-          </label>
+          {/* تاریخچه */}
+          <OrdersHistory refreshKey={refreshKey} />
+        </>
+      )}
 
-          {error && (
-            <p role="alert" className="text-error flex items-center gap-1.5 text-xs">
-              <IconAlertTriangle className="size-3.5" aria-hidden="true" />
-              {error}
-            </p>
-          )}
-          {success && (
-            <p role="status" className="text-success flex items-center gap-1.5 text-xs">
-              <IconCircleCheck className="size-3.5" aria-hidden="true" />
-              {success}
-            </p>
-          )}
+      {tab === 'sip' && <SipCard online />}
 
-          <Button
-            variant="default"
-            className="w-full"
-            onClick={submit}
-            disabled={busy || !online}
-            title={!online ? 'اتصال اینترنت برقرار نیست' : undefined}
-          >
-            {!online
-              ? 'آفلاین — معامله در دسترس نیست'
-              : busy
-                ? 'در حال انجام معامله…'
-                : mode === 'BUY'
-                  ? 'خرید طلا'
-                  : 'فروش طلا'}
-          </Button>
-          <p className="text-muted-foreground text-[10px] leading-4">
-            معامله با آخرین قیمت معتبر سرور انجام می‌شود — قیمت دقیق در سند سفارش ثبت می‌گردد.
-          </p>
-        </CardContent>
-      </Card>
+      {tab === 'alerts' && <PriceAlertsCard online currentPrice={null} />}
 
-      {/* هشدار قیمت — رسیدن به سقف/کف دلخواه کاربر */}
-      <PriceAlertsCard
-        online={online}
-        currentPrice={price?.buyPrice ?? null}
-        onChanged={() => void loadAll()}
-      />
-
-      {/* تاریخچه معاملات */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <IconHistory className="text-gold-600 size-5" stroke={1.75} />
-            تاریخچه معاملات
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {orders.length === 0 ? (
-            <EmptyState
-              icon={IconRepeat}
-              title="هنوز معامله‌ای انجام نداده‌اید"
-              description="پس از اولین خرید یا فروش، تاریخچه کامل معاملات شما اینجا ثبت می‌شود."
-            />
-          ) : (
-            <ul className="divide-border/40 divide-y">
-              {orders.map((o) => (
-                <li key={o.id} className="flex items-center justify-between gap-3 py-3">
-                  <div className="flex items-center gap-3">
-                    {o.type === 'BUY' ? (
-                      <IconArrowDownLeft className="text-gold-600 size-6 shrink-0" stroke={1.75} />
-                    ) : (
-                      <IconArrowUpLeft
-                        className="text-muted-foreground size-6 shrink-0"
-                        stroke={1.75}
-                      />
-                    )}
-                    <div>
-                      <p className="text-foreground text-xs font-semibold">
-                        {o.type === 'BUY' ? 'خرید' : 'فروش'} — {formatExactAmount(o.goldAmount)} گرم
-                      </p>
-                      <p className="text-muted-foreground mt-0.5 text-[10px] tabular-nums">
-                        {new Date(o.createdAt).toLocaleString('fa-IR', {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-left">
-                    <p className="text-foreground text-xs font-semibold tabular-nums" dir="ltr">
-                      {formatExactAmount(o.total)}{' '}
-                      <span className="text-muted-foreground">تومان</span>
-                    </p>
-                    <StatusBadge tone="gold" dot={false} className="mt-1">
-                      {o.status === 'FILLED'
-                        ? 'انجام‌شده'
-                        : o.status === 'REVERSED'
-                          ? 'برگشت‌خورده'
-                          : o.status}
-                    </StatusBadge>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+      {/* راهنمای کوچک پایین */}
+      <p className="text-muted-foreground flex items-center gap-1 pb-2 text-[10px]">
+        <IconChevronDown className="size-3" aria-hidden="true" />
+        معامله با آخرین قیمت معتبر سرور انجام می‌شود — قیمت دقیق در سند سفارش ثبت می‌گردد
+      </p>
     </div>
   )
 }

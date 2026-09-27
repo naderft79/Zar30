@@ -2,25 +2,30 @@
 // Zar30 - Platform Price Quote Builder
 // ============================================
 // قانون پلتفرم: قیمت خرید کاربر = قیمت خام بازار (تومان/گرم)
-// قیمت فروش کاربر = قیمت خرید − تخفیف ثابت (پیش‌فرض ۲۵۰٬۰۰۰ تومان)
-// مقدار تخفیف با env قابل تنظیم است و در فاز بعدی از پنل ادمین
-// مدیریت می‌شود.
+// قیمت فروش کاربر = قیمت خرید − تخفیف فروش
+// تخفیف از پنل ادمین (PlatformSetting: pricing.sell_discount_toman)
+// خوانده می‌شود؛ env فقط fallback اولیه است.
 // ============================================
 
 import { FinanceErrors } from '@/lib/finance/errors'
+import { getSellDiscountToman } from '@/lib/config/platform-config'
 import type { GoldPriceQuote } from './types'
 
-// تخفیف ثابت فروش نسبت به خرید — تومان (env: PRICE_SELL_DISCOUNT_TOMAN)
-const SELL_DISCOUNT_TOMAN = BigInt(
-  Math.round(Number(process.env.PRICE_SELL_DISCOUNT_TOMAN ?? '250000')),
-)
+// تخفیف فروش نسبت به خرید — تومان (ادمین → env fallback)
+async function sellDiscountToman(): Promise<bigint> {
+  return getSellDiscountToman()
+}
 
-export function platformQuote(gramPriceToman: number, timestamp?: Date): GoldPriceQuote {
+export async function platformQuote(
+  gramPriceToman: number,
+  timestamp?: Date,
+): Promise<GoldPriceQuote> {
   const buy = BigInt(Math.round(gramPriceToman))
   if (buy <= 0n) {
     throw FinanceErrors.providerUnavailable('قیمت provider نامعتبر است')
   }
-  const sell = buy - SELL_DISCOUNT_TOMAN
+  const discount = await sellDiscountToman()
+  const sell = buy - discount
   if (sell <= 0n) {
     throw FinanceErrors.providerUnavailable('قیمت provider کمتر از کف اسپرد پلتفرم است')
   }

@@ -78,7 +78,7 @@ export function LedgerBalancesWidget({
             className="flex items-center justify-between gap-2 py-2 first:pt-0 last:pb-0"
           >
             <div className="min-w-0">
-              <p className="text-foreground truncate text-xs font-semibold">{r.nameFa}</p>
+              <p className="text-foreground text-xs font-semibold">{r.nameFa}</p>
               <p className="text-muted-foreground text-[9px] tabular-nums">{r.code}</p>
             </div>
             <Link
@@ -131,7 +131,7 @@ export function PnlWidget({
               <IconArrowDownLeft className="text-success size-3.5" strokeWidth={2} />
               درآمد
             </span>
-            <span className="text-success text-sm font-bold tabular-nums">
+            <span className="text-success text-left text-sm font-bold break-all tabular-nums">
               {formatExactAmount(pnl.revenue)}
             </span>
           </div>
@@ -140,7 +140,7 @@ export function PnlWidget({
               <IconArrowUpRight className="text-error size-3.5" strokeWidth={2} />
               هزینه
             </span>
-            <span className="text-error text-sm font-bold tabular-nums">
+            <span className="text-error text-left text-sm font-bold break-all tabular-nums">
               {formatExactAmount(pnl.expense)}
             </span>
           </div>
@@ -148,7 +148,7 @@ export function PnlWidget({
             <span className="text-foreground text-xs font-bold">خالص</span>
             <span
               className={cn(
-                'text-base font-bold tabular-nums',
+                'text-left text-base font-bold break-all tabular-nums',
                 net >= 0n ? 'text-gold-700 dark:text-gold-300' : 'text-error',
               )}
             >
@@ -204,13 +204,13 @@ export function CashflowWidget({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <p className="text-muted-foreground text-[10px]">واریز</p>
-              <p className="text-success text-sm font-bold tabular-nums">
+              <p className="text-success text-sm font-bold break-all tabular-nums">
                 {formatExactAmount(cf.deposits)}
               </p>
             </div>
             <div className="text-left">
               <p className="text-muted-foreground text-[10px]">برداشت</p>
-              <p className="text-error text-sm font-bold tabular-nums">
+              <p className="text-error text-sm font-bold break-all tabular-nums">
                 {formatExactAmount(cf.withdrawals)}
               </p>
             </div>

@@ -47,6 +47,6 @@ export class TgjuProvider implements GoldPriceProvider {
     const ts = item?.ts ? new Date(item.ts.replace(' ', 'T') + '+03:30') : undefined
     const timestamp = ts && !Number.isNaN(ts.getTime()) ? ts : undefined
 
-    return platformQuote(rialPerGram / 10, timestamp)
+    return await platformQuote(rialPerGram / 10, timestamp)
   }
 }

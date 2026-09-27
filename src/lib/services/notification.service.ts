@@ -19,21 +19,23 @@ export interface NotifyInput {
   data?: Record<string, unknown>
 }
 
-// اعلان تکی — رکورد + push به همه دستگاه‌های کاربر
+// اعلان تکی — رکورد DB (QUEUED) + push به همه دستگاه‌های کاربر + SENT/FAILED
+// push fail-open است — هرگز flow اصلی را خراب نمی کند
 export async function notifyUser(input: NotifyInput): Promise<void> {
+  let notificationId: string
   try {
-    await prisma.notification.create({
+    const record = await prisma.notification.create({
       data: {
         userId: input.userId,
         type: input.type,
         title: input.title,
         body: input.body,
         channel: 'IN_APP',
-        status: 'SENT',
-        sentAt: new Date(),
+        status: 'QUEUED',
         data: input.data ? JSON.parse(JSON.stringify(input.data)) : undefined,
       },
     })
+    notificationId = record.id
   } catch (err) {
     logger.error({ err, userId: input.userId, type: input.type }, 'Notification create failed')
     return
@@ -46,9 +48,26 @@ export async function notifyUser(input: NotifyInput): Promise<void> {
     tag: input.type,
     data: input.data,
   }
-  sendPushToUser(input.userId, payload).catch((err) =>
-    logger.warn({ err, userId: input.userId }, 'Push dispatch failed'),
-  )
+
+  // رکورد در-app خودش «تحویل‌شده» است (کاربر در لیست می‌بیند)؛
+  // push تلاش می‌شود و نتیجه فقط برای observability ثبت می‌شود.
+  try {
+    const sent = await sendPushToUser(input.userId, payload)
+    await prisma.notification
+      .update({
+        where: { id: notificationId },
+        data: { status: 'SENT', sentAt: new Date() },
+      })
+      .catch(() => {})
+    if (sent === 0) {
+      logger.debug({ userId: input.userId, type: input.type }, 'No push subscriptions')
+    }
+  } catch (err) {
+    logger.warn({ err, userId: input.userId }, 'Push dispatch failed')
+    await prisma.notification
+      .update({ where: { id: notificationId }, data: { status: 'FAILED' } })
+      .catch(() => {})
+  }
 }
 
 // اعلان گروهی — برای broadcast ادمین (بدون بلاک‌کردن پاسخ API)

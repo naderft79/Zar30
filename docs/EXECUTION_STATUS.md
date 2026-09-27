@@ -1,6 +1,53 @@
 # Zar30 — Execution Status
 
-> وضعیت اجرای پروژه — به‌روزرسانی شده در Phase User Panel Luxury Redesign (2026-09-22)
+> وضعیت اجرای پروژه — به‌روزرسانی شده در Phase Trade Redesign (2026-09-26)
+
+## Phase: Trade Page Market-Grade Redesign (2026-09-26)
+
+**وضعیت:** ✅ DONE — بازطراحی کامل بخش معاملات بر اساس الگوی اپ‌های معتبر داخلی (طلاین/طلاسی/TGJU) و جهانی (Robinhood/Binance/DigiGold)
+
+| مؤلفه             | وضعیت | توضیح                                                                                                                                                                                                                                  |
+| ----------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Quote API         | ✅    | `GET /api/v1/orders/quote?side&inputType&amount` — read-only پیش‌نمایش معامله: قیمت اجرا، کارمزد اختصاصی کاربر (bps)، اسپرد، سقف/مصرف روزانه KYC، موجودی آزاد — سرویس `quote.service.ts` با همان helpers موتور معامله                  |
+| Live Price Header | ✅    | هدر `surface-wealth` — قیمت خرید/فروش همزمان + اسپرد تومانی/درصدی + نشانگر زنده (pulsing) یا تاخیری + تغییر ۲۴س + رفرش دستی/۳۰s                                                                                                        |
+| Trade Ticket      | ✅    | تیکت دوطرفه BUY/SELL با تبدیل زنده تومان↔گرم، quick-amounts، اسلایدر درصدی موجودی، پیش‌نمایش زنده debounce ۴۰۰ms، نوار سقف روزانه KYC با لینک ارتقا، validation حداقل/موجودی، Confirmation Dialog کامل قبل از POST با Idempotency-Key |
+| Profit/Loss Card  | ✅    | میانگین خرید (avgBuyPrice)، ارزش فعلی، سود/زیان تومانی و درصدی با رنگ + تغییر روز دارایی — از `wallet/summary`                                                                                                                         |
+| Orders History    | ✅    | pagination واقعی از meta + فیلتر نوع (همه/خرید/فروش) + ردیف کامل با قیمت واحد و کارمزد                                                                                                                                                 |
+| Service Tabs      | ✅    | تب‌های معامله آنی / خرید دوره‌ای (SipCard) / هشدار قیمت (PriceAlertsCard) در یک نقطه                                                                                                                                                   |
+| Chart             | ✅    | PriceChart موجود با تایم‌فریم‌ها در ستون چارت صفحه دوستونه                                                                                                                                                                             |
+| Tests             | ✅    | ۶ تست integration جدید (`trade-quote.test.ts`) — سازگاری پیش‌نمایش با اجرای واقعی، کارمزد، سقف روزانه — ۳۴۳/۳۴۳ کل suite سبز                                                                                                           |
+| Verification      | ✅    | typecheck 0 / lint 0 / vitest 343 pass / build موفق                                                                                                                                                                                    |
+
+### محدودیت‌های شناخته‌شده
+
+- quote endpoint rate-limit از fallback `api.general` استفاده می‌کند — key اختصاصی `trading.quote` می‌تواند بعداً به RateLimitConfig seed اضافه شود
+- تبدیل خرید به گرم (GOLD→تومان) سمت سرور به tomanAmount گرد می‌شود و POST فعلی BUY فقط tomanAmount می‌پذیرد — تیکت در حالت GOLD خرید فقط پیش‌نمایش می‌دهد؛ اگر خرید با مقدار گرم لازم شد، createOrderSchema باید گسترش یابد
+
+## Phase: Financial Modules Completion — قسطی / سرمایه‌گذاری / Referral / Ticket / Pricing Settings (2026-09-26)
+
+**وضعیت:** ✅ DONE — پنج ماژول عملیاتی به Backend وصل و راستی‌آزمایی شدند
+
+| مؤلفه                    | وضعیت | توضیح                                                                                                                                                                                                                                                            |
+| ------------------------ | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Pricing Settings (Admin) | ✅    | `GET/PUT /api/v1/admin/pricing/settings` — تخفیف فروش، سن قیمت، انحراف مجاز از PlatformSetting با env fallback + کش ۳۰s + strict audit                                                                                                                           |
+| Installment Core         | ✅    | `installment.service` — quote annuity، درخواست قرارداد، approve (وصول پیش‌پرداخت + تحویل طلا + جدول اقساط)، پرداخت قسط با idempotency، رد ادمین، جریمه دیرکرد روزانه + نکول (cron `/api/v1/cron/installments`)                                                   |
+| Installment Admin        | ✅    | `/admin/installments/[id]/approve                                                                                                                                                                                                                                | reject`+ CRUD طرح‌ها`/admin/installments/plans` |
+| Investment Admin         | ✅    | CRUD طرح‌های زرکار `/admin/investments/plans` (زیرساخت position/payout از قبل کامل بود)                                                                                                                                                                          |
+| Referral                 | ✅    | رکورد PENDING در ثبت‌نام، QUALIFIED خودکار بعد از حداقل حجم خرید (fire-and-forget از buyGold)، پاداش ادمین با سند متوازن `D ASSET_TOMAN[user] / C LIABILITY_USER_TOMAN`، double-pay رد می‌شود، API آمار کاربر `/referrals` + اکشن `/admin/referrals/[id]/reward` |
+| Ticket                   | ✅    | `ticket.service` — ساخت/لیست/پاسخ/بستن کاربر (IDOR-safe) + پاسخ/بستن ادمین با SLA بر اساس اولویت + اعلان پاسخ؛ API: `/tickets`, `/tickets/[id]/reply                                                                                                             | close`, `/admin/support/[id]` (+reply/close)    |
+| Notifications            | ✅    | `notifyUser` حالا QUEUED → SENT/FAILED واقعی با sentAt — status tracking قابل مشاهده برای ادمین                                                                                                                                                                  |
+| Tests                    | ✅    | ۷ تست integration جدید (`referral-installment.test.ts`) روی PostgreSQL واقعی — ۳۳۷/۳۳۷ کل suite سبز                                                                                                                                                              |
+| Verification             | ✅    | typecheck 0 errors / lint 0 errors-0 warnings / vitest 337 pass                                                                                                                                                                                                  |
+
+### محدودیت‌های شناخته‌شده
+
+- درگاه پرداخت واقعی: adapter ZarinPal v4 کامل است؛ برای production فقط `PAYMENT_PROVIDER=zarinpal` + `PAYMENT_MERCHANT_ID` واقعی لازم است (مستند در `.env.example`)
+- ~~UI پنل کاربری برای قراردادهای قسطی واقعی وصل نشده~~ → ✅ **UI قسطی وصل شد (2026-09-26):** صفحه `/dashboard/installments` حالا قراردادهای واقعی را از API می‌خواند، شیت جزئیات با جدول اقساط و دکمه پرداخت قسط دارد، checkout با quote سرور-محور و ثبت قرارداد واقعی کار می‌کند؛ flow قدیمی preview و صفحات `installments/payment` + `installments/callback` (درگاه هزینه خدمات) حذف شدند
+- ~~UI پاسخ تیکت (Support) وصل نشده~~ → ✅ **UI Support وصل شد (2026-09-26):** صفحه `/dashboard/profile/support` حالا تیکت واقعی دارد (لیست/ساخت/گفتگو/پاسخ/بستن از `/api/v1/tickets`)؛ پنل ادمین: صفحه جدید `/admin/support/[id]` با رشته پیام‌ها + فرم پاسخ + بستن تیکت، و لیست `/admin/support` با detail link به این صفحه وصل شد
+- ~~UI قسطی ادمین read-only~~ → ✅ **مرکز عملیات قسطی ادمین (2026-09-26):** صفحه `/admin/installments` بازطراحی کامل شد — ردیف KPI (در انتظار/فعال/تسویه/معوق/نکول با API stats)، فیلتر وضعیت، لیست غنی با نوار پیشرفت اقساط، Sheet جزئیات (مشخصات، متقاضی، جدول کامل اقساط با جریمه)، Dialog تایید/رد با پیش‌نمایش مالی و دلیل رد الزامی — به‌جای جدول عمومی read-only. APIهای جدید: `GET /admin/installments/[id]` + `GET /admin/installments/stats` — permission `installments.review` شرطی سمت کلاینت + enforce سمت سرور
+- ~~UI Referral preview~~ → ✅ **UI Referral وصل شد (2026-09-26):** صفحه `/dashboard/profile/referral` حالا آمار واقعی از `GET /api/v1/referrals` دارد (کل دعوت‌ها/واجد پاداش/مجموع پاداش تومانی) + لیست دعوت‌شدگان با وضعیت؛ پنل ادمین: دکمه پرداخت پاداش روی دعوت‌های QUALIFIED در لیست `/admin/referrals` — permission `referrals.manage` + پاداش از PlatformSetting با سند ledger متوازن؛ لیست پس از پرداخت refresh می‌شود
+- روش CHEQUE فقط شماره چک را ثبت می‌کند — آپلود تصویر چک و تایید ضامن (OTP guarantor) فاز بعد
+- `notification.service` SMS/Email channel را هنوز ارسال نمی‌کند — فقط IN_APP + Push
 
 ## Phase NEXT: User Panel Luxury Redesign (White + Deep Navy + Gold)
 

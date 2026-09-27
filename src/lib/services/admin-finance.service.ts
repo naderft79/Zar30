@@ -576,7 +576,8 @@ export async function getAdminGoldHoldings(input: {
     prisma.assetAccount.count({ where: { assetType: 'GOLD' } }),
     prisma.assetAccount.findMany({
       where: { assetType: 'GOLD' },
-      orderBy: { balance: 'desc' },
+      // ترتیب پایدار — فقط balance صف‌های هم‌ارزش را غیرقطعی می‌کند
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       skip,
       take: input.limit,
       select: {

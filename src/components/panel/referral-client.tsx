@@ -1,12 +1,15 @@
 // ============================================
-// Zar30 - Referral (Full Panel Redesign)
+// Zar30 - Referral Client — Backend واقعی وصل
 // ============================================
-// کد دعوت + لینک + آمار — Commission Engine در Phase بعدی
+// GET /api/v1/referrals → کد دعوت، آمار (کل/qualified/rewarded)،
+// مجموع پاداش و لیست دعوت‌شدگان با وضعیت
+// کیفیت‌سنجی خودکار بعد از حداقل حجم خرید (سمت سرور) انجام می‌شود؛
+// پاداش تومانی توسط ادمین از صف referrals پرداخت می‌شود.
 // ============================================
 
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   IconCheck,
   IconCopy,
@@ -20,12 +23,62 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { PageHeader } from './page-header'
+import { apiGetWithRefresh } from '@/lib/api/client'
+import { formatExactAmount } from '@/lib/utils/format'
+import { cn } from 'cn'
+
+interface ReferralItem {
+  id: string
+  status: 'PENDING' | 'QUALIFIED' | 'REWARDED'
+  createdAt: string
+  qualifiedAt: string | null
+  rewardAmount: string | null
+  referred: {
+    name: string
+    joinedAt: string
+  }
+}
+
+interface ReferralStats {
+  referralCode: string
+  total: number
+  qualified: number
+  rewarded: number
+  totalReward: string
+  items: ReferralItem[]
+}
+
+const STATUS_META: Record<string, { label: string; tone: 'warning' | 'success' | 'neutral' }> = {
+  PENDING: { label: 'در انتظار خرید', tone: 'warning' },
+  QUALIFIED: { label: 'واجد پاداش', tone: 'success' },
+  REWARDED: { label: 'پاداش داده شد', tone: 'neutral' },
+}
+
+const faNum = (v: string | number) => String(v).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.charAt(+d))
+const fmt = (v: string) => formatExactAmount(v)
 
 export function ReferralClient() {
   const { user } = usePanelUser()
   const [copied, setCopied] = useState<'code' | 'link' | null>(null)
+  const [stats, setStats] = useState<ReferralStats | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
-  const referralLink = `https://zar30.com/register?ref=${user.referralCode}`
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const res = await apiGetWithRefresh<ReferralStats>('/api/v1/referrals')
+      if (cancelled) return
+      if (res.ok && res.data) setStats(res.data)
+      setLoaded(true)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // کد از API — در نبودش از context کاربر
+  const code = stats?.referralCode || user.referralCode
+  const referralLink = `https://zar30.com/register?ref=${code}`
 
   async function copy(text: string, which: 'code' | 'link') {
     try {
@@ -52,10 +105,10 @@ export function ReferralClient() {
         <CardContent className="relative space-y-4">
           <div className="border-gold-500/30 bg-elevated/80 flex items-center justify-between gap-3 rounded-xl border p-4 shadow-xs">
             <span className="text-foreground font-mono text-xl font-bold tabular-nums" dir="ltr">
-              {user.referralCode}
+              {code}
             </span>
             <button
-              onClick={() => copy(user.referralCode, 'code')}
+              onClick={() => copy(code, 'code')}
               className="text-muted-foreground hover:text-gold-600 dark:hover:text-gold-400 focus-visible:ring-ring inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
             >
               {copied === 'code' ? (
@@ -88,23 +141,34 @@ export function ReferralClient() {
             </button>
           </div>
           <p className="text-muted-foreground text-xs leading-5">
-            این کد یا لینک را با دوستان خود به اشتراک بگذارید تا هنگام ثبت‌نام از آن استفاده کنند.
+            این کد یا لینک را با دوستان خود به اشتراک بگذارید. پس از ثبت‌نام و اولین خرید آن‌ها،
+            پاداش معرفی به کیف پول تومانی شما واریز می‌شود.
           </p>
         </CardContent>
       </Card>
 
-      {/* آمار معرفی — پیش‌نمایش (بدون داده مالی جعلی) */}
-      <div className="grid gap-4 sm:grid-cols-2">
+      {/* آمار — واقعی */}
+      <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="flex items-center gap-4 py-5">
             <IconUsers className="text-gold-600 dark:text-gold-400 size-7 shrink-0" stroke={1.5} />
             <div className="min-w-0">
-              <p className="text-muted-foreground text-label">دعوت‌های موفق</p>
-              <p className="text-financial-lg text-foreground mt-1 tabular-nums">—</p>
+              <p className="text-muted-foreground text-label">کل دعوت‌ها</p>
+              <p className="text-financial-lg text-foreground mt-1 tabular-nums">
+                {loaded ? faNum(stats?.total ?? 0) : '—'}
+              </p>
             </div>
-            <StatusBadge tone="gold" dot={false} className="mr-auto">
-              به‌زودی
-            </StatusBadge>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center gap-4 py-5">
+            <IconUsers className="text-gold-600 dark:text-gold-400 size-7 shrink-0" stroke={1.5} />
+            <div className="min-w-0">
+              <p className="text-muted-foreground text-label">واجد پاداش</p>
+              <p className="text-financial-lg text-foreground mt-1 tabular-nums">
+                {loaded ? faNum(stats?.qualified ?? 0) : '—'}
+              </p>
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -114,24 +178,74 @@ export function ReferralClient() {
               stroke={1.5}
             />
             <div className="min-w-0">
-              <p className="text-muted-foreground text-label">پاداش معرفی</p>
-              <p className="text-financial-lg text-foreground mt-1 tabular-nums">—</p>
+              <p className="text-muted-foreground text-label">پاداش دریافتی</p>
+              <p className="text-financial-lg text-foreground mt-1 tabular-nums">
+                {loaded && stats ? (
+                  <>
+                    {fmt(stats.totalReward)}
+                    <span className="text-muted-foreground ms-1 text-[10px] font-normal">
+                      تومان
+                    </span>
+                  </>
+                ) : (
+                  '—'
+                )}
+              </p>
             </div>
-            <StatusBadge tone="gold" dot={false} className="mr-auto">
-              به‌زودی
-            </StatusBadge>
           </CardContent>
         </Card>
       </div>
 
+      {/* لیست دعوت‌شدگان */}
       <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <IconUsers className="text-gold-600 size-5" stroke={1.75} />
+            دعوت‌شدگان من
+          </CardTitle>
+        </CardHeader>
         <CardContent>
-          <EmptyState
-            icon={IconUsers}
-            title="آمار معرفی به‌زودی فعال می‌شود"
-            description="تعداد دعوت‌های موفق و پاداش معرفی پس از راه‌اندازی موتور کمیسیون اینجا نمایش داده می‌شود."
-            badge="به‌زودی — پیش‌نمایش"
-          />
+          {!loaded ? (
+            <div className="skeleton-shimmer h-16 rounded-lg" />
+          ) : !stats || stats.items.length === 0 ? (
+            <EmptyState
+              icon={IconUsers}
+              title="هنوز کسی را دعوت نکرده‌اید"
+              description="کد یا لینک دعوت خود را با دوستان به اشتراک بگذارید؛ با اولین خرید آن‌ها پاداش معرفی دریافت می‌کنید."
+            />
+          ) : (
+            <ul className="divide-border/40 divide-y">
+              {stats.items.map((it) => {
+                const meta = STATUS_META[it.status] ?? {
+                  label: it.status,
+                  tone: 'neutral' as const,
+                }
+                return (
+                  <li key={it.id} className="flex items-center justify-between gap-3 py-3">
+                    <div className="min-w-0">
+                      <p className="text-foreground truncate text-xs font-semibold">
+                        {it.referred.name}
+                      </p>
+                      <p className="text-muted-foreground mt-0.5 text-[10px]">
+                        عضویت:{' '}
+                        {new Date(it.referred.joinedAt).toLocaleDateString('fa-IR', {
+                          dateStyle: 'short',
+                        })}
+                        {it.status === 'REWARDED' && it.rewardAmount && (
+                          <span className="text-success ms-1.5 font-medium">
+                            · پاداش {fmt(it.rewardAmount)} تومان
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    <StatusBadge tone={meta.tone} dot={false} className={cn('shrink-0')}>
+                      {meta.label}
+                    </StatusBadge>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
         </CardContent>
       </Card>
     </div>

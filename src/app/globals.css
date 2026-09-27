@@ -454,6 +454,41 @@ html {
     rgb(212 175 55 / 0.08) 35px
   );
 }
+/* ============================================
+   Trade Terminal — سطح نیمه‌شفاف روی تم فعلی
+   هماهنگ با لایت و دارک مود — از توکن‌های semantic پیروی می‌کند
+   ============================================ */
+.terminal-canvas {
+  background: color-mix(in oklab, var(--card) 88%, transparent);
+}
+
+.terminal-surface {
+  background: color-mix(in oklab, var(--card) 92%, transparent);
+  border: 1px solid var(--border);
+}
+
+.font-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* اسکوپ PriceChart روی canvas ترمینال — همان تم صفحه، بدون بازنویسی */
+.terminal-chart-scope {
+  --background: var(--card);
+  --surface: var(--card);
+  --card: var(--card);
+  --elevated: var(--elevated);
+  --field: var(--field);
+  --border: var(--border);
+  --border-strong: var(--border-strong);
+  --foreground: var(--foreground);
+  --text-secondary: var(--text-secondary);
+  --muted-foreground: var(--muted-foreground);
+  --muted: var(--muted);
+  --secondary: var(--secondary);
+  --secondary-foreground: var(--secondary-foreground);
+}
+
 /* ترکیب Wealth + Rings — حلقه‌ها روی گرادیان navy لایه می‌شوند، نه جایگزین */
 .surface-wealth.gold-rings {
   background-image:

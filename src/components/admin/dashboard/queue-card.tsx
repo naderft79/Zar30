@@ -137,7 +137,7 @@ export function QueueCard({ queue, icon: QueueIcon, rowActions, onRefresh }: Que
                       {row.subtitle}
                     </span>
                     {row.amount && (
-                      <span className="text-gold-700 dark:text-gold-300 shrink-0 text-[11px] font-bold tabular-nums">
+                      <span className="text-gold-700 dark:text-gold-300 text-[11px] font-bold tabular-nums">
                         {formatExactAmount(row.amount)} تومان
                       </span>
                     )}

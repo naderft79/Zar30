@@ -102,6 +102,12 @@ export async function register(input: RegisterInput, meta: SessionMeta) {
     },
   })
 
+  // رکورد دعوت — lazy؛ شکست آن ثبت‌نام را خراب نمی‌کند
+  if (referredById) {
+    const { ensureReferralRecord } = await import('@/lib/services/referral.service')
+    await ensureReferralRecord(user.id).catch(() => {})
+  }
+
   await sendOtp(user.mobile, 'register')
   await writeAudit({
     actorType: 'user',

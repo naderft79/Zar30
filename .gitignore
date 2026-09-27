@@ -48,6 +48,9 @@ next-env.d.ts
 *.log
 logs/
 
+# codebuff tool state
+.freebuff/
+
 # capacitor (track android/ios source, ignore build outputs)
 /android/app/build/
 /android/build/

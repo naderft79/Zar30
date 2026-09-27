@@ -16,11 +16,18 @@ import { FinanceErrors } from './errors'
 import { logger } from '@/lib/logger/logger'
 import { getPriceProvider, type GoldPriceProvider } from '@/lib/price/providers'
 import { checkPriceAlerts } from './price-alert.service'
+import { getPriceMaxAgeMinutes, getPriceMaxDeviationPercent } from '@/lib/config/platform-config'
 
 // حداکثر سن قیمت قابل معامله — پیش‌فرض ۱۵ دقیقه (env: PRICE_MAX_AGE_MINUTES)
-const MAX_AGE_MS = Number(process.env.PRICE_MAX_AGE_MINUTES ?? 15) * 60_000
+// قابل بازنویسی از پنل ادمین — key: pricing.max_age_minutes
+async function maxAgeMs(): Promise<number> {
+  return (await getPriceMaxAgeMinutes()) * 60_000
+}
 // حداکثر انحراف مجاز قیمت جدید از آخرین قیمت — پیش‌فرض ۱۵٪
-const MAX_DEVIATION_PERCENT = Number(process.env.PRICE_MAX_DEVIATION_PERCENT ?? 15)
+// قابل بازنویسی از پنل ادمین — key: pricing.max_deviation_percent
+async function maxDeviationPercent(): Promise<number> {
+  return getPriceMaxDeviationPercent()
+}
 
 export interface ExecutablePrice {
   priceId: string
@@ -45,16 +52,17 @@ export function ensureFreshPrice(): Promise<unknown> {
   return syncInFlight
 }
 
-const isFresh = (recordedAt: Date) => Date.now() - recordedAt.getTime() <= MAX_AGE_MS
+const isFresh = (recordedAt: Date, maxAge: number) => Date.now() - recordedAt.getTime() <= maxAge
 
-// آخرین قیمت معتبر — قدیمی‌تر از MAX_AGE → تلاش برای sync زنده، بعد PRICE_UNAVAILABLE (stale)
+// آخرین قیمت معتبر — قدیمی‌تر از حد مجاز → تلاش برای sync زنده، بعد PRICE_UNAVAILABLE (stale)
 export async function getExecutablePrice(): Promise<ExecutablePrice> {
+  const maxAge = await maxAgeMs()
   let price = await prisma.goldPrice.findFirst({ orderBy: { recordedAt: 'desc' } })
-  if (!price || !isFresh(price.recordedAt)) {
+  if (!price || !isFresh(price.recordedAt, maxAge)) {
     await ensureFreshPrice()
     price = await prisma.goldPrice.findFirst({ orderBy: { recordedAt: 'desc' } })
   }
-  if (!price || !isFresh(price.recordedAt)) throw FinanceErrors.priceUnavailable()
+  if (!price || !isFresh(price.recordedAt, maxAge)) throw FinanceErrors.priceUnavailable()
   return {
     priceId: price.id,
     buyPrice: price.buyPrice,
@@ -77,13 +85,14 @@ export interface RecordPriceInput {
 // بررسی جهش غیرعادی نسبت به آخرین قیمت ثبت‌شده
 async function checkAbnormalMovement(sellPrice: bigint, allowAbnormal?: boolean) {
   if (allowAbnormal) return
+  const maxDeviation = await maxDeviationPercent()
   const last = await prisma.goldPrice.findFirst({
     orderBy: { recordedAt: 'desc' },
     select: { sellPrice: true },
   })
   if (!last || last.sellPrice <= 0n) return
   const deviation = Math.abs(Number(sellPrice - last.sellPrice)) / Number(last.sellPrice)
-  if (deviation * 100 > MAX_DEVIATION_PERCENT) {
+  if (deviation * 100 > maxDeviation) {
     throw FinanceErrors.abnormalPrice()
   }
 }
@@ -130,7 +139,8 @@ export async function syncLivePrice(opts?: { provider?: GoldPriceProvider }) {
     throw FinanceErrors.providerUnavailable('quote نامعتبر از provider')
   }
   const age = Date.now() - quote.timestamp.getTime()
-  if (age > MAX_AGE_MS || age < -60_000) {
+  const maxAge = await maxAgeMs()
+  if (age > maxAge || age < -60_000) {
     throw FinanceErrors.providerUnavailable('quote با timestamp نامعتبر از provider')
   }
 

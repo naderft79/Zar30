@@ -352,5 +352,8 @@ describe('Admin Finance — Withdrawals/Pricing', () => {
     const target = filtered.rows.find((p) => p.source === 'vitest-mock')
     expect(target?.buyPrice).toBe(huge.toString())
     expect(target?.sellPrice).toBe((huge - 1000n).toString())
+
+    // cleanup — این رکورد آینده‌نگر است و getExecutablePrice سایر suiteها را می‌شکند
+    await prisma.goldPrice.deleteMany({ where: { source: 'vitest-mock' } })
   })
 })

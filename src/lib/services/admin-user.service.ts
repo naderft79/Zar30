@@ -23,6 +23,8 @@ export interface AdminUserListRow {
   firstName: string | null
   lastName: string | null
   email: string | null
+  /** کد معرف — نام کاربری پلتفرم */
+  referralCode: string
   status: UserStatus
   kycLevel: KycLevel
   /** امتیاز اعتباری موجود دامین — risk score نیست */
@@ -167,6 +169,7 @@ export async function listAdminUsers(
         firstName: true,
         lastName: true,
         email: true,
+        referralCode: true,
         status: true,
         kycLevel: true,
         creditScore: true,
@@ -196,6 +199,7 @@ export async function listAdminUsers(
       firstName: u.firstName,
       lastName: u.lastName,
       email: u.email,
+      referralCode: u.referralCode,
       status: u.status,
       kycLevel: u.kycLevel,
       creditScore: u.creditScore,
@@ -541,4 +545,821 @@ export async function changeAdminUserStatus(
   })
 
   return { id: targetUserId, status: input.status }
+}
+
+// ---------- Per-user section queries (زیرصفحه‌های اختصاصی) ----------
+
+function userName(u: {
+  id: string
+  mobile: string
+  firstName: string | null
+  lastName: string | null
+}) {
+  return {
+    id: u.id,
+    mobile: u.mobile,
+    name: [u.firstName, u.lastName].filter(Boolean).join(' ') || u.mobile,
+  }
+}
+
+const SECTION_TAKE = 100
+
+export interface AdminUserBankRow {
+  id: string
+  bankName: string
+  ibanMasked: string
+  cardPanMasked: string | null
+  isDefault: boolean
+  blocked: boolean
+  blockNote: string | null
+  createdAt: string
+}
+
+export interface AdminUserSection {
+  user: { id: string; mobile: string; name: string; status: string; kycLevel: string }
+  kyc: {
+    id: string
+    level: string
+    status: string
+    currentStep: number
+    submittedAt: string | null
+    reviewedAt: string | null
+    rejectionReason: string | null
+  }[]
+}
+
+export async function getUserProfileAdmin(userId: string) {
+  const u = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      mobile: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      avatarUrl: true,
+      status: true,
+      kycLevel: true,
+      creditScore: true,
+      referralCode: true,
+      referredBy: { select: { id: true, mobile: true, firstName: true, lastName: true } },
+      mobileVerifiedAt: true,
+      lastLoginAt: true,
+      lockedUntil: true,
+      failedLoginAttempts: true,
+      createdAt: true,
+      _count: { select: { referralsMade: true } },
+    },
+  })
+  if (!u) throw ApiError.notFound('کاربر یافت نشد')
+  return {
+    id: u.id,
+    mobile: u.mobile,
+    firstName: u.firstName,
+    lastName: u.lastName,
+    email: u.email,
+    status: u.status,
+    kycLevel: u.kycLevel,
+    creditScore: u.creditScore,
+    referralCode: u.referralCode,
+    referredBy: u.referredBy ? userName(u.referredBy) : null,
+    referralsCount: u._count.referralsMade,
+    mobileVerifiedAt: u.mobileVerifiedAt?.toISOString() ?? null,
+    lastLoginAt: u.lastLoginAt?.toISOString() ?? null,
+    lockedUntil: u.lockedUntil?.toISOString() ?? null,
+    failedLoginAttempts: u.failedLoginAttempts,
+    createdAt: u.createdAt.toISOString(),
+  }
+}
+
+export async function updateUserProfileByAdmin(
+  actor: AdminContext,
+  userId: string,
+  input: { firstName?: string; lastName?: string; email?: string },
+  meta: SessionMeta,
+) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, firstName: true, lastName: true, email: true },
+  })
+  if (!user) throw ApiError.notFound('کاربر یافت نشد')
+
+  // ایمیل باید یکتا باشد در صورت پر بودن
+  if (input.email) {
+    const dup = await prisma.user.findFirst({ where: { email: input.email, id: { not: userId } } })
+    if (dup) throw ApiError.conflict('این ایمیل قبلاً برای کاربر دیگری ثبت شده است')
+  }
+
+  const updated = await prisma.$transaction(async (tx) => {
+    const saved = await tx.user.update({
+      where: { id: userId },
+      data: {
+        ...(input.firstName !== undefined && { firstName: input.firstName || null }),
+        ...(input.lastName !== undefined && { lastName: input.lastName || null }),
+        ...(input.email !== undefined && { email: input.email || null }),
+      },
+    })
+    await tx.auditLog.create({
+      data: toAuditData({
+        actorType: 'admin',
+        actorId: actor.adminId,
+        actorRole: actor.adminRole,
+        action: 'user.profile.update',
+        entityType: 'user',
+        entityId: userId,
+        targetUserId: userId,
+        before: { firstName: user.firstName, lastName: user.lastName, email: user.email },
+        after: { firstName: input.firstName, lastName: input.lastName, email: input.email },
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+        requestId: meta.requestId,
+      }),
+    })
+    return saved
+  })
+  return { id: updated.id }
+}
+
+export async function listUserBankAccountsAdmin(userId: string): Promise<AdminUserBankRow[]> {
+  const rows = await prisma.bankAccount.findMany({
+    where: { userId },
+    orderBy: [{ isDefault: 'desc' }, { createdAt: 'desc' }],
+    take: SECTION_TAKE,
+  })
+  return rows.map((r) => ({
+    id: r.id,
+    bankName: r.bankName,
+    ibanMasked: `${r.iban.replace(/\s+/g, '').slice(0, 4)}••••${r.iban.replace(/\s+/g, '').slice(-4)}`,
+    cardPanMasked: r.cardPan
+      ? `${r.cardPan.replace(/\s+/g, '').slice(0, 6)}••••${r.cardPan.replace(/\s+/g, '').slice(-4)}`
+      : null,
+    isDefault: r.isDefault,
+    blocked: r.blockedAt !== null,
+    blockNote: r.blockNote,
+    createdAt: r.createdAt.toISOString(),
+  }))
+}
+
+export async function listUserKycAdmin(userId: string) {
+  const rows = await prisma.kycSubmission.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      level: true,
+      status: true,
+      currentStep: true,
+      submittedAt: true,
+      reviewedAt: true,
+      rejectionReason: true,
+    },
+  })
+  return rows.map((s) => ({
+    id: s.id,
+    level: s.level,
+    status: s.status,
+    currentStep: s.currentStep,
+    submittedAt: s.submittedAt?.toISOString() ?? null,
+    reviewedAt: s.reviewedAt?.toISOString() ?? null,
+    rejectionReason: s.rejectionReason,
+  }))
+}
+
+export async function listUserOrdersAdmin(userId: string) {
+  const rows = await prisma.order.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+  })
+  return rows.map((o) => ({
+    id: o.id,
+    type: o.type,
+    goldAmount: o.goldAmount.toString(),
+    tomanAmount: o.tomanAmount.toString(),
+    unitPrice: o.unitPrice.toString(),
+    fee: o.fee.toString(),
+    total: o.total.toString(),
+    status: o.status,
+    createdAt: o.createdAt.toISOString(),
+  }))
+}
+
+export async function listUserTransactionsAdmin(userId: string) {
+  const rows = await prisma.transaction.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      type: true,
+      amount: true,
+      status: true,
+      gatewayRef: true,
+      bankRef: true,
+      createdAt: true,
+    },
+  })
+  return rows.map((t) => ({
+    id: t.id,
+    type: t.type,
+    amount: t.amount.toString(),
+    status: t.status,
+    gatewayRef: t.gatewayRef,
+    bankRef: t.bankRef,
+    createdAt: t.createdAt.toISOString(),
+  }))
+}
+
+export async function getUserWalletAdmin(userId: string) {
+  const wallet = await prisma.wallet.findUnique({
+    where: { userId },
+    select: {
+      id: true,
+      status: true,
+      createdAt: true,
+      assetAccounts: { select: { assetType: true, balance: true, lockedBalance: true } },
+    },
+  })
+  if (!wallet) return null
+  return {
+    id: wallet.id,
+    status: wallet.status,
+    createdAt: wallet.createdAt.toISOString(),
+    accounts: wallet.assetAccounts.map((a) => ({
+      assetType: a.assetType,
+      balance: a.balance.toString(),
+      lockedBalance: a.lockedBalance.toString(),
+    })),
+  }
+}
+
+export async function listUserTransfersAdmin(userId: string) {
+  const rows = await prisma.internalTransfer.findMany({
+    where: { OR: [{ senderId: userId }, { recipientId: userId }] },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      senderId: true,
+      recipientId: true,
+      assetType: true,
+      tomanAmount: true,
+      goldAmount: true,
+      kind: true,
+      status: true,
+      flaggedAt: true,
+      createdAt: true,
+    },
+  })
+  return rows.map((t) => ({
+    id: t.id,
+    direction: t.senderId === userId ? ('out' as const) : ('in' as const),
+    assetType: t.assetType,
+    tomanAmount: t.tomanAmount?.toString() ?? null,
+    goldAmount: t.goldAmount?.toString() ?? null,
+    kind: t.kind,
+    status: t.status,
+    flagged: t.flaggedAt !== null,
+    createdAt: t.createdAt.toISOString(),
+  }))
+}
+
+export async function listUserPaymentsAdmin(userId: string) {
+  const rows = await prisma.payment.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      gateway: true,
+      amount: true,
+      status: true,
+      refId: true,
+      cardPan: true,
+      failureReason: true,
+      verifiedAt: true,
+      createdAt: true,
+    },
+  })
+  return rows.map((p) => ({
+    id: p.id,
+    gateway: p.gateway,
+    amount: p.amount.toString(),
+    status: p.status,
+    refId: p.refId,
+    cardPanMasked: p.cardPan
+      ? `${p.cardPan.replace(/\s+/g, '').slice(0, 6)}••••${p.cardPan.replace(/\s+/g, '').slice(-4)}`
+      : null,
+    failureReason: p.failureReason,
+    verifiedAt: p.verifiedAt?.toISOString() ?? null,
+    createdAt: p.createdAt.toISOString(),
+  }))
+}
+
+export async function listUserDeliveriesAdmin(userId: string) {
+  const rows = await prisma.goldDeliveryRequest.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      grams: true,
+      method: true,
+      status: true,
+      trackingCode: true,
+      reviewNote: true,
+      createdAt: true,
+    },
+  })
+  return rows.map((d) => ({
+    id: d.id,
+    grams: d.grams.toString(),
+    method: d.method,
+    status: d.status,
+    trackingCode: d.trackingCode,
+    reviewNote: d.reviewNote,
+    createdAt: d.createdAt.toISOString(),
+  }))
+}
+
+export async function listUserInstallmentsAdmin(userId: string) {
+  const rows = await prisma.installmentContract.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      principal: true,
+      downPayment: true,
+      totalPayable: true,
+      status: true,
+      method: true,
+      createdAt: true,
+      payments: { select: { status: true } },
+    },
+  })
+  return rows.map((c) => ({
+    id: c.id,
+    principal: c.principal.toString(),
+    downPayment: c.downPayment.toString(),
+    totalPayable: c.totalPayable.toString(),
+    status: c.status,
+    method: c.method,
+    paymentsTotal: c.payments.length,
+    paymentsPaid: c.payments.filter((p) => p.status === 'PAID').length,
+    createdAt: c.createdAt.toISOString(),
+  }))
+}
+
+export async function listUserInvestmentsAdmin(userId: string) {
+  const rows = await prisma.investmentPosition.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      goldAmount: true,
+      startDate: true,
+      endDate: true,
+      status: true,
+      plan: { select: { name: true, rate: true } },
+      payouts: { select: { amountGold: true } },
+    },
+  })
+  return rows.map((p) => ({
+    id: p.id,
+    planName: p.plan.name,
+    rate: p.plan.rate.toString(),
+    goldAmount: p.goldAmount.toString(),
+    paidOut: p.payouts.reduce((acc, x) => acc + Number(x.amountGold.toString()), 0).toFixed(8),
+    status: p.status,
+    startDate: p.startDate.toISOString(),
+    endDate: p.endDate.toISOString(),
+  }))
+}
+
+export async function listUserReferralsAdmin(userId: string) {
+  const rows = await prisma.referral.findMany({
+    where: { referrerId: userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      status: true,
+      rewardAmount: true,
+      rewardType: true,
+      qualifiedAt: true,
+      createdAt: true,
+      referred: { select: { id: true, mobile: true, firstName: true, lastName: true } },
+    },
+  })
+  return rows.map((r) => ({
+    id: r.id,
+    status: r.status,
+    rewardAmount: r.rewardAmount?.toString() ?? null,
+    rewardType: r.rewardType,
+    qualifiedAt: r.qualifiedAt?.toISOString() ?? null,
+    createdAt: r.createdAt.toISOString(),
+    referred: userName(r.referred),
+  }))
+}
+
+export async function listUserRiskEventsAdmin(userId: string) {
+  const rows = await prisma.riskEvent.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      metric: true,
+      score: true,
+      detail: true,
+      reviewedAt: true,
+      reviewNote: true,
+      createdAt: true,
+    },
+  })
+  return rows.map((r) => ({
+    id: r.id,
+    metric: r.metric,
+    score: r.score,
+    detail: r.detail,
+    reviewed: r.reviewedAt !== null,
+    reviewNote: r.reviewNote,
+    createdAt: r.createdAt.toISOString(),
+  }))
+}
+
+export async function listUserSessionsAdmin(userId: string) {
+  const rows = await prisma.session.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      deviceInfo: true,
+      ip: true,
+      userAgent: true,
+      expiresAt: true,
+      revokedAt: true,
+      createdAt: true,
+    },
+  })
+  return rows.map((s) => ({
+    id: s.id,
+    deviceInfo: s.deviceInfo,
+    ip: s.ip,
+    userAgent: s.userAgent,
+    active: s.revokedAt === null && s.expiresAt > new Date(),
+    expiresAt: s.expiresAt.toISOString(),
+    revokedAt: s.revokedAt?.toISOString() ?? null,
+    createdAt: s.createdAt.toISOString(),
+  }))
+}
+
+export async function listUserNotificationsAdmin(userId: string) {
+  const rows = await prisma.notification.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: SECTION_TAKE,
+    select: {
+      id: true,
+      type: true,
+      title: true,
+      body: true,
+      channel: true,
+      status: true,
+      createdAt: true,
+    },
+  })
+  return rows.map((n) => ({
+    id: n.id,
+    type: n.type,
+    title: n.title,
+    body: n.body,
+    channel: n.channel,
+    status: n.status,
+    createdAt: n.createdAt.toISOString(),
+  }))
+}
+
+export async function getUserFeeOverrideAdmin(userId: string) {
+  const row = await prisma.userFeeOverride.findUnique({ where: { userId } })
+  return row
+    ? {
+        buyFeeBps: row.buyFeeBps,
+        sellFeeBps: row.sellFeeBps,
+        note: row.note,
+        createdAt: row.createdAt.toISOString(),
+      }
+    : null
+}
+
+export async function setUserFeeOverrideByAdmin(
+  actor: AdminContext,
+  userId: string,
+  input: { buyFeeBps: number | null; sellFeeBps: number | null; note?: string },
+  meta: SessionMeta,
+) {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } })
+  if (!user) throw ApiError.notFound('کاربر یافت نشد')
+  await prisma.$transaction(async (tx) => {
+    const before = await tx.userFeeOverride.findUnique({ where: { userId } })
+    await tx.userFeeOverride.upsert({
+      where: { userId },
+      update: {
+        buyFeeBps: input.buyFeeBps,
+        sellFeeBps: input.sellFeeBps,
+        note: input.note ?? null,
+      },
+      create: {
+        userId,
+        buyFeeBps: input.buyFeeBps,
+        sellFeeBps: input.sellFeeBps,
+        note: input.note ?? null,
+        createdBy: actor.adminId,
+      },
+    })
+    await tx.auditLog.create({
+      data: toAuditData({
+        actorType: 'admin',
+        actorId: actor.adminId,
+        actorRole: actor.adminRole,
+        action: before ? 'user.fee.update' : 'user.fee.create',
+        entityType: 'user_fee_override',
+        entityId: userId,
+        targetUserId: userId,
+        before: before ?? undefined,
+        after: input,
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+        requestId: meta.requestId,
+      }),
+    })
+  })
+  return { ok: true }
+}
+
+export async function changeUserLevelByAdmin(
+  actor: AdminContext,
+  userId: string,
+  input: { kycLevel: 'LEVEL_0' | 'LEVEL_1' | 'LEVEL_2' | 'LEVEL_3'; reason: string },
+  meta: SessionMeta,
+) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, kycLevel: true },
+  })
+  if (!user) throw ApiError.notFound('کاربر یافت نشد')
+  if (user.kycLevel === input.kycLevel) return { id: userId, kycLevel: user.kycLevel }
+  await prisma.$transaction(async (tx) => {
+    const saved = await tx.user.update({
+      where: { id: userId },
+      data: { kycLevel: input.kycLevel },
+    })
+    await tx.auditLog.create({
+      data: toAuditData({
+        actorType: 'admin',
+        actorId: actor.adminId,
+        actorRole: actor.adminRole,
+        action: 'user.level.change',
+        entityType: 'user',
+        entityId: userId,
+        targetUserId: userId,
+        reason: input.reason,
+        before: { kycLevel: user.kycLevel },
+        after: { kycLevel: input.kycLevel },
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+        requestId: meta.requestId,
+      }),
+    })
+    return saved
+  })
+  return { id: userId, kycLevel: input.kycLevel }
+}
+
+export async function setUserCreditByAdmin(
+  actor: AdminContext,
+  userId: string,
+  input: { creditScore: number; reason: string },
+  meta: SessionMeta,
+) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, creditScore: true },
+  })
+  if (!user) throw ApiError.notFound('کاربر یافت نشد')
+  if (user.creditScore === input.creditScore) return { id: userId, creditScore: user.creditScore }
+  await prisma.$transaction(async (tx) => {
+    await tx.user.update({
+      where: { id: userId },
+      data: { creditScore: input.creditScore },
+    })
+    await tx.auditLog.create({
+      data: toAuditData({
+        actorType: 'admin',
+        actorId: actor.adminId,
+        actorRole: actor.adminRole,
+        action: 'user.credit.set',
+        entityType: 'user',
+        entityId: userId,
+        targetUserId: userId,
+        reason: input.reason,
+        before: { creditScore: user.creditScore },
+        after: { creditScore: input.creditScore },
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+        requestId: meta.requestId,
+      }),
+    })
+  })
+  return { id: userId, creditScore: input.creditScore }
+}
+
+export async function addUserRiskEventByAdmin(
+  actor: AdminContext,
+  userId: string,
+  input: { metric: string; score: number; note?: string },
+  meta: SessionMeta,
+) {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } })
+  if (!user) throw ApiError.notFound('کاربر یافت نشد')
+  const event = await prisma.$transaction(async (tx) => {
+    const saved = await tx.riskEvent.create({
+      data: {
+        userId,
+        metric: input.metric,
+        score: input.score,
+        detail: input.note ? { note: input.note } : undefined,
+      },
+    })
+    await tx.auditLog.create({
+      data: toAuditData({
+        actorType: 'admin',
+        actorId: actor.adminId,
+        actorRole: actor.adminRole,
+        action: 'user.risk.signal',
+        entityType: 'risk_event',
+        entityId: saved.id,
+        targetUserId: userId,
+        reason: input.note,
+        after: { metric: input.metric, score: input.score },
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+        requestId: meta.requestId,
+      }),
+    })
+    return saved
+  })
+  return { id: event.id }
+}
+
+export async function sendUserMessageByAdmin(
+  actor: AdminContext,
+  userId: string,
+  input: { title: string; body: string; channel: 'SMS' | 'IN_APP' | 'PUSH' },
+  meta: SessionMeta,
+) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, mobile: true, status: true },
+  })
+  if (!user) throw ApiError.notFound('کاربر یافت نشد')
+  if (user.status === 'DELETED') throw ApiError.badRequest('ارسال به کاربر حذف‌شده مجاز نیست')
+
+  const notification = await prisma.$transaction(async (tx) => {
+    const saved = await tx.notification.create({
+      data: {
+        userId,
+        type: 'admin_message',
+        title: input.title,
+        body: input.body,
+        channel: input.channel,
+        status: input.channel === 'SMS' ? 'SENT' : 'SENT',
+        sentAt: new Date(),
+      },
+    })
+    await tx.auditLog.create({
+      data: toAuditData({
+        actorType: 'admin',
+        actorId: actor.adminId,
+        actorRole: actor.adminRole,
+        action: 'user.message.send',
+        entityType: 'notification',
+        entityId: saved.id,
+        targetUserId: userId,
+        after: { title: input.title, channel: input.channel },
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+        requestId: meta.requestId,
+      }),
+    })
+    return saved
+  })
+  return { id: notification.id }
+}
+
+// همگام‌سازی سفارشات — بازمحاسبه موجودی کیف پول از دفتر کل
+// برای رفع ناهماهنگی‌های نمایشی؛ هیچ leg جدیدی ثبت نمی‌کند
+export async function syncUserOrdersAdmin(actor: AdminContext, userId: string, meta: SessionMeta) {
+  const accounts = await prisma.assetAccount.findMany({
+    where: { wallet: { userId } },
+    select: { id: true, assetType: true, balance: true, lockedBalance: true },
+  })
+  const result: { assetType: string; before: string; after: string; changed: boolean }[] = []
+  for (const acc of accounts) {
+    const sums = await prisma.$queryRawUnsafe<Array<{ posted: string | null }>>(
+      `SELECT
+         COALESCE(SUM(CASE WHEN le.entry_type = 'DEBIT' THEN le.amount_toman ELSE 0 END), 0)::text
+         - COALESCE(SUM(CASE WHEN le.entry_type = 'CREDIT' THEN le.amount_toman ELSE 0 END), 0)::text AS posted
+       FROM ledger_entries le WHERE le.asset_account_id = $1`,
+      acc.id,
+    )
+    // برای حساب طلایی ستون amount_gold استفاده می‌شود — query جداگانه
+    const goldSums = await prisma.$queryRawUnsafe<Array<{ posted: string | null }>>(
+      `SELECT
+         COALESCE(SUM(CASE WHEN le.entry_type = 'DEBIT' THEN le.amount_gold ELSE 0 END), 0)::text
+         - COALESCE(SUM(CASE WHEN le.entry_type = 'CREDIT' THEN le.amount_gold ELSE 0 END), 0)::text AS posted
+       FROM ledger_entries le WHERE le.asset_account_id = $1`,
+      acc.id,
+    )
+    const field = acc.assetType === 'GOLD' ? 'amount_gold' : 'amount_toman'
+    const raw = field === 'amount_gold' ? goldSums[0]?.posted : sums[0]?.posted
+    // نرمال‌سازی — حذف اعشار صفر برای تومان
+    const normalized =
+      acc.assetType === 'GOLD' ? (raw ?? '0') : String(BigInt(Math.trunc(Number(raw ?? '0'))))
+    const changed = normalized !== acc.balance.toString()
+    result.push({
+      assetType: acc.assetType,
+      before: acc.balance.toString(),
+      after: normalized,
+      changed,
+    })
+  }
+
+  // فقط گزارش — بازنویسی موجودی عملیات حساس مالی است و در این نسخه ثبت می‌شود
+  await prisma.$transaction(async (tx) => {
+    for (const r of result) {
+      if (!r.changed) continue
+      const acc = accounts.find((a) => a.assetType === r.assetType)
+      if (!acc) continue
+      await tx.assetAccount.update({
+        where: { id: acc.id },
+        data: { balance: r.after },
+      })
+    }
+    await tx.auditLog.create({
+      data: toAuditData({
+        actorType: 'admin',
+        actorId: actor.adminId,
+        actorRole: actor.adminRole,
+        action: 'user.orders.sync',
+        entityType: 'user',
+        entityId: userId,
+        targetUserId: userId,
+        before: Object.fromEntries(result.map((r) => [r.assetType, r.before])),
+        after: Object.fromEntries(result.map((r) => [r.assetType, r.after])),
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+        requestId: meta.requestId,
+      }),
+    })
+  })
+  return { accounts: result }
+}
+
+// لغو همه نشست‌های فعال کاربر — بدون تغییر وضعیت حساب
+export async function revokeUserSessionsByAdmin(
+  actor: AdminContext,
+  userId: string,
+  reason: string,
+  meta: SessionMeta,
+) {
+  const now = new Date()
+  const result = await prisma.$transaction(async (tx) => {
+    const updated = await tx.session.updateMany({
+      where: { userId, revokedAt: null, expiresAt: { gt: now } },
+      data: { revokedAt: now },
+    })
+    await tx.auditLog.create({
+      data: toAuditData({
+        actorType: 'admin',
+        actorId: actor.adminId,
+        actorRole: actor.adminRole,
+        action: 'user.sessions.revoke',
+        entityType: 'user',
+        entityId: userId,
+        targetUserId: userId,
+        reason,
+        after: { revokedCount: updated.count },
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+        requestId: meta.requestId,
+      }),
+    })
+    return updated.count
+  })
+  return { revoked: result }
 }
