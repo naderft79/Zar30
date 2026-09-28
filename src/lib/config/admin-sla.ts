@@ -7,7 +7,14 @@
 
 import prisma from '@/lib/db/prisma'
 
-export type QueueKey = 'kyc' | 'withdrawals' | 'orders' | 'tickets' | 'delivery' | 'risk'
+export type QueueKey =
+  | 'kyc'
+  | 'withdrawals'
+  | 'orders'
+  | 'tickets'
+  | 'delivery'
+  | 'risk'
+  | 'zareesi'
 
 export interface SlaThreshold {
   warningSec: number
@@ -22,6 +29,7 @@ const DEFAULT_SLA: Record<QueueKey, SlaThreshold> = {
   tickets: { warningSec: 2 * 3600, breachSec: 8 * 3600 }, // ۲h / ۸h
   delivery: { warningSec: 24 * 3600, breachSec: 72 * 3600 }, // ۲۴h / ۷۲h
   risk: { warningSec: 2 * 3600, breachSec: 12 * 3600 }, // ۲h / ۱۲h
+  zareesi: { warningSec: 24 * 3600, breachSec: 72 * 3600 }, // ۲۴h / ۷۲h — چرخه تولید کارت زمان‌بر است
 }
 
 export type SlaState = 'ok' | 'warning' | 'breach'

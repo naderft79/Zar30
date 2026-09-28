@@ -27,6 +27,7 @@ export const dashboardQueueKeySchema = z.enum([
   'tickets',
   'delivery',
   'risk',
+  'zareesi',
 ])
 
 export const dashboardLayoutSchema = z.object({

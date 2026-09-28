@@ -367,18 +367,28 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         description: 'درخواست‌ها و سفارش‌های تحویل فیزیکی',
         permissions: [PERMISSIONS.DELIVERY_READ],
       },
+    ],
+  },
+
+  // ---------- ۱۰. خدمات ----------
+  {
+    key: 'services',
+    label: 'خدمات',
+    icon: IconCreditCard,
+    items: [
       {
-        key: 'zareesi-cards',
+        key: 'zareesi-cards-service',
         label: 'کارت زرسی',
         href: '/admin/zareesi-cards',
+        badgeKey: 'zareesi',
         icon: IconCreditCard,
-        description: 'سفارش‌های کارت اعتباری طلایی زرسی',
+        description: 'سفارش‌های کارت اعتباری طلایی — صدور، ارسال و فعال‌سازی',
         permissions: [PERMISSIONS.DELIVERY_READ],
       },
     ],
   },
 
-  // ---------- ۱۰. خدمات مالی ----------
+  // ---------- ۱۱. خدمات مالی ----------
   {
     key: 'financial-services',
     label: 'خدمات مالی',

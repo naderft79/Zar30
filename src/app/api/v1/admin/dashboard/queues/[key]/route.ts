@@ -21,6 +21,7 @@ const QUEUE_PERMISSION: Record<QueueKey, Permission> = {
   tickets: PERMISSIONS.TICKETS_READ,
   delivery: PERMISSIONS.DELIVERY_READ,
   risk: PERMISSIONS.RISK_READ,
+  zareesi: PERMISSIONS.DELIVERY_READ,
 }
 
 export const GET = withErrorHandler(

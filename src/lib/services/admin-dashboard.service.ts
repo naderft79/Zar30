@@ -181,6 +181,12 @@ const QUEUE_DEFS: QueueDef[] = [
     permission: PERMISSIONS.RISK_READ,
     href: '/admin/risk?status=open',
   },
+  {
+    key: 'zareesi',
+    label: 'کارت زرسی در انتظار',
+    permission: PERMISSIONS.DELIVERY_READ,
+    href: '/admin/zareesi-cards?status=PENDING',
+  },
 ]
 
 async function queueStat(key: QueueKey): Promise<{ count: number; oldest: Date | null }> {
@@ -240,6 +246,16 @@ async function queueStat(key: QueueKey): Promise<{ count: number; oldest: Date |
         prisma.riskEvent.count({ where: { reviewedAt: null } }),
         prisma.riskEvent.aggregate({
           where: { reviewedAt: null },
+          _min: { createdAt: true },
+        }),
+      ])
+      return { count, oldest: agg._min.createdAt }
+    }
+    case 'zareesi': {
+      const [count, agg] = await Promise.all([
+        prisma.zareesiCard.count({ where: { status: 'PENDING' } }),
+        prisma.zareesiCard.aggregate({
+          where: { status: 'PENDING' },
           _min: { createdAt: true },
         }),
       ])
@@ -1094,7 +1110,34 @@ export async function getQueueRows(key: QueueKey): Promise<QueueRow[]> {
         href: `/admin/risk?status=open`,
       }))
     }
+    case 'zareesi': {
+      const rows = await prisma.zareesiCard.findMany({
+        where: { status: 'PENDING' },
+        orderBy: { createdAt: 'asc' },
+        take,
+        select: {
+          id: true,
+          color: true,
+          holderName: true,
+          createdAt: true,
+          user: { select: { mobile: true } },
+        },
+      })
+      return rows.map((r) => ({
+        id: r.id,
+        title: r.holderName,
+        subtitle: `${r.user.mobile} — کارت ${ZAREESI_COLOR_LABEL[r.color]}`,
+        at: r.createdAt.toISOString(),
+        href: `/admin/zareesi-cards`,
+      }))
+    }
   }
+}
+
+const ZAREESI_COLOR_LABEL: Record<string, string> = {
+  GOLD: 'طلایی',
+  NAVY: 'سورمه‌ای',
+  CREAM: 'کرمی',
 }
 
 // ============================================
@@ -1230,6 +1273,8 @@ export interface AdminNavBadgeCounts {
   tickets?: number
   risk?: number
   delivery?: number
+  /** کارت‌های زرسی در انتظار تایید */
+  zareesi?: number
   /** وضعیت توقف اضطراری — برای بنر سراسری در shell */
   halted?: { trading: boolean; withdrawals: boolean }
 }
@@ -1284,6 +1329,11 @@ export async function getAdminNavBadges(
         .then((n) => {
           if (n > 0) badges.delivery = n
         }),
+    )
+    tasks.push(
+      prisma.zareesiCard.count({ where: { status: 'PENDING' } }).then((n) => {
+        if (n > 0) badges.zareesi = n
+      }),
     )
   }
   // پرچم‌های halt — همه ادمین‌ها باید وضعیت توقف را ببینند

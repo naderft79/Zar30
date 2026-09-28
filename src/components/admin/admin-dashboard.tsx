@@ -19,6 +19,7 @@ import {
   IconPackage,
   IconRefresh,
   IconShieldExclamation,
+  IconCreditCard,
   IconTrendingUp,
   IconUserCheck,
   IconUsers,
@@ -100,6 +101,7 @@ const QUEUE_ICONS: Record<
   tickets: IconLifebuoy,
   delivery: IconPackage,
   risk: IconShieldExclamation,
+  zareesi: IconCreditCard,
 }
 
 const ALL_WIDGETS: WidgetDef[] = [
@@ -423,6 +425,17 @@ export function AdminDashboard() {
             icon={IconUsers}
             href="/admin/users"
           />
+          {hasPermission(admin.permissions, PERMISSIONS.DELIVERY_READ) && (
+            <KpiCard
+              id="kpi-zareesi"
+              label="کارت زرسی در انتظار تایید"
+              value={String(dashboard.queues.find((q) => q.key === 'zareesi')?.count ?? 0)}
+              unit="سفارش"
+              icon={IconCreditCard}
+              href="/admin/zareesi-cards?status=PENDING"
+              gold
+            />
+          )}
         </div>
       )}
 
