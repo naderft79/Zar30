@@ -259,6 +259,7 @@ model User {
   coinHoldings      CoinHolding[]
   feeOverride       UserFeeOverride?
   riskEvents        RiskEvent[]
+  zareesiCards      ZareesiCard[]
 
   @@index([referredById])
   @@index([status])
@@ -283,6 +284,7 @@ model AdminUser {
   installmentContracts InstallmentContract[]
   deliveryRequests    GoldDeliveryRequest[]
   exportRecords       ExportRecord[]
+  zareesiCardApprovals ZareesiCard[]       @relation("ZareesiCardApprover")
 
   @@map("admin_users")
 }
@@ -632,6 +634,7 @@ model Address {
 
   user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   deliveryRequests GoldDeliveryRequest[]
+  zareesiCards     ZareesiCard[]
 
   @@index([userId])
   @@map("addresses")
@@ -1107,6 +1110,57 @@ model InterestPayout {
 
   @@index([positionId, periodStart])
   @@map("interest_payouts")
+}
+
+// ============================================
+// Zareesi Card (کارت طلایی زرسی)
+// ============================================
+// کارت فیزیکی مفرغی/فلزی اعتباری — خرید با موجودی طلایی کیف پول
+// رنگ: طلایی | سورمه‌ای | کرمی — شماره یکتا + QR فعال‌سازی
+// وضعیت‌ها: PENDING (در انتظار تایید ادمین) → PRODUCTION → SHIPPED → ACTIVE / REJECTED
+enum ZareesiCardColor {
+  GOLD
+  NAVY
+  CREAM
+}
+
+enum ZareesiCardStatus {
+  PENDING
+  APPROVED
+  PRODUCTION
+  SHIPPED
+  ACTIVE
+  REJECTED
+  BLOCKED
+}
+
+model ZareesiCard {
+  id          String            @id @default(uuid())
+  userId      String            @map("user_id")
+  color       ZareesiCardColor
+  status      ZareesiCardStatus @default(PENDING)
+  cardNumber  String            @unique @map("card_number") // شماره یکتا روی کارت — مثل ZRC-7X4K-9M2P
+  holderName  String            @map("holder_name") // نام فارسی حک‌شده روی کارت
+  deliveryAddressId String?     @map("delivery_address_id")
+  shippingMethod String        @default("POST") @map("shipping_method") // POST | PICKUP
+  feeGold     Decimal           @map("fee_gold") @db.Decimal(18, 8) // کارمزد صدور به گرم طلا
+  feeToman    BigInt            @default(0) @map("fee_toman") // کارمزد ارسال تومانی (پست پیشتاز)
+  activatedAt DateTime?         @map("activated_at")
+  rejectedReason String?        @map("rejected_reason")
+  trackingCode String?          @map("tracking_code") // کد رهگیری پستی
+  adminNote   String?           @map("admin_note")
+  approvedBy  String?           @map("approved_by")
+  approvedAt  DateTime?         @map("approved_at")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  user      User      @relation(fields: [userId], references: [id])
+  approver  AdminUser? @relation("ZareesiCardApprover", fields: [approvedBy], references: [id])
+  address   Address?  @relation(fields: [deliveryAddressId], references: [id])
+
+  @@index([userId, status])
+  @@index([status])
+  @@map("zareesi_cards")
 }
 
 // ============================================

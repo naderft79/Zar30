@@ -39,6 +39,7 @@ import {
 } from '@tabler/icons-react'
 import { apiPut } from '@/lib/api/client'
 import { toPersianDigits } from '@/lib/utils/format'
+import { cn } from 'cn'
 import { usePanelUser, type PanelUser } from './panel-shell'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -46,6 +47,7 @@ import { Input } from '@/components/ui/input'
 
 // خدمات بیشتر — گرید ۴تایی مربعی عین میان‌برهای صفحه خانه
 const MORE_SERVICES = [
+  { label: 'کارت زرسی', href: '/dashboard/zareesi-card', icon: IconCreditCard, highlight: true },
   { label: 'زرکار', href: '/dashboard/zarkar', icon: IconSparkles },
   { label: 'خرید قسطی', href: '/dashboard/installments', icon: IconCalendarClock },
   { label: 'اعتبار فوری', href: '/dashboard/installments', icon: IconBolt },
@@ -263,7 +265,13 @@ export function ProfileClient() {
             <Link
               key={s.label}
               href={s.href}
-              className="border-border/60 bg-card hover:border-gold-500/40 focus-visible:ring-ring flex aspect-square flex-col items-center justify-center gap-2.5 rounded-2xl border transition-all duration-(--duration-normal) hover:shadow-md focus-visible:ring-2 focus-visible:outline-none"
+              className={cn(
+                'flex aspect-square flex-col items-center justify-center gap-2.5 rounded-2xl border transition-all duration-(--duration-normal) hover:shadow-md focus-visible:ring-2 focus-visible:outline-none',
+                'highlight' in s && s.highlight
+                  ? 'border-gold-500/40 from-gold-500/10 hover:border-gold-500/60 bg-gradient-to-bl to-transparent'
+                  : 'border-border/60 bg-card hover:border-gold-500/40',
+                'focus-visible:ring-ring',
+              )}
             >
               <s.icon className="text-gold-600 size-6 sm:size-7" stroke={1.5} />
               <span className="text-foreground px-1 text-center text-[10px] font-medium sm:text-xs">

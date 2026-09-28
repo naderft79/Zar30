@@ -68,3 +68,22 @@ export const financeListQuerySchema = paginationSchema.extend({
 export type CreateOrderInput = z.infer<typeof createOrderSchema>
 export type CreateDepositInput = z.infer<typeof createDepositSchema>
 export type CreateWithdrawalInput = z.infer<typeof createWithdrawalSchema>
+
+// ============================================
+// Zareesi Card — کارت زرسی
+// ============================================
+
+export const ZAREESI_CARD_COLORS = ['GOLD', 'NAVY', 'CREAM'] as const
+
+export const orderZareesiCardSchema = z.object({
+  color: z.enum(ZAREESI_CARD_COLORS, { message: 'رنگ کارت نامعتبر است' }),
+  holderName: z
+    .string()
+    .trim()
+    .min(3, 'نام حک‌شده روی کارت باید حداقل ۳ کاراکتر باشد')
+    .max(40, 'نام حک‌شده روی کارت حداکثر ۴۰ کاراکتر است'),
+  shippingMethod: z.enum(['POST', 'PICKUP']).default('POST'),
+  deliveryAddressId: z.string().uuid('آدرس تحویل نامعتبر است').optional(),
+})
+
+export type OrderZareesiCardInput = z.infer<typeof orderZareesiCardSchema>

@@ -36,6 +36,7 @@ const STATUS_MAP: Record<string, { label: string; tone: Tone }> = {
   // Delivery
   PREPARING: { label: 'در حال آماده‌سازی', tone: 'info' },
   SHIPPED: { label: 'ارسال‌شده', tone: 'info' },
+  PRODUCTION: { label: 'در حال تولید', tone: 'info' },
   // Wallet
   active: { label: 'فعال', tone: 'success' },
   frozen: { label: 'مسدود', tone: 'error' },

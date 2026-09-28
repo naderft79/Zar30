@@ -367,6 +367,14 @@ export const ADMIN_NAV_SECTIONS: readonly AdminNavSection[] = [
         description: 'درخواست‌ها و سفارش‌های تحویل فیزیکی',
         permissions: [PERMISSIONS.DELIVERY_READ],
       },
+      {
+        key: 'zareesi-cards',
+        label: 'کارت زرسی',
+        href: '/admin/zareesi-cards',
+        icon: IconCreditCard,
+        description: 'سفارش‌های کارت اعتباری طلایی زرسی',
+        permissions: [PERMISSIONS.DELIVERY_READ],
+      },
     ],
   },
 
