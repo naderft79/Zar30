@@ -64,7 +64,7 @@ export interface AdminNavItem {
   /** حداقل یکی از این permissionها برای دیدن item لازم است */
   permissions: readonly Permission[]
   /** کلید شمارنده pending — از GET /api/v1/admin/nav-badges تغذیه می‌شود */
-  badgeKey?: 'kyc' | 'withdrawals' | 'orders' | 'tickets' | 'risk' | 'delivery'
+  badgeKey?: 'kyc' | 'withdrawals' | 'orders' | 'tickets' | 'risk' | 'delivery' | 'zareesi'
 }
 
 export interface AdminNavSection {

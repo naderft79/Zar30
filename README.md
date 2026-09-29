@@ -22,8 +22,8 @@ node --version   # 24 LTS — nvm use 24
 pnpm --version
 
 # راه‌اندازی
-cp .env.example .env.local
-docker compose up -d
+cp .env.example .env   # برای dev: NODE_ENV=development و NEXT_PUBLIC_APP_URL=http://localhost:3000
+docker compose up -d   # فقط dev — Postgres/Redis/MinIO محلی (در صورت نصب native نیازی نیست)
 pnpm install
 pnpm db:generate
 pnpm db:migrate
@@ -78,6 +78,8 @@ docs/             # Documentation
 - [Testing](docs/TESTING.md)
 - [Security](docs/SECURITY.md)
 - [Deployment](docs/DEPLOYMENT.md)
+- [Production Deployment — aaPanel](docs/deployment/AA_PANEL.md)
+- [Production Overview](docs/deployment/PRODUCTION.md)
 - [Phase 0 Report](docs/phases/PHASE-00-REPORT.md)
 - [Changelog](docs/CHANGELOG.md)
 
@@ -90,3 +92,4 @@ docs/             # Documentation
 - **Idempotency** — durable در DB + Redis acceleration
 - **دو Target** — Web (SSR) + Mobile (Capacitor)
 - **Offline ممنوع** — عملیات مالی فقط آنلاین
+- **Production بدون Docker** — Node + PM2 + PostgreSQL + Redis + Nginx (aaPanel) روی `zar30.com`

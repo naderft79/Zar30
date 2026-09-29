@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { Providers } from '@/components/providers/providers'
 import { InstallPrompt } from '@/components/panel/install-prompt'
+import { OnboardingGate } from '@/components/providers/onboarding-gate'
 import './globals.css'
 
 const vazirmatn = localFont({
@@ -65,6 +66,7 @@ export default function RootLayout({
         <Providers>
           {children}
           <InstallPrompt />
+          <OnboardingGate />
         </Providers>
       </body>
     </html>

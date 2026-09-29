@@ -9,22 +9,28 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IconShare, IconX, IconDownload } from '@tabler/icons-react'
 
 const DISMISS_KEY = 'zar30:pwa-install-dismissed:v2'
 // بعد از ضربدر، بنر ۶ ساعت مخفی می‌ماند و دوباره پیشنهاد می‌شود
 const DISMISS_TTL_MS = 6 * 60 * 60 * 1000
 
-function isDismissed(): boolean {
+// زمان باقی‌مانده تا اتمام دوره سکوت — null یعنی الان باید نشان داده شود
+function msUntilReshow(): number | null {
   const raw = localStorage.getItem(DISMISS_KEY)
-  if (!raw) return false
+  if (!raw) return null
   const ts = Number(raw)
-  if (!Number.isFinite(ts) || Date.now() - ts > DISMISS_TTL_MS) {
+  if (!Number.isFinite(ts)) {
     localStorage.removeItem(DISMISS_KEY)
-    return false
+    return null
   }
-  return true
+  const remaining = DISMISS_TTL_MS - (Date.now() - ts)
+  if (remaining <= 0) {
+    localStorage.removeItem(DISMISS_KEY)
+    return null
+  }
+  return remaining
 }
 
 // Event غیر استاندارد beforeinstallprompt در تایپ‌های DOM نیست
@@ -55,30 +61,55 @@ export function InstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null)
   const [showIosHint, setShowIosHint] = useState(false)
   const [visible, setVisible] = useState(false)
+  // تایمر پیشنهاد مجدد — بعد از ضربدر دقیقاً ۶ ساعت بعد دوباره نمایش می‌دهد
+  const reshowTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (isStandalone() || isDismissed()) return
+    if (isStandalone()) return
+
+    const scheduleReshow = (ms: number) => {
+      if (reshowTimer.current) clearTimeout(reshowTimer.current)
+      reshowTimer.current = setTimeout(() => {
+        setShowIosHint(isIosSafari())
+        setVisible(true)
+      }, ms)
+    }
+
+    const remaining = msUntilReshow()
 
     const onPrompt = (e: Event) => {
       e.preventDefault()
       setDeferred(e as BeforeInstallPromptEvent)
-      setVisible(true)
+      // اگر در دوره سکوت ضربدر هستیم، prompt خارجی آن را override نمی‌کند
+      if (msUntilReshow() === null) setVisible(true)
     }
     window.addEventListener('beforeinstallprompt', onPrompt)
 
     // روی Android/iOS بنر بلافاصله پیشنهاد می‌شود — نصب واقعی هر زمان
     // beforeinstallprompt برسد فعال است، قبل از آن راهنمای دستی نشان می‌دهیم
     let mobileTimer: ReturnType<typeof setTimeout> | undefined
-    if (isMobileDevice()) {
-      mobileTimer = setTimeout(() => {
-        setShowIosHint(isIosSafari())
-        setVisible(true)
-      }, 2_000)
+    if (remaining === null) {
+      if (isMobileDevice()) {
+        mobileTimer = setTimeout(() => {
+          setShowIosHint(isIosSafari())
+          setVisible(true)
+        }, 2_000)
+      }
+    } else {
+      // در دوره سکوت — دقیقاً با اتمام ۶ ساعت دوباره پیشنهاد می‌دهیم
+      scheduleReshow(remaining)
     }
+
+    // چرخه: هر بار که بنر بسته شود، ۶ ساعت بعد دوباره می‌آید
+    const onReshow = () => scheduleReshow(DISMISS_TTL_MS)
+    window.addEventListener('zar30:install-dismissed', onReshow)
+
     return () => {
       window.removeEventListener('beforeinstallprompt', onPrompt)
+      window.removeEventListener('zar30:install-dismissed', onReshow)
       if (mobileTimer) clearTimeout(mobileTimer)
+      if (reshowTimer.current) clearTimeout(reshowTimer.current)
     }
   }, [])
 
@@ -87,6 +118,8 @@ export function InstallPrompt() {
   const dismiss = () => {
     localStorage.setItem(DISMISS_KEY, String(Date.now()))
     setVisible(false)
+    // اطلاع به listener برای برنامه‌ریزی پیشنهاد مجدد ۶ ساعت بعد
+    window.dispatchEvent(new Event('zar30:install-dismissed'))
   }
 
   const install = async () => {

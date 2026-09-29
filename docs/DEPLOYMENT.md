@@ -1,38 +1,55 @@
 # Zar30 — Deployment Documentation
 
-## Infrastructure V1 (ساده)
+## Production Architecture (Native VPS — بدون Docker)
 
 ```
 Internet
    │
    ▼
-Reverse Proxy (Caddy)
-   │
-   ├── Next.js App (Web Target — SSR)
+Nginx / aaPanel (:443 — SSL)
+   │ proxy → 127.0.0.1:3000
+   ▼
+Next.js (PM2 → Node 24 — SSR)
    │      └── /api/v1/*
-   │
-   ├── PostgreSQL 18.x
-   ├── Redis 7.x
-   └── MinIO (S3-compatible)
+   ├── PostgreSQL (native, 127.0.0.1:5432)
+   ├── Redis (native, 127.0.0.1:6379)
+   └── Object Storage (S3-compatible — ENV-driven)
 ```
+
+**Production به Docker نیاز ندارد.** راهنمای کامل:
+`docs/deployment/AA_PANEL.md` و `docs/deployment/PRODUCTION.md`
+کانفیگ نمونه‌ی Nginx: `deploy/nginx/zar30.conf`
 
 ## Development
 
 ```bash
 # پیش‌نیازها
 node --version   # باید 24 باشد — nvm use 24
-pnpm --version   # 9+
-docker --version # برای DB/Redis
+pnpm --version   # 12+
 
 # راه‌اندازی
-cp .env.example .env.local   # پر کردن متغیرها
-docker compose up -d          # PostgreSQL + Redis + MinIO
-pnpm install                  # نصب وابستگی‌ها
-pnpm db:generate              # Prisma client
-pnpm db:migrate               # Migration
-pnpm db:seed                  # Seed (dev only)
-pnpm dev                      # شروع dev server
+cp .env.example .env    # پر کردن متغیرها (NODE_ENV=development برای dev)
+pnpm install            # نصب وابستگی‌ها
+pnpm db:generate        # Prisma client
+pnpm db:migrate         # Migration (فقط dev)
+pnpm db:seed            # Seed (dev only)
+pnpm dev                # شروع dev server روی پورت 3000
 ```
+
+### سرویس‌های dev (PostgreSQL / Redis / MinIO)
+
+`docker-compose.yml` **فقط برای توسعه محلی** است و نقشی در production ندارد.
+اگر Postgres/Redis را native نصب کرده‌اید، به آن نیازی نیست:
+
+```bash
+docker compose up -d    # Postgres:5432 + Redis:6379 + MinIO:9000 (dev only)
+```
+
+| Service  | Image                      | Port       |
+| -------- | -------------------------- | ---------- |
+| postgres | postgres:18-alpine         | 5432       |
+| redis    | redis:7-alpine             | 6379       |
+| minio    | quay.io/minio/minio:latest | 9000, 9001 |
 
 ## Build
 
@@ -45,24 +62,19 @@ BUILD_TARGET=mobile pnpm build
 npx cap sync
 ```
 
-## Docker Compose Services
+## Production Quick Reference
 
-| Service  | Image                      | Port       |
-| -------- | -------------------------- | ---------- |
-| postgres | postgres:18-alpine         | 5432       |
-| redis    | redis:7-alpine             | 6379       |
-| minio    | quay.io/minio/minio:latest | 9000, 9001 |
-
-> **MinIO Image Note:** ایمیج `minio/minio` در Docker Hub آرشیو شده است. از رجیستری رسمی `quay.io/minio/minio` استفاده می کنیم. برای Development فعلاً `latest` قابل قبول است — برای Production باید نسخه Pin شود.
->
-> **PostgreSQL 18+ Volume Note:** از نسخه ۱۸، ایمیج postgres داده را با ساختار `pg_ctlcluster` (زیرپوشه per-major-version) ذخیره می کند. Volume باید روی `/var/lib/postgresql` (نه `/var/lib/postgresql/data`) mount شود.
+```bash
+pnpm install --frozen-lockfile
+pnpm db:generate
+pnpm db:deploy                      # هرگز migrate dev روی production نه
+pnpm build
+pm2 start ecosystem.config.cjs --env production
+pm2 save && pm2 startup
+```
 
 ## CI/CD
 
 - `.github/workflows/ci.yml`: Install → Typecheck → Lint → Test → Build
+- GitHub service containers (postgres/redis) فقط برای CI هستند — به deployment مربوط نیستند
 - Branch: `main`, `develop`
-
-## Production (آینده)
-
-- Docker + Reverse Proxy + PostgreSQL + Redis + MinIO
-- Scaling به Swarm/K8s در صورت نیاز واقعی
