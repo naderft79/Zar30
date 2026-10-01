@@ -929,13 +929,15 @@ export async function getDashboardFeeds(): Promise<DashboardFeeds> {
 
   // نام actorها — یک کوئری برای همه
   const actorIds = [...new Set(auditRows.map((a) => a.actorId).filter(Boolean))] as string[]
-  const actors = await prisma.adminUser.findMany({
-    where: { id: { in: actorIds } },
-    select: {
-      id: true,
-      user: { select: { mobile: true, firstName: true, lastName: true } },
-    },
-  })
+  const actors = actorIds.length
+    ? await prisma.adminUser.findMany({
+        where: { id: { in: actorIds } },
+        select: {
+          id: true,
+          user: { select: { mobile: true, firstName: true, lastName: true } },
+        },
+      })
+    : []
   const actorName = new Map(
     actors.map((a) => [
       a.id,
@@ -1191,10 +1193,12 @@ export async function listDashboardNotes(): Promise<DashboardNote[]> {
         .filter((v): v is string => typeof v === 'string'),
     ),
   ]
-  const admins = await prisma.adminUser.findMany({
-    where: { id: { in: adminIds } },
-    select: { id: true, user: { select: { mobile: true, firstName: true, lastName: true } } },
-  })
+  const admins = adminIds.length
+    ? await prisma.adminUser.findMany({
+        where: { id: { in: adminIds } },
+        select: { id: true, user: { select: { mobile: true, firstName: true, lastName: true } } },
+      })
+    : []
   const nameOf = new Map(
     admins.map((a) => [
       a.id,

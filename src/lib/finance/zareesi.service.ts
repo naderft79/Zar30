@@ -235,9 +235,29 @@ export async function listZareesiCards(userId: string) {
   const cards = await prisma.zareesiCard.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
-    include: { address: { select: { city: true, province: true, address: true } } },
   })
-  return cards.map(serializeCard)
+
+  // واکشی آدرس فقط وقتی حداقل یک کارت آدرس داشته باشد — جلوگیری از کوئری IN (NULL)
+  const addressIds = [
+    ...new Set(cards.map((c) => c.deliveryAddressId).filter((id): id is string => !!id)),
+  ]
+  const addressMap = new Map(
+    addressIds.length
+      ? (
+          await prisma.address.findMany({
+            where: { id: { in: addressIds } },
+            select: { id: true, city: true, province: true, address: true },
+          })
+        ).map((a) => [a.id, a])
+      : [],
+  )
+
+  return cards.map((c) =>
+    serializeCard({
+      ...c,
+      address: c.deliveryAddressId ? (addressMap.get(c.deliveryAddressId) ?? null) : null,
+    }),
+  )
 }
 
 // ---------- برگشت کارمزد هنگام رد (ادمین) ----------
